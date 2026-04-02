@@ -1,0 +1,256 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-cookie-policy.css' | asset_url | stylesheet_tag }}
+
+<div class="cookie-page">
+  
+  <!-- ================================================
+       1) HERO SECTION – PRIVACY FIRST
+       ================================================ -->
+  <section class="cookie-hero">
+    <div class="cookie-hero-content">
+      <h1 class="cookie-hero-title">Cookie-Richtlinie</h1>
+      <p class="cookie-hero-subtitle">Informationen zur Verwendung von Cookies und ähnlichen Technologien auf unserer Website.</p>
+      <div class="cookie-hero-divider"></div>
+      <p class="cookie-hero-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 6px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Zuletzt aktualisiert: 9. Februar 2026
+      </p>
+    </div>
+  </section>
+
+  <div class="cookie-container">
+
+    <!-- ================================================
+         2) INTRO – HUMAN & TRANSPARENT
+         ================================================ -->
+    <div class="cookie-intro">
+      <p>Wir verwenden Cookies, um Ihnen ein optimales Nutzungserlebnis zu bieten und unsere Website kontinuierlich zu verbessern.</p>
+      <p><strong>Ihre Privatsphäre ist uns wichtig.</strong> Wir respektieren Ihre Entscheidung und geben Ihnen die volle Kontrolle darüber, welche Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit anpassen.</p>
+    </div>
+
+    <!-- ================================================
+         3) COOKIE CATEGORIES
+         ================================================ -->
+    <section class="cookie-section">
+      <h2 class="cookie-section-title">Welche Cookies verwenden wir?</h2>
+      <p class="cookie-section-subtitle">Wir unterscheiden zwischen verschiedenen Cookie-Kategorien, die unterschiedliche Zwecke erfüllen.</p>
+      
+      <div class="cookie-categories">
+        
+        <!-- Notwendige Cookies -->
+        <div class="cookie-card">
+          <div class="cookie-card-header">
+            <div class="cookie-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div class="cookie-card-title-wrap">
+              <h3 class="cookie-card-title">Notwendige Cookies</h3>
+              <span class="cookie-card-badge cookie-card-badge--required">Immer aktiv</span>
+            </div>
+          </div>
+          <p class="cookie-card-text">Diese Cookies sind für die Grundfunktionen der Website unbedingt erforderlich. Sie ermöglichen grundlegende Funktionen wie Warenkorb, Anmeldung und sichere Bereiche. Ohne diese Cookies kann die Website nicht ordnungsgemäß funktionieren.</p>
+          <div class="cookie-card-examples">
+            <span class="cookie-card-example">_shopify_s</span>
+            <span class="cookie-card-example">_shopify_y</span>
+            <span class="cookie-card-example">cart_currency</span>
+            <span class="cookie-card-example">secure_customer_sig</span>
+          </div>
+        </div>
+
+        <!-- Funktionale Cookies -->
+        <div class="cookie-card">
+          <div class="cookie-card-header">
+            <div class="cookie-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+            <div class="cookie-card-title-wrap">
+              <h3 class="cookie-card-title">Funktionale Cookies</h3>
+              <span class="cookie-card-badge cookie-card-badge--optional">Optional</span>
+            </div>
+          </div>
+          <p class="cookie-card-text">Diese Cookies ermöglichen erweiterte Funktionen und Personalisierung. Sie speichern Ihre Präferenzen wie Sprache, Region oder bereits angesehene Produkte, um Ihr Einkaufserlebnis zu verbessern.</p>
+          <div class="cookie-card-examples">
+            <span class="cookie-card-example">localization</span>
+            <span class="cookie-card-example">recently_viewed</span>
+          </div>
+        </div>
+
+        <!-- Analyse & Statistik -->
+        <div class="cookie-card">
+          <div class="cookie-card-header">
+            <div class="cookie-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+            <div class="cookie-card-title-wrap">
+              <h3 class="cookie-card-title">Analyse & Statistik</h3>
+              <span class="cookie-card-badge cookie-card-badge--optional">Optional</span>
+            </div>
+          </div>
+          <p class="cookie-card-text">Diese Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen. Sie erfassen anonyme Daten über Seitenaufrufe und Nutzerverhalten, damit wir unsere Website kontinuierlich verbessern können.</p>
+          <div class="cookie-card-examples">
+            <span class="cookie-card-example">_ga</span>
+            <span class="cookie-card-example">_gid</span>
+            <span class="cookie-card-example">_gat</span>
+          </div>
+        </div>
+
+        <!-- Marketing Cookies -->
+        <div class="cookie-card">
+          <div class="cookie-card-header">
+            <div class="cookie-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div class="cookie-card-title-wrap">
+              <h3 class="cookie-card-title">Marketing Cookies</h3>
+              <span class="cookie-card-badge cookie-card-badge--optional">Optional</span>
+            </div>
+          </div>
+          <p class="cookie-card-text">Diese Cookies werden verwendet, um Werbung zu zeigen, die für Sie relevant ist. Sie können auch dazu dienen, die Effektivität von Werbekampagnen zu messen und Wiederholungen zu vermeiden.</p>
+          <div class="cookie-card-examples">
+            <span class="cookie-card-example">_fbp</span>
+            <span class="cookie-card-example">_gcl_au</span>
+            <span class="cookie-card-example">fr</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================
+         4) COOKIE SETTINGS ACTION
+         ================================================ -->
+    <div class="cookie-settings-action">
+      <h2 class="cookie-settings-title">Cookie-Einstellungen verwalten</h2>
+      <p class="cookie-settings-text">Sie können Ihre Cookie-Präferenzen jederzeit anpassen. Klicken Sie auf die Schaltfläche, um Ihre Einstellungen zu überprüfen oder zu ändern.</p>
+      <button class="cookie-settings-button" onclick="if(window.Cookiebot){Cookiebot.renew()}else if(window.Shopify&&window.Shopify.customerPrivacy){Shopify.customerPrivacy.showPreferences()}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Einstellungen öffnen
+      </button>
+    </div>
+
+    <!-- ================================================
+         5) LEGAL TRANSPARENCY
+         ================================================ -->
+    <section class="cookie-section cookie-legal">
+      <h2 class="cookie-section-title">Rechtliche Grundlagen</h2>
+      
+      <div class="cookie-legal-grid">
+        <div class="cookie-legal-item">
+          <p class="cookie-legal-label">Rechtsgrundlage</p>
+          <p class="cookie-legal-value">Art. 6 Abs. 1 lit. a DSGVO (Einwilligung)</p>
+        </div>
+        <div class="cookie-legal-item">
+          <p class="cookie-legal-label">Compliance</p>
+          <p class="cookie-legal-value">DSGVO-konform</p>
+        </div>
+        <div class="cookie-legal-item">
+          <p class="cookie-legal-label">Speicherdauer</p>
+          <p class="cookie-legal-value">Je nach Cookie-Typ: Session bis 2 Jahre</p>
+        </div>
+        <div class="cookie-legal-item">
+          <p class="cookie-legal-label">Drittanbieter</p>
+          <p class="cookie-legal-value">Google Analytics, Meta (Facebook)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         COOKIEBOT DECLARATION (AUTOMATED)
+         ================================================ -->
+    <div class="cookie-declaration">
+      <h3 class="cookie-declaration-title">Detaillierte Cookie-Übersicht</h3>
+      <p class="cookie-declaration-text">Die folgende Liste wird automatisch von unserem Cookie-Management-System generiert und zeigt alle verwendeten Cookies im Detail.</p>
+      <script id="CookieDeclaration" src="https://consent.cookiebot.com/02dfecd9-0fbf-4e96-bcea-62e12312f217/cd.js" type="text/javascript" async data-culture="de"></script>
+    </div>
+
+    <!-- ================================================
+         6) CONTACT FOR PRIVACY QUESTIONS
+         ================================================ -->
+    <section class="cookie-section">
+      <div class="cookie-contact">
+        <h2 class="cookie-contact-title">Fragen zum Datenschutz?</h2>
+        <p class="cookie-contact-text">Bei Fragen zur Verwendung von Cookies oder zum Datenschutz können Sie uns jederzeit kontaktieren. Wir helfen Ihnen gerne weiter.</p>
+        <div class="cookie-contact-actions">
+          <a href="{{ _root }}pages/kontakt" class="cookie-contact-link cookie-contact-link--primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Kontaktseite
+          </a>
+          <a href="mailto:shop@karinex.de" class="cookie-contact-link cookie-contact-link--secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            E-Mail schreiben
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         LAST UPDATED
+         ================================================ -->
+    <div class="cookie-updated">
+      <p class="cookie-updated-text">Letzte Aktualisierung: Februar 2026</p>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cookie Policy",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "default": "default",
+      "label": "Color scheme"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ]
+}
+{% endschema %}

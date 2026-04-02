@@ -1,0 +1,58 @@
+{%- doc -%}
+  Outputs the Durchmesser (diameter) value for a product.
+  Reads from: 1) product tags matching "XXmm" pattern, 2) metafield custom.durchmesser,
+  3) product option "Durchmesser"/"Gehäusedurchmesser".
+
+  @param {object} product - The product object
+{%- enddoc -%}
+{%- liquid
+  assign dm_value = ''
+
+  comment
+    1) Check product tags for mm pattern (e.g. "46mm", "42mm", "40 mm")
+       Only match short tags (max 2 words) to exclude compound tags
+       like "Große Herrenuhr 51mm"
+  endcomment
+  for tag in product.tags
+    assign tag_down = tag | downcase | strip
+    if tag_down contains 'mm'
+      assign tag_words = tag_down | split: ' '
+      assign tag_word_count = tag_words | size
+      if tag_word_count <= 2
+        assign tag_clean = tag_down | remove: ' '
+        assign last_two = tag_clean | slice: -2, 2
+        if last_two == 'mm'
+          assign mm_prefix = tag_clean | remove: 'mm'
+          assign mm_numeric = mm_prefix | plus: 0 | append: ''
+          if mm_numeric == mm_prefix
+            assign dm_value = tag | strip
+            break
+          endif
+        endif
+      endif
+    endif
+  endfor
+
+  comment
+    2) Fallback: check metafield custom.durchmesser
+  endcomment
+  if dm_value == ''
+    assign meta_dm = product.metafields.custom.durchmesser
+    if meta_dm != blank
+      assign dm_value = meta_dm | strip
+    endif
+  endif
+
+  comment
+    3) Fallback: check product options
+  endcomment
+  if dm_value == ''
+    for option in product.options_with_values
+      if option.name == 'Durchmesser' or option.name == 'durchmesser' or option.name == 'Gehäusedurchmesser'
+        assign dm_value = option.values[0]
+        break
+      endif
+    endfor
+  endif
+-%}
+{{- dm_value -}}

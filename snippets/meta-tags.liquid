@@ -1,0 +1,496 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  ELITE META TAGS - GLOBAL COMPETITION LEVEL
+  Version: 2.0 Elite | Updated: 20.01.2026
+  Competing with: Amazon, eBay, Otto, MediaMarkt
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes">
+
+{%- comment -%} ═══ THEME & BRAND COLOR ═══ {%- endcomment -%}
+<meta name="theme-color" content="#1D4739">
+<meta name="msapplication-TileColor" content="#1D4739">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+{%- comment -%} ═══ CORE LOGIC ═══ {%- endcomment -%}
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url | default: request.origin
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+  assign og_image = page_image
+  
+  if request.page_type == 'product'
+    assign og_type = 'product'
+    if og_image == blank
+      if product.selected_or_first_available_variant.featured_image
+        assign og_image = product.selected_or_first_available_variant.featured_image
+      elsif product.featured_image
+        assign og_image = product.featured_image
+      endif
+    endif
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'password'
+    assign og_url = request.origin
+  endif
+
+  if og_image == blank and request.page_type == 'collection' and collection.image
+    assign og_image = collection.image
+  endif
+  if og_image == blank and settings.logo
+    assign og_image = settings.logo
+  endif
+%}
+
+{%- comment -%} ═══ ADVANCED META DESCRIPTION ═══ {%- endcomment -%}
+{%- liquid
+  # Meta description should be 150-160 chars (~1000 pixels) maximum
+  assign meta_description = page_description | strip_html | strip_newlines | truncate: 155
+  assign meta_keywords = ''
+  
+  # Fallback descriptions for pages without custom SEO description
+  if meta_description == blank
+    assign meta_description = shop.description | default: shop.name | truncate: 155
+  endif
+
+  # Override descriptions for specific pages with missing/bad descriptions
+  if request.page_type == 'page' and page.handle == 'cookie-policy'
+    assign meta_description = 'Erfahren Sie, welche Cookies karinex.de verwendet, warum wir sie nutzen und wie Sie Ihre Cookie-Einstellungen verwalten können.'
+  endif
+  
+  # Final safety: always truncate to max 155 chars
+  assign meta_description = meta_description | truncate: 155
+-%}
+
+{%- comment -%} ═══ PAGE TITLE (SEO OPTIMIZED - 55-65 chars) ═══ {%- endcomment -%}
+{%- liquid
+  assign seo_title = page_title
+  
+  # For collections: truncate at first comma
+  if request.page_type == 'collection'
+    if seo_title contains ','
+      assign seo_title = seo_title | split: ',' | first
+    endif
+  endif
+  
+  # Short suffix - "karinex" appears in footer/header, avoiding "Online Shop" keyword mismatch
+  assign title_suffix = ' | karinex'
+  
+  # Check if this is a vendor filter page
+  assign is_vendor_page = false
+  if request.path contains '/vendors'
+    assign is_vendor_page = true
+  endif
+  
+  # Enhanced titles for collections
+  if request.page_type == 'collection'
+    if is_vendor_page
+      # Vendor pages - add "Produkte von" prefix to make unique
+      assign vendor_name = collection.title | default: 'Hersteller'
+      assign seo_title = vendor_name | append: ' Produkte - Alle Artikel'
+    elsif collection.handle == 'software'
+      assign seo_title = 'Software kaufen - Windows, Office & mehr'
+    elsif collection.handle == 'games'
+      assign seo_title = 'Games & Spiele - PC, PlayStation, Xbox'
+    elsif collection.handle == 'lego' or collection.handle == 'lego®'
+      assign seo_title = 'LEGO® Sets - Spielzeug & Bausteine'
+    elsif collection.handle == 'sale'
+      assign seo_title = 'SALE - Angebote & Rabatte'
+    elsif collection.handle == 'all'
+      assign seo_title = 'Alle Produkte - Software, Games, Uhren'
+    elsif collection.handle == 'microsoft'
+      assign seo_title = 'Microsoft Produkte - Windows, Office, 365'
+    elsif collection.handle == 'uhren'
+      assign seo_title = 'Uhren - Boss, Michael Kors & mehr'
+    elsif collection.handle == 'boss-uhren'
+      assign seo_title = 'Boss Uhren - Herren & Damen Armbanduhren'
+    elsif collection.handle == 'michael-kors-uhren'
+      assign seo_title = 'Michael Kors Uhren - Luxus Armbanduhren'
+    elsif collection.handle == 'unsere-bestseller'
+      assign seo_title = 'Bestseller - Top Produkte bei karinex'
+    elsif collection.handle == 'spielzeug'
+      assign seo_title = 'Spielzeug - LEGO, Games & mehr'
+    elsif collection.handle == 'controller'
+      assign seo_title = 'Controller - PlayStation, Xbox, PC Gaming'
+    elsif collection.handle == 'playstation'
+      assign seo_title = 'PlayStation - Spiele, Controller & Zubehör'
+    elsif collection.handle == 'xbox'
+      assign seo_title = 'Xbox - Spiele, Controller & Zubehör'
+    elsif collection.handle == 'antivirus'
+      assign seo_title = 'Antivirus Software - Schutz für PC & Mac'
+    elsif collection.handle == 'adobe'
+      assign seo_title = 'Adobe Software - Photoshop, Acrobat & mehr'
+    elsif collection.handle == 'adobe-1'
+      assign seo_title = 'Adobe Creative Suite - Software & Apps'
+    elsif collection.handle == 'damenuhren'
+      assign seo_title = 'Damenuhren - Elegante Armbanduhren kaufen'
+    elsif collection.handle == 'herrenuhren'
+      assign seo_title = 'Herrenuhren - Stilvolle Armbanduhren kaufen'
+    elsif collection.handle == 'alle'
+      assign seo_title = 'Alle Produkte - Software, Games & Uhren'
+    elsif collection.handle == 'lego-1'
+      assign seo_title = 'Toys & Spielzeug - LEGO Sets & mehr'
+    endif
+  
+  # Enhanced titles for pages
+  elsif request.page_type == 'page'
+    if page.handle == 'agb'
+      assign seo_title = 'AGB - Allgemeine Geschäftsbedingungen'
+    elsif page.handle == 'cookie-policy'
+      assign seo_title = 'Cookie-Richtlinie - Cookies & Datenschutz'
+    elsif page.handle == 'uber-uns' or page.handle == 'about-us'
+      assign seo_title = 'Über uns - Ihr Partner für Software'
+    elsif page.handle == 'kontakt' or page.handle == 'contact'
+      assign seo_title = 'Kontakt - Kundenservice & Support'
+    elsif page.handle == 'faq'
+      assign seo_title = 'FAQ - Häufig gestellte Fragen'
+    elsif page.handle == 'retouren'
+      assign seo_title = 'Retouren & Rückgabe - So funktioniert es'
+    elsif page.handle == 'live-chat'
+      assign seo_title = 'Live-Chat - Sofort Hilfe erhalten'
+    elsif page.handle == 'newsletter'
+      assign seo_title = 'Newsletter - Angebote & Neuheiten'
+    elsif page.handle == 'datenschutz'
+      assign seo_title = 'Datenschutz - Ihre Daten sind sicher'
+    elsif page.handle == 'wishlist'
+      assign seo_title = 'Wunschliste - Ihre Favoriten'
+    elsif page.handle == 'rechnungen'
+      assign seo_title = 'Rechnungen - Download & Übersicht'
+    elsif page.handle == 'coupons'
+      assign seo_title = 'Gutscheine & Coupons - Sparen Sie jetzt'
+    elsif page.handle contains 'download'
+      assign seo_title = page.title | truncate: 50, '…'
+    elsif page.handle contains 'microsoft-office'
+      assign seo_title = 'Office für Mac - Info & Download'
+    else
+      # Fallback for pages with empty or generic titles
+      if seo_title == blank or seo_title == '– karinex' or seo_title == 'karinex'
+        assign seo_title = page.title | default: page.handle | replace: '-', ' ' | capitalize
+      endif
+    endif
+  
+  # Enhanced titles for blogs
+  elsif request.page_type == 'blog'
+    assign seo_title = 'News & Blog - Tipps, Tricks & Neuigkeiten'
+  
+  # Enhanced titles for articles
+  elsif request.page_type == 'article'
+    if article.handle == 'html'
+      assign seo_title = 'HTML Guide - Webentwicklung Tipps'
+    endif
+  endif
+
+  # Enhanced titles for policy pages
+  if request.page_type == 'policy'
+    if page_title == 'AGB'
+      assign seo_title = 'AGB - Allgemeine Geschäftsbedingungen'
+    endif
+  endif
+  
+  # Product page titles - use the exact product title without any modifications
+  if request.page_type == 'product'
+    # Keep the original page_title as-is, no modifications
+    assign seo_title = page_title
+    # No suffix for product pages
+    assign title_suffix = ''
+  endif
+  
+  # Truncate blog article titles - aggressive
+  if request.page_type == 'article'
+    assign seo_title = seo_title | truncate: 60, '…'
+    assign title_suffix = ' - Karinex'
+  endif
+  
+  # Truncate collection titles
+  if request.page_type == 'collection'
+    if seo_title.size > 40
+      assign seo_title = seo_title | truncate: 40, '…'
+    endif
+  endif
+  
+  # Final fallback - ensure no empty titles
+  if seo_title == blank or seo_title == '–' or seo_title == '– karinex'
+    assign seo_title = page_title | default: shop.name
+  endif
+
+  # Enforce max 50 chars for page titles (60 total with suffix)
+  if request.page_type == 'page'
+    if seo_title.size > 50
+      assign seo_title = seo_title | truncate: 50, '…'
+    endif
+  endif
+-%}
+<title>
+  {%- if request.page_type == 'product' -%}
+    {{- seo_title -}}
+  {%- else -%}
+    {{- seo_title -}}
+    {%- if current_tags %} – {{ current_tags | join: ', ' | truncate: 30 }}{% endif -%}
+    {%- if current_page != 1 %} – Seite {{ current_page }}{% endif -%}
+    {%- unless seo_title contains shop.name or seo_title contains 'karinex' or seo_title contains 'Karinex' or seo_title.size > 50 %}{{ title_suffix }}{% endunless -%}
+  {%- endif -%}
+</title>
+
+{%- comment -%} ═══ CANONICAL & ALTERNATE LANGUAGES ═══ {%- endcomment -%}
+{%- liquid
+  # Normalize canonical URL
+  # For vendor pages: point to the main collections page (vendors are blocked by robots.txt)
+  # For search pages: convert %20 to + for consistent query parameters
+  # For pagination: point to page 1 to avoid duplicate content issues
+  assign clean_canonical = canonical_url
+  
+  if canonical_url contains '/collections/vendors?q='
+    # Vendor filter pages are blocked by robots.txt
+    # Point canonical to main collections page instead
+    assign clean_canonical = shop.url | append: '/collections/all'
+  elsif canonical_url contains '/search?q='
+    assign clean_canonical = canonical_url | replace: '%20', '+'
+  elsif canonical_url contains '?page='
+    # Pagination pages should point to page 1
+    assign clean_canonical = canonical_url | split: '?page=' | first
+  elsif canonical_url contains '&page='
+    assign clean_canonical = canonical_url | split: '&page=' | first
+  endif
+-%}
+{%- comment -%}
+  CANONICAL OVERRIDE
+  We output our own canonical tag here. The default Shopify canonical tag in
+  content_for_header is stripped out in layout/theme.liquid to avoid duplicates.
+{%- endcomment -%}
+<link rel="canonical" href="{{ clean_canonical }}">
+
+{%- comment -%} 
+  Hreflang: Single language site (German)
+  Using "de" without country code since we serve the same content to DE/AT/CH
+  x-default for international visitors
+  
+  UPDATE: Seobility flags "rel=alternate" to same URL as canonical as "duplicate canonical".
+  Since this is a single language site, we rely on <html lang="de-DE"> instead.
+{%- endcomment -%}
+
+{%- comment -%} ═══ PAGINATION (PREV/NEXT) ═══ {%- endcomment -%}
+{%- if paginate -%}
+  {%- if paginate.previous -%}
+    <link rel="prev" href="{{ paginate.previous.url }}">
+  {%- endif -%}
+  {%- if paginate.next -%}
+    <link rel="next" href="{{ paginate.next.url }}">
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ═══ BASIC META ═══ {%- endcomment -%}
+<meta name="description" content="{{ meta_description | escape }}">
+{%- if meta_keywords != blank -%}
+<meta name="keywords" content="{{ meta_keywords | escape }}">
+{%- endif -%}
+
+{%- comment -%} Author {%- endcomment -%}
+{%- if request.page_type == 'article' and article.author -%}
+  <meta name="author" content="{{ article.author }}">
+{%- else -%}
+  <meta name="author" content="{{ shop.name }}">
+{%- endif -%}
+
+{%- comment -%} ═══ ROBOTS META (ADVANCED) ═══ {%- endcomment -%}
+{%- liquid
+  assign is_paginated = false
+  if canonical_url contains '?page=' or canonical_url contains '&page='
+    assign is_paginated = true
+  endif
+-%}
+{%- if request.page_type == 'search' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' -%}
+  <meta name="robots" content="noindex, follow">
+  <meta name="googlebot" content="noindex, follow">
+  <meta name="bingbot" content="noindex, follow">
+{%- elsif is_paginated -%}
+  {%- comment -%} Pagination pages: index but don't use for snippets to avoid duplicate content {%- endcomment -%}
+  <meta name="robots" content="index, follow, max-snippet:0, max-image-preview:large">
+  <meta name="googlebot" content="index, follow, max-snippet:0">
+{%- else -%}
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow">
+{%- endif -%}
+
+{%- comment -%} ═══ GEO TARGETING ═══ {%- endcomment -%}
+<meta name="geo.region" content="DE-HH">
+<meta name="geo.placename" content="Hamburg">
+<meta name="geo.position" content="53.5511;10.0897">
+<meta name="ICBM" content="53.5511, 10.0897">
+
+{%- comment -%} ═══ OPEN GRAPH (FACEBOOK/LINKEDIN) ═══ {%- endcomment -%}
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:url" content="{{ og_url }}">
+<meta property="og:title" content="{{ og_title | escape }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:description" content="{{ og_description | escape }}">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="de_AT">
+<meta property="og:locale:alternate" content="de_CH">
+
+{%- if og_image -%}
+  {%- assign og_image_aspect = og_image.aspect_ratio | default: 1.0 -%}
+  {%- assign og_image_height = 800.0 | divided_by: og_image_aspect | round -%}
+  <meta property="og:image" content="https:{{ og_image | image_url: width: 800, format: 'webp' }}">
+  <meta property="og:image:secure_url" content="https:{{ og_image | image_url: width: 800, format: 'webp' }}">
+  <meta property="og:image:width" content="800">
+  <meta property="og:image:height" content="{{ og_image_height }}">
+  <meta property="og:image:alt" content="{{ og_image.alt | default: og_title | escape }}">
+  <meta property="og:image:type" content="image/webp">
+{%- endif -%}
+
+{%- comment -%} ═══ PRODUCT-SPECIFIC OG TAGS ═══ {%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  <meta property="og:price:amount" content="{{ product.price | money_without_currency | strip_html | replace: ',', '.' }}">
+  <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+  <meta property="product:price:amount" content="{{ product.price | divided_by: 100.0 }}">
+  <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
+  
+  {%- if product.selected_or_first_available_variant.available -%}
+    <meta property="product:availability" content="in stock">
+    <meta property="og:availability" content="instock">
+  {%- else -%}
+    <meta property="product:availability" content="out of stock">
+    <meta property="og:availability" content="oos">
+  {%- endif -%}
+  
+  <meta property="product:condition" content="new">
+  <meta property="product:retailer_item_id" content="{{ product.id }}">
+  
+  {%- if product.vendor -%}
+    <meta property="product:brand" content="{{ product.vendor | escape }}">
+  {%- endif -%}
+  
+  {%- if product.type -%}
+    <meta property="product:category" content="{{ product.type | escape }}">
+  {%- endif -%}
+  
+  {%- if product.compare_at_price > product.price -%}
+    <meta property="product:sale_price:amount" content="{{ product.price | divided_by: 100.0 }}">
+    <meta property="product:sale_price:currency" content="{{ cart.currency.iso_code }}">
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ═══ TWITTER CARDS (ENHANCED) ═══ {%- endcomment -%}
+{%- if settings.social_twitter_link != blank -%}
+  <meta name="twitter:site" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+  <meta name="twitter:creator" content="{{ settings.social_twitter_link | split: 'twitter.com/' | last | prepend: '@' }}">
+{%- endif -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ og_title | escape }}">
+<meta name="twitter:description" content="{{ og_description | escape }}">
+{%- if og_image -%}
+  <meta name="twitter:image" content="https:{{ og_image | image_url: width: 800, format: 'webp' }}">
+  <meta name="twitter:image:alt" content="{{ og_image.alt | default: og_title | escape }}">
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <meta name="twitter:label1" content="Preis">
+  <meta name="twitter:data1" content="{{ product.price | money }}">
+  <meta name="twitter:label2" content="Verfügbarkeit">
+  <meta name="twitter:data2" content="{% if product.available %}Auf Lager{% else %}Ausverkauft{% endif %}">
+{%- endif -%}
+
+{%- comment -%} ═══ PINTEREST RICH PINS ═══ {%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  <meta name="pinterest-rich-pin" content="true">
+{%- endif -%}
+
+{%- comment -%} ═══ GOOGLE MERCHANT CENTER ═══ {%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  <meta itemprop="name" content="{{ product.title | escape }}">
+  <meta itemprop="description" content="{{ product.description | strip_html | truncate: 500 | escape }}">
+  <meta itemprop="price" content="{{ product.price | divided_by: 100.0 }}">
+  <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+  {%- if product.selected_or_first_available_variant.featured_image -%}
+    <meta itemprop="image" content="https:{{ product.selected_or_first_available_variant.featured_image | image_url: width: 800, format: 'webp' }}">
+  {%- elsif product.featured_image -%}
+    <meta itemprop="image" content="https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}">
+  {%- endif -%}
+  {%- if product.available -%}
+    <meta itemprop="availability" content="https://schema.org/InStock">
+  {%- else -%}
+    <meta itemprop="availability" content="https://schema.org/OutOfStock">
+  {%- endif -%}
+  <meta itemprop="itemCondition" content="https://schema.org/NewCondition">
+  {%- if product.vendor -%}
+    <meta itemprop="brand" content="{{ product.vendor | escape }}">
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ═══ MOBILE APP META ═══ {%- endcomment -%}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="{{ shop.name }}">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="{{ shop.name }}">
+
+{%- comment -%} ═══ MICROSOFT META ═══ {%- endcomment -%}
+<meta name="msapplication-starturl" content="{{ shop.url }}">
+<meta name="msapplication-tooltip" content="{{ shop.name }} - {{ shop.description | truncate: 50 | escape }}">
+<meta name="msapplication-tap-highlight" content="no">
+
+{%- comment -%} ═══ RATING & REVIEW META ═══ {%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  {%- assign rating_value = product.metafields.reviews.rating.value -%}
+  {%- assign rating_count = product.metafields.reviews.rating_count -%}
+  
+  {%- if product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_value = product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_count = product.metafields.ddreviews.content.total_reviews -%}
+  {%- endif -%}
+  
+  {%- if rating_value and rating_value > 0 -%}
+    <meta name="rating" content="{{ rating_value }}">
+    <meta name="reviewCount" content="{{ rating_count | default: 1 }}">
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ═══ CONTENT SECURITY & COPYRIGHT ═══ {%- endcomment -%}
+<meta name="copyright" content="© {{ 'now' | date: '%Y' }} {{ shop.name }}. Alle Rechte vorbehalten.">
+<meta name="rating" content="General">
+<meta name="distribution" content="global">
+<meta name="revisit-after" content="7 days">
+
+{%- comment -%} ═══ ADVANCED E-COMMERCE META ═══ {%- endcomment -%}
+{%- if request.page_type == 'product' -%}
+  <meta name="product_type" content="{{ product.type | escape }}">
+  <meta name="product_id" content="{{ product.id }}">
+  <meta name="product_handle" content="{{ product.handle }}">
+  
+  {%- if product.selected_or_first_available_variant.sku -%}
+    <meta name="product_sku" content="{{ product.selected_or_first_available_variant.sku }}">
+  {%- endif -%}
+  
+  {%- if product.selected_or_first_available_variant.barcode -%}
+    <meta name="product_gtin" content="{{ product.selected_or_first_available_variant.barcode }}">
+  {%- endif -%}
+  
+  {%- if product.compare_at_price > product.price -%}
+    {%- assign discount_percent = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+    <meta name="product_discount" content="{{ discount_percent }}%">
+  {%- endif -%}
+{%- endif -%}
+
+{%- comment -%} ═══ COLLECTION META ═══ {%- endcomment -%}
+{%- if request.page_type == 'collection' -%}
+  <meta name="collection_title" content="{{ collection.title | escape }}">
+  <meta name="collection_handle" content="{{ collection.handle }}">
+  <meta name="collection_products_count" content="{{ collection.products_count }}">
+{%- endif -%}
+
+{%- comment -%} ═══ REFERRER POLICY ═══ {%- endcomment -%}
+<meta name="referrer" content="origin-when-cross-origin">
+
+{%- comment -%} ═══ FORMAT DETECTION ═══ {%- endcomment -%}
+<meta name="format-detection" content="telephone=yes">
+<meta name="format-detection" content="date=no">
+<meta name="format-detection" content="address=no">
+<meta name="format-detection" content="email=no">
+
+{%- comment -%} ═══ CACHE CONTROL ═══ {%- endcomment -%}
+<meta http-equiv="Cache-Control" content="public, max-age=31536000">

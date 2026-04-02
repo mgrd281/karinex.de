@@ -1,0 +1,31 @@
+
+
+<div class="blog-post-content rte">
+  <rte-formatter>
+    {%- assign clean_content = article.content
+      | replace: '<!-- SEO: Meta Description (max. 155 Zeichen) -->', ''
+      | replace: '<!-- SEO: Meta Description -->', ''
+    -%}
+    {%- assign clean_content = clean_content | remove: '<title>' -%}
+    {{ clean_content }}
+  </rte-formatter>
+</div>
+
+{% stylesheet %}
+  .blog-post-content {
+    max-width: var(--normal-content-width);
+    margin: 0 auto;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.content",
+  "settings": [],
+  "presets": [
+    {
+      "name": "t:names.content"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  SCHEMA: WEBSITE + SEARCHACTION
+  Version: 1.0 | Created: 20.01.2026
+  Purpose: Enable Google Search Box in SERP + Site Links
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ shop.url }}/#website",
+  "url": "{{ shop.url }}",
+  "name": "{{ shop.name }}",
+  "description": "{{ shop.description | default: 'Karinex - Premium Software zum besten Preis' | escape }}",
+  "publisher": {
+    "@id": "{{ shop.url }}/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  },
+  "inLanguage": ["de-DE", "de-AT", "de-CH"]
+}
+</script>

@@ -1,0 +1,765 @@
+<!-- Trigger Button (Font Awesome question-circle) -->
+<button id="frage-btn" class="frage-btn" type="button" aria-label="Frage zum Artikel" onclick="openFrageModal(); return false;">
+  <i class="fa-solid fa-circle-question frage-icon" aria-hidden="true"></i>
+  <span>Frage zum Artikel</span>
+</button>
+
+<script>
+  function openFrageModal() {
+    var overlay = document.getElementById('frage-modal');
+    if(overlay) {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+    
+    document.body.classList.add('modal-open');
+    
+    // Focus panel
+    var panel = document.getElementById('fzaModalPanel');
+    if(panel) setTimeout(function(){ panel.focus(); }, 100);
+    
+    document.addEventListener('keydown', handleFrageEscape);
+  }
+  
+  function closeFrageModal() {
+    var overlay = document.getElementById('frage-modal');
+    
+    if(overlay) {
+      overlay.classList.remove('is-open');
+      setTimeout(function() {
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+      }, 300);
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    document.removeEventListener('keydown', handleFrageEscape);
+  }
+  
+  function handleFrageEscape(e) {
+    if(e.key === 'Escape') closeFrageModal();
+  }
+</script>
+
+<!-- New Bottom Sheet Modal -->
+<div id="frage-modal" class="fza-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="fzaTitle">
+  <div class="fza-modal" id="fzaModalPanel" tabindex="-1">
+    <!-- Drag Indicator -->
+    <div class="fza-drag-indicator"></div>
+
+    <div class="fza-modal-content">
+      <!-- Header -->
+      <div class="fza-modal__header">
+      <div class="fza-modal__title-group">
+        <h2 class="fza-modal__title" id="fzaTitle">Frage zum Artikel</h2>
+        <p class="fza-modal__sub" id="fzaSub">Art.-Nr: {{ product.metafields.custom.artikelnummer | default: product.id | slice: -6, 6 }} &middot; {{ product.title | truncate: 30 }}</p>
+      </div>
+      <!-- Close -->
+      <button class="fza-modal__close" type="button" aria-label="Schließen" onclick="closeFrageModal(); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form method="post" action="/contact#contact_form" id="contact_form" class="contact-form" enctype="multipart/form-data" novalidate>
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="hidden" name="contact[produkt_title]" value="{{ product.title }}">
+      <input type="hidden" name="contact[produkt_url]" value="{{ shop.url }}{{ product.url }}">
+      <input type="hidden" name="contact[gtin]" value="{{ product.selected_or_first_available_variant.barcode }}">
+      <input type="hidden" name="contact[Artikelnummer]" value="{{ product.metafields.custom.artikelnummer | default: product.id | slice: -6, 6 }}">
+
+      <!-- Anrede + Vorname -->
+      <div class="fza-row">
+        <div class="fza-field">
+          <select class="fza-select" name="contact[anrede]" aria-label="Anrede">
+            <option value="" disabled selected>Anrede</option>
+            <option value="Frau">Frau</option>
+            <option value="Herr">Herr</option>
+            <option value="Divers">Divers</option>
+          </select>
+        </div>
+        <div class="fza-field">
+          <input class="fza-input" name="contact[vorname]" type="text" placeholder="Vorname *" required aria-label="Vorname">
+        </div>
+      </div>
+
+      <!-- Nachname -->
+      <div class="fza-field">
+        <input class="fza-input" name="contact[nachname]" type="text" placeholder="Nachname *" required aria-label="Nachname">
+      </div>
+
+      <!-- E-Mail -->
+      <div class="fza-field">
+        <input class="fza-input" name="contact[email]" type="email" placeholder="E-Mail Adresse *" required aria-label="E-Mail Adresse">
+      </div>
+
+      <!-- Schnellvorlagen -->
+      <span class="fza-chips-label">Schnellvorlagen:</span>
+      <div class="fza-chips" id="fzaChips">
+        <button type="button" class="fza-chip" data-text="Kompatibilität?">Kompatibilität?</button>
+        <button type="button" class="fza-chip" data-text="Lieferzeit?">Lieferzeit?</button>
+        <button type="button" class="fza-chip" data-text="Aktivierung?">Aktivierung?</button>
+        <button type="button" class="fza-chip" data-text="Rechnung?">Rechnung?</button>
+      </div>
+
+      <!-- Nachricht -->
+      <div class="fza-field">
+        <textarea class="fza-textarea" name="contact[body]" placeholder="Ihre Nachricht..." id="fzaBody" aria-label="Nachricht" maxlength="500" required></textarea>
+        <span class="fza-char-count" id="fzaCharCount">0 / 500</span>
+      </div>
+
+      <!-- Datei anhängen -->
+      <label class="fza-file-area" for="fzaFileInput" id="fzaFileArea">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+        <span id="fzaFileLabel">Foto oder Video hinzufügen</span>
+        <span class="fza-file-subtext">Optional (JPG, PNG, PDF)</span>
+        <input type="file" id="fzaFileInput" name="contact[attachment]" accept="image/*,video/*,.pdf" aria-label="Datei anhängen" multiple>
+      </label>
+      
+      <!-- Preview Grid -->
+      <div class="fza-file-preview-grid" id="fzaFilePreviewGrid"></div>
+
+      <!-- Datenschutz -->
+      <p class="fza-legal">
+        Mit dem Absenden akzeptieren Sie unsere <a href="/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a>.
+      </p>
+
+      <!-- Submit (Sticky) -->
+      <div class="fza-submit-wrapper">
+        <button type="submit" class="fza-submit" id="fzaSubmit">Anfrage senden</button>
+      </div>
+    </form>
+    </div>
+    
+    <div id="frage-success" style="display:none; text-align:center; padding:20px;">
+      <div class="fza-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" width="28" height="28" stroke="#1D4739" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h3 style="margin:15px 0 8px; font:600 18px/1.4 Inter,system-ui;">Vielen Dank!</h3>
+      <p style="color:#444; font:400 15px/1.5 Inter,system-ui;">
+        Ihre Nachricht wurde erfolgreich versendet.<br>
+        Wir antworten Ihnen innerhalb von <strong>24 Stunden</strong>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Trigger Button Override ── */
+.frage-btn{
+  background:none;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:.55rem;
+  color:var(--primary, #111);font:600 16px/1.2 Inter,system-ui,Arial,sans-serif;
+  margin-top: 12px;
+}
+.frage-btn:hover{color:#1D4739}
+
+/* ── Frage zum Artikel Modal (Simple & Stable) ───────────────────────── */
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.fza-overlay {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 999999;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms ease, visibility 300ms;
+}
+.fza-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fza-modal {
+  background: #FFFFFF;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 90%;
+  max-width: 650px;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -50%) scale(0.95);
+  max-height: 85vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 100px rgba(0,0,0,0.35);
+  opacity: 0;
+  transition: opacity 300ms ease, transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+  outline: none;
+}
+.fza-overlay.is-open .fza-modal {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Mobile: Bottom sheet style */
+@media (max-width: 640px) {
+  .fza-modal {
+    border-radius: 28px 28px 0 0;
+    width: 100% !important;
+    margin: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    transform: translateY(100%);
+    max-height: 94vh;
+    box-shadow: 0 -15px 50px rgba(0,0,0,0.25);
+  }
+  .fza-overlay.is-open .fza-modal {
+    transform: translateY(0);
+  }
+}
+.fza-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 28px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+.fza-modal-content::-webkit-scrollbar { 
+  width: 6px; 
+}
+.fza-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+@media (max-width: 640px) {
+  .fza-modal-content {
+    padding: 0 20px;
+    scrollbar-width: none;
+  }
+  .fza-modal-content::-webkit-scrollbar { 
+    display: none; 
+  }
+}
+
+/* Drag Indicator - Hidden on Desktop, shown on Mobile */
+.fza-drag-indicator {
+  width: 40px;
+  height: 5px;
+  background-color: #E5E5EA;
+  border-radius: 4px;
+  margin: 8px auto;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+  display: none;
+}
+@media (max-width: 640px) {
+  .fza-drag-indicator {
+    display: block;
+    margin: 12px auto 8px;
+  }
+}
+.fza-modal__header:active .fza-drag-indicator,
+.fza-drag-indicator:active {
+  background-color: #D1D1D6;
+}
+
+/* Header Layout */
+.fza-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background: #FFFFFF;
+  padding: 20px 28px 12px;
+  z-index: 10;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+@media (max-width: 640px) {
+  .fza-modal__header {
+    padding: 8px 20px 12px;
+    margin-bottom: 16px;
+  }
+}
+
+.fza-modal__title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.fza-modal__title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+  font-family: 'Inter', sans-serif;
+}
+.fza-modal__sub {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.fza-modal__close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #F3F3F3;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.fza-modal__close:hover { background: #E5E5EA; }
+.fza-modal__close:active { transform: scale(0.95); }
+.fza-modal__close svg { width: 18px; height: 18px; stroke: #333; stroke-width: 2.5; }
+
+/* Form wrapper to ensure sticky CTA works */
+.contact-form {
+  display: contents;
+}
+
+/* Form rows */
+.fza-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 0;
+}
+.fza-row > * { flex: 1 1 0; }
+
+.fza-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.fza-select,
+.fza-input,
+.fza-textarea {
+  border: 1.5px solid #E8E8ED;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #111;
+  background: #FAFAFA;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.fza-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: calc(100% - 16px) center; padding-right: 40px; }
+
+.fza-select:focus,
+.fza-input:focus,
+.fza-textarea:focus {
+  background: #FFFFFF;
+  border-color: #1D4739;
+  box-shadow: 0 0 0 4px rgba(29, 71, 57, 0.08);
+}
+.fza-select::placeholder,
+.fza-input::placeholder,
+.fza-textarea::placeholder { color: #999999; }
+
+.fza-textarea {
+  resize: none;
+  min-height: 110px;
+  line-height: 1.5;
+  border-radius: 18px;
+}
+
+.fza-char-count {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  font-size: 12px;
+  color: #999;
+  pointer-events: none;
+}
+
+/* Schnellvorlagen chips */
+.fza-chips-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  margin-top: -4px;
+  margin-bottom: 8px;
+  display: block;
+}
+.fza-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px; /* For scrollbar breathing room */
+  scrollbar-width: none; /* Firefox */
+}
+.fza-chips::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.fza-chip {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #333;
+  background: #FAFAFA;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fza-chip:active {
+  transform: scale(0.97);
+}
+.fza-chip:hover {
+  background: #F0F0F0;
+}
+.fza-chip.is-active,
+.fza-chip.is-active:hover {
+  border-color: #1D4739;
+  background: #1D4739;
+  color: #FFFFFF;
+}
+
+/* File upload */
+.fza-file-area {
+  border: 2px dashed #D1D1D6;
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  background: #FAFAFA;
+}
+.fza-file-area:hover { 
+  border-color: #1D4739; 
+  background: #F0FAF5; 
+}
+.fza-file-area.is-dragover {
+  border-color: #1D4739;
+  background: #E8F5EE;
+  transform: scale(0.98);
+}
+.fza-file-area input[type="file"] { display: none; }
+.fza-file-area svg { width: 32px; height: 32px; stroke: #1D4739; flex-shrink: 0; margin-bottom: 4px; stroke-width: 1.5; }
+.fza-file-subtext { font-size: 13px; color: #888; font-weight: 400; }
+
+.fza-file-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+  display: none; /* hidden by default */
+}
+.fza-file-preview-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  aspect-ratio: 1;
+  background: #F7F7F8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fza-file-preview-item img, .fza-file-preview-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fza-file-preview-item .remove-file {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.fza-file-preview-item .remove-file svg { width: 14px; height: 14px; stroke: #111; stroke-width: 2; }
+
+/* Legal */
+.fza-legal {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.fza-legal a { color: #555; text-decoration: underline; }
+
+/* Submit button (Sticky Bottom) */
+.fza-submit-wrapper {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -28px;
+  padding: 16px 28px calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #fff 80%, transparent);
+  z-index: 100;
+}
+
+@media (max-width: 640px) {
+  .fza-submit-wrapper {
+    margin: 0 -20px;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
+.fza-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  background: #1D4739;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto; /* re-enable clicks on button */
+}
+.fza-submit:hover { opacity: 0.92; }
+.fza-submit:active { transform: scale(0.98); }
+.fza-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.fza-success-icon {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: #f0faf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+@media (max-width: 640px) {
+  .fza-row { flex-direction: column; gap: 0; }
+  .fza-field { margin-bottom: 14px; }
+  .fza-chips { gap: 8px; }
+  .fza-chip { font-size: 13.5px; padding: 8px 14px; }
+  .fza-modal__title { font-size: 20px; }
+  .fza-textarea { min-height: 100px; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // Close on outside click
+  var overlay = document.getElementById('frage-modal');
+  if(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if(e.target === overlay) closeFrageModal();
+    });
+  }
+
+  /* ── Schnellvorlagen chips ── */
+  var chips = document.querySelectorAll('#fzaChips .fza-chip');
+  var bodyInput = document.getElementById('fzaBody');
+  
+  if(chips && bodyInput) {
+    chips.forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var text = chip.getAttribute('data-text') || '';
+        var current = bodyInput.value.trim();
+        if(bodyInput){
+          bodyInput.value = current ? current + (current.endsWith('?') || current.endsWith('.') ? ' ' : '\n') + text : text;
+          bodyInput.focus();
+          updateCharCount();
+        }
+        
+        chip.classList.toggle('is-active');
+        
+        // Haptic feedback
+        if (window.navigator && window.navigator.vibrate) {
+          window.navigator.vibrate(10);
+        }
+      });
+    });
+  }
+
+  /* ── Textarea Character Count ── */
+  var charCountSpan = document.getElementById('fzaCharCount');
+  function updateCharCount() {
+    if(!bodyInput || !charCountSpan) return;
+    var len = bodyInput.value.length;
+    var max = bodyInput.getAttribute('maxlength') || 500;
+    charCountSpan.textContent = len + ' / ' + max;
+  }
+  if(bodyInput) {
+    bodyInput.addEventListener('input', updateCharCount);
+    updateCharCount(); // Init
+  }
+
+  /* ── File input & Drag n Drop with Previews ── */
+  var fileInput = document.getElementById('fzaFileInput');
+  var dropZone = document.getElementById('fzaFileArea');
+  var previewGrid = document.getElementById('fzaFilePreviewGrid');
+  var fileLabel = document.getElementById('fzaFileLabel');
+  var selectedFiles = []; // Keep track of files
+
+  function updateFilePreview() {
+    if(!previewGrid || !dropZone) return;
+    previewGrid.innerHTML = '';
+    
+    if(selectedFiles.length === 0) {
+      previewGrid.style.display = 'none';
+      if(fileLabel) fileLabel.textContent = 'Foto oder Video hinzufügen';
+      return;
+    }
+    
+    previewGrid.style.display = 'grid';
+    // Update label to show count
+    if(fileLabel) fileLabel.textContent = selectedFiles.length + ' Datei' + (selectedFiles.length > 1 ? 'en' : '') + ' ausgewählt';
+
+    selectedFiles.forEach((file, index) => {
+      var item = document.createElement('div');
+      item.className = 'fza-file-preview-item';
+      
+      var innerExt = file.name.split('.').pop().toUpperCase();
+      
+      var removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-file';
+      removeBtn.type = 'button';
+      removeBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+      removeBtn.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        selectedFiles.splice(index, 1);
+        updateInputFiles();
+        updateFilePreview();
+      };
+
+      if(file.type.startsWith('image/')) {
+        var img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.onload = function() { URL.revokeObjectURL(img.src); } 
+        item.appendChild(img);
+      } else if (file.type.startsWith('video/')) {
+        var video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.muted = true;
+        item.appendChild(video);
+      } else {
+        var text = document.createElement('div');
+        text.style.color = '#1D4739';
+        text.style.fontWeight = '700';
+        text.style.fontSize = '18px';
+        text.textContent = innerExt.substring(0,4);
+        item.appendChild(text);
+      }
+      
+      item.appendChild(removeBtn);
+      previewGrid.appendChild(item);
+    });
+  }
+
+  function updateInputFiles() {
+    if(!fileInput) return;
+    var dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    fileInput.files = dt.files;
+  }
+
+  if(fileInput && dropZone){
+    fileInput.addEventListener('change', function(e){
+      var files = Array.from(e.target.files);
+      selectedFiles = selectedFiles.concat(files).slice(0, 4); // Max 4 files
+      updateInputFiles();
+      updateFilePreview();
+    });
+
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropZone.classList.add('is-dragover');
+    });
+    
+    dropZone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('is-dragover');
+    });
+    
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('is-dragover');
+      
+      if(e.dataTransfer.files && e.dataTransfer.files.length) {
+        var newFiles = Array.from(e.dataTransfer.files);
+        // filter accepted types manually if needed, but for now just accept
+        selectedFiles = selectedFiles.concat(newFiles).slice(0, 4); 
+        updateInputFiles();
+        updateFilePreview();
+      }
+    });
+  }
+
+  // Hide the old modal if needed
+  var oldModal = document.querySelector('.frage-modal[aria-hidden="false"]');
+  if (oldModal && oldModal.id !== 'frage-modal') {
+      oldModal.style.display = 'none';
+  }
+});
+
+if (window.location.href.indexOf('?contact_posted=true') > -1) {
+  var overlay = document.getElementById('frage-modal');
+  var form = document.getElementById('contact_form');
+  var success = document.getElementById('frage-success');
+  var titleGroup = document.querySelector('.fza-modal__title-group');
+  if(overlay && form && success) {
+    if(form) form.style.display = 'none';
+    if(titleGroup) titleGroup.style.display = 'none';
+    if(success) success.style.display = 'block';
+    openFrageModal();
+  }
+}
+</script>

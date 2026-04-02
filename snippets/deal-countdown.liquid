@@ -1,0 +1,137 @@
+{%- liquid
+  assign show_countdown = true
+
+  # "deal_end_date" Metafield priority (ISO format: YYYY-MM-DDTHH:mm:ss)
+  assign end_date = product.metafields.custom.deal_end_date
+  
+  # Fallback: Midnight today (for demo purposes if no metafield)
+  unless end_date
+    # Calculates seconds to next midnight in Liquid (approximate) or handled by JS
+    # We will let JS handle the defaulting to next midnight if no date is passed
+    assign end_date = ""
+  endunless
+-%}
+
+{%- if show_countdown -%}
+<div class="deal-countdown-wrapper" data-end-date="{{ end_date }}">
+  <div class="deal-countdown-bar">
+    <div class="deal-countdown-message">
+      Nur noch <span data-timer-text>00t 00s 00m 00s</span> bis zum Ende des EXTRA-Sales
+    </div>
+  </div>
+</div>
+
+<style>
+  .deal-countdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 0;
+    padding-top: 0;
+    margin-bottom: 0;
+    font-family: 'Mark Pro', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .deal-countdown-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1D4739; /* Reference Image Green */
+    color: #ffffff;
+    height: 18px;
+    width: 100%;
+  }
+
+  .deal-countdown-message {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  @media(max-width: 768px) {
+    .deal-countdown-bar {
+      height: auto;
+      min-height: 18px;
+      width: 100%;
+      padding: 4px 10px;
+      box-sizing: border-box;
+    }
+    .deal-countdown-message {
+      font-size: 10px;
+      white-space: normal;
+      line-height: 1.2;
+      position: relative;
+      top: 1px;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const wrapper = document.querySelector('.deal-countdown-wrapper');
+  if(!wrapper) return;
+
+  const timerTextEl = wrapper.querySelector('[data-timer-text]');
+  
+  let endDateStr = wrapper.dataset.endDate;
+  let endTime;
+
+  if (endDateStr && endDateStr !== "") {
+    endTime = new Date(endDateStr).getTime();
+  } else {
+    // 3-Day Auto-Renewing Logic (Synchronized Cycle)
+    const epoch = new Date('2024-01-01T00:00:00Z').getTime(); // Fixed reference point
+    const cycleTime = 3 * 24 * 60 * 60 * 1000; // 3 days in ms
+    const now = new Date().getTime();
+    
+    // Calculate how much time has passed in the CURRENT 3-day cycle
+    const timeInCurrentCycle = (now - epoch) % cycleTime;
+    
+    // The end of the cycle is (cycleTime - timeInCurrentCycle) from now
+    endTime = now + (cycleTime - timeInCurrentCycle);
+  }
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const distance = endTime - now;
+
+    if (distance < 0) {
+      clearInterval(interval);
+      wrapper.style.display = 'none';
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    const pad = (n) => n < 10 ? '0' + n : n;
+    const totalSec = Math.floor(distance / 1000);
+    let timeText;
+    if (totalSec >= 86400) {
+      timeText = `${pad(days)}t ${pad(hours)}s ${pad(minutes)}m`;
+    } else if (totalSec >= 3600) {
+      timeText = `${pad(hours)}s ${pad(minutes)}m ${pad(seconds)}s`;
+    } else if (totalSec >= 60) {
+      timeText = `${pad(minutes)}m ${pad(seconds)}s`;
+    } else {
+      timeText = `${pad(seconds)}s`;
+    }
+
+    if(timerTextEl) timerTextEl.textContent = timeText;
+
+    const bar = wrapper.querySelector('.deal-countdown-bar');
+    if (bar && totalSec < 3600) {
+      bar.style.backgroundColor = '#8B0000';
+    }
+  }
+
+  updateTimer();
+  const interval = setInterval(updateTimer, 1000);
+});
+</script>
+{%- endif -%}

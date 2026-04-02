@@ -1,0 +1,766 @@
+{% comment %}
+  Lookbook Carousel Section
+  Ein Lifestyle-Bild links mit einem Produkt-Karussell rechts
+  Inspiriert von Hunkemöller Shopping Ads
+{% endcomment %}
+
+{%- liquid
+  assign collection = section.settings.collection
+  assign max_products = section.settings.max_products | default: 6
+  assign columns = section.settings.columns | default: 3
+  assign media_position = section.settings.media_position | default: 'left'
+  assign media_width = section.settings.media_width | default: 'wide'
+-%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+<section
+  id="lookbook-{{ section.id }}"
+  class="lookbook-carousel-section color-{{ section.settings.color_scheme }} spacing-style"
+  data-section-id="{{ section.id }}"
+  style="
+    {% render 'spacing-style', settings: section.settings %}
+    --lookbook-columns: {{ columns }};
+    --lookbook-gap: {{ section.settings.gap }}px;
+  "
+>
+  <div class="lookbook-carousel__container lookbook-carousel--media-{{ media_position }} lookbook-carousel--media-{{ media_width }}">
+    
+    {%- comment -%} Lifestyle Image / Video Block {%- endcomment -%}
+    <div class="lookbook-carousel__media">
+      {% if section.settings.video != blank %}
+        <video
+          class="lookbook-carousel__video"
+          autoplay
+          loop
+          muted
+          playsinline
+        >
+          <source src="{{ section.settings.video }}" type="video/mp4">
+        </video>
+      {% elsif section.settings.image != blank %}
+        {% render 'optimized-image',
+          image: section.settings.image,
+          width: 1200,
+          class: 'lookbook-carousel__img',
+          alt: section.settings.image.alt | default: 'Lookbook Image',
+          loading: 'lazy'
+        %}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'lookbook-carousel__placeholder' }}
+      {% endif %}
+
+      {%- comment -%} Brand Overlay {%- endcomment -%}
+      {% if section.settings.brand_logo != blank or section.settings.brand_name != blank %}
+        <div class="lookbook-carousel__brand">
+          {% if section.settings.brand_logo != blank %}
+            <img
+              src="{{ section.settings.brand_logo | image_url: width: 300 }}"
+              alt="{{ section.settings.brand_name | default: 'Brand Logo' }}"
+              class="lookbook-carousel__brand-logo"
+              loading="lazy"
+            >
+          {% elsif section.settings.brand_name != blank %}
+            <span class="lookbook-carousel__brand-name">{{ section.settings.brand_name }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {%- comment -%} Optional Badge (z.B. "Gesponsert", "Folgen") {%- endcomment -%}
+      {% if section.settings.show_follow_button %}
+        <button class="lookbook-carousel__follow-btn" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span>{{ section.settings.follow_text | default: 'Folgen' }}</span>
+        </button>
+      {% endif %}
+
+      {% if section.settings.show_sponsored_label %}
+        <div class="lookbook-carousel__sponsored">
+          <span>{{ section.settings.sponsored_text | default: 'Gesponsert' }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Product Carousel {%- endcomment -%}
+    <div class="lookbook-carousel__products">
+      <div class="lookbook-carousel__slider" ref="slider">
+        <div class="lookbook-carousel__track" ref="track">
+          {% if collection != blank %}
+            {% for product in collection.products limit: max_products %}
+              {% assign price = product.price %}
+              {% assign compare_at = product.compare_at_price %}
+              {% assign first_available_variant = product.selected_or_first_available_variant %}
+
+              <article class="lookbook-product-card">
+                {%- comment -%} Wishlist Button {%- endcomment -%}
+                <button class="lookbook-product-card__wishlist" type="button" aria-label="Zur Wunschliste hinzufügen">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+
+                <a class="lookbook-product-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                  <div class="lookbook-product-card__image-wrap">
+                    {% if product.featured_image %}
+                      {% render 'optimized-image',
+                        image: product.featured_image,
+                        width: 500,
+                        class: 'lookbook-product-card__image',
+                        alt: product.title,
+                        loading: 'lazy'
+                      %}
+                    {% else %}
+                      {{ 'product-1' | placeholder_svg_tag: 'lookbook-product-card__image' }}
+                    {% endif %}
+                  </div>
+
+                  <div class="lookbook-product-card__info">
+                    {% if section.settings.show_vendor and product.vendor %}
+                      <span class="lookbook-product-card__vendor">{{ product.vendor }}</span>
+                    {% endif %}
+                    <h3 class="lookbook-product-card__title">{{ product.title }}</h3>
+                    <div class="lookbook-product-card__price">
+                      {% if compare_at and compare_at > price %}
+                        <s class="lookbook-product-card__price-compare">{{ compare_at | money }}</s>
+                      {% endif %}
+                      <span class="lookbook-product-card__price-main">{{ price | money }}</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
+            {% endfor %}
+          {% else %}
+            {%- comment -%} Placeholder Cards für Theme Editor {%- endcomment -%}
+            {% for i in (1..4) %}
+              <article class="lookbook-product-card lookbook-product-card--placeholder">
+                <button class="lookbook-product-card__wishlist" type="button" aria-label="Zur Wunschliste hinzufügen">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+                <div class="lookbook-product-card__link">
+                  <div class="lookbook-product-card__image-wrap">
+                    {{ 'product-1' | placeholder_svg_tag: 'lookbook-product-card__image' }}
+                  </div>
+                  <div class="lookbook-product-card__info">
+                    <span class="lookbook-product-card__vendor">Marke</span>
+                    <h3 class="lookbook-product-card__title">Produktname</h3>
+                    <div class="lookbook-product-card__price">
+                      <span class="lookbook-product-card__price-main">29,99€</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      {%- comment -%} Navigation Arrows {%- endcomment -%}
+      {% if section.settings.show_arrows %}
+        <button class="lookbook-carousel__arrow lookbook-carousel__arrow--prev" type="button" aria-label="Vorherige Produkte" disabled>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <button class="lookbook-carousel__arrow lookbook-carousel__arrow--next" type="button" aria-label="Nächste Produkte">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lookbook-carousel-section {
+    --lookbook-media-width: 50%;
+    --lookbook-card-bg: #ffffff;
+    --lookbook-card-radius: 8px;
+    --lookbook-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .lookbook-carousel__container {
+    display: grid;
+    grid-template-columns: var(--lookbook-media-width) 1fr;
+    min-height: 500px;
+    overflow: hidden;
+  }
+
+  /* Media Width Variants */
+  .lookbook-carousel--media-wide {
+    --lookbook-media-width: 55%;
+  }
+
+  .lookbook-carousel--media-medium {
+    --lookbook-media-width: 50%;
+  }
+
+  .lookbook-carousel--media-narrow {
+    --lookbook-media-width: 40%;
+  }
+
+  /* Media Position */
+  .lookbook-carousel--media-right {
+    grid-template-columns: 1fr var(--lookbook-media-width);
+  }
+
+  .lookbook-carousel--media-right .lookbook-carousel__media {
+    order: 2;
+  }
+
+  .lookbook-carousel--media-right .lookbook-carousel__products {
+    order: 1;
+  }
+
+  /* Media Block */
+  .lookbook-carousel__media {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5ebe0, #d5bdaf);
+  }
+
+  .lookbook-carousel__img,
+  .lookbook-carousel__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lookbook-carousel__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #e9e9e9;
+  }
+
+  /* Brand Overlay */
+  .lookbook-carousel__brand {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    z-index: 2;
+  }
+
+  .lookbook-carousel__brand-logo {
+    max-width: 180px;
+    max-height: 50px;
+    object-fit: contain;
+  }
+
+  .lookbook-carousel__brand-name {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Follow Button */
+  .lookbook-carousel__follow-btn {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 24px;
+    color: #ffffff;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 2;
+  }
+
+  .lookbook-carousel__follow-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Sponsored Label */
+  .lookbook-carousel__sponsored {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #666;
+    z-index: 2;
+  }
+
+  /* Products Carousel */
+  .lookbook-carousel__products {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    padding: 24px;
+    background: linear-gradient(180deg, #f8f5f2, #e8e0da);
+  }
+
+  .lookbook-carousel__slider {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .lookbook-carousel__track {
+    display: flex;
+    gap: var(--lookbook-gap, 16px);
+    transition: transform 0.4s ease;
+    height: 100%;
+  }
+
+  /* Product Card */
+  .lookbook-product-card {
+    flex: 0 0 calc((100% - (var(--lookbook-columns, 3) - 1) * var(--lookbook-gap, 16px)) / var(--lookbook-columns, 3));
+    min-width: 200px;
+    max-width: 300px;
+    background: var(--lookbook-card-bg);
+    border-radius: var(--lookbook-card-radius);
+    box-shadow: var(--lookbook-shadow);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .lookbook-product-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Wishlist Button */
+  .lookbook-product-card__wishlist {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .lookbook-product-card__wishlist:hover {
+    transform: scale(1.1);
+  }
+
+  .lookbook-product-card__wishlist:hover svg {
+    fill: #e63946;
+    stroke: #e63946;
+  }
+
+  .lookbook-product-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .lookbook-product-card__image-wrap {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  .lookbook-product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+
+  .lookbook-product-card:hover .lookbook-product-card__image {
+    transform: scale(1.05);
+  }
+
+  .lookbook-product-card__info {
+    padding: 16px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lookbook-product-card__vendor {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #333;
+  }
+
+  .lookbook-product-card__title {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .lookbook-product-card__price {
+    margin-top: auto;
+    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .lookbook-product-card__price-compare {
+    font-size: 0.875rem;
+    color: #999;
+  }
+
+  .lookbook-product-card__price-main {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Navigation Arrows */
+  .lookbook-carousel__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .lookbook-carousel__arrow:hover:not(:disabled) {
+    background: #f5f5f5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .lookbook-carousel__arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .lookbook-carousel__arrow--prev {
+    left: 8px;
+  }
+
+  .lookbook-carousel__arrow--next {
+    right: 8px;
+  }
+
+  /* Mobile Styles */
+  @media screen and (max-width: 749px) {
+    .lookbook-carousel__container {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+
+    .lookbook-carousel--media-right .lookbook-carousel__media,
+    .lookbook-carousel__media {
+      order: 1;
+      min-height: 300px;
+      max-height: 400px;
+    }
+
+    .lookbook-carousel--media-right .lookbook-carousel__products,
+    .lookbook-carousel__products {
+      order: 2;
+      padding: 16px;
+    }
+
+    .lookbook-carousel__track {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .lookbook-carousel__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .lookbook-product-card {
+      flex: 0 0 70%;
+      min-width: 200px;
+      scroll-snap-align: start;
+    }
+
+    .lookbook-carousel__arrow {
+      display: none;
+    }
+
+    .lookbook-carousel__brand-name {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .lookbook-product-card {
+      flex: 0 0 calc((100% - var(--lookbook-gap, 16px)) / 2);
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.querySelector('#lookbook-{{ section.id }}');
+    if (!section) return;
+
+    const track = section.querySelector('.lookbook-carousel__track');
+    const prevBtn = section.querySelector('.lookbook-carousel__arrow--prev');
+    const nextBtn = section.querySelector('.lookbook-carousel__arrow--next');
+    
+    if (!track || !prevBtn || !nextBtn) return;
+
+    const cards = track.querySelectorAll('.lookbook-product-card');
+    if (cards.length === 0) return;
+
+    let currentIndex = 0;
+    const visibleCards = {{ columns }};
+    const totalCards = cards.length;
+    const maxIndex = Math.max(0, totalCards - visibleCards);
+
+    function updateArrows() {
+      prevBtn.disabled = currentIndex <= 0;
+      nextBtn.disabled = currentIndex >= maxIndex;
+    }
+
+    function scrollToIndex(index) {
+      currentIndex = Math.max(0, Math.min(index, maxIndex));
+      const card = cards[currentIndex];
+      if (card) {
+        const gap = {{ section.settings.gap | default: 16 }};
+        const offset = currentIndex * (card.offsetWidth + gap);
+        track.style.transform = `translateX(-${offset}px)`;
+      }
+      updateArrows();
+    }
+
+    prevBtn.addEventListener('click', () => scrollToIndex(currentIndex - 1));
+    nextBtn.addEventListener('click', () => scrollToIndex(currentIndex + 1));
+
+    updateArrows();
+
+    // Touch swipe support
+    let startX = 0;
+    let isDragging = false;
+
+    track.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          scrollToIndex(currentIndex + 1);
+        } else {
+          scrollToIndex(currentIndex - 1);
+        }
+      }
+      isDragging = false;
+    }, { passive: true });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Lookbook Carousel",
+  "tag": "section",
+  "class": "lookbook-carousel-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Lifestyle Bild"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Bild"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Video URL (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "brand_logo",
+      "label": "Marken-Logo"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Markenname (wenn kein Logo)",
+      "default": "MARKE"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Bild Position",
+      "options": [
+        { "value": "left", "label": "Links" },
+        { "value": "right", "label": "Rechts" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "media_width",
+      "label": "Bild Breite",
+      "options": [
+        { "value": "narrow", "label": "Schmal (40%)" },
+        { "value": "medium", "label": "Mittel (50%)" },
+        { "value": "wide", "label": "Breit (55%)" }
+      ],
+      "default": "wide"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_follow_button",
+      "label": "Folgen-Button anzeigen",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "follow_text",
+      "label": "Folgen-Button Text",
+      "default": "Folgen"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sponsored_label",
+      "label": "Gesponsert-Label anzeigen",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "sponsored_text",
+      "label": "Gesponsert-Text",
+      "default": "Gesponsert"
+    },
+    {
+      "type": "header",
+      "content": "Produkte"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Kollektion auswählen"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Max. Anzahl Produkte",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Sichtbare Produkte (Desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Abstand zwischen Karten",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Marke anzeigen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Navigationspfeile anzeigen",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Stil"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Farbschema",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Abstände"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Abstand oben",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Abstand unten",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook Carousel",
+      "category": "Image"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

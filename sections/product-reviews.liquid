@@ -1,0 +1,293 @@
+<!-- ====================================================
+     PRODUCT REVIEWS (Bewertungen)
+     ==================================================== -->
+<div class="kx-reviews-section">
+  <div class="kx-reviews-section__header">
+    <h2 class="kx-reviews-section__title">Kundenbewertungen</h2>
+  </div>
+  <div class="kx-reviews-section__body">
+    <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}"></div>
+  </div>
+</div>
+
+<style>
+  /* ══════════════════════════════════════════════════════
+     REVIEWS SECTION – Modern Card Design
+     ══════════════════════════════════════════════════════ */
+  .kx-reviews-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+  }
+  .kx-reviews-section__header {
+    margin-bottom: 24px;
+  }
+  .kx-reviews-section__title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+    margin: 0;
+  }
+  .kx-reviews-section__body {
+    background: #fafafa;
+    border-radius: 16px;
+    border: 1px solid #f0f0f0;
+    padding: 32px;
+    min-height: 120px;
+  }
+
+  /* ── Override widget's default "no reviews" state ── */
+  .rp-widget {
+    font-family: inherit !important;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     REVIEW MODAL – Ultra Premium Redesign
+     ══════════════════════════════════════════════════════ */
+
+  /* ── Backdrop: frosted glass ── */
+  .rp-modal-overlay {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    animation: kxOverlayIn 0.25s ease both !important;
+  }
+  @keyframes kxOverlayIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Modal container ── */
+  .rp-modal {
+    background: #fff !important;
+    border-radius: 20px !important;
+    padding: 28px 32px 24px !important;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+    border: none !important;
+    max-width: 560px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    animation: kxModalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+  @keyframes kxModalIn {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ── Header ── */
+  .rp-modal-header {
+    margin-bottom: 8px !important;
+    padding-bottom: 0 !important;
+    border: none !important;
+  }
+  .rp-modal-title {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #1a1a1a !important;
+    letter-spacing: -0.4px !important;
+    line-height: 1.2 !important;
+  }
+  /* Subtitle injected via JS below the title */
+  .rp-modal-subtitle {
+    font-size: 13px;
+    color: #999;
+    font-weight: 400;
+    margin: 2px 0 14px;
+    line-height: 1.4;
+  }
+
+  /* ── Close button ── */
+  .rp-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    border: none !important;
+    color: #bbb !important;
+    font-size: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease, background 0.2s ease !important;
+    line-height: 1 !important;
+  }
+  .rp-close-btn:hover {
+    color: #666 !important;
+    background: #f5f5f5 !important;
+  }
+
+  /* ── Star rating: hero element ── */
+  .rp-star-input {
+    gap: 5px !important;
+    padding: 2px 0 2px !important;
+  }
+  .rp-star-input label {
+    font-size: 28px !important;
+    color: #e0e0e0 !important;
+    transition: color 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    line-height: 1 !important;
+  }
+  .rp-star-input label:hover {
+    transform: scale(1.15) !important;
+  }
+  .rp-star-input label:hover,
+  .rp-star-input label:hover ~ label,
+  .rp-star-input input:checked ~ label {
+    color: #1D4739 !important;
+  }
+
+  /* ── Form groups: breathing space ── */
+  .rp-form-group {
+    margin-bottom: 14px !important;
+  }
+
+  /* ── Labels ── */
+  .rp-label {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #777 !important;
+    margin-bottom: 7px !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  /* ── Text inputs ── */
+  .rp-input,
+  .rp-textarea {
+    border: 1.5px solid #eaeaea !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: #1a1a1a !important;
+    background: #fff !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+    font-family: inherit !important;
+    -webkit-appearance: none !important;
+  }
+  .rp-input:focus,
+  .rp-textarea:focus {
+    border-color: #1D4739 !important;
+    box-shadow: 0 0 0 3px rgba(29, 71, 57, 0.06) !important;
+  }
+  .rp-input::placeholder,
+  .rp-textarea::placeholder {
+    color: #c5c5c5 !important;
+    font-weight: 400 !important;
+  }
+
+  /* ── Textarea: larger, comfortable ── */
+  .rp-textarea {
+    min-height: 80px !important;
+    resize: vertical !important;
+    line-height: 1.5 !important;
+  }
+
+  /* ── File upload ── */
+  .rp-form-group input[type="file"].rp-input,
+  .rp-modal input[type="file"] {
+    border: 1.5px dashed #ddd !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    background: #fafafa !important;
+    font-size: 13px !important;
+    color: #999 !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s ease, background 0.2s ease !important;
+  }
+  .rp-form-group input[type="file"].rp-input:hover,
+  .rp-modal input[type="file"]:hover {
+    border-color: #1D4739 !important;
+    background: #f7faf9 !important;
+  }
+  .rp-form-group small {
+    font-size: 11px !important;
+    color: #c5c5c5 !important;
+    display: none !important;
+  }
+
+  /* ── Submit CTA ── */
+  .rp-submit-btn {
+    height: 44px !important;
+    background: #1D4739 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    letter-spacing: 0.01em !important;
+    margin-top: 8px !important;
+    padding: 0 !important;
+    transition: background 0.25s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease !important;
+    font-family: inherit !important;
+  }
+  .rp-submit-btn:hover:not(:disabled) {
+    background: #16362b !important;
+    transform: translateY(-1px) scale(1.01) !important;
+    box-shadow: 0 8px 24px rgba(29, 71, 57, 0.16) !important;
+  }
+  .rp-submit-btn:active:not(:disabled) {
+    transform: scale(0.98) !important;
+    box-shadow: none !important;
+  }
+  .rp-submit-btn:disabled {
+    opacity: 0.6 !important;
+    background: #1D4739 !important;
+  }
+
+  /* ── Write Review trigger button (in widget header) ── */
+  .rp-write-btn {
+    background: #1D4739 !important;
+    border-radius: 999px !important;
+    padding: 11px 26px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+  }
+  .rp-write-btn:hover {
+    opacity: 1 !important;
+    background: #16362b !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(29, 71, 57, 0.15) !important;
+  }
+
+  /* ── Success state after submit ── */
+  .rp-modal [style*="color: #16a34a"] {
+    color: #1D4739 !important;
+  }
+</style>
+
+<script>
+(function() {
+  /* Remove file restrictions from modal when it opens */
+  var enhanced = false;
+  function enhanceModal() {
+    if (enhanced) return;
+    var fileInputs = document.querySelectorAll('.rp-modal input[type="file"]');
+    if (fileInputs.length) {
+      fileInputs.forEach(function(fi) {
+        fi.removeAttribute('accept');
+        fi.removeAttribute('max');
+        fi.removeAttribute('maxlength');
+      });
+      enhanced = true;
+    }
+  }
+  /* Check periodically when modal might be open */
+  document.addEventListener('click', function() {
+    setTimeout(enhanceModal, 300);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Bewertungen",
+  "settings": []
+}
+{% endschema %}

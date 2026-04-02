@@ -1,0 +1,74 @@
+{%- doc -%}
+  Renders auto-generated mega menu from a collection's products,
+  grouped by product type into columns (LizenzHub-style).
+
+  When a top-level menu item links to a collection but has no
+  manually-added sub-links, this snippet auto-generates the
+  mega menu dropdown by grouping products by their product type.
+
+  @param {object} collection - The collection object
+  @param {string} id - Unique ID for CSS grid targeting
+{%- enddoc -%}
+
+{%- liquid
+  assign product_types = collection.all_types
+  assign max_per_column = 6
+  assign max_columns = 6
+  assign max_columns_tablet = 4
+
+  assign visible_types = 0
+  for type in product_types
+    if type != blank
+      assign visible_types = visible_types | plus: 1
+    endif
+  endfor
+
+  assign grid_cols = visible_types | at_most: max_columns
+  assign grid_cols_tablet = visible_types | at_most: max_columns_tablet
+-%}
+
+{%- if visible_types > 0 -%}
+  <ul
+    data-menu-list-id="{{ id }}"
+    class="mega-menu__list list-unstyled"
+  >
+    {%- for type in product_types -%}
+      {%- if type != blank -%}
+        <li class="mega-menu__column mega-menu__column--span-1">
+          <div>
+            <a
+              href="{{ collection.url }}?filter.p.product_type={{ type | url_encode }}"
+              class="mega-menu__link mega-menu__link--parent"
+            >
+              <span class="mega-menu__link-title wrap-text">{{ type | upcase }}</span>
+            </a>
+            <ul class="list-unstyled">
+              {%- assign items_shown = 0 -%}
+              {%- for product in collection.products -%}
+                {%- if product.type == type and items_shown < max_per_column -%}
+                  <li>
+                    <a href="{{ product.url }}" class="mega-menu__link">
+                      <span class="mega-menu__link-title wrap-text">{{ product.title }}</span>
+                    </a>
+                  </li>
+                  {%- assign items_shown = items_shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+
+  {% style %}
+    [data-menu-grid-id="{{ id }}"] {
+      --menu-columns-desktop: {{ grid_cols }};
+      --menu-columns-tablet: {{ grid_cols_tablet }};
+    }
+    [data-menu-list-id="{{ id }}"] {
+      --menu-columns-desktop: {{ grid_cols }};
+      --menu-columns-tablet: {{ grid_cols_tablet }};
+    }
+  {% endstyle %}
+{%- endif -%}

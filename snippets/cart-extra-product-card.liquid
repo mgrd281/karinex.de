@@ -1,0 +1,44 @@
+<div class="rv-card" data-product-id="{{ product.id }}">
+  <button type="button" class="rv-card__remove" data-product-id="{{ product.id }}" aria-label="Entfernen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="{{ product.url }}" class="rv-card__img-wrap">
+    {%- if product.compare_at_price > product.price -%}
+      {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+      <span class="rv-card__badge">-{{ discount_pct }}%</span>
+    {%- endif -%}
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 300 }}"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        loading="lazy"
+        width="300"
+        class="rv-card__img"
+      >
+    {%- endif -%}
+  </a>
+  <div class="rv-card__body">
+    {%- if product.vendor != blank -%}
+      <div class="rv-card__brand">{{ product.vendor | upcase }}</div>
+    {%- endif -%}
+    <a href="{{ product.url }}" class="rv-card__title">{{ product.title | truncate: 50 }}</a>
+    <div class="rv-card__price-row">
+      {%- if product.compare_at_price > product.price -%}
+        <span class="rv-card__price rv-card__price--sale">{{ product.price | money }}</span>
+        <s class="rv-card__compare">{{ product.compare_at_price | money }}</s>
+      {%- else -%}
+        <span class="rv-card__price">{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+    <form method="post" action="/cart/add" class="rv-card__form">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button
+        type="submit"
+        class="rv-card__btn"
+        {%- unless product.available -%}disabled{%- endunless -%}
+      >
+        {%- if product.available -%}HINZUFÜGEN{%- else -%}AUSVERKAUFT{%- endif -%}
+      </button>
+    </form>
+  </div>
+</div>

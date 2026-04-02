@@ -1,0 +1,501 @@
+{% schema %}
+{
+  "name": "Premium Newsletter Page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Bleib immer auf dem Laufenden"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Erhalte exklusive Angebote & Trends direkt in dein Postfach."
+    },
+    {
+      "type": "text",
+      "id": "voucher_text",
+      "label": "Voucher Highlight",
+      "default": "🎁 10 € Willkommensgutschein nach Anmeldung"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Jetzt anmelden & 10 € sichern"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Button Color",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Benefit Text",
+          "default": "Exklusive Angebote"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "star", "label": "Star" },
+            { "value": "clock", "label": "Clock" },
+            { "value": "trend", "label": "Trend" },
+            { "value": "check", "label": "Check" },
+            { "value": "gift", "label": "Gift" }
+          ],
+          "default": "star"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Newsletter Page",
+      "blocks": [
+        { "type": "benefit", "settings": { "text": "Exklusive Angebote", "icon": "gift" } },
+        { "type": "benefit", "settings": { "text": "Früher Zugang zu Sales", "icon": "clock" } },
+        { "type": "benefit", "settings": { "text": "Neuheiten & Trends", "icon": "trend" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="premium-newsletter-wrapper" style="background-color: {{ section.settings.bg_color }};">
+  <div class="premium-newsletter-container">
+    
+    <div class="premium-newsletter-header">
+      <h1 class="premium-title">{{ section.settings.heading }}</h1>
+      
+      <!-- Voucher Highlight -->
+      {% if section.settings.voucher_text != blank %}
+        <div class="voucher-highlight">
+           {{ section.settings.voucher_text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p class="premium-subtitle">{{ section.settings.subheading }}</p>
+      {% endif %}
+      
+      <p class="newsletter-seo-text" style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+        Melde dich für unseren Newsletter an und erhalte exklusive Angebote, Neuheiten und Rabattaktionen direkt in dein Postfach.
+      </p>
+    </div>
+
+    <!-- Benefits Chips -->
+    {% if section.blocks.size > 0 %}
+      <div class="premium-benefits-grid">
+        {% for block in section.blocks %}
+          <div class="benefit-chip">
+            <span class="benefit-icon">
+              {% case block.settings.icon %}
+                {% when 'star' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+                {% when 'clock' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {% when 'trend' %}
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+                {% when 'gift' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5v-8.25M3 11.25h18M3 11.25l9 9 9-9" /></svg>
+                {% when 'check' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              {% endcase %}
+            </span>
+            <span class="benefit-text">{{ block.settings.text }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Newsletter Form -->
+    <div class="premium-form-wrapper">
+      {% form 'customer', class: 'premium-newsletter-form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        
+        {%- if form.posted_successfully? -%}
+          <div class="premium-message success" tabindex="-1" autofocus>
+            <div class="message-icon-wrapper success">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+               <strong>Vielen Dank!</strong>
+               <p>Dein 10 € Gutschein wurde dir per E-Mail zugesendet.</p>
+            </div>
+          </div>
+        {%- elsif form.errors -%}
+           <div class="premium-message error" tabindex="-1" autofocus>
+            <div class="message-icon-wrapper error">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </div>
+            <div>
+              <strong>Hoppla!</strong>
+              <p>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</p>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="premium-input-group">
+          <div class="premium-input-container">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+            <input 
+              type="email" 
+              name="contact[email]" 
+              class="premium-input" 
+              value="{{ form.email }}" 
+              placeholder="Deine E-Mail-Adresse" 
+              required
+              aria-label="E-Mail-Adresse"
+            >
+          </div>
+          <button type="submit" class="premium-submit-btn">
+            {{ section.settings.button_label }}
+          </button>
+        </div>
+        
+        <div class="premium-privacy">
+          Mit der Anmeldung akzeptierst du die <a href="/policies/privacy-policy">Datenschutzbestimmungen</a>.
+        </div>
+      {% endform %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* Base Layout */
+.premium-newsletter-wrapper {
+  padding: 80px 20px 100px;
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #111;
+  box-sizing: border-box;
+}
+
+.premium-newsletter-container {
+  width: 100%;
+  max-width: 640px;
+  text-align: center;
+}
+
+/* Typography */
+.premium-title {
+  font-size: 38px;
+  font-weight: 600; 
+  color: #111;
+  margin: 0 0 24px 0;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.voucher-highlight {
+  display: inline-block;
+  background: #fdf4f7; 
+  color: #be185d;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid transparent; 
+}
+
+.premium-subtitle {
+  font-size: 16px;
+  color: #777; 
+  font-weight: 300;
+  margin: 0 auto;
+  max-width: 480px; 
+  line-height: 1.6;
+}
+
+/* Benefits Chips */
+.premium-benefits-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px; /* Tighter spacing */
+  margin: 32px 0 40px;
+}
+
+.benefit-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #f0f0f0; 
+  border-radius: 100px;
+  padding: 8px 16px;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  height: 38px;
+  transition: all 0.2s;
+}
+
+.benefit-chip:hover {
+  border-color: #d1d5db;
+  color: #000;
+}
+
+.benefit-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 1.5; 
+  color: #555;
+}
+
+/* Form Area */
+.premium-form-wrapper {
+  max-width: 580px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.premium-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0; 
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.premium-input-group:focus-within {
+  border-color: #000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.premium-input-container {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.premium-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px 0 42px;
+  font-size: 15px;
+  color: #111;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  appearance: none;
+}
+.premium-input:focus {
+  outline: none;
+}
+
+/* Button */
+.premium-submit-btn {
+  background: {{ section.settings.accent_color }};
+  color: #fff;
+  border: none;
+  height: 44px; 
+  padding: 0 24px;
+  margin-right: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px; 
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.premium-submit-btn:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.premium-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Messages */
+.premium-message {
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.premium-message.success {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #166534;
+}
+.premium-message.error {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #991b1b;
+}
+.message-icon-wrapper svg { width: 20px; height: 20px; }
+
+/* Privacy */
+.premium-privacy {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #999;
+  letter-spacing: 0.2px;
+}
+.premium-privacy a {
+  color: #666;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+.premium-privacy a:hover {
+  color: #000;
+}
+
+/* ----------------------------------------------------------------
+   MOBILE-FIRST REDESIGN (Overrides)
+   ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  
+  /* Layout: Full width, clean padding */
+  .premium-newsletter-wrapper {
+    padding: 60px 20px;
+    align-items: center; /* Keep centered for symmetry */
+  }
+  
+  .premium-newsletter-container {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  /* Typography: Readable & Clear */
+  .premium-title {
+    font-size: 28px; /* High legibility */
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+  
+  .premium-subtitle {
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 0 10px; /* Prevent edge touching */
+  }
+
+  /* Content Stacking */
+  .voucher-highlight {
+    margin-bottom: 20px;
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+
+  /* Form: Vertical Stack, Full Width Touch targets */
+  .premium-form-wrapper {
+    margin-top: 30px;
+  }
+
+  /* Remove desktop "group" styling */
+  .premium-input-group {
+    flex-direction: column; /* Stack VERTICALLY */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    gap: 10px; /* Clear separation */
+  }
+  
+  /* Input: Standalone box */
+  .premium-input-container {
+    width: 100%;
+  }
+  
+  .premium-input {
+    background: #fff;
+    border: 1px solid #d1d5db; /* Visible border */
+    height: 52px; /* Touch friendly */
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  /* Button: Standalone box, Full Width */
+  .premium-submit-btn {
+    width: 100%;
+    margin: 0;
+    height: 52px; /* Matching height */
+    border-radius: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Benefits: Stack/Grid for Mobile */
+  .premium-benefits-grid {
+    gap: 8px;
+    margin: 30px 0;
+    flex-direction: column; /* Clean vertical list as requested */
+    align-items: center;
+    width: 100%;
+  }
+  
+  .benefit-chip {
+    width: 100%;
+    justify-content: center;
+    background: transparent; /* Cleaner on mobile */
+    border-color: transparent;
+    padding: 4px 0;
+    height: auto;
+    font-size: 14px;
+    color: #555;
+  }
+  .benefit-chip svg {
+    color: {{ section.settings.accent_color }};
+  }
+}
+</style>

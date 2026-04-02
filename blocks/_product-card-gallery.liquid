@@ -1,0 +1,371 @@
+
+
+{% assign product = closest.product %}
+
+{% capture children %}
+  {% unless product == blank %}
+    <div
+      class="product-badges product-badges--{{ settings.badge_position }}"
+      style="
+        --badge-border-radius: {{ settings.badge_corner_radius }}px;
+        --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
+      "
+    >
+      {% liquid
+        assign is_sold_out = false
+        if product.available == false
+          assign is_sold_out = true
+        endif
+
+        assign is_low_stock = false
+        assign low_stock_threshold = 10
+        assign current_inventory = 0
+        for variant in product.variants
+          if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny'
+            assign current_inventory = current_inventory | plus: variant.inventory_quantity
+          endif
+        endfor
+
+        assign has_low_stock_tag = false
+        assign has_sold_out_tag = false
+
+        if product.tags contains 'ausverkauft' or product.tags contains 'Ausverkauft'
+          assign has_sold_out_tag = true
+        endif
+
+        if product.tags contains 'tages' or product.tags contains 'Tages' or product.tags contains 'fast-ausverkauft'
+          assign has_low_stock_tag = true
+        endif
+
+        if has_sold_out_tag
+           assign is_sold_out = true
+        endif
+
+        if product.available and has_low_stock_tag and is_sold_out == false
+           assign is_low_stock = true
+        elsif product.available and current_inventory > 0 and current_inventory <= low_stock_threshold and is_sold_out == false
+           assign is_low_stock = true
+        endif
+      %}
+      {%- if is_sold_out or is_low_stock or product.compare_at_price > product.price -%}
+        <div
+          class="
+            product-badges__badge product-badges__badge--rectangle
+            {% if is_sold_out %} color-{{ settings.badge_sold_out_color_scheme }}{% elsif is_low_stock %} product-badges__badge--low-stock{% elsif product.compare_at_price > product.price %} product-badges__badge--sale{% endif %}
+          "
+        >
+          {%- if is_sold_out -%}
+            Ausverkauft
+          {%- elsif is_low_stock -%}
+            Fast ausverkauft
+          {%- elsif product.compare_at_price > product.price -%}
+            {{ 'content.product_badge_sale' | t }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+    <wishlist-heart data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}"></wishlist-heart>
+    {%  if settings.quick_add or settings.mobile_quick_add %}
+      {% render 'quick-add', product: product, section_id: section.id %}
+    {% endif %}
+  {% endunless %}
+{% endcapture %}
+
+{% render 'card-gallery', children: children %}
+
+{% # Title and price for the zoomed out grid view %}
+<div class="product-grid-view-zoom-out--details">
+  {% if product == blank %}
+    <h3 class="h4">{{ 'content.product_card_placeholder' | t }}</h3>
+  {% else %}
+    <h3 class="h4">{{ product.title }}</h3>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .product-badges {
+    --badge-inset: max(var(--padding-xs), calc((var(--border-radius) + var(--padding-xs)) * (1 - cos(45deg))));
+
+    position: absolute;
+    z-index: var(--layer-flat);
+  }
+
+  .product-badges--bottom-left {
+    bottom: calc(var(--badge-inset) + var(--padding-block-start));
+    left: calc(var(--badge-inset) + var(--padding-inline-start));
+  }
+
+  .product-badges--top-left {
+    top: calc(var(--badge-inset) + var(--padding-block-start));
+    left: 0;
+  }
+
+  .product-badges--top-right {
+    top: calc(var(--badge-inset) + var(--padding-block-start));
+    right: calc(var(--badge-inset) + var(--padding-inline-start));
+  }
+
+  .product-badges__badge {
+    --badge-font-size: var(--font-size--xs);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    font-size: var(--badge-font-size);
+    font-family: var(--badge-font-family);
+    font-weight: var(--badge-font-weight);
+    text-transform: var(--badge-text-transform);
+    border-radius: var(--badge-border-radius);
+  }
+
+  .product-badges__badge--rectangle {
+    padding-block: var(--badge-rectangle-padding-block);
+    padding-inline: var(--badge-rectangle-padding-inline);
+  }
+
+  .product-badges__badge--sale {
+    background: #e30613 !important;
+    color: #ffffff !important;
+    --color-foreground: #ffffff;
+    border-radius: 0 6px 6px 0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 4px 12px !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .product-badges--top-left {
+    left: 0 !important;
+  }
+
+  .product-badges__badge--low-stock {
+    background: #fef9c3 !important;
+    color: #111111 !important;
+    --color-foreground: #111111;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0.3px !important;
+    padding: 4px 10px !important;
+    border: none !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+
+  /* Hide reviews on collection cards */
+  product-card .rechnung-profi-stars,
+  product-card .rechnung-profi-stars + span,
+  product-card .rechnung-profi-stars ~ span,
+  product-card .rating-wrapper,
+  .product-card__content .rechnung-profi-stars,
+  .product-card__content .rechnung-profi-stars + span,
+  .product-card__content .rechnung-profi-stars ~ span {
+    display: none !important;
+  }
+
+  /* Wishlist heart – transparent, no white circle (AboutYou style) */
+  wishlist-heart .wishlist-heart__button {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  wishlist-heart .wishlist-heart__button:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: scale(1.1);
+  }
+  wishlist-heart .wishlist-heart__button svg {
+    width: 22px;
+    height: 22px;
+    stroke: #333;
+    stroke-width: 1.6;
+    fill: transparent;
+  }
+  wishlist-heart[saved] .wishlist-heart__button {
+    background: transparent !important;
+  }
+  wishlist-heart[saved] .wishlist-heart__button svg {
+    stroke: #1d4739;
+    fill: #1d4739;
+  }
+  wishlist-heart .wishlist-social-proof {
+    display: none !important;
+  }
+
+  /* product-like-heart – transparent, no white circle */
+  product-like-heart .like-heart__button {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  product-like-heart .like-heart__button:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: scale(1.1);
+  }
+  product-like-heart .like-heart__button svg {
+    width: 22px;
+    height: 22px;
+    stroke: #333;
+    stroke-width: 1.6;
+    fill: transparent;
+  }
+  product-like-heart[liked] .like-heart__button {
+    background: transparent !important;
+  }
+  product-like-heart[liked] .like-heart__button svg {
+    stroke: #1d4739;
+    fill: #1d4739;
+  }
+  product-like-heart .like-heart__counter {
+    display: none !important;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_image",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_product_media"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:options.auto"
+        },
+        {
+          "value": "portrait",
+          "label": "t:options.portrait"
+        },
+        {
+          "value": "square",
+          "label": "t:options.square"
+        },
+        {
+          "value": "landscape",
+          "label": "t:options.landscape"
+        }
+      ],
+      "default": "portrait",
+      "label": "t:settings.aspect_ratio",
+      "info": "t:info.aspect_ratio_adjusted"
+    },
+    {
+      "type": "header",
+      "content": "t:content.borders"
+    },
+    {
+      "type": "select",
+      "id": "border",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "solid",
+          "label": "t:options.solid"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "t:settings.thickness",
+      "default": 1,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "label": "t:settings.opacity",
+      "default": 100,
+      "visible_if": "{{ block.settings.border != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_card_media",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

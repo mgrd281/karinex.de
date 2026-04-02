@@ -1,0 +1,334 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+<div class="page-width page-width--narrow section-{{ section.id }}-padding">
+  <div class="account-page-layout">
+    <div class="account-page-sidebar">
+      <nav class="account-nav">
+        <ul class="account-nav__list">
+          <li>
+            <a href="{{ routes.account_url }}" class="account-nav__link">
+              {{ 'content.account_orders' | t }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ _root }}pages/rechnungen" class="account-nav__link account-nav__link--active">
+              Meine Rechnungen
+            </a>
+          </li>
+          <li>
+            <a href="{{ routes.account_addresses_url }}" class="account-nav__link">
+              {{ 'content.account_profile' | t }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ routes.account_logout_url }}" class="account-nav__link">
+              {{ 'actions.log_out' | t }}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="account-page-content">
+      <h1 class="main-page-title page-title h0">
+        {{ page.title | escape }} – Übersicht & Downloads
+      </h1>
+      <p class="rechnungen-intro" style="margin-bottom: 1.5rem; color: #555; font-size: 0.95rem;">
+        Hier finden Sie alle Ihre Rechnungen zum Download als PDF. Nutzen Sie die Übersicht um vergangene Bestellungen einzusehen und Downloads zu starten.
+      </p>
+      <div class="rte">
+        {{ page.content }}
+        
+        <div class="account-rechnungen-list">
+          <div id="invoice-api-error" style="display:none; padding: 10px 15px; margin-bottom: 20px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;"></div>
+          
+          {% paginate customer.orders by 20 %}
+            {% if customer.orders.size > 0 %}
+              <table role="table" class="order-history">
+                <caption class="visually-hidden">
+                  {{ 'customer.orders.title' | t }}
+                </caption>
+                <thead role="rowgroup">
+                  <tr role="row">
+                    <th id="ColumnOrder" scope="col" role="columnheader">Bestellnummer</th>
+                    <th id="ColumnDate" scope="col" role="columnheader">Datum</th>
+                    <th id="ColumnTotal" scope="col" role="columnheader">Gesamt</th>
+                    <th id="ColumnInvoice" scope="col" role="columnheader">Rechnung (PDF)</th>
+                  </tr>
+                </thead>
+                <tbody role="rowgroup">
+                  {% for order in customer.orders %}
+                    <tr role="row" data-order-name="{{ order.name }}">
+                      <td
+                        id="RowOrder"
+                        role="cell"
+                        headers="ColumnOrder"
+                        data-label="Bestellnummer"
+                      >
+                        <a
+                          href="{{ order.customer_url }}"
+                          aria-label="Bestellung {{ order.name }}"
+                        >
+                          {{ order.name }}
+                        </a>
+                      </td>
+                      <td headers="ColumnDate" role="cell" data-label="Datum">
+                        {{ order.created_at | time_tag: format: 'date' }}
+                      </td>
+                      <td headers="ColumnTotal" role="cell" data-label="Gesamt">
+                        {{ order.total_net_price | money_with_currency }}
+                      </td>
+                      <td headers="ColumnInvoice" role="cell" data-label="Rechnung">
+                        <button 
+                          type="button"
+                          class="button button--small button--secondary invoice-download-btn" 
+                          onclick="alert('Rechnung wird geladen oder ist noch nicht verfügbar.');"
+                          style="white-space: nowrap; padding: 0.5rem 1rem; min-height: unset; display: inline-flex; align-items: center; gap: 0.5rem;"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                          </svg>
+                          Download PDF
+                        </button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="invoices-placeholder" style="margin-top: 2rem; padding: 2rem; background: var(--color-background-secondary); border-radius: var(--border-radius-sm); text-align: center;">
+                <p>{{ 'customer.orders.none' | t }}</p>
+              </div>
+            {% endif %}
+
+            {%- if paginate.pages > 1 -%}
+              {%- if paginate.parts.size > 0 -%}
+                  <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+                    <ul role="list">
+                    {%- if paginate.previous -%}
+                      <li>
+                        <a href="{{ paginate.previous.url }}" aria-label="{{ 'general.pagination.previous' | t }}">
+                          <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                          </svg>
+                        </a>
+                      </li>
+                    {%- endif -%}
+
+                    {%- for part in paginate.parts -%}
+                      <li>
+                        {%- if part.is_link -%}
+                          <a href="{{ part.url }}" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">{{ part.title }}</a>
+                        {%- else -%}
+                          {%- if part.title == paginate.current_page -%}
+                            <span aria-current="page" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">{{ part.title }}</span>
+                          {%- else -%}
+                            <span>{{ part.title }}</span>
+                          {%- endif -%}
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+
+                    {%- if paginate.next -%}
+                      <li>
+                        <a href="{{ paginate.next.url }}" aria-label="{{ 'general.pagination.next' | t }}">
+                          <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                          </svg>
+                        </a>
+                      </li>
+                    {%- endif -%}
+                    </ul>
+                  </nav>
+              {%- endif -%}
+            {%- endif -%}
+          {% endpaginate %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rechnungen Seite",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .account-page-layout {
+    display: flex;
+    gap: 4rem;
+    margin-top: 2rem;
+  }
+  
+  .account-page-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+  }
+  
+  .account-page-content {
+    flex-grow: 1;
+  }
+  
+  .account-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .account-nav__link {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--color-foreground);
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.2s;
+  }
+  
+  .account-nav__link:last-child {
+    border-bottom: none;
+  }
+  
+  .account-nav__link:hover {
+    background-color: var(--color-background-secondary);
+  }
+  
+  .account-nav__link--active {
+    font-weight: bold;
+    background-color: var(--color-background-secondary);
+  }
+
+  @media screen and (max-width: 750px) {
+    .account-page-layout {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .account-page-sidebar {
+      width: 100%;
+    }
+  }
+  
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+</style>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    const API_URL = 'https://invoice-production-8cd6.up.railway.app/api/invoices';
+    const API_KEY = 'sk_2cd4ef2a324e64fc47f324fb495be690159f4ffb4a8465e4';
+    const CUSTOMER_EMAIL = '{{ customer.email }}';
+    const errorContainer = document.getElementById('invoice-api-error');
+
+    // Helper to find button by order name
+    const getButtonByOrder = (orderName) => {
+      const cleanOrderName = orderName.replace('#', '');
+      let row = document.querySelector(`tr[data-order-name="${orderName}"]`);
+      if (!row) {
+         row = document.querySelector(`tr[data-order-name="#${cleanOrderName}"]`);
+      }
+      return row ? row.querySelector('.invoice-download-btn') : null;
+    };
+
+    const showError = (message) => {
+      if (errorContainer) {
+        errorContainer.textContent = message;
+        errorContainer.style.display = 'block';
+      }
+      console.error(message);
+    };
+
+    try {
+      const response = await fetch(`${API_URL}?email=${encodeURIComponent(CUSTOMER_EMAIL)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+           throw new Error('Nicht autorisiert: Bitte prüfen Sie den API-Schlüssel (401).');
+        } else if (response.status === 404) {
+           throw new Error('API-Endpunkt nicht gefunden (404).');
+        } else {
+           throw new Error(`API Fehler: ${response.status} ${response.statusText}`);
+        }
+      }
+
+      const data = await response.json();
+      const invoices = Array.isArray(data) ? data : (data.invoices || []);
+
+      invoices.forEach(invoice => {
+        if (invoice.order_number && invoice.pdf_url) {
+           const btn = getButtonByOrder(invoice.order_number);
+           if (btn) {
+             btn.onclick = null;
+             btn.innerHTML = `
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+               </svg>
+               Download PDF
+             `;
+             btn.addEventListener('click', () => {
+                window.open(invoice.pdf_url, '_blank');
+             });
+             btn.classList.remove('button--secondary');
+             btn.classList.add('button--primary');
+             btn.title = "Rechnung herunterladen";
+           }
+        }
+      });
+
+    } catch (error) {
+      showError(`Fehler beim Laden der Rechnungen: ${error.message}`);
+    }
+  });
+</script>

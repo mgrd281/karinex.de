@@ -1,0 +1,611 @@
+/* ==============================================
+   COOKIE POLICY PAGE STYLES
+   Enterprise, calm, trust-driven privacy design
+   ============================================== */
+
+/* CSS Custom Properties */
+:root {
+  --cookie-text: #1a1a1a;
+  --cookie-text-muted: #555555;
+  --cookie-text-light: #777777;
+  --cookie-bg: #ffffff;
+  --cookie-bg-soft: #f8f9fa;
+  --cookie-bg-card: #ffffff;
+  --cookie-border: #e8e8e8;
+  --cookie-accent: #1a1a1a;
+  --cookie-check: #2e7d32;
+  --cookie-radius: 12px;
+  --cookie-radius-sm: 8px;
+  --cookie-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  --cookie-transition: 200ms ease;
+  --cookie-max-width: 760px;
+}
+
+/* ==============================================
+   BASE CONTAINER
+   ============================================== */
+.cookie-page {
+  background: var(--cookie-bg);
+  min-height: 100vh;
+}
+
+.cookie-container {
+  max-width: var(--cookie-max-width);
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+
+/* ==============================================
+   1) HERO SECTION
+   ============================================== */
+.cookie-hero {
+  background: var(--cookie-bg);
+  padding: 72px 24px 56px;
+  text-align: center;
+  position: static !important;
+  border: none;
+  box-shadow: none;
+}
+
+.cookie-hero-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.cookie-hero-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  color: var(--cookie-text);
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.cookie-hero-subtitle {
+  font-size: clamp(16px, 2.5vw, 18px);
+  color: var(--cookie-text-muted);
+  margin: 0 0 36px;
+  line-height: 1.6;
+}
+
+.cookie-hero-divider {
+  width: 48px;
+  height: 3px;
+  background: #111;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+.cookie-hero-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.cookie-hero-meta svg {
+  opacity: 0.7;
+}
+
+/* ==============================================
+   2) INTRO SECTION
+   ============================================== */
+.cookie-section {
+  margin-bottom: 56px;
+}
+
+.cookie-intro {
+  padding: 32px;
+  background: var(--cookie-bg-soft);
+  border-radius: var(--cookie-radius);
+  margin-bottom: 56px;
+}
+
+.cookie-intro p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--cookie-text-muted);
+  margin: 0 0 16px;
+}
+
+.cookie-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.cookie-intro strong {
+  color: var(--cookie-text);
+}
+
+/* ==============================================
+   3) SECTION TITLES
+   ============================================== */
+.cookie-section-title {
+  font-size: clamp(22px, 3.5vw, 28px);
+  font-weight: 700;
+  color: var(--cookie-text);
+  margin: 0 0 24px;
+  letter-spacing: -0.3px;
+}
+
+.cookie-section-subtitle {
+  font-size: 16px;
+  color: var(--cookie-text-muted);
+  margin: -16px 0 28px;
+  line-height: 1.6;
+}
+
+/* ==============================================
+   3) COOKIE CATEGORY CARDS
+   ============================================== */
+.cookie-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cookie-card {
+  background: var(--cookie-bg-card);
+  border: 1px solid var(--cookie-border);
+  border-radius: var(--cookie-radius);
+  padding: 28px;
+  transition: var(--cookie-transition);
+  transition-property: box-shadow;
+}
+
+.cookie-card:hover {
+  box-shadow: var(--cookie-shadow);
+}
+
+.cookie-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cookie-card-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--cookie-bg-soft);
+  border-radius: var(--cookie-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cookie-card-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--cookie-text);
+}
+
+.cookie-card-title-wrap {
+  flex: 1;
+}
+
+.cookie-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cookie-text);
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.cookie-card-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--cookie-bg-soft);
+  color: var(--cookie-text-light);
+}
+
+.cookie-card-badge--required {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.cookie-card-badge--optional {
+  background: #fafafa;
+  color: #888;
+}
+
+.cookie-card-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--cookie-text-muted);
+  margin: 0 0 16px;
+}
+
+.cookie-card-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cookie-border);
+}
+
+.cookie-card-example {
+  font-size: 13px;
+  color: var(--cookie-text-light);
+  background: var(--cookie-bg-soft);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ==============================================
+   4) COOKIE SETTINGS ACTION
+   ============================================== */
+.cookie-settings-action {
+  background: var(--cookie-bg-soft);
+  border-radius: var(--cookie-radius);
+  padding: 40px 32px;
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.cookie-settings-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cookie-text);
+  margin: 0 0 12px;
+}
+
+.cookie-settings-text {
+  font-size: 15px;
+  color: var(--cookie-text-muted);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.cookie-settings-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--cookie-text);
+  color: var(--cookie-bg);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--cookie-radius-sm);
+  cursor: pointer;
+  transition: var(--cookie-transition);
+  transition-property: background, transform;
+}
+
+.cookie-settings-button:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.cookie-settings-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ==============================================
+   5) LEGAL TRANSPARENCY
+   ============================================== */
+.cookie-legal {
+  margin-bottom: 56px;
+}
+
+.cookie-legal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.cookie-legal-item {
+  background: var(--cookie-bg-card);
+  border: 1px solid var(--cookie-border);
+  border-radius: var(--cookie-radius-sm);
+  padding: 20px;
+}
+
+.cookie-legal-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--cookie-text-light);
+  margin: 0 0 8px;
+}
+
+.cookie-legal-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--cookie-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==============================================
+   6) CONTACT SECTION
+   ============================================== */
+.cookie-contact {
+  background: var(--cookie-bg-card);
+  border: 1px solid var(--cookie-border);
+  border-radius: var(--cookie-radius);
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.cookie-contact-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cookie-text);
+  margin: 0 0 12px;
+}
+
+.cookie-contact-text {
+  font-size: 15px;
+  color: var(--cookie-text-muted);
+  margin: 0 0 24px;
+  line-height: 1.6;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cookie-contact-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cookie-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--cookie-radius-sm);
+  transition: var(--cookie-transition);
+}
+
+.cookie-contact-link--primary {
+  background: var(--cookie-text);
+  color: var(--cookie-bg);
+}
+
+.cookie-contact-link--primary:hover {
+  background: #333;
+}
+
+.cookie-contact-link--secondary {
+  background: var(--cookie-bg-soft);
+  color: var(--cookie-text);
+  border: 1px solid var(--cookie-border);
+}
+
+.cookie-contact-link--secondary:hover {
+  background: #f0f0f0;
+}
+
+.cookie-contact-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==============================================
+   COOKIEBOT DECLARATION STYLING
+   ============================================== */
+.cookie-declaration {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--cookie-border);
+}
+
+.cookie-declaration-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--cookie-text);
+  margin: 0 0 8px;
+}
+
+.cookie-declaration-text {
+  font-size: 14px;
+  color: var(--cookie-text-muted);
+  margin: 0 0 24px;
+}
+
+/* Override Cookiebot default styles */
+#CookieDeclaration {
+  font-family: inherit !important;
+}
+
+#CookieDeclaration table {
+  font-size: 14px !important;
+  border-collapse: collapse !important;
+  width: 100% !important;
+}
+
+#CookieDeclaration th,
+#CookieDeclaration td {
+  padding: 12px !important;
+  border: 1px solid var(--cookie-border) !important;
+  text-align: left !important;
+}
+
+#CookieDeclaration th {
+  background: var(--cookie-bg-soft) !important;
+  font-weight: 600 !important;
+}
+
+/* ==============================================
+   LAST UPDATED
+   ============================================== */
+.cookie-updated {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--cookie-border);
+  text-align: center;
+}
+
+.cookie-updated-text {
+  font-size: 14px;
+  color: var(--cookie-text-light);
+  margin: 0;
+}
+
+/* ==============================================
+   RESPONSIVE – TABLET (< 768px)
+   ============================================== */
+@media (max-width: 767px) {
+  .cookie-hero {
+    padding: 56px 20px 44px;
+  }
+  
+  .cookie-container {
+    padding: 0 20px 80px;
+  }
+  
+  .cookie-section {
+    margin-bottom: 48px;
+  }
+  
+  .cookie-intro {
+    padding: 24px;
+  }
+  
+  .cookie-card {
+    padding: 24px;
+  }
+  
+  .cookie-legal-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .cookie-settings-action {
+    padding: 32px 24px;
+  }
+  
+  .cookie-contact {
+    padding: 32px 24px;
+  }
+}
+
+/* ==============================================
+   RESPONSIVE – MOBILE (< 480px)
+   ============================================== */
+@media (max-width: 479px) {
+  .cookie-hero {
+    padding: 48px 16px 36px;
+  }
+  
+  .cookie-hero-title {
+    font-size: 28px;
+  }
+  
+  .cookie-hero-subtitle {
+    font-size: 15px;
+  }
+  
+  .cookie-container {
+    padding: 0 16px 64px;
+  }
+  
+  .cookie-section {
+    margin-bottom: 40px;
+  }
+  
+  .cookie-section-title {
+    font-size: 20px;
+  }
+  
+  .cookie-intro {
+    padding: 20px;
+  }
+  
+  .cookie-intro p {
+    font-size: 15px;
+  }
+  
+  .cookie-card {
+    padding: 20px;
+  }
+  
+  .cookie-card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cookie-card-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+  
+  .cookie-card-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .cookie-card-title {
+    font-size: 16px;
+  }
+  
+  .cookie-card-text {
+    font-size: 14px;
+  }
+  
+  .cookie-card-examples {
+    gap: 6px;
+  }
+  
+  .cookie-card-example {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  
+  .cookie-settings-action {
+    padding: 28px 20px;
+  }
+  
+  .cookie-settings-title {
+    font-size: 18px;
+  }
+  
+  .cookie-settings-button {
+    width: 100%;
+    padding: 16px 24px;
+  }
+  
+  .cookie-legal-item {
+    padding: 16px;
+  }
+  
+  .cookie-contact {
+    padding: 28px 20px;
+  }
+  
+  .cookie-contact-title {
+    font-size: 18px;
+  }
+  
+  .cookie-contact-actions {
+    flex-direction: column;
+  }
+  
+  .cookie-contact-link {
+    width: 100%;
+    justify-content: center;
+  }
+}

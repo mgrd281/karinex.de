@@ -1,0 +1,538 @@
+{% comment %}
+  Enterprise Collection Page - Premium Product Listing
+  Design: AboutYou / MediaMarkt / Zalando Style
+{% endcomment %}
+
+{%- liquid
+  assign products_per_page = section.settings.products_per_page | default: 24
+  assign grid_cols = section.settings.grid_columns | default: 4
+-%}
+
+<!-- Google Fonts: Inter - loaded globally, using system fallback -->
+<!-- Fonts deferred for better performance -->
+
+{{ 'collection-enterprise.css' | asset_url | stylesheet_tag }}
+<style>.enterprise-collection { --ec-grid-cols: {{ grid_cols }}; }</style>
+
+<div class="enterprise-collection">
+  <div class="ec-container">
+    <!-- Header -->
+    <header class="ec-header">
+      <nav class="ec-breadcrumb">
+        <div class="ec-breadcrumb-desktop">
+          <a href="/">Startseite</a> / 
+          <a href="/collections">Kategorien</a> / 
+          <span>{{ collection.title }}</span>
+        </div>
+        <div class="ec-breadcrumb-mobile">
+          <a href="/collections" class="ec-back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Kategorien</span>
+          </a>
+        </div>
+      </nav>
+      <h1 class="ec-title">{{ collection.title }}</h1>
+    </header>
+
+    <!-- Layout -->
+    <div class="ec-layout">
+      <!-- Sidebar Filters -->
+      <aside class="ec-sidebar">
+        <!-- Brand Filter -->
+        <div class="ec-filter-section">
+          <div class="ec-filter-header">
+            <span class="ec-filter-title">Marke</span>
+            <svg class="ec-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <div class="ec-filter-content">
+            <label class="ec-checkbox-item">
+              <input type="checkbox" checked>
+              <span class="ec-checkbox"></span>
+              Microsoft
+              <span class="ec-checkbox-count">({{ collection.products_count }})</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Product Type Filter -->
+        <div class="ec-filter-section">
+          <div class="ec-filter-header">
+            <span class="ec-filter-title">Produktart</span>
+            <svg class="ec-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <div class="ec-filter-content">
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Office
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Windows
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Server
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Project / Visio
+            </label>
+          </div>
+        </div>
+
+        <!-- Platform Filter -->
+        <div class="ec-filter-section">
+          <div class="ec-filter-header">
+            <span class="ec-filter-title">Plattform</span>
+            <svg class="ec-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <div class="ec-filter-content">
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Windows
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Mac
+            </label>
+          </div>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="ec-filter-section">
+          <div class="ec-filter-header">
+            <span class="ec-filter-title">Preis</span>
+            <svg class="ec-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <div class="ec-filter-content">
+            <div class="ec-price-slider">
+              <div class="ec-price-inputs">
+                <input type="number" class="ec-price-input" placeholder="Min €" min="0">
+                <span>—</span>
+                <input type="number" class="ec-price-input" placeholder="Max €">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- License Type Filter -->
+        <div class="ec-filter-section">
+          <div class="ec-filter-header">
+            <span class="ec-filter-title">Lizenztyp</span>
+            <svg class="ec-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <div class="ec-filter-content">
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Einzellizenz
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Volumenlizenz
+            </label>
+            <label class="ec-checkbox-item">
+              <input type="checkbox">
+              <span class="ec-checkbox"></span>
+              Family Pack
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="ec-main">
+        <!-- Top Bar -->
+        <div class="ec-topbar">
+          <div class="ec-results-count">
+            <strong>{{ collection.products_count }}</strong> Produkte gefunden
+          </div>
+          <div class="ec-sort">
+            <span class="ec-sort-label">Sortieren:</span>
+            <div class="ec-sort-options">
+              <button class="ec-sort-btn active" data-sort="relevance">Relevanz</button>
+              <button class="ec-sort-btn" data-sort="price-asc">Preis ↑</button>
+              <button class="ec-sort-btn" data-sort="price-desc">Preis ↓</button>
+              <button class="ec-sort-btn" data-sort="newest">Neueste</button>
+              <button class="ec-sort-btn" data-sort="bestseller">Bestseller</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="ec-grid">
+          {% paginate collection.products by products_per_page %}
+            {% for product in collection.products %}
+              {%- liquid
+                assign current_price = product.price | money
+                assign compare_price = product.compare_at_price
+                assign has_discount = false
+                assign discount_percent = 0
+                
+                if compare_price and compare_price > product.price
+                  assign has_discount = true
+                  assign savings = compare_price | minus: product.price
+                  assign discount_percent = savings | times: 100.0 | divided_by: compare_price | round
+                endif
+                
+                assign product_type = product.type | downcase
+                assign is_bestseller = false
+                assign is_new = false
+                assign is_deal = false
+                
+                if product.tags contains 'bestseller'
+                  assign is_bestseller = true
+                elsif product.tags contains 'neu' or product.tags contains 'new'
+                  assign is_new = true
+                elsif discount_percent >= 50
+                  assign is_deal = true
+                endif
+              -%}
+              
+              <article class="ec-card">
+                <!-- Badge -->
+                {% if is_bestseller %}
+                  <span class="ec-badge ec-badge--bestseller">Bestseller</span>
+                {% elsif is_deal %}
+                  <span class="ec-badge ec-badge--deal">Mega Deal</span>
+                {% elsif is_new %}
+                  <span class="ec-badge ec-badge--new">Neu</span>
+                {% endif %}
+
+                <!-- Wishlist -->
+                <button class="ec-wishlist" aria-label="Zur Wunschliste hinzufügen">
+                  <svg viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
+
+                <!-- Image -->
+                <a href="{{ product.url }}" class="ec-card-image">
+                  {% if product.featured_image %}
+                    <img 
+                      src="{{ product.featured_image | image_url: width: 400 }}"
+                      alt="{{ product.title }}"
+                      loading="lazy"
+                      width="400"
+                      height="400"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+                </a>
+
+                <!-- Content -->
+                <div class="ec-card-content">
+                  <!-- Meta Tags -->
+                  <div class="ec-card-meta">
+                    {% if product.vendor %}
+                      <span class="ec-card-tag">{{ product.vendor }}</span>
+                    {% endif %}
+                    {% if product.type != blank %}
+                      <span class="ec-card-tag">{{ product.type }}</span>
+                    {% endif %}
+                  </div>
+
+                  <!-- Title -->
+                  <span class="ec-card-title">
+                    <a href="{{ product.url }}">{{ product.title }}</a>
+                  </span>
+
+                  <!-- Price -->
+                  <div class="ec-card-price">
+                    <span class="ec-price-current">{{ current_price }}</span>
+                    {% if has_discount %}
+                      <span class="ec-price-old">{{ compare_price | money }}</span>
+                      <span class="ec-price-discount">-{{ discount_percent }}%</span>
+                    {% endif %}
+                  </div>
+
+                  <!-- Status -->
+                  <div class="ec-card-status">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Sofort verfügbar
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="ec-card-actions">
+                  <button class="ec-btn-cart" data-product-id="{{ product.variants.first.id }}">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    In den Warenkorb
+                  </button>
+                </div>
+              </article>
+            {% endfor %}
+          {% endpaginate %}
+        </div>
+
+        <!-- Pagination -->
+        {% paginate collection.products by products_per_page %}
+          {% if paginate.pages > 1 %}
+            <nav class="ec-pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="ec-page-btn">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </a>
+              {% endif %}
+
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="ec-page-btn">{{ part.title }}</a>
+                {% elsif part.title == paginate.current_page %}
+                  <span class="ec-page-btn active">{{ part.title }}</span>
+                {% else %}
+                  <span class="ec-page-btn">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="ec-page-btn">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </a>
+              {% endif %}
+            </nav>
+          {% endif %}
+        {% endpaginate %}
+
+        <!-- Trust Block -->
+        <div class="ec-trust">
+          <div class="ec-trust-item">
+            <div class="ec-trust-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <span class="ec-trust-text">Original Lizenz</span>
+          </div>
+          <div class="ec-trust-item">
+            <div class="ec-trust-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+            </div>
+            <span class="ec-trust-text">Sofort Download</span>
+          </div>
+          <div class="ec-trust-item">
+            <div class="ec-trust-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span class="ec-trust-text">Käuferschutz</span>
+          </div>
+          <div class="ec-trust-item">
+            <div class="ec-trust-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/>
+              </svg>
+            </div>
+            <span class="ec-trust-text">Deutsche MwSt</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Mobile Filter Button -->
+  <button class="ec-mobile-filter-btn" id="mobileFilterBtn">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+    </svg>
+    Filter
+  </button>
+
+  <!-- Mobile Filter Drawer -->
+  <div class="ec-filter-overlay" id="filterOverlay"></div>
+  <div class="ec-filter-drawer" id="filterDrawer">
+    <div class="ec-filter-drawer-header">
+      <span class="ec-filter-drawer-title">Filter</span>
+      <button class="ec-filter-close" id="filterClose">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <!-- Filter content will be cloned here via JS -->
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Filter Accordion
+    document.querySelectorAll('.ec-filter-header').forEach(header => {
+      header.addEventListener('click', function() {
+        this.closest('.ec-filter-section').classList.toggle('collapsed');
+      });
+    });
+
+    // Sort Buttons
+    document.querySelectorAll('.ec-sort-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.ec-sort-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        // Add sorting logic here
+      });
+    });
+
+    // Wishlist Toggle
+    document.querySelectorAll('.ec-wishlist').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.classList.toggle('active');
+      });
+    });
+
+    // Add to Cart
+    document.querySelectorAll('.ec-btn-cart').forEach(btn => {
+      btn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        const productId = this.dataset.productId;
+        
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: productId, quantity: 1 })
+          });
+          
+          if (response.ok) {
+            this.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Hinzugefügt';
+            this.style.background = '#10b981';
+            
+            setTimeout(() => {
+              this.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg> In den Warenkorb';
+              this.style.background = '';
+            }, 2000);
+          }
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+        }
+      });
+    });
+
+    // Mobile Filter
+    const mobileBtn = document.getElementById('mobileFilterBtn');
+    const overlay = document.getElementById('filterOverlay');
+    const drawer = document.getElementById('filterDrawer');
+    const closeBtn = document.getElementById('filterClose');
+
+    function openFilter() {
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        overlay.classList.add('active');
+        drawer.classList.add('active');
+      }, 10);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilter() {
+      overlay.classList.remove('active');
+      drawer.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 300);
+    }
+
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', openFilter);
+    }
+    if (overlay) {
+      overlay.addEventListener('click', closeFilter);
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeFilter);
+    }
+
+    // Clone sidebar filters to mobile drawer
+    const sidebar = document.querySelector('.ec-sidebar');
+    const drawerContent = document.querySelector('.ec-filter-drawer');
+    if (sidebar && drawerContent) {
+      const clonedFilters = sidebar.cloneNode(true);
+      clonedFilters.style.display = 'block';
+      clonedFilters.style.position = 'static';
+      clonedFilters.style.maxHeight = 'none';
+      drawerContent.appendChild(clonedFilters);
+    }
+
+    // Lazy Loading Images
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.removeAttribute('data-src');
+            }
+            observer.unobserve(img);
+          }
+        });
+      });
+
+      document.querySelectorAll('.ec-card-image img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Enterprise Collection",
+  "tag": "section",
+  "class": "section-enterprise-collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Produkte pro Seite",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "grid_columns",
+      "label": "Spalten (Desktop)",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Enterprise Collection"
+    }
+  ],
+  "templates": ["collection", "search"]
+}
+{% endschema %}

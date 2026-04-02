@@ -1,0 +1,223 @@
+/* ==============================================
+   AGB PAGE - Enterprise Legal Design
+   Clean, trustworthy, professional
+   ============================================== */
+
+.agb-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Hero Header */
+.agb-header {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  text-align: center;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  position: static !important;
+}
+
+.agb-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.agb-meta {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.agb-divider {
+  display: none;
+}
+
+/* Main Container */
+.agb-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Table of Contents */
+.agb-toc {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 28px 32px;
+  margin-bottom: 48px;
+}
+
+.agb-toc-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.agb-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+  column-gap: 24px;
+}
+
+.agb-toc-list li {
+  padding: 6px 0;
+  break-inside: avoid;
+}
+
+.agb-toc-list a {
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  transition: color 0.15s;
+  line-height: 1.5;
+}
+
+.agb-toc-list a:hover {
+  color: #000;
+}
+
+.agb-toc-list .toc-number {
+  color: #888;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+@media (max-width: 600px) {
+  .agb-toc-list {
+    columns: 1;
+  }
+}
+
+/* Content Sections */
+.agb-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.agb-section {
+  margin-bottom: 40px;
+  scroll-margin-top: 100px;
+}
+
+.agb-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.agb-section p {
+  margin: 0 0 12px;
+}
+
+.agb-section p:last-child {
+  margin-bottom: 0;
+}
+
+/* Sub-points indentation */
+.agb-subpoint {
+  padding-left: 24px;
+  margin: 8px 0;
+  color: #444;
+}
+
+/* Highlighted sections */
+.agb-section--highlight {
+  background: #f9f9f9;
+  border-left: 3px solid #ddd;
+  padding: 24px;
+  border-radius: 0 6px 6px 0;
+  margin-left: -24px;
+  margin-right: -24px;
+}
+
+@media (max-width: 600px) {
+  .agb-section--highlight {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding: 20px 16px;
+  }
+}
+
+.agb-section--highlight .agb-section-title {
+  border-bottom-color: #ddd;
+}
+
+/* List styling */
+.agb-list {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+
+.agb-list li {
+  margin-bottom: 6px;
+}
+
+/* External links */
+.agb-link {
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.agb-link:hover {
+  color: #555;
+}
+
+/* Trust Footer */
+.agb-trust-footer {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.agb-trust-text {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .agb-header {
+    padding: 40px 20px 32px;
+  }
+  
+  .agb-container {
+    padding: 0 20px 60px;
+  }
+  
+  .agb-toc {
+    padding: 20px;
+  }
+  
+  .agb-content {
+    font-size: 15px;
+  }
+  
+  .agb-section-title {
+    font-size: 16px;
+  }
+}

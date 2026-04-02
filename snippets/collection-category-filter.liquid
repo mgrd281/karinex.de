@@ -1,0 +1,110 @@
+{%- doc -%}
+  Kategorie filter for collection pages.
+  Works entirely client-side via JavaScript — no Search & Discovery app needed.
+  Reads data-category attributes from product grid items and hides/shows them.
+  Uses product.type as the category value.
+  Shown on Uhren collections.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- capture category_list -%}
+  {%- for product in collection.products limit: 1000 -%}
+    {%- assign p_category = product.type | strip -%}
+    {%- if p_category != '' -%}|{{ p_category }}|,{%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign category_entries = category_list | split: ',' -%}
+{%- assign unique_categories = category_entries | uniq | sort -%}
+
+{%- comment -%} Remove blank entries and count {%- endcomment -%}
+{%- assign clean_categories = '' -%}
+{%- assign category_count = 0 -%}
+{%- for c in unique_categories -%}
+  {%- assign c_stripped = c | strip -%}
+  {%- if c_stripped != '' -%}
+    {%- assign c_value = c_stripped | remove: '|' -%}
+    {%- if c_value != '' -%}
+      {%- assign c_product_count = 0 -%}
+      {%- for entry in category_entries -%}
+        {%- assign entry_stripped = entry | strip -%}
+        {%- if entry_stripped == c_stripped -%}
+          {%- assign c_product_count = c_product_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign category_count = category_count | plus: 1 -%}
+      {%- assign category_with_count = c_value | append: ':' | append: c_product_count -%}
+      {%- if clean_categories == '' -%}
+        {%- assign clean_categories = category_with_count -%}
+      {%- else -%}
+        {%- assign clean_categories = clean_categories | append: '|||' | append: category_with_count -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign final_categories = clean_categories | split: '|||' -%}
+
+{%- if category_count > 1 -%}
+<accordion-custom
+  class="facets__item category-filter-accordion"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  {% if filter_style == 'vertical' %}
+  {% endif %}
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-category-{{ filter_style }}"
+    class="facets__panel"
+    {% if filter_style == 'horizontal' %}
+      data-auto-close-details="desktop"
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Kategorie</span>
+      <div class="facets__status-wrapper">
+        <span class="category-filter-count" style="display: none;"></span>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+    >
+      <div class="facets__inputs-wrapper">
+        <ul class="facets__inputs-list list-unstyled">
+          {%- for cat in final_categories -%}
+            {%- assign cat_parts = cat | split: ':' -%}
+            {%- assign cat_value = cat_parts[0] | strip -%}
+            {%- assign cat_product_count = cat_parts[1] | strip -%}
+            {%- if cat_value != '' -%}
+              {%- assign cat_id = 'category-filter-' | append: forloop.index | append: '-' | append: filter_style -%}
+              <li class="facets__inputs-list-item" data-skip-node-update="true">
+                <div class="checkbox category-filter-item">
+                  <input
+                    type="checkbox"
+                    id="{{ cat_id }}"
+                    class="checkbox__input js-category-checkbox"
+                    data-category-value="{{ cat_value | escape }}"
+                    value="{{ cat_value | escape }}"
+                  >
+                  <label class="checkbox__label" for="{{ cat_id }}" role="checkbox">
+                    {{ 'icon-checkmark.svg' | inline_asset_content }}
+                    <span class="checkbox__label-text">{{ cat_value }} <span style="color: #767676;">({{ cat_product_count }})</span></span>
+                  </label>
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+{%- endif -%}

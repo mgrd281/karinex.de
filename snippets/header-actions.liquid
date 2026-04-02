@@ -1,0 +1,1260 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+<script
+  type="module"
+  src="{{ 'cart-icon.js' | asset_url }}"
+  fetchpriority="low"
+></script>
+
+{% capture cart_icon %}
+  <cart-icon
+    class="
+      header-actions__cart-icon
+      {% unless cart == empty %} header-actions__cart-icon--has-cart{% endunless %}
+    "
+    data-testid="cart-icon"
+  >
+    <span
+      class="svg-wrapper"
+      aria-hidden="true"
+    >
+      {{ 'icon-cart.svg' | inline_asset_content }}
+    </span>
+
+    {% render 'cart-bubble', limit: 100, live_region: true, test_id: test_id %}
+  </cart-icon>
+{% endcapture %}
+
+<header-actions
+  {{- block.shopify_attributes -}}
+>
+    <script
+      src="{{ 'dialog.js' | asset_url }}"
+      type="module"
+    ></script>
+
+    <anchored-popover-component
+      data-close-on-resize="true"
+      class="account-popover mobile:hidden"
+    >
+      {% render 'account-button' with 'account-popover' as popover_id %}
+      <div
+        class="account-popover__panel details-content color-{{ settings.popover_color_scheme }}"
+        id="account-popover"
+        popover="auto"
+        ref="popover"
+      >
+        {% render 'account-actions', heading_id: 'account-popover-heading' %}
+      </div>
+    </anchored-popover-component>
+
+    <dialog-component
+      class="account-drawer"
+      {{ block.shopify_attributes }}
+    >
+      {% render 'account-button', attributes: 'on:click="/showDialog"' %}
+      <dialog
+        ref="dialog"
+        class="color-{{ settings.popover_color_scheme }} dialog-modal dialog-drawer dialog-bottom-sheet account-drawer__dialog"
+        scroll-lock
+        aria-labelledby="account-drawer-heading"
+      >
+        <button
+          ref="closeButton"
+          on:click="/closeDialog"
+          class="button button-unstyled close-button account-drawer__close-button"
+          aria-label="{{ 'actions.close_dialog' | t }}"
+          autofocus
+        >
+          <span
+            class="svg-wrapper"
+            aria-hidden="true"
+          >
+            {{- 'icon-close.svg' | inline_asset_content -}}
+          </span>
+        </button>
+        {% render 'account-actions', heading_id: 'account-drawer-heading' %}
+      </dialog>
+    </dialog-component>
+
+  <a
+    href="{{ _root }}pages/wishlist"
+    class="header-actions__action action__wishlist"
+    aria-label="Wunschliste"
+    style="display: flex; align-items: center; justify-content: center; gap: 0; text-decoration: none;"
+  >
+    <span class="visually-hidden">Wunschliste</span>
+    <span class="svg-wrapper icon-wrapper" style="position: relative;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+      </svg>
+      <span class="wishlist-count-badge icon-badge" data-count="0">0</span>
+    </span>
+  </a>
+
+  <script>
+    (function() {
+      // Use a unique name or IIFE to avoid global scope pollution if snippet is included multiple times
+      // We check if the function is already attached to window to avoid duplicate listeners
+      if (window.wishlistScriptInitialized) return;
+      window.wishlistScriptInitialized = true;
+
+      function updateWishlistCountHeader() {
+          const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+          const badges = document.querySelectorAll('.wishlist-count-badge');
+          
+          badges.forEach(badge => {
+              if(wishlist.length > 0) {
+                  const prevText = badge.textContent;
+                  badge.textContent = wishlist.length;
+                  badge.setAttribute('data-count', wishlist.length);
+                  // Show badge
+                  badge.style.display = 'flex';
+                  // Trigger pop animation on count change
+                  if (prevText !== String(wishlist.length)) {
+                    badge.classList.remove('icon-badge--pop');
+                    void badge.offsetWidth; // force reflow
+                    badge.classList.add('icon-badge--pop');
+                  }
+              } else {
+                  badge.textContent = '0';
+                  badge.setAttribute('data-count', '0');
+                  badge.style.display = 'none';
+              }
+          });
+      }
+
+      // Hide cart bubble if cart is empty on page load
+      function hideEmptyCartBubble() {
+          const cartBubbles = document.querySelectorAll('.header-actions__cart-icon .cart-bubble');
+          cartBubbles.forEach(bubble => {
+              const countEl = bubble.querySelector('.cart-bubble__text-count');
+              const count = countEl ? parseInt(countEl.textContent.trim() || '0', 10) : 0;
+              if (count === 0 || bubble.classList.contains('visually-hidden')) {
+                  bubble.style.display = 'none';
+                  bubble.style.visibility = 'hidden';
+                  bubble.style.opacity = '0';
+              }
+          });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+          updateWishlistCountHeader();
+          hideEmptyCartBubble();
+      });
+      window.addEventListener('wishlist-updated', updateWishlistCountHeader);
+      
+      // Also run immediately in case DOM is ready
+      updateWishlistCountHeader();
+      hideEmptyCartBubble();
+
+      // Observer to handle dynamic header re-rendering (e.g. sticky header injections)
+      const observer = new MutationObserver((mutations) => {
+        // Debounce simple check
+        updateWishlistCountHeader();
+        hideEmptyCartBubble();
+      });
+      
+      // Observe the body for subtree changes (broad but ensures we catch header injections)
+      // Or better: observe specific header container if known. For now, let's rely on event + initial.
+      // Actually, if the header is re-rendered via AJAX, the script inside might NOT run again if it's stripping scripts,
+      // OR it might run again. 
+      // If the element is replaced, the old event listener on the element is gone (but here we listen on window/document).
+      // The old element is gone. The new element needs to be updated.
+      // Since we querySelectorAll every time, we just need a trigger.
+      
+      // Let's add a periodic check for a few seconds to handle slow hydration
+      let checks = 0;
+      const interval = setInterval(() => {
+          updateWishlistCountHeader();
+          hideEmptyCartBubble();
+          checks++;
+          if(checks > 10) clearInterval(interval); // check for 5 seconds
+      }, 500);
+
+    })();
+  </script>
+
+  {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
+    <button
+      class="button header-actions__action button-unstyled"
+      on:click="cart-drawer-component/open"
+      aria-haspopup="dialog"
+      aria-label="{{ 'accessibility.cart' | t }}"
+      aria-describedby="cart-bubble-text"
+      data-testid="cart-drawer-trigger"
+    >
+      {{ cart_icon }}
+    </button>
+  {% else %}
+    <a
+      href="{{ routes.cart_url }}"
+      class="header-actions__action action__cart"
+      aria-label="{{ 'accessibility.cart' | t }}"
+      aria-describedby="cart-bubble-text"
+    >
+      {{ cart_icon }}
+    </a>
+  {% endif %}
+</header-actions>
+
+<script>
+  (function() {
+    // Slider initialization function - will be called after HTML is loaded
+    window.initSliderInteractions = function() {
+      const slider = document.querySelector('.cart-upsell-items');
+      if (!slider) return;
+      
+      // Already initialized? Skip
+      if (slider.dataset.sliderInit === 'true') return;
+      slider.dataset.sliderInit = 'true';
+      
+      // Mouse drag for desktop - smooth and simple
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      let isDragging = false;
+      
+      slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        isDragging = false;
+        slider.style.cursor = 'grabbing';
+        startX = e.pageX;
+        scrollLeft = slider.scrollLeft;
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isDown) {
+          isDown = false;
+          slider.style.cursor = 'grab';
+        }
+      });
+      
+      slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        isDragging = true;
+        const x = e.pageX;
+        const walk = (startX - x);
+        slider.scrollLeft = scrollLeft + walk;
+      });
+      
+      // Prevent click on links after drag
+      slider.addEventListener('click', (e) => {
+        if (isDragging) {
+          e.preventDefault();
+          e.stopPropagation();
+          isDragging = false;
+        }
+      }, true);
+      
+      // Touch events for mobile swipe with momentum
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchScrollLeft = 0;
+      let isTouching = false;
+      let isHorizontalSwipe = null;
+      let lastTouchX = 0;
+      let lastTouchTime = 0;
+      let velocity = 0;
+      let momentumId = null;
+      
+      slider.addEventListener('touchstart', (e) => {
+        // Stop any ongoing momentum
+        if (momentumId) {
+          cancelAnimationFrame(momentumId);
+          momentumId = null;
+        }
+        
+        isTouching = true;
+        isHorizontalSwipe = null;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchScrollLeft = slider.scrollLeft;
+        lastTouchX = touchStartX;
+        lastTouchTime = Date.now();
+        velocity = 0;
+      }, { passive: true });
+      
+      slider.addEventListener('touchmove', (e) => {
+        if (!isTouching) return;
+        
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const diffX = touchStartX - touchX;
+        const diffY = touchStartY - touchY;
+        
+        // Determine swipe direction on first move
+        if (isHorizontalSwipe === null) {
+          isHorizontalSwipe = Math.abs(diffX) > Math.abs(diffY);
+        }
+        
+        // Only handle horizontal swipes
+        if (isHorizontalSwipe) {
+          e.preventDefault();
+          
+          // Calculate velocity for momentum
+          const now = Date.now();
+          const dt = now - lastTouchTime;
+          if (dt > 0) {
+            velocity = (lastTouchX - touchX) / dt;
+          }
+          lastTouchX = touchX;
+          lastTouchTime = now;
+          
+          slider.scrollLeft = touchScrollLeft + diffX;
+        }
+      }, { passive: false });
+      
+      slider.addEventListener('touchend', () => {
+        if (!isTouching) return;
+        isTouching = false;
+        
+        // Apply momentum scrolling
+        if (isHorizontalSwipe && Math.abs(velocity) > 0.1) {
+          const friction = 0.95;
+          const minVelocity = 0.1;
+          
+          const momentum = () => {
+            velocity *= friction;
+            slider.scrollLeft += velocity * 16;
+            
+            if (Math.abs(velocity) > minVelocity) {
+              momentumId = requestAnimationFrame(momentum);
+            }
+          };
+          
+          momentumId = requestAnimationFrame(momentum);
+        }
+        
+        isHorizontalSwipe = null;
+      });
+      
+      // Trackpad and wheel horizontal scroll
+      slider.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaX) > 0 || e.shiftKey) {
+          e.preventDefault();
+          const delta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+          slider.scrollLeft += delta;
+        }
+      }, { passive: false });
+    };
+    
+    // Define with force parameter
+    window.initCartUpsell = function(force, cartData) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      // If force is true, we bypass the check. 
+      // Otherwise, avoid double init if already populated and visible
+      if (!force && container.children.length > 0 && container.style.display !== 'none') return;
+
+      async function loadUpsells() {
+        try {
+          let cart = cartData;
+          if (!cart) {
+            const cartRes = await fetch('/cart.js');
+            cart = await cartRes.json();
+          }
+          
+          if (cart.items.length === 0) {
+            container.innerHTML = '';
+            container.style.display = 'none';
+            return;
+          }
+
+          const product_id = cart.items[0].product_id;
+          const recommendationsUrl = `/recommendations/products?section_id=cart-drawer-upsell&product_id=${product_id}&limit=4`;
+          
+          const res = await fetch(recommendationsUrl);
+          const text = await res.text();
+          
+          if (text.trim().length > 0) {
+            container.innerHTML = text;
+            container.style.display = 'block';
+            
+            container.querySelectorAll('.cart-upsell-form').forEach(form => {
+              form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = form.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = '...';
+                
+                const formData = new FormData(form);
+                await fetch('/cart/add.js', { method: 'POST', body: formData });
+                
+                btn.innerText = '✓';
+                // Refresh to update cart contents
+                window.location.reload(); 
+              });
+            });
+            
+            // Initialize slider interactions after HTML is inserted
+            initSliderInteractions();
+          } else {
+              container.style.display = 'none';
+          }
+          
+        } catch (e) {
+          console.error('Upsell error:', e);
+        }
+      }
+
+      // Observe internal list changes (e.g. quantity updates)
+      // We still attach observer if not present, to catch internal changes within the list if they don't trigger full morph
+      const list = document.querySelector('.cart-drawer__items');
+      if(list && !list.dataset.upsellObserved) {
+        // Debounce simplistic observer
+        let timeout;
+        const observer = new MutationObserver(() => {
+             clearTimeout(timeout);
+             timeout = setTimeout(() => loadUpsells(), 100);
+        });
+        // We only care about childList changes that are NOT the recommendation container itself
+        // But since container is a child, we must be careful.
+        // Actually, initCartUpsell(true) is called manually now, so the observer is less critical for the main update flow
+        // But let's keep it for fallback.
+        observer.observe(list, { childList: true, subtree: true });
+        list.dataset.upsellObserved = "true";
+      }
+      
+      loadUpsells();
+    }
+
+    // 1. Run on load
+    if(document.readyState !== 'loading') window.initCartUpsell(false);
+    else document.addEventListener('DOMContentLoaded', () => window.initCartUpsell(false));
+    
+    // 2. Run when a cart drawer open button is clicked
+    document.addEventListener('click', (e) => {
+        if(e.target.closest('[data-testid="cart-drawer-trigger"], .header-actions__cart-icon, [href="/cart"]')) {
+            setTimeout(() => {
+              window.initCartUpsell(true);
+              if (window.initCartTimer) window.initCartTimer();
+            }, 200); 
+        }
+    });
+
+    // 3. Global observer for Drawer injection
+    const bodyObserver = new MutationObserver((mutations) => {
+        for(const mutation of mutations) {
+            for(const node of mutation.addedNodes) {
+                if(node.nodeType === 1 && (node.id === containerId || node.querySelector('#'+containerId))) {
+                    window.initCartUpsell(true);
+                    if (window.initCartTimer) window.initCartTimer();
+                    return;
+                }
+            }
+        }
+    });
+    bodyObserver.observe(document.body, { childList: true, subtree: true });
+
+  })();
+</script>
+
+<style>
+  header-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    vertical-align: middle;
+  }
+  
+  header-actions .header-actions__action {
+    margin: 0 !important;
+  }
+
+  .account-popover {
+    --account-popover-min-width: 22rem;
+    --account-actions-max-width: 22rem;
+  }
+
+  .account-popover__summary {
+    padding: 0;
+  }
+
+  .account-popover__summary:hover {
+    color: var(--color-foreground);
+  }
+
+  .account-popover__panel {
+    --account-popover-opacity: 0;
+    --account-popover-y: 10px;
+
+    position-anchor: --account-button-trigger;
+    /* Card Styling */
+    border-radius: 12px;
+    margin: 0;
+    left: unset;
+    width: max-content;
+    min-width: 300px; /* Compact width */
+    max-width: 350px;
+    box-shadow: none; /* User Request: Remove Shadow */
+    border: 1px solid rgba(0,0,0,0.08); /* Minimal border for visibility */
+    background-color: var(--color-background);
+    overflow: hidden; /* rounded corners clip content */
+    opacity: var(--account-popover-opacity);
+    translate: 0 var(--account-popover-y);
+    
+    transition-property: display, opacity, translate;
+    transition-duration: 0.25s;
+    transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-behavior: allow-discrete;
+    
+    /* Positioning */
+    top: calc(anchor(bottom) + 10px);
+    right: anchor(right);
+    /* Fallback right alignment if anchor fails or needs offset */
+    margin-right: -10px; 
+  }
+
+  .account-popover__panel:popover-open {
+    --account-popover-opacity: 1;
+    --account-popover-y: 0px;
+  }
+
+  @supports not (position-anchor: --account-button-trigger) {
+    .account-popover__panel {
+      top: calc(var(--anchor-top) * 1px + 50px);
+      right: 20px; /* Simple fallback */
+    }
+  }
+
+  @starting-style {
+    .account-popover__panel {
+      --account-popover-opacity: 0;
+      --account-popover-y: 10px;
+    }
+
+    .account-popover__panel:popover-open {
+      --account-popover-opacity: 1;
+      --account-popover-y: 0px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .account-drawer {
+      display: none;
+    }
+  }
+
+  .account-drawer__dialog {
+    --animation-speed: 0.24s;
+    --dialog-drawer-opening-animation: move-and-fade;
+    --dialog-drawer-closing-animation: move-and-fade;
+
+    height: fit-content;
+    margin: 0;
+    inset-block-end: 0;
+    inset-block-start: auto;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .dialog-drawer.account-drawer__dialog[open] {
+    --start-x: 0px;
+    --end-x: 0px;
+    --start-y: 100%;
+    --start-opacity: 1;
+  }
+
+  .dialog-drawer.account-drawer__dialog.dialog-closing {
+    --start-x: 0px;
+    --end-x: 0px;
+    --end-y: 100%;
+    --start-opacity: 1;
+  }
+
+  .account-drawer__close-button {
+    z-index: 1;
+    inset-block-start: var(--padding-xs);
+    inset-inline-end: var(--padding-xs);
+    color: var(--color-foreground);
+    background-color: transparent;
+  }
+
+  .account-drawer__close-button .svg-wrapper {
+    display: flex;
+    width: var(--button-size);
+    height: var(--button-size);
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes account-drawer-slide-in {
+    from {
+      transform: translateY(100%);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes account-drawer-slide-out {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  .cart-drawer {
+    --cart-drawer-padding: 20px 20px;
+    --cart-drawer-padding-desktop: 20px 20px;
+  }
+
+  /* Sequential Animation - Disabled to prevent layout issues */
+  .cart-drawer__dialog[open] .cart-section {
+    opacity: 1;
+    transform: translateY(0);
+    /* animation: cartFadeUp 0.25s ease forwards; */
+  }
+  /* @keyframes cartFadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .cart-drawer__dialog[open] .cart-section--1 { animation-delay: 0.08s; }
+  .cart-drawer__dialog[open] .cart-section--2 { animation-delay: 0.16s; }
+  .cart-drawer__dialog[open] .cart-section--3 { animation-delay: 0.24s; }
+  .cart-drawer__dialog[open] .cart-section--4 { animation-delay: 0.32s; }
+  .cart-drawer__dialog[open] .cart-section--5 { animation-delay: 0.40s; } */
+
+  .cart-drawer__dialog {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    inset: 0 0 0 auto; /* Explicit positioning: top right bottom left */
+    overflow: hidden;
+    border-radius: 0;
+    width: 480px !important;
+    max-width: 480px !important;
+    min-width: 480px !important;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border-left: var(--style-border-drawer);
+    box-shadow: var(--shadow-drawer);
+    background-color: var(--color-background);
+    box-sizing: border-box;
+  }
+
+  @media screen and (max-width: 989px) {
+    .cart-drawer__dialog {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      min-width: 100vw !important;
+      inset: 0; /* Full screen on mobile */
+    }
+  }
+
+  .cart-drawer__dialog:modal {
+    max-height: 100dvh;
+    max-width: 480px; /* Match desktop drawer width */
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 989px) {
+    .cart-drawer__dialog:modal {
+      max-width: 100vw;
+    }
+  }
+
+  /* Flex Container for Full Height Layout */
+  .cart-drawer__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure the component inside inner uses full height and flex */
+  .cart-drawer__inner .cart-items-component {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  /* Header: Fixed at top (via flex) */
+  .cart-drawer__header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 20px;
+    background-color: var(--color-background);
+    border-bottom: 1px solid #e8e8e8;
+    z-index: 100;
+    position: relative;
+  }
+  
+  .cart-drawer__heading {
+    margin: 0;
+    font-size: 18px;
+    font-family: var(--font-heading--family);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    flex-direction: row; 
+    gap: 10px;
+    width: fit-content;
+    letter-spacing: 0.4px;
+    color: #2b2b2b;
+  }
+  
+  /* Desktop Close Button Styling */
+  .cart-drawer__close-button {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: opacity 0.18s ease, transform 0.15s ease;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+  
+  .cart-drawer__close-button:hover {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  .cart-drawer__close-button:active {
+    transform: scale(0.93);
+  }
+  
+  .cart-drawer__close-button .svg-wrapper {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cart-drawer__close-button svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Content: Scrollable Area */
+  .cart-drawer__content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: clip; /* Stricter than hidden */
+    padding: 0;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-background);
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    contain: layout style paint; /* Performance optimization */
+  }
+
+  /* Ensure all drawer content fits */
+  .cart-drawer .cart-items,
+  .cart-drawer .cart-items__table,
+  .cart-drawer .cart-section {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .cart-drawer .cart-items__table-row {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    min-width: 0; /* Allow grid items to shrink */
+  }
+
+  .cart-drawer .cart-items__details,
+  .cart-drawer .cart-items__media,
+  .cart-drawer .cart-items__quantity,
+  .cart-drawer .cart-items__price {
+    min-width: 0; /* Allow grid items to shrink */
+    max-width: 100%;
+  }
+
+  /* Sticky Footer: Fixed at bottom (via flex) */
+  .cart-drawer__summary {
+    flex: 0 0 auto;
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    padding: 20px;
+    width: 100%;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05); /* Subtle shadow for depth */
+  }
+
+  /* CSS-only fix: Use animation to enforce drawer width continuously */
+  @media screen and (min-width: 990px) {
+    .cart-drawer__dialog[open],
+    .cart-drawer__dialog:modal {
+      animation: enforceDrawerWidth 0s forwards !important;
+    }
+    
+    @keyframes enforceDrawerWidth {
+      to {
+        width: 480px !important;
+        max-width: 480px !important;
+        min-width: 480px !important;
+        inset: 0 0 0 auto !important;
+        margin: 0 0 0 auto !important;
+      }
+    }
+  }
+
+  /* Override base.css drawer styles for cart drawer */
+  .cart-drawer .drawer,
+  dialog.cart-drawer__dialog,
+  .cart-drawer__dialog[open],
+  .cart-drawer__dialog.dialog-drawer {
+    width: 480px !important;
+    max-width: 480px !important;
+    min-width: 480px !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    .cart-drawer .drawer,
+    dialog.cart-drawer__dialog,
+    .cart-drawer__dialog[open],
+    .cart-drawer__dialog.dialog-drawer {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      min-width: 100vw !important;
+    }
+  }
+    .cart-drawer__dialog {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      min-width: 100vw !important; /* Override desktop min-width */
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+      border-left: none;
+    }
+
+    body:has(.cart-drawer__dialog[open]) .header-actions__cart-icon .cart-bubble {
+      display: none !important;
+    }
+    
+    /* Prevent background scroll when drawer is open */
+    body:has(.cart-drawer__dialog[open]) {
+      overflow: hidden !important;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .cart-drawer__items {
+      padding: 10px 15px 100px 15px;
+    }
+
+    .cart-drawer__header {
+      padding: 14px 20px 16px;
+    }
+    
+    .cart-drawer__heading {
+      font-size: 17px;
+      margin: 0;
+      padding-right: 15px; /* Prevent badge clipping */
+    }
+
+    /* Mobile Close Button - Larger tap target */
+    .cart-drawer__close-button,
+    .account-drawer__close-button {
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      padding: 10px !important;
+      width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 6px !important;
+      transition: opacity 0.18s ease, transform 0.15s ease !important;
+      opacity: 0.7 !important;
+    }
+    
+    .cart-drawer__close-button .svg-wrapper,
+    .account-drawer__close-button .svg-wrapper {
+      width: 18px !important;
+      height: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    
+    .cart-drawer__close-button:hover,
+    .account-drawer__close-button:hover,
+    .cart-drawer__close-button:focus,
+    .account-drawer__close-button:focus {
+      opacity: 1 !important;
+      background: transparent !important;
+      transform: scale(1.08) !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .cart-drawer__close-button:active,
+    .account-drawer__close-button:active {
+      transform: scale(0.93) !important;
+      opacity: 1 !important;
+    }
+
+    .cart-drawer__summary {
+      padding: 15px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    }
+    
+    /* Ensure content area uses remaining space */
+    .cart-drawer__content {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Empty State Centering */
+  .cart-drawer--empty .cart-drawer__content {
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding-top: 10px;
+  }
+
+  /* Suppress legacy empty message (replaced by cart-empty-state) */
+  .cart-drawer__empty-message {
+    display: none;
+  }
+
+  /* Header Actions Utility */
+  .header-actions__action {
+    --button-size: 30px;
+    --icon-size-md: 22px;
+    --icon-stroke-width: 1.8px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #1A1A1A !important;
+    opacity: 1 !important;
+    transition: all 0.2s ease;
+  }
+  .header-actions__action:hover {
+    opacity: 0.7 !important;
+  }
+  
+  /* Wishlist heart icon hover - gray color like other icons */
+  .action__wishlist:hover svg {
+    color: #6B7280 !important;
+    stroke: #6B7280 !important;
+    opacity: 1 !important;
+  }
+  .header-actions__action .svg-wrapper {
+    height: var(--icon-size-md);
+    width: var(--icon-size-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-actions__cart-icon .svg-wrapper {
+    position: relative;
+    overflow: visible;
+  }
+  .header-actions__action svg {
+    width: var(--icon-size-md) !important;
+    height: var(--icon-size-md) !important;
+    stroke: currentColor !important;
+    stroke-width: var(--icon-stroke-width) !important;
+    fill: none !important;
+  }
+
+  .header-actions__cart-icon {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    overflow: visible;
+  }
+
+  .header-actions__cart-icon .cart-bubble {
+    position: absolute !important;
+    top: -5px !important;
+    right: -7px !important;
+    left: auto !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    width: auto !important;
+    background: #0f3b2e !important;
+    border-radius: 50px !important;
+    border: none !important;
+    padding: 2px 4px !important;
+    z-index: 3 !important;
+  }
+
+  /* Show cart bubble only when cart has items */
+  .header-actions__cart-icon .cart-bubble:not(.visually-hidden) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Hide cart bubble when cart is empty - override visually-hidden completely */
+  .header-actions__cart-icon .cart-bubble.visually-hidden,
+  .header-actions__cart-icon .cart-bubble.visually-hidden:not(:focus, :active),
+  cart-icon .cart-bubble.visually-hidden {
+    position: absolute !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    max-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .cart-drawer__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    padding: 0;
+    margin-left: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: #0f3b2e;
+    border-radius: 50%;
+    vertical-align: middle;
+    line-height: 1;
+  }
+
+  .cart-drawer__heading .cart-bubble,
+  .cart-drawer__heading .cart-bubble.visually-hidden {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    inset: auto !important;
+    margin-left: 6px;
+    width: auto;
+    min-width: 16px;
+    height: 16px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    aspect-ratio: auto;
+    padding: 0 4px;
+    transform: none;
+    background: #0f3b2e !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    vertical-align: middle;
+    z-index: 1;
+    clip: auto !important;
+    overflow: visible !important;
+  }
+
+  .cart-drawer__heading .cart-bubble[data-maintain-ratio] {
+    aspect-ratio: 1;
+    min-width: 26px;
+  }
+
+  .header-actions__cart-icon .cart-bubble__text,
+  .cart-drawer__heading .cart-bubble__text {
+    font-family: var(--font-paragraph--family);
+    font-weight: var(--font-paragraph--weight);
+  }
+
+  .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
+    mask: none;
+  }
+
+  .cart-drawer__heading .cart-bubble__background {
+    display: none;
+  }
+
+  .header-actions__cart-icon .cart-bubble__background {
+    display: none !important;
+  }
+
+  .cart-drawer__heading .cart-bubble__text {
+    color: #fff !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-actions__cart-icon .cart-bubble__text {
+    color: #fff !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+  }
+
+  .cart-bubble--animating .cart-bubble__background {
+    animation: grow var(--animation-speed) var(--animation-easing);
+  }
+
+  .cart-bubble--animating .cart-bubble__text {
+    --start-y: -1em;
+    --start-opacity: 1;
+    /* Set initial transform state before animation starts */
+    transform: translate(0, var(--start-y, -1em));
+    opacity: var(--start-opacity, 1);
+    animation: move-and-fade var(--animation-speed) var(--animation-easing);
+  }
+
+  cart-icon:has(.cart-bubble__text-count:empty) {
+    --cart-bubble-size: 10px;
+    --cart-bubble-top: 9px;
+    --cart-bubble-right: 9px;
+  }
+
+  cart-icon:has(.cart-bubble__text-count:empty) .svg-wrapper {
+    --cart-bubble-top: 4px;
+    --cart-bubble-right: 4px;
+  }
+
+  /* ═══ Shared icon-badge styling - handled by header.liquid ═══ */
+  .icon-badge--pop {
+    animation: icon-badge-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  }
+
+  @keyframes icon-badge-pop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    60%  { transform: scale(1.2); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  /* ── Toast overlays (DOM lives in header, CSS must load here) ── */
+  .swipe-snackbar {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px) scale(0.95);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.22);
+    max-width: 88%;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    background: rgba(26,26,26,0.92);
+  }
+  .swipe-snackbar.show {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  .swipe-snackbar button {
+    background: none;
+    border: none;
+    color: #64B5F6;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 0;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .swipe-snackbar--wish {
+    background: rgba(238, 243, 240, 0.92) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(1.2) !important;
+    backdrop-filter: blur(24px) saturate(1.2) !important;
+    color: #2C4A3C !important;
+    box-shadow: 0 8px 32px rgba(15, 59, 46, 0.10), 0 1px 3px rgba(0,0,0,0.06) !important;
+    border: 1px solid rgba(15, 59, 46, 0.06) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.2px !important;
+  }
+  .swipe-snackbar--wish svg { flex-shrink: 0; }
+
+  .wishlist-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: #000;
+    color: #fff;
+    padding: 16px 24px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-width: 90%;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .wishlist-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  .wishlist-toast__content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .wishlist-toast__content svg {
+    flex-shrink: 0;
+    fill: #fff;
+    stroke: none;
+  }
+</style>

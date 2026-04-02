@@ -1,0 +1,211 @@
+/* ================================================
+   COLLECTION DESCRIPTION BOTTOM — Premium Editorial Refactor
+   ================================================ */
+
+.cdb-section {
+  padding: 80px 0;
+  background: #fff;
+  /* Pure white for premium look */
+  border-top: 1px solid #f0f0f0;
+}
+
+.cdb-container {
+  max-width: var(--page-width, 1200px);
+  margin: 0 auto;
+  padding: 0 40px;
+  /* Matching common page-width side padding */
+}
+
+/* ---- Single Column Layout ---- */
+.cdb-main {
+  width: 100%;
+}
+
+/* ================================================
+   LEFT COLUMN — EDITORIAL CONTENT
+   ================================================ */
+.cdb-main {
+  min-width: 0;
+}
+
+.cdb-editorial {
+  font-size: 16px;
+  line-height: 1.55;
+  color: #333;
+}
+
+.cdb-editorial p {
+  margin: 0 0 24px;
+  max-width: 70ch;
+  /* Optimal reading width */
+}
+
+.cdb-editorial h2,
+.cdb-editorial h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin: 48px 0 16px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  /* No all-caps */
+}
+
+.cdb-editorial h2:first-child,
+.cdb-editorial h3:first-child {
+  margin-top: 0;
+}
+
+.cdb-editorial strong {
+  font-weight: 600;
+  color: #000;
+}
+
+/* Feature Lists — Clean Statements */
+.cdb-features {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 32px 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cdb-feature-item {
+  display: flex;
+  align-items: center;
+  /* Vertical center for cleaner line look */
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.cdb-feature-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: #10b981;
+  /* Brand green */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cdb-feature-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.0;
+}
+
+/* ================================================
+   RIGHT COLUMN — TRUST MODULE
+   ================================================ */
+.cdb-sidebar {
+  position: sticky;
+  top: 120px;
+}
+
+.cdb-trust-module {
+  padding: 0;
+  background: transparent;
+}
+
+.cdb-trust-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #777;
+  margin: 0 0 20px;
+}
+
+.cdb-payment-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.cdb-payment-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 34px;
+  background: #f7f7f7;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.cdb-payment-badge img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+.cdb-trust-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cdb-trust-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border-radius: 20px;
+  width: fit-content;
+}
+
+.cdb-trust-pill svg {
+  width: 18px;
+  height: 18px;
+  color: #10b981;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+
+@media screen and (max-width: 990px) {
+  .cdb-layout {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .cdb-container {
+    padding: 0 24px;
+  }
+
+  .cdb-sidebar {
+    position: static;
+  }
+
+  .cdb-section {
+    padding: 60px 0;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .cdb-editorial {
+    font-size: 15px;
+  }
+
+  .cdb-editorial h2,
+  .cdb-editorial h3 {
+    font-size: 20px;
+    margin: 40px 0 12px;
+  }
+
+  .cdb-feature-item {
+    font-size: 14px;
+  }
+}

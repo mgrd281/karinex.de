@@ -1,0 +1,105 @@
+{%- comment -%}
+  Collection Description Bottom — Premium SEO + Trust Block
+  Renders the collection description after the product grid with
+  a two-column layout inspired by lizenzstar.de.
+  Includes a placeholder logic if description is empty.
+{%- endcomment -%}
+
+{%- assign description_content = collection.description -%}
+{%- if description_content == blank -%}
+  {%- capture description_content -%}
+    <h2>Über {{ collection.title | default: 'die Kollektion' }} bei Karinex</h2>
+    <p>Entdecken Sie unsere hochwertige Auswahl an <strong>{{ collection.title | default: 'Produkten' }}</strong>. Wir bieten Ihnen erstklassige Artikel, die speziell für Ihre Bedürfnisse ausgewählt wurden. Profitieren Sie von unserer Erfahrung und unserem exzellenten Kundenservice.</p>
+    <ul>
+      <li>Schnelle Lieferung direkt aus Deutschland</li>
+      <li>Sichere Bezahlung mit Käuferschutz</li>
+      <li>Geprüfte Qualität und Top-Service</li>
+    </ul>
+    <p>Durchstöbern Sie unser Sortiment und finden Sie das passende Produkt für sich. Bei Fragen steht Ihnen unser Support jederzeit zur Verfügung.</p>
+  {%- endcapture -%}
+{%- endif -%}
+
+{%- if description_content != blank or request.design_mode -%}
+  {{ 'collection-description-bottom.css' | asset_url | stylesheet_tag }}
+
+  <section class="cdb-section" aria-label="Beschreibung" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+    <div class="cdb-container">
+      {%- comment -%} Single Column — Description Content {%- endcomment -%}
+      <div class="cdb-main">
+        <div class="rte cdb-editorial" id="cdb-content-{{ section.id }}">
+          {{ description_content }}
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function() {
+      var container = document.getElementById('cdb-content-{{ section.id }}');
+      if (!container) return;
+
+      // SVG check icon template for list items
+      var svgIcon = '<span class="cdb-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
+
+      // Enhance all list items with SVG check icons
+      var lists = container.querySelectorAll('ul, ol');
+      lists.forEach(function(list) {
+        list.classList.add('cdb-features');
+
+        var items = list.querySelectorAll('li');
+        items.forEach(function(li) {
+          li.classList.add('cdb-feature-item');
+
+          // Clean up any existing emoji check marks
+          var text = li.innerHTML;
+          text = text.replace(/^[\s]*[✓✔☑️☑✅🔹▸►•–—-]\s*/g, '');
+          text = text.replace(/^[\s]*&#x2713;?\s*/g, '');
+          text = text.replace(/^[\s]*&#10003;?\s*/g, '');
+          text = text.replace(/^[\s]*&#9989;?\s*/g, '');
+
+          li.innerHTML = svgIcon + '<span>' + text.trim() + '</span>';
+        });
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection Description",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Sidebar Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 72
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Description Bottom"
+    }
+  ]
+}
+{% endschema %}

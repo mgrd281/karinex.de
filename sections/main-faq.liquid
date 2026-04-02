@@ -1,0 +1,1114 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-faq.css' | asset_url | stylesheet_tag }}
+
+<div class="help-center">
+  
+  <!-- HERO SECTION -->
+  <section class="help-hero">
+    <div class="help-hero-content">
+      <h1 class="help-hero-title">Wie können wir Ihnen helfen?</h1>
+      <p class="help-hero-subtitle">Finden Sie schnelle Antworten oder kontaktieren Sie unseren Support.</p>
+      
+      <div class="help-search-wrapper">
+        <div class="help-search">
+          <svg class="help-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input 
+            type="search" 
+            id="help-search-input" 
+            class="help-search-input"
+            placeholder="Suchen Sie nach einer Frage oder einem Thema…" 
+            autocomplete="off"
+            aria-label="FAQ durchsuchen"
+            spellcheck="false"
+          >
+          <button type="button" id="help-search-clear" class="help-search-clear" aria-label="Suche löschen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="help-container">
+    
+    <!-- CATEGORY CARDS -->
+    <section class="help-categories" id="categories">
+      <div class="category-grid">
+        <button class="category-card" data-category="bestellung" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Bestellung</h3>
+            <p class="category-desc">Zahlungsarten, Stornierung, Rechnung</p>
+          </div>
+        </button>
+
+        <button class="category-card" data-category="versand" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Versand & Lieferung</h3>
+            <p class="category-desc">Lieferzeiten, Tracking, Kosten</p>
+          </div>
+        </button>
+
+        <button class="category-card" data-category="rueckgabe" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Rückgabe & Erstattung</h3>
+            <p class="category-desc">Widerruf, Retoure, Geld zurück</p>
+          </div>
+        </button>
+
+        <button class="category-card" data-category="produkte" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Produkte</h3>
+            <p class="category-desc">Uhren, Garantie, Pflege</p>
+          </div>
+        </button>
+
+        <button class="category-card" data-category="software" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Software & Lizenzen</h3>
+            <p class="category-desc">Aktivierung, Download, Keys</p>
+          </div>
+        </button>
+
+        <button class="category-card" data-category="konto" aria-pressed="false">
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="category-content">
+            <h3 class="category-title">Konto & Zahlung</h3>
+            <p class="category-desc">Login, Passwort, Zahlungen</p>
+          </div>
+        </button>
+      </div>
+      
+      <button class="category-reset" id="category-reset" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+        Alle Kategorien anzeigen
+      </button>
+    </section>
+
+    <!-- SEARCH RESULTS INFO -->
+    <div class="search-results-info" id="search-results-info" style="display: none;">
+      <span class="results-count"></span>
+      <button class="results-clear" id="results-clear">Filter zurücksetzen</button>
+    </div>
+
+    <!-- FAQ ACCORDIONS -->
+    <section class="help-faq" id="faq-content">
+      
+      <!-- Bestellung & Zahlung -->
+      <div class="faq-group" data-group="bestellung">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+          </span>
+          Bestellung & Zahlung
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="zahlung zahlungsmethoden paypal kreditkarte klarna rechnung">
+            <summary class="faq-question">
+              <span class="faq-q-text">Welche Zahlungsmethoden werden akzeptiert?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Wir bieten Ihnen folgende sichere Zahlungsmöglichkeiten:</p>
+              <ul>
+                <li><strong>PayPal</strong> – Schnell und sicher bezahlen</li>
+                <li><strong>Kreditkarte</strong> – Visa, Mastercard, American Express</li>
+                <li><strong>Klarna</strong> – Rechnung, Ratenzahlung oder Sofortüberweisung</li>
+                <li><strong>Apple Pay & Google Pay</strong> – Kontaktlos mit Ihrem Smartphone</li>
+                <li><strong>SEPA-Lastschrift</strong> – Bequem per Bankeinzug</li>
+              </ul>
+              <p>Alle Transaktionen sind SSL-verschlüsselt und 100% sicher.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="rechnung kauf klarna bezahlen später">
+            <summary class="faq-question">
+              <span class="faq-q-text">Ist die Bezahlung auf Rechnung möglich?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Ja! Mit <strong>Klarna Rechnung</strong> können Sie bequem innerhalb von 14-30 Tagen nach Erhalt der Ware bezahlen. Bei der Zahlung wählen Sie einfach "Klarna" und dann "Rechnung" aus. Klarna prüft automatisch Ihre Bonität – die Entscheidung erfolgt in Sekunden.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="raten ratenzahlung finanzierung klarna monatlich">
+            <summary class="faq-question">
+              <span class="faq-q-text">Kann ich in Raten zahlen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Ja, mit <strong>Klarna Ratenkauf</strong> können Sie Ihren Einkauf in 6, 12, 24 oder 36 monatlichen Raten bezahlen. Die Zinsen und Konditionen werden Ihnen transparent vor Abschluss angezeigt.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="bestellung stornieren ändern abbrechen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Kann ich meine Bestellung stornieren oder ändern?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Solange Ihre Bestellung noch nicht versendet wurde, können Sie diese ändern oder stornieren. Kontaktieren Sie uns schnellstmöglich per E-Mail an <a href="mailto:info@karinex.de">info@karinex.de</a> oder telefonisch. Nach dem Versand können Sie die Ware innerhalb von 100 Tagen zurücksenden.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="rechnung invoice unternehmen firma geschäftskunde">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie erhalte ich eine Rechnung für meine Bestellung?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Ihre Rechnung wird automatisch per E-Mail an die bei der Bestellung angegebene Adresse gesendet. Sie finden sie auch in Ihrem <a href="/account">Kundenkonto</a> unter "Bestellungen". Benötigen Sie eine separate Rechnung für Ihr Unternehmen? Kontaktieren Sie uns mit Ihrer Bestellnummer.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Versand & Lieferung -->
+      <div class="faq-group" data-group="versand">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </span>
+          Versand & Lieferung
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="versandkosten kosten porto gebühren gratis kostenlos">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie hoch sind die Versandkosten?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p><strong>Kostenloser Versand!</strong> Wir liefern alle Bestellungen innerhalb Deutschlands versandkostenfrei. Für Lieferungen in andere EU-Länder berechnen wir eine kleine Pauschale – diese wird Ihnen im Checkout transparent angezeigt.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="lieferzeit dauer tage wann kommt schnell">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie lange dauert die Lieferung?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Die Lieferzeiten variieren je nach Produkt:</p>
+              <ul>
+                <li><strong>Software-Lizenzen:</strong> Sofort per E-Mail (innerhalb von Minuten)</li>
+                <li><strong>Uhren & physische Produkte:</strong> 1-3 Werktage innerhalb Deutschlands</li>
+                <li><strong>EU-Ausland:</strong> 3-7 Werktage</li>
+              </ul>
+              <p>Bestellungen vor 14:00 Uhr werden in der Regel noch am selben Tag versendet.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="tracking sendungsverfolgung wo ist paket status">
+            <summary class="faq-question">
+              <span class="faq-q-text">Kann ich meine Sendung verfolgen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Ja! Sobald Ihre Bestellung versendet wird, erhalten Sie eine E-Mail mit der Sendungsnummer und einem Tracking-Link. Damit können Sie den Lieferstatus in Echtzeit verfolgen. Die Tracking-Informationen finden Sie auch in Ihrem <a href="/account">Kundenkonto</a>.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="ausland international eu europa schweiz österreich">
+            <summary class="faq-question">
+              <span class="faq-q-text">Liefern Sie auch ins Ausland?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Ja, wir liefern in alle EU-Länder sowie in die Schweiz. Die Versandkosten und Lieferzeiten werden Ihnen im Checkout angezeigt. Für Nicht-EU-Länder können zusätzliche Zollgebühren anfallen.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Rückgabe & Erstattung -->
+      <div class="faq-group" data-group="rueckgabe">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+          </span>
+          Rückgabe & Erstattung
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="rückgabe widerruf tage frist umtausch zurückgeben">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie lange habe ich Rückgaberecht?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Bei KARINEX genießen Sie ein <strong>100-Tage-Rückgaberecht</strong> – weit über das gesetzliche Widerrufsrecht von 14 Tagen hinaus! Sie können die Ware ohne Angabe von Gründen zurücksenden und erhalten den vollen Kaufpreis erstattet.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="retoure zurücksenden rücksendung wie ablauf">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie kann ich einen Artikel zurücksenden?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>So einfach geht die Rückgabe:</p>
+              <ol>
+                <li>Kontaktieren Sie uns per E-Mail an <a href="mailto:info@karinex.de">info@karinex.de</a></li>
+                <li>Sie erhalten ein kostenloses Retourenlabel</li>
+                <li>Verpacken Sie die Ware sicher</li>
+                <li>Geben Sie das Paket bei DHL ab</li>
+                <li>Nach Eingang erstatten wir innerhalb von 3-5 Werktagen</li>
+              </ol>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="rücksendekosten porto retoure kostenlos">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wer trägt die Rücksendekosten?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Bei Widerruf oder Umtausch innerhalb Deutschlands übernehmen wir die Rücksendekosten. Sie erhalten von uns ein <strong>kostenloses Retourenlabel</strong>.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="erstattung geld zurück wann dauer refund">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie schnell erhalte ich meine Erstattung?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Nach Eingang und Prüfung Ihrer Rücksendung erstatten wir den Kaufpreis innerhalb von <strong>3-5 Werktagen</strong> auf das ursprüngliche Zahlungsmittel. Bei Kreditkartenzahlungen kann die Gutschrift je nach Bank bis zu 10 Tage dauern.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Produkte -->
+      <div class="faq-group" data-group="produkte">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </span>
+          Uhren & Produkte
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="original echt neu fälschung authentisch">
+            <summary class="faq-question">
+              <span class="faq-q-text">Sind alle Uhren original und neu?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p><strong>100% Original und Neu!</strong> Alle unsere Uhren sind brandneu, originalverpackt und stammen direkt von autorisierten Händlern. Sie erhalten alle Originalunterlagen, Zertifikate und die Herstellergarantie.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="garantie gewährleistung jahre hersteller">
+            <summary class="faq-question">
+              <span class="faq-q-text">Welche Garantie erhalte ich auf Uhren?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Sie erhalten die volle <strong>Herstellergarantie</strong> (in der Regel 2-5 Jahre) plus unsere <strong>KARINEX 100-Tage-Zufriedenheitsgarantie</strong>. Bei Problemen sind wir immer für Sie da.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="wasserdicht atm meter schwimmen tauchen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Sind die Uhren wasserdicht?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Die Wasserdichtigkeit variiert je nach Modell und ist auf der Produktseite angegeben:</p>
+              <ul>
+                <li><strong>3 ATM (30m):</strong> Spritzwassergeschützt</li>
+                <li><strong>5 ATM (50m):</strong> Duschen möglich</li>
+                <li><strong>10 ATM (100m):</strong> Schwimmen geeignet</li>
+                <li><strong>20+ ATM:</strong> Tauchen geeignet</li>
+              </ul>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="armband wechseln tauschen band größe anpassen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Kann ich das Armband wechseln oder anpassen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Die meisten unserer Uhren haben austauschbare Armbänder. Die passende Stegbreite finden Sie in den Produktdetails. Falls Sie Hilfe beim Anpassen der Größe benötigen, wenden Sie sich gerne an uns oder einen Uhrmacher vor Ort.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Software & Lizenzen -->
+      <div class="faq-group" data-group="software">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </span>
+          Software & Lizenzen
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="lizenz legal original microsoft partner echt">
+            <summary class="faq-question">
+              <span class="faq-q-text">Sind die Software-Lizenzen legal und original?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p><strong>Ja, 100% legal!</strong> Wir sind offizieller <strong>Microsoft Partner</strong> und vertreiben ausschließlich originale, legale Lizenzen. Alle Lizenzschlüssel können direkt bei Microsoft aktiviert werden.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="lizenz erhalten email sofort download key schlüssel">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie erhalte ich meine Software-Lizenz?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Nach erfolgreicher Zahlung erhalten Sie Ihren Lizenzschlüssel <strong>sofort per E-Mail</strong> – in der Regel innerhalb von 5-15 Minuten. Die E-Mail enthält:</p>
+              <ul>
+                <li>Ihren persönlichen Product Key</li>
+                <li>Eine Schritt-für-Schritt-Anleitung zur Aktivierung</li>
+                <li>Download-Links (falls benötigt)</li>
+              </ul>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="aktivieren windows office installieren anleitung einrichten">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie aktiviere ich Windows oder Office?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p><strong>Windows aktivieren:</strong></p>
+              <ol>
+                <li>Öffnen Sie Einstellungen → System → Aktivierung</li>
+                <li>Klicken Sie auf "Product Key ändern"</li>
+                <li>Geben Sie Ihren Key ein und bestätigen Sie</li>
+              </ol>
+              <p><strong>Office aktivieren:</strong></p>
+              <ol>
+                <li>Öffnen Sie eine Office-App (Word, Excel, etc.)</li>
+                <li>Gehen Sie zu Konto → Product Key ändern</li>
+                <li>Oder besuchen Sie <a href="https://www.office.com/setup" target="_blank">office.com/setup</a></li>
+              </ol>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="key funktioniert nicht problem fehler aktivierung ungültig">
+            <summary class="faq-question">
+              <span class="faq-q-text">Was tun, wenn der Lizenzschlüssel nicht funktioniert?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Prüfen Sie zunächst folgende Punkte:</p>
+              <ul>
+                <li><strong>Tippfehler:</strong> 0 (Null) vs. O (Buchstabe), 1 vs. I</li>
+                <li><strong>Richtige Version:</strong> Passt der Key zur installierten Software?</li>
+                <li><strong>Internetverbindung:</strong> Ist Ihr PC online?</li>
+              </ul>
+              <p>Falls das Problem weiterhin besteht, kontaktieren Sie uns – wir helfen sofort und finden eine Lösung!</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="mehrere geräte pc computer laptop installieren">
+            <summary class="faq-question">
+              <span class="faq-q-text">Kann ich die Lizenz auf mehreren Geräten nutzen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Das hängt vom Lizenztyp ab:</p>
+              <ul>
+                <li><strong>Windows:</strong> 1 PC pro Lizenz</li>
+                <li><strong>Office Home:</strong> 1 PC + Tablets/Smartphones</li>
+                <li><strong>Microsoft 365:</strong> Bis zu 5 Geräte gleichzeitig</li>
+              </ul>
+              <p>Die genauen Nutzungsbedingungen finden Sie auf der jeweiligen Produktseite.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Konto & Service -->
+      <div class="faq-group" data-group="konto">
+        <h2 class="faq-group-title">
+          <span class="faq-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          Konto & Service
+        </h2>
+        
+        <div class="faq-list">
+          <details class="faq-item" data-keywords="konto erstellen registrieren anmelden gast bestellen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Muss ich ein Kundenkonto erstellen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Nein, Sie können auch als <strong>Gast bestellen</strong>. Ein Kundenkonto bietet jedoch folgende Vorteile:</p>
+              <ul>
+                <li>Bestellübersicht und Rechnungen jederzeit abrufbar</li>
+                <li>Schnellerer Checkout bei zukünftigen Bestellungen</li>
+                <li>Exklusive Angebote und Rabatte</li>
+              </ul>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="passwort vergessen zurücksetzen reset login anmelden">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie kann ich mein Passwort zurücksetzen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Klicken Sie auf der <a href="/account/login" rel="nofollow">Login-Seite</a> auf <strong>"Passwort vergessen?"</strong>. Geben Sie Ihre E-Mail-Adresse ein und Sie erhalten innerhalb weniger Minuten einen Link zum Zurücksetzen.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="kontakt kundenservice support hilfe telefon email erreichen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie erreiche ich den Kundenservice?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Unser freundliches Team ist für Sie da:</p>
+              <ul>
+                <li><strong>E-Mail:</strong> <a href="mailto:info@karinex.de">info@karinex.de</a></li>
+                <li><strong>Telefon:</strong> <a href="tel:+4932221097746">+49 322 210 977 46</a></li>
+                <li><strong>Kostenlose Beratung:</strong> <a href="{{ _root }}pages/kundenberatung">Termin vereinbaren</a></li>
+              </ul>
+              <p><strong>Servicezeiten:</strong> Mo-Fr 9:00-18:00 Uhr</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+
+          <details class="faq-item" data-keywords="daten löschen datenschutz gdpr dsgvo konto löschen">
+            <summary class="faq-question">
+              <span class="faq-q-text">Wie kann ich meine Daten löschen lassen?</span>
+              <span class="faq-toggle-icon"></span>
+            </summary>
+            <div class="faq-answer">
+              <p>Gemäß DSGVO haben Sie das Recht auf Löschung Ihrer Daten. Senden Sie uns eine E-Mail an <a href="mailto:info@karinex.de">info@karinex.de</a> mit dem Betreff "Datenlöschung" und wir bearbeiten Ihre Anfrage innerhalb von 30 Tagen.</p>
+              <div class="faq-feedback">
+                <span>War diese Antwort hilfreich?</span>
+                <button class="feedback-btn" data-feedback="yes" aria-label="Ja, hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                </button>
+                <button class="feedback-btn" data-feedback="no" aria-label="Nein, nicht hilfreich">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- No Results Message -->
+      <div class="no-results" id="no-results" style="display: none;">
+        <div class="no-results-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+            <path d="M8 8l6 6M14 8l-6 6"/>
+          </svg>
+        </div>
+        <h3>Keine Ergebnisse gefunden</h3>
+        <p>Versuchen Sie es mit anderen Suchbegriffen oder kontaktieren Sie unseren Support.</p>
+      </div>
+
+    </section>
+
+    <!-- HUMAN SUPPORT SECTION -->
+    <section class="help-support">
+      <div class="support-content">
+        <div class="support-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h2 class="support-title">Keine passende Antwort gefunden?</h2>
+        <p class="support-text">Unser Kundenservice hilft Ihnen gerne persönlich weiter.</p>
+        <div class="support-actions">
+          <a href="{{ _root }}pages/kundenberatung" class="support-btn support-btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            Kostenlose Beratung
+          </a>
+          <a href="mailto:info@karinex.de" class="support-btn support-btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            E-Mail schreiben
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUST ELEMENTS -->
+    <section class="help-trust">
+      <div class="trust-items">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Deutscher Support</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Schnelle Antwortzeiten</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Sichere Abwicklung</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Tausende zufriedene Kunden</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('help-search-input');
+  const searchClear = document.getElementById('help-search-clear');
+  const categoryCards = document.querySelectorAll('.category-card');
+  const categoryReset = document.getElementById('category-reset');
+  const faqGroups = document.querySelectorAll('.faq-group');
+  const faqItems = document.querySelectorAll('.faq-item');
+  const noResults = document.getElementById('no-results');
+  const searchResultsInfo = document.getElementById('search-results-info');
+  const resultsClear = document.getElementById('results-clear');
+
+  /* ── Smooth Accordion ── */
+  faqItems.forEach(function(details) {
+    var answer = details.querySelector('.faq-answer');
+    if (!answer) return;
+
+    // Wrap answer children in an inner div for height animation
+    var inner = document.createElement('div');
+    inner.className = 'faq-answer-inner';
+    while (answer.firstChild) inner.appendChild(answer.firstChild);
+    answer.appendChild(inner);
+
+    var summary = details.querySelector('summary');
+    var animating = false;
+
+    function afterTransition(cb) {
+      var done = false;
+      function finish() {
+        if (done) return;
+        done = true;
+        cb();
+      }
+      inner.addEventListener('transitionend', function onEnd(ev) {
+        if (ev.target !== inner) return;
+        inner.removeEventListener('transitionend', onEnd);
+        finish();
+      });
+      // Fallback if transitionend doesn't fire
+      setTimeout(finish, 350);
+    }
+
+    summary.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (animating) return;
+      animating = true;
+
+      if (details.open) {
+        // === CLOSE ===
+        // 1. Lock current height
+        inner.style.height = inner.scrollHeight + 'px';
+        inner.style.opacity = '1';
+        // 2. Force reflow so browser registers the starting point
+        inner.offsetHeight;
+        // 3. Animate to 0
+        inner.style.height = '0px';
+        inner.style.opacity = '0';
+
+        afterTransition(function() {
+          details.open = false;
+          inner.style.height = '';
+          inner.style.opacity = '';
+          animating = false;
+        });
+
+      } else {
+        // === OPEN ===
+        // 1. Set open but keep inner collapsed
+        inner.style.height = '0px';
+        inner.style.opacity = '0';
+        details.open = true;
+        // 2. Measure the natural height
+        var targetH = inner.scrollHeight;
+        // 3. Force reflow
+        inner.offsetHeight;
+        // 4. Animate to target height
+        inner.style.height = targetH + 'px';
+        inner.style.opacity = '1';
+
+        afterTransition(function() {
+          inner.style.height = 'auto';
+          inner.style.opacity = '';
+          animating = false;
+        });
+      }
+    });
+  });
+  
+  let activeCategory = null;
+
+  // Search functionality
+  function performSearch(query) {
+    query = query.toLowerCase().trim();
+    searchClear.style.display = query ? 'flex' : 'none';
+    
+    let visibleCount = 0;
+    
+    if (!query && !activeCategory) {
+      // Show all
+      faqGroups.forEach(g => g.style.display = 'block');
+      faqItems.forEach(item => {
+        item.style.display = 'block';
+        item.open = false;
+        // Reset highlight
+        const qText = item.querySelector('.faq-q-text');
+        qText.innerHTML = qText.textContent;
+      });
+      noResults.style.display = 'none';
+      searchResultsInfo.style.display = 'none';
+      return;
+    }
+
+    faqGroups.forEach(group => {
+      const groupCategory = group.dataset.group;
+      let groupHasVisible = false;
+      
+      if (activeCategory && groupCategory !== activeCategory) {
+        group.style.display = 'none';
+        return;
+      }
+      
+      const items = group.querySelectorAll('.faq-item');
+      items.forEach(item => {
+        const qText = item.querySelector('.faq-q-text');
+        const questionText = qText.textContent.toLowerCase();
+        const answerText = item.querySelector('.faq-answer').textContent.toLowerCase();
+        const keywords = item.dataset.keywords || '';
+        
+        const matchesSearch = !query || 
+          questionText.includes(query) || 
+          answerText.includes(query) ||
+          keywords.includes(query);
+        
+        if (matchesSearch) {
+          item.style.display = 'block';
+          groupHasVisible = true;
+          visibleCount++;
+          
+          // Highlight search term
+          if (query && questionText.includes(query)) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            qText.innerHTML = qText.textContent.replace(regex, '<mark>$1</mark>');
+          } else {
+            qText.innerHTML = qText.textContent;
+          }
+          
+          if (query) item.open = true;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      group.style.display = groupHasVisible ? 'block' : 'none';
+    });
+
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    
+    if (query || activeCategory) {
+      searchResultsInfo.style.display = 'flex';
+      searchResultsInfo.querySelector('.results-count').textContent = 
+        visibleCount + ' Ergebnis' + (visibleCount !== 1 ? 'se' : '') + ' gefunden';
+    } else {
+      searchResultsInfo.style.display = 'none';
+    }
+  }
+
+  // Debounce search
+  let searchTimeout;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => performSearch(this.value), 150);
+  });
+
+  searchClear.addEventListener('click', function() {
+    searchInput.value = '';
+    performSearch('');
+    searchInput.focus();
+  });
+
+  resultsClear.addEventListener('click', function() {
+    searchInput.value = '';
+    activeCategory = null;
+    categoryCards.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    categoryReset.style.display = 'none';
+    performSearch('');
+  });
+
+  // Category filtering
+  categoryCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const category = this.dataset.category;
+      
+      if (activeCategory === category) {
+        activeCategory = null;
+        this.setAttribute('aria-pressed', 'false');
+        categoryReset.style.display = 'none';
+      } else {
+        activeCategory = category;
+        categoryCards.forEach(c => c.setAttribute('aria-pressed', 'false'));
+        this.setAttribute('aria-pressed', 'true');
+        categoryReset.style.display = 'flex';
+      }
+      
+      performSearch(searchInput.value);
+      
+      // Smooth scroll to FAQ content
+      setTimeout(() => {
+        document.getElementById('faq-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    });
+  });
+
+  categoryReset.addEventListener('click', function() {
+    activeCategory = null;
+    categoryCards.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    this.style.display = 'none';
+    performSearch(searchInput.value);
+  });
+
+  // Feedback buttons
+  document.querySelectorAll('.feedback-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const parent = this.closest('.faq-feedback');
+      parent.innerHTML = '<span class="feedback-thanks">Danke für Ihr Feedback!</span>';
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Help Center",
+  "tag": "section",
+  "class": "section-help-center",
+  "settings": []
+}
+{% endschema %}

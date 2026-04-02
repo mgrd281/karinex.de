@@ -1,0 +1,1211 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+<style>
+  /* ═══════════════════════════════════════════════════════
+     MODERN 404 PAGE - Premium Design
+     ═══════════════════════════════════════════════════════ */
+  
+  .template-404-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    min-height: 60vh;
+  }
+
+  /* Animated 404 Number */
+  .template-404-number {
+    font-size: clamp(120px, 25vw, 200px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #1D4739 0%, #2C5A4A 50%, #3D7A65 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 20px;
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .template-404-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 15px;
+    color: #111;
+  }
+
+  .template-404-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #666;
+    max-width: 500px;
+    margin: 0 auto 35px;
+  }
+
+  /* Premium Search Bar */
+  .template-404-search {
+    position: relative;
+    max-width: 550px;
+    width: 100%;
+    margin-bottom: 35px;
+  }
+  
+  .template-404-search input {
+    width: 100%;
+    padding: 18px 25px;
+    padding-right: 60px;
+    border: 2px solid #e8e8e8;
+    border-radius: 60px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #fafafa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .template-404-search input:focus {
+    border-color: #1D4739;
+    outline: none;
+    background: #fff;
+    box-shadow: 0 8px 25px rgba(29, 71, 57, 0.12);
+  }
+  
+  .template-404-search input::placeholder {
+    color: #999;
+  }
+
+  .template-404-search button {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #1D4739 0%, #2C5A4A 100%);
+    color: #fff;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(29, 71, 57, 0.3);
+  }
+
+  .template-404-search button:hover {
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 0 6px 20px rgba(29, 71, 57, 0.4);
+  }
+
+  /* Premium Buttons */
+  .template-404-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .btn-404 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 60px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-404-primary {
+    background: linear-gradient(135deg, #1D4739 0%, #2C5A4A 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(29, 71, 57, 0.3);
+  }
+
+  .btn-404-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(29, 71, 57, 0.4);
+  }
+
+  .btn-404-secondary {
+    background: #fff;
+    color: #1D4739;
+    border: 2px solid #e0e0e0;
+  }
+
+  .btn-404-secondary:hover {
+    border-color: #1D4739;
+    background: #f8faf9;
+    transform: translateY(-3px);
+  }
+
+  /* Smart Redirect Notice - Premium Style */
+  #smart-redirect-notice {
+    background: linear-gradient(135deg, #1D4739 0%, #2C5A4A 100%) !important;
+    border-radius: 16px !important;
+    padding: 20px 30px !important;
+    box-shadow: 0 10px 40px rgba(29, 71, 57, 0.25);
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 500px;
+    margin: 0 auto 30px !important;
+  }
+  
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  #smart-redirect-notice p {
+    margin: 0 !important;
+  }
+  
+  #smart-redirect-notice a {
+    color: rgba(255,255,255,0.9) !important;
+    text-decoration: none !important;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-top: 8px;
+    transition: background 0.2s ease;
+  }
+  
+  #smart-redirect-notice a:hover {
+    background: rgba(255,255,255,0.25);
+  }
+
+  /* Product Suggestions Cards */
+  .product-suggestion-card {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .product-suggestion-card:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateX(5px);
+  }
+  
+  .product-suggestion-card img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #fff;
+  }
+  
+  .product-suggestion-card span {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  /* Quick Links */
+  .template-404-quick-links {
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid #eee;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .template-404-quick-links h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .template-404-quick-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  
+  .quick-link {
+    background: #f8f8f8;
+    padding: 15px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .quick-link:hover {
+    background: #1D4739;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  
+  .quick-link svg {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .template-404-container {
+      padding: 40px 15px 60px;
+    }
+    
+    .template-404-actions {
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+    }
+    
+    .btn-404 {
+      width: 100%;
+    }
+    
+    .template-404-quick-links-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<div class="template-404-container">
+  {% if request.path contains '/wishlist' %}
+    <!-- Hijacked Wishlist Content for 404 Fallback -->
+    <h1 class="main-page-title page-title h0" style="margin-bottom: 50px;">Wunschliste</h1>
+    
+    <div id="wishlist-grid" class="grid product-grid" style="width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; @media (min-width: 750px) { grid-template-columns: repeat(4, 1fr); gap: 30px; }">
+        <div id="wishlist-loading" style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+            <p>Laden...</p>
+        </div>
+        <div id="wishlist-empty" style="display:none; grid-column: 1 / -1; text-align: center; padding: 50px;">
+            <p>Deine Wunschliste ist noch leer.</p>
+            <a href="{{ _root }}collections/all" class="button button--primary" style="margin-top:20px;display:inline-block;padding:10px 20px;border-radius:5px;background:#000;color:#fff;text-decoration:none;">Jetzt einkaufen</a>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Same logic as main-wishlist.liquid
+        const wishlistGrid = document.getElementById('wishlist-grid');
+        const loadingMsg = document.getElementById('wishlist-loading');
+        const emptyMsg = document.getElementById('wishlist-empty');
+
+        const wishlistParams = localStorage.getItem('wishlist');
+        let wishlist = wishlistParams ? JSON.parse(wishlistParams) : [];
+        wishlist = wishlist.filter(handle => handle && typeof handle === 'string');
+
+        // Check again after a small delay to be sure (optional)
+        if (wishlist.length === 0) {
+            loadingMsg.style.display = 'none';
+            emptyMsg.style.display = 'block';
+            return;
+        }
+
+        const fetchCard = async (handle) => {
+            try {
+                // We use section rendering API from the 404 page context
+                const response = await fetch(`/products/${handle}?section_id=section-rendering-product-card`);
+                if (!response.ok) throw new Error('Product not found');
+                const text = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = text;
+                const card = tempDiv.querySelector('product-card');
+                const linkWrapper = tempDiv.querySelector('product-card-link');
+                if (linkWrapper) return linkWrapper.outerHTML;
+                if (card) return card.outerHTML;
+                return text;
+            } catch (e) {
+                console.error(`Failed to load ${handle}`, e);
+                return null;
+            }
+        };
+
+        const promises = wishlist.map(handle => fetchCard(handle));
+        const results = await Promise.all(promises);
+
+        loadingMsg.style.display = 'none';
+        let hasItems = false;
+        results.forEach(html => {
+            if (html) {
+                const li = document.createElement('div');
+                li.classList.add('grid__item');
+                li.innerHTML = html;
+                
+                // Find the pre-rendered standard remove button inside the card
+                const removeBtn = li.querySelector('.wishlist-remove-btn');
+                
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // Find handle from the button or fallback to link logic if data-attribute missing (it shouldn't be)
+                        let handle = this.dataset.handle;
+                        
+                        // Fallback logic if needed (redundant but safe)
+                        if (!handle) {
+                             const link = li.querySelector('a[href*="/products/"]');
+                             if(link) {
+                                const url = new URL(link.href);
+                                handle = url.pathname.split('/').pop();
+                             }
+                        }
+
+                        if (handle) {
+                            let w = JSON.parse(localStorage.getItem('wishlist') || '[]');
+                            w = w.filter(h => h !== handle);
+                            localStorage.setItem('wishlist', JSON.stringify(w));
+                            window.dispatchEvent(new Event('wishlist-updated'));
+                            
+                            // Animate removal
+                            li.style.opacity = '0';
+                            li.style.transform = 'scale(0.9)';
+                            setTimeout(() => {
+                                li.remove();
+                                if(document.querySelectorAll('#wishlist-grid .grid__item').length === 0) emptyMsg.style.display = 'block';
+                            }, 300);
+                        }
+                    });
+                }
+
+                wishlistGrid.appendChild(li);
+                hasItems = true;
+            }
+        });
+        if (!hasItems) emptyMsg.style.display = 'block';
+    });
+    </script>
+
+  {% else %}
+    <!-- Standard 404 Content -->
+    
+    <!-- 404 ULTIMATE SMART REDIRECT SYSTEM v2.0 -->
+    <!-- Features: Dictionary + Fuzzy + Live API Search + Smart Suggestions + /en/ Handler + Login Redirect -->
+    <script>
+      (async function() {
+        const path = window.location.pathname.toLowerCase();
+        const fullUrl = window.location.href;
+        const urlParams = new URLSearchParams(window.location.search);
+        const pathClean = path.replace(/^\//, '').replace(/\/$/, '');
+        const container = document.querySelector('.template-404-container');
+        
+        // ═══════════════════════════════════════════════════════
+        // INSTANT LOGIN REDIRECT - Handle customer_authentication URLs
+        // ═══════════════════════════════════════════════════════
+        
+        if (path.includes('customer_authentication') || path.includes('/account/login')) {
+          const returnTo = urlParams.get('return_to');
+          if (returnTo) {
+            // Decode and clean the return_to URL
+            let targetPath = decodeURIComponent(returnTo);
+            
+            // Remove /en/ prefix if present
+            targetPath = targetPath.replace(/^\/en\/?/, '/');
+            
+            // Remove double /products/products/ if present
+            targetPath = targetPath.replace(/\/products\/products-/, '/products/');
+            targetPath = targetPath.replace(/\/products\/products\//, '/products/');
+            
+            // Remove variant and other query params for cleaner URL
+            targetPath = targetPath.split('?')[0];
+            
+            // Track in Analytics
+            if (typeof gtag === 'function') {
+              gtag('event', 'login_redirect_fix', {
+                'from': path,
+                'to': targetPath
+              });
+            }
+            
+            // Instant redirect to the product/page
+            window.location.replace(targetPath);
+            return;
+          } else {
+            // No return_to parameter - go to account page
+            window.location.replace('/account');
+            return;
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // DISCOUNT CODE REDIRECT - Handle /discount/ URLs
+        // ═══════════════════════════════════════════════════════
+        
+        if (path.includes('/discount/')) {
+          // Redirect to cart or homepage
+          const redirect = urlParams.get('redirect');
+          if (redirect) {
+            window.location.replace(redirect);
+          } else {
+            window.location.replace('/cart');
+          }
+          return;
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // HELPER FUNCTIONS
+        // ═══════════════════════════════════════════════════════
+        
+        function showNotice(message, subtext, isLoading = false) {
+          const existing = document.getElementById('smart-redirect-notice');
+          if (existing) existing.remove();
+          
+          const notice = document.createElement('div');
+          notice.id = 'smart-redirect-notice';
+          notice.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+              ${isLoading ? '<div class="loading-spinner" style="width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>' : '<span style="font-size:1.3em;">✨</span>'}
+              <p style="margin:0;font-weight:600;font-size:1.05rem;">${message}</p>
+            </div>
+            ${subtext ? `<div style="margin-top:10px;">${subtext}</div>` : ''}
+          `;
+          notice.innerHTML += '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+          if (container) container.insertBefore(notice, container.firstChild);
+        }
+        
+        function extractSearchTerms(pathname) {
+          // Extract meaningful words from the URL
+          return pathname
+            .replace(/^(products|collections|pages)\//, '')
+            .replace(/[-_]/g, ' ')
+            .replace(/[^a-z0-9äöüß\s]/gi, '')
+            .trim();
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // EXTRACT MODEL NUMBERS FROM URL
+        // ═══════════════════════════════════════════════════════
+        
+        function extractModelNumber(url) {
+          const lowerUrl = url.toLowerCase();
+          
+          // Watch model patterns
+          const watchPatterns = [
+            // Michael Kors: MK followed by 4-5 digits
+            /mk[\s\-_]?(\d{4,5})/i,
+            // Boss: 7-digit number starting with 15
+            /\b(15\d{5})\b/,
+            // Armani: AR followed by 4 digits
+            /ar[\s\-_]?(\d{4})/i,
+            // Diesel: DZ followed by 4 digits
+            /dz[\s\-_]?(\d{4})/i,
+            // Daniel Wellington: DW followed by 8 digits
+            /dw[\s\-_]?(\d{8})/i,
+            // Casio: A followed by numbers and letters
+            /\b(a\d{3}[a-z]{2,3}-\d[a-z]{2,3})\b/i,
+            // Maserati: R followed by 10 digits
+            /r[\s\-_]?(\d{10})/i,
+            // Tag Heuer: WAZ followed by numbers
+            /waz[\s\-_]?(\d{4})/i,
+            // Emporio Armani: Same as AR
+            /emporio[\s\-_]?armani[\s\-_\w]*ar[\s\-_]?(\d{4})/i,
+          ];
+          
+          for (const pattern of watchPatterns) {
+            const match = lowerUrl.match(pattern);
+            if (match) {
+              // Return the full model code
+              const fullMatch = match[0];
+              return fullMatch.replace(/[\s\-_]/g, '').toUpperCase();
+            }
+          }
+          
+          // LEGO set numbers: 5 digits
+          const legoMatch = lowerUrl.match(/lego[\s\-_\w]*(\d{5})/i);
+          if (legoMatch) {
+            return legoMatch[1];
+          }
+          
+          return null;
+        }
+        
+        // Search by model number
+        async function searchByModelNumber(modelNumber) {
+          if (!modelNumber) return null;
+          
+          try {
+            const response = await fetch(`/search/suggest.json?q=${encodeURIComponent(modelNumber)}&resources[type]=product&resources[limit]=1`);
+            if (!response.ok) return null;
+            
+            const data = await response.json();
+            const products = data?.resources?.results?.products;
+            
+            if (products && products.length > 0) {
+              return products[0];
+            }
+          } catch (e) {
+            console.warn('Model search failed:', e);
+          }
+          return null;
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // SMART KEYWORD EXPANSION - Understands abbreviations
+        // ═══════════════════════════════════════════════════════
+        
+        function expandKeywords(query) {
+          const expansions = {
+            // Windows abbreviations
+            'win': 'windows',
+            'win10': 'windows 10',
+            'win11': 'windows 11',
+            'win7': 'windows 7',
+            'win8': 'windows 8',
+            'windows10': 'windows 10',
+            'windows11': 'windows 11',
+            'w10': 'windows 10',
+            'w11': 'windows 11',
+            
+            // Office abbreviations
+            'ms': 'microsoft',
+            'msoffice': 'microsoft office',
+            'ms-office': 'microsoft office',
+            'o365': 'office 365',
+            'o2024': 'office 2024',
+            'o2021': 'office 2021',
+            'o2019': 'office 2019',
+            'office24': 'office 2024',
+            'office21': 'office 2021',
+            'office19': 'office 2019',
+            'm365': 'microsoft 365',
+            'ms365': 'microsoft 365',
+            
+            // Edition abbreviations
+            'pro': 'professional',
+            'prof': 'professional',
+            'profplus': 'professional plus',
+            'pro+': 'professional plus',
+            'proplus': 'professional plus',
+            'pp': 'professional plus',
+            'std': 'standard',
+            'ent': 'enterprise',
+            'ult': 'ultimate',
+            'hb': 'home business',
+            'hs': 'home student',
+            
+            // Server abbreviations  
+            'srv': 'server',
+            'serv': 'server',
+            'server22': 'server 2022',
+            'server19': 'server 2019',
+            'srv2022': 'server 2022',
+            'srv2019': 'server 2019',
+            'ws2022': 'windows server 2022',
+            'ws2019': 'windows server 2019',
+            
+            // Other software
+            'vs': 'visual studio',
+            'vscode': 'visual studio code',
+            'proj': 'project',
+            'project21': 'project 2021',
+            'project19': 'project 2019',
+            'visio21': 'visio 2021',
+            'visio19': 'visio 2019',
+            
+            // German words
+            'lizenz': 'lizenz',
+            'key': 'lizenz',
+            'aktivierung': 'aktivierung',
+            'download': 'download',
+            'sofort': 'sofort download',
+            
+            // Common typos
+            'widows': 'windows',
+            'windwos': 'windows',
+            'windos': 'windows',
+            'wndows': 'windows',
+            'winodws': 'windows',
+            'offfice': 'office',
+            'ofice': 'office',
+            'offcie': 'office',
+            'mircosoft': 'microsoft',
+            'microsft': 'microsoft',
+            'mcrosoft': 'microsoft',
+            'micorsoft': 'microsoft',
+            
+            // Numbers without space
+            '2024': ' 2024',
+            '2021': ' 2021',
+            '2019': ' 2019',
+            '2022': ' 2022',
+            '365': ' 365',
+            '10': ' 10',
+            '11': ' 11',
+          };
+          
+          let expanded = query.toLowerCase();
+          
+          // First pass: expand exact matches
+          for (const [abbr, full] of Object.entries(expansions)) {
+            // Word boundary matching
+            const regex = new RegExp(`\\b${abbr}\\b`, 'gi');
+            expanded = expanded.replace(regex, full);
+          }
+          
+          // Second pass: expand combined words (e.g., "win11pro" → "windows 11 professional")
+          expanded = expanded
+            .replace(/win(\d+)/gi, 'windows $1')
+            .replace(/office(\d+)/gi, 'office $1')
+            .replace(/(\d+)(pro|std|ent)/gi, '$1 $2')
+            .replace(/pro(\+|plus)/gi, 'professional plus')
+            .replace(/(\w)(pro|professional|standard|enterprise|home)$/gi, '$1 $2');
+          
+          // Clean up extra spaces
+          expanded = expanded.replace(/\s+/g, ' ').trim();
+          
+          return expanded;
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // LIVE PRODUCT SEARCH via Shopify API
+        // ═══════════════════════════════════════════════════════
+        
+        async function searchProducts(query) {
+          if (!query || query.length < 2) return null;
+          
+          // Expand keywords before searching
+          const expandedQuery = expandKeywords(query);
+          
+          try {
+            const response = await fetch(`/search/suggest.json?q=${encodeURIComponent(expandedQuery)}&resources[type]=product&resources[limit]=3`);
+            if (!response.ok) return null;
+            
+            const data = await response.json();
+            const products = data?.resources?.results?.products;
+            
+            if (products && products.length > 0) {
+              return products;
+            }
+            
+            // If no results with expanded query, try original
+            if (expandedQuery !== query) {
+              const response2 = await fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=3`);
+              if (response2.ok) {
+                const data2 = await response2.json();
+                return data2?.resources?.results?.products || null;
+              }
+            }
+          } catch (e) {
+            console.warn('Product search failed:', e);
+          }
+          return null;
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // PRODUCT DICTIONARY - Direct product mappings
+        // ═══════════════════════════════════════════════════════
+        
+        const productDictionary = {
+          // Main Collections - Instant redirects
+          'herren-uhren': '/collections/uhren',
+          'microsoft-office': '/collections/software',
+          'windows': '/collections/software',
+          'pc-games': '/collections/games',
+          'nintendo': '/collections/games',
+          'steam': '/collections/games',
+          'laptops': '/',
+          'keyboards': '/',
+          'monitore': '/',
+          'zubehoer': '/',
+          'drucker': '/',
+          'maus': '/',
+          'gift-cards': '/',
+          'backup': '/collections/software',
+          'autodesk': '/collections/software',
+          
+          // Office 2024
+          'office-2024': '/collections/microsoft-office-2024',
+          'office-2024-pro': '/search?q=office+2024+professional',
+          'office-2024-professional': '/search?q=office+2024+professional',
+          'office-2024-professional-plus': '/search?q=office+2024+professional+plus',
+          'office-2024-standard': '/search?q=office+2024+standard',
+          'office-2024-mac': '/search?q=office+2024+mac',
+          
+          // Office 2021
+          'office-2021': '/collections/office-2021',
+          'office-2021-pro': '/search?q=office+2021+professional',
+          'office-2021-professional': '/search?q=office+2021+professional',
+          'office-2021-professional-plus': '/search?q=office+2021+professional+plus',
+          'office-2021-home': '/search?q=office+2021+home',
+          'office-2021-mac': '/search?q=office+2021+mac',
+          
+          // Office 2019
+          'office-2019': '/collections/office-2019',
+          'office-2019-pro': '/search?q=office+2019+professional',
+          'office-2019-professional': '/search?q=office+2019+professional',
+          'office-2019-professional-plus': '/search?q=office+2019+professional+plus',
+          
+          // Microsoft 365
+          'microsoft-365': '/collections/microsoft-365',
+          'office-365': '/collections/microsoft-365',
+          'm365': '/collections/microsoft-365',
+          '365-family': '/search?q=microsoft+365+family',
+          '365-personal': '/search?q=microsoft+365+personal',
+          '365-business': '/search?q=microsoft+365+business',
+          
+          // Windows 11
+          'windows-11': '/collections/software',
+          'win-11': '/collections/software',
+          'windows-11-pro': '/products/windows-11-pro-key-kaufen-download',
+          'windows-11-professional': '/search?q=windows+11+professional',
+          'windows-11-home': '/search?q=windows+11+home',
+          'windows-11-enterprise': '/search?q=windows+11+enterprise',
+          
+          // Windows 10
+          'windows-10': '/collections/windows-10',
+          'win-10': '/collections/windows-10',
+          'windows-10-pro': '/search?q=windows+10+pro',
+          'windows-10-professional': '/search?q=windows+10+professional',
+          'windows-10-home': '/search?q=windows+10+home',
+          'windows-10-enterprise': '/search?q=windows+10+enterprise',
+          
+          // Windows Server
+          'windows-server': '/search?q=windows+server',
+          'windows-server-2022': '/search?q=windows+server+2022',
+          'windows-server-2019': '/search?q=windows+server+2019',
+          'server-2022': '/search?q=windows+server+2022',
+          'server-2019': '/search?q=windows+server+2019',
+          
+          // Project & Visio
+          'project': '/search?q=microsoft+project',
+          'project-2021': '/search?q=project+2021',
+          'project-2019': '/search?q=project+2019',
+          'visio': '/search?q=microsoft+visio',
+          'visio-2021': '/search?q=visio+2021',
+          'visio-2019': '/search?q=visio+2019',
+          
+          // Antivirus & Security
+          'antivirus': '/search?q=antivirus',
+          'kaspersky': '/search?q=kaspersky',
+          'norton': '/search?q=norton',
+          'mcafee': '/search?q=mcafee',
+          'avira': '/search?q=avira',
+          'bitdefender': '/search?q=bitdefender',
+          
+          // Other Software
+          'adobe': '/search?q=adobe',
+          'photoshop': '/search?q=adobe+photoshop',
+          'acrobat': '/search?q=adobe+acrobat',
+          'autocad': '/search?q=autocad',
+          
+          // Collections
+          'bestseller': '/collections/unsere-bestseller',
+          'sale': '/collections/sale',
+          'neuheiten': '/collections/all',
+          'angebote': '/collections/sale',
+          'alle-produkte': '/collections/all',
+          'all-products': '/collections/all',
+          'microsoft': '/collections/microsoft',
+          
+          // Pages
+          'kontakt': '/pages/kontakt',
+          'contact': '/pages/kontakt',
+          'impressum': '/policies/legal-notice',
+          'imprint': '/policies/legal-notice',
+          'datenschutz': '/policies/privacy-policy',
+          'privacy': '/policies/privacy-policy',
+          'agb': '/policies/terms-of-service',
+          'terms': '/policies/terms-of-service',
+          'faq': '/pages/faq',
+          'hilfe': '/pages/faq',
+          'help': '/pages/faq',
+          'ueber-uns': '/pages/ueber-uns',
+          'about': '/pages/ueber-uns',
+          'widerrufsbelehrung': '/pages/widerrufsrecht',
+          'widerruf': '/pages/widerrufsrecht',
+          
+          // Cart & Account
+          'warenkorb': '/cart',
+          'cart': '/cart',
+          'basket': '/cart',
+          'konto': '/account',
+          'account': '/account',
+          'login': '/account/login',
+          'anmelden': '/account/login',
+          'registrieren': '/account/register',
+          'register': '/account/register',
+          'bestellungen': '/account/orders',
+          'orders': '/account/orders',
+          'wishlist': '/pages/wishlist',
+          'wunschliste': '/pages/wishlist',
+          'merkliste': '/pages/wishlist',
+        };
+        
+        // ═══════════════════════════════════════════════════════
+        // FUZZY MATCHING - Find similar words
+        // ═══════════════════════════════════════════════════════
+        
+        function levenshtein(a, b) {
+          if (a.length === 0) return b.length;
+          if (b.length === 0) return a.length;
+          const matrix = [];
+          for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+          for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+          for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+              if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+              } else {
+                matrix[i][j] = Math.min(
+                  matrix[i - 1][j - 1] + 1,
+                  matrix[i][j - 1] + 1,
+                  matrix[i - 1][j] + 1
+                );
+              }
+            }
+          }
+          return matrix[b.length][a.length];
+        }
+        
+        function findBestMatch(input, dictionary) {
+          let bestMatch = null;
+          let bestScore = Infinity;
+          const threshold = 3; // Max 3 character differences
+          
+          for (const key of Object.keys(dictionary)) {
+            const distance = levenshtein(input, key);
+            if (distance < bestScore && distance <= threshold) {
+              bestScore = distance;
+              bestMatch = key;
+            }
+          }
+          return bestMatch;
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // SMART REDIRECT LOGIC
+        // ═══════════════════════════════════════════════════════
+        
+        let redirectUrl = null;
+        
+        // 0. FIRST: Try to find model number and search for it
+        const modelNumber = extractModelNumber(path);
+        if (modelNumber) {
+          const modelProduct = await searchByModelNumber(modelNumber);
+          if (modelProduct && modelProduct.url) {
+            // Track in Analytics
+            if (typeof gtag === 'function') {
+              gtag('event', 'model_redirect', {
+                'model': modelNumber,
+                'product': modelProduct.title
+              });
+            }
+            // Instant redirect to the product
+            window.location.replace(modelProduct.url);
+            return;
+          }
+        }
+        
+        // 1. Check exact match in dictionary
+        if (productDictionary[pathClean]) {
+          redirectUrl = productDictionary[pathClean];
+        }
+        
+        // 2. Check if path contains product/collection prefix
+        if (!redirectUrl) {
+          const productMatch = pathClean.match(/^products\/(.+)/);
+          const collectionMatch = pathClean.match(/^collections\/(.+)/);
+          const pagesMatch = pathClean.match(/^pages\/(.+)/);
+          
+          if (productMatch && productDictionary[productMatch[1]]) {
+            redirectUrl = productDictionary[productMatch[1]];
+          } else if (collectionMatch && productDictionary[collectionMatch[1]]) {
+            redirectUrl = productDictionary[collectionMatch[1]];
+          } else if (pagesMatch && productDictionary[pagesMatch[1]]) {
+            redirectUrl = productDictionary[pagesMatch[1]];
+          }
+        }
+        
+        // 3. Try fuzzy matching
+        if (!redirectUrl) {
+          const searchTerms = [pathClean];
+          // Also try without prefixes
+          if (pathClean.startsWith('products/')) searchTerms.push(pathClean.replace('products/', ''));
+          if (pathClean.startsWith('collections/')) searchTerms.push(pathClean.replace('collections/', ''));
+          if (pathClean.startsWith('pages/')) searchTerms.push(pathClean.replace('pages/', ''));
+          
+          for (const term of searchTerms) {
+            const fuzzyMatch = findBestMatch(term, productDictionary);
+            if (fuzzyMatch) {
+              redirectUrl = productDictionary[fuzzyMatch];
+              break;
+            }
+          }
+        }
+        
+        // 4. Fallback patterns (regex-based)
+        if (!redirectUrl) {
+          const redirectRules = [
+            // Product patterns - redirect to search
+            { pattern: /\/products\/(.+)/, redirect: (match) => `/search?q=${match[1].replace(/-/g, ' ')}` },
+            
+            // Collection patterns
+            { pattern: /\/collections\/(.+)/, redirect: (match) => `/search?q=${match[1].replace(/-/g, ' ')}` },
+            
+            // Common typos & old URLs
+            { pattern: /\/(produkte?|artikel|shop)\/(.+)/, redirect: (match) => `/search?q=${match[2].replace(/-/g, ' ')}` },
+            { pattern: /\/(kategorie|category)\/(.+)/, redirect: (match) => `/search?q=${match[2].replace(/-/g, ' ')}` },
+            
+            // Windows products (any format)
+            { pattern: /win(dows)?[-_\s]?11/i, redirect: () => '/collections/software' },
+            { pattern: /win(dows)?[-_\s]?10/i, redirect: () => '/collections/windows-10' },
+            
+            // Office products (any format)
+            { pattern: /office[-_\s]?2024/i, redirect: () => '/collections/microsoft-office-2024' },
+            { pattern: /office[-_\s]?2021/i, redirect: () => '/collections/office-2021' },
+            { pattern: /office[-_\s]?2019/i, redirect: () => '/collections/office-2019' },
+            { pattern: /office[-_\s]?365|microsoft[-_\s]?365|m365/i, redirect: () => '/collections/microsoft-365' },
+          ];
+          
+          for (const rule of redirectRules) {
+            const match = path.match(rule.pattern);
+            if (match) {
+              redirectUrl = rule.redirect(match);
+              break;
+            }
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // 5. LIVE API SEARCH (Last resort - find real products)
+        // ═══════════════════════════════════════════════════════
+        
+        if (!redirectUrl) {
+          const searchQuery = extractSearchTerms(pathClean);
+          
+          if (searchQuery && searchQuery.length >= 2) {
+            showNotice('Suche nach passenden Produkten...', null, true);
+            
+            const products = await searchProducts(searchQuery);
+            
+            if (products && products.length > 0) {
+              // Found real products! Show them as suggestions
+              const notice = document.getElementById('smart-redirect-notice');
+              if (notice) {
+                notice.innerHTML = `
+                  <p style="margin:0 0 10px;font-weight:600;">🎯 Meinten Sie vielleicht:</p>
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    ${products.map(p => `
+                      <a href="${p.url}" style="color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:8px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;">
+                        ${p.image ? `<img src="${p.image}" alt="${p.title}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">` : ''}
+                        <span>${p.title}</span>
+                      </a>
+                    `).join('')}
+                  </div>
+                `;
+              }
+              
+              // Auto-redirect to first product after 3 seconds
+              redirectUrl = products[0].url;
+              setTimeout(() => {
+                window.location.href = redirectUrl;
+              }, 3000);
+            } else {
+              // No products found, remove loading notice
+              const notice = document.getElementById('smart-redirect-notice');
+              if (notice) notice.remove();
+            }
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // EXECUTE REDIRECT (for dictionary/fuzzy matches)
+        // ═══════════════════════════════════════════════════════
+        
+        if (redirectUrl && redirectUrl !== path && !redirectUrl.startsWith('/products/')) {
+          // Instant redirect - no message
+          window.location.replace(redirectUrl);
+          return; // Stop execution
+        }
+        
+        // ═══════════════════════════════════════════════════════
+        // ANALYTICS TRACKING
+        // ═══════════════════════════════════════════════════════
+        
+        const errorData = {
+          page_path: window.location.pathname,
+          page_referrer: document.referrer || 'direct',
+          page_title: '404 - Seite nicht gefunden',
+          timestamp: new Date().toISOString(),
+          auto_redirect: redirectUrl || null,
+          method: redirectUrl ? (products ? 'api_search' : 'dictionary_or_fuzzy') : 'none'
+        };
+        
+        // Google Analytics 4 (gtag)
+        if (typeof gtag === 'function') {
+          gtag('event', 'page_not_found', {
+            'page_location': window.location.href,
+            'page_path': errorData.page_path,
+            'page_referrer': errorData.page_referrer,
+            'auto_redirect': errorData.auto_redirect,
+            'redirect_method': errorData.method
+          });
+        }
+        
+        // Google Analytics Universal (ga)
+        if (typeof ga === 'function') {
+          ga('send', 'event', '404 Error', errorData.page_path, errorData.page_referrer);
+        }
+        
+        // Console log for debugging
+        console.warn('404 Error:', errorData);
+        
+        // Store in localStorage for admin review
+        try {
+          const errors404 = JSON.parse(localStorage.getItem('karinex_404_errors') || '[]');
+          errors404.push(errorData);
+          // Keep only last 50 errors
+          if (errors404.length > 50) errors404.shift();
+          localStorage.setItem('karinex_404_errors', JSON.stringify(errors404));
+        } catch(e) {}
+      })();
+    </script>
+    
+    <!-- Animated 404 Number -->
+    <div class="template-404-number">404</div>
+
+    <h1 class="template-404-title">Oops! Diese Seite existiert nicht</h1>
+    
+    <p class="template-404-text">
+      Die gewünschte Seite wurde verschoben oder existiert nicht mehr. 
+      Kein Problem – wir helfen Ihnen weiter!
+    </p>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="template-404-search">
+      <input
+        type="search"
+        name="q"
+        value="{{ search.terms | escape }}"
+        placeholder="Was suchen Sie? z.B. Windows 11, Office 2024..."
+        aria-label="Suche"
+      >
+      <input type="hidden" name="type" value="product">
+      <button type="submit" aria-label="Suchen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </form>
+
+    <div class="template-404-actions">
+      <a href="{{ routes.root_url }}" class="btn-404 btn-404-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        Zur Startseite
+      </a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn-404 btn-404-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        Alle Produkte
+      </a>
+    </div>
+    
+    <!-- Quick Links Section -->
+    <div class="template-404-quick-links">
+      <h3>Beliebte Kategorien</h3>
+      <div class="template-404-quick-links-grid">
+        <a href="{{ _root }}collections/software" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+          Windows 11
+        </a>
+        <a href="{{ _root }}collections/microsoft-office-2024" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53 4.306v15.363q0 .807-.472 1.433-.472.627-1.253.85l-6.888 1.974q-.136.037-.29.055-.156.019-.293.019-.396 0-.72-.105-.321-.106-.656-.292l-4.505-2.544q-.248-.137-.391-.366-.143-.23-.143-.515 0-.434.304-.738.304-.305.739-.305h5.831V4.964l-4.38 1.563q-.533.187-.856.658-.322.472-.322 1.03v8.078q0 .496-.248.912-.25.416-.683.651l-2.072 1.13q-.286.148-.571.148-.497 0-.844-.347-.348-.347-.348-.844V6.563q0-.62.33-1.19.328-.571.874-.881L11.07.285q.248-.136.534-.21.285-.075.57-.075.211 0 .38.019.168.018.35.074l8.006 2.306q.606.18 1.065.665.456.485.456 1.242z"/></svg>
+          Office 2024
+        </a>
+        <a href="{{ _root }}collections/microsoft-365" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 3v8.5H3V3h8.5zm0 18H3v-8.5h8.5V21zm1-18H21v8.5h-8.5V3zm8.5 9.5V21h-8.5v-8.5H21z"/></svg>
+          Microsoft 365
+        </a>
+        <a href="{{ _root }}collections/unsere-bestseller" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Bestseller
+        </a>
+        <a href="{{ _root }}collections/sale" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+          Sale
+        </a>
+        <a href="{{ _root }}pages/kontakt" class="quick-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          Kontakt
+        </a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+/* Auto-redirect broken 404 URLs (legacy locale prefixes, typos) */
+(function() {
+  var p = location.pathname;
+  var q = location.search;
+  var target = null;
+
+  /* /encollections/... → /collections/... */
+  if (p.indexOf('/encollections/') === 0) {
+    target = '/collections/' + p.substring('/encollections/'.length) + q;
+  }
+  /* /plcollections/... → /collections/... */
+  else if (p.indexOf('/plcollections/') === 0) {
+    target = '/collections/' + p.substring('/plcollections/'.length) + q;
+  }
+  /* /en/products/... → /products/... */
+  else if (p.indexOf('/en/') === 0) {
+    target = p.substring(3) + q;
+  }
+  /* /pl/products/... → /products/... */
+  else if (p.indexOf('/pl/') === 0) {
+    target = p.substring(3) + q;
+  }
+  /* /collections/herren-uhren → /collections/herrenuhren */
+  else if (p === '/collections/herren-uhren') {
+    target = '/collections/herrenuhren' + q;
+  }
+
+  if (target && target !== p + q) {
+    location.replace(target);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Custom 404 Page",
+  "tag": "section",
+  "class": "section",
+  "settings": []
+}
+{% endschema %}

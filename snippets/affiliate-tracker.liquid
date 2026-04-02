@@ -1,0 +1,64 @@
+{%- comment -%}
+  ═══════════════════════════════════════════════════════
+  KARINEX Affiliate Tracker
+  ─────────────────────────────────────────────────────
+  • Reads ?ref=CODE from URL → saves in cookie (30 days)
+  • Injects affiliate code as cart attribute on every page
+  • Shows up on orders in Shopify Admin: "Affiliate: CODE"
+  ═══════════════════════════════════════════════════════
+{%- endcomment -%}
+
+<script>
+(function(){
+  var COOKIE_NAME = 'kx_affiliate';
+  var COOKIE_DAYS = 30;
+
+  /* ── 1. Read ?ref= from URL ── */
+  function getParam(name){
+    var url = new URL(window.location.href);
+    return url.searchParams.get(name);
+  }
+
+  /* ── 2. Cookie helpers ── */
+  function setCookie(name, value, days){
+    var d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  }
+
+  function getCookie(name){
+    var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  /* ── 3. Check URL for ref param ── */
+  var refParam = getParam('ref');
+  if(refParam && refParam.length > 1){
+    setCookie(COOKIE_NAME, refParam, COOKIE_DAYS);
+  }
+
+  /* ── 4. Get stored affiliate code ── */
+  var affiliateCode = getCookie(COOKIE_NAME);
+  if(!affiliateCode) return; /* No affiliate, stop here */
+
+  /* ── 5. Inject into cart as cart attribute ── */
+  function updateCartAttribute(){
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        attributes: {
+          'Affiliate': affiliateCode
+        }
+      })
+    }).catch(function(){});
+  }
+
+  /* Run once on page load if affiliate cookie exists */
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', updateCartAttribute);
+  } else {
+    updateCartAttribute();
+  }
+})();
+</script>

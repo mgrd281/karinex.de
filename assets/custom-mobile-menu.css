@@ -1,0 +1,316 @@
+  /* Base Styles for Mobile Menu */
+  .custom-mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85vw; /* Slightly less than full width for depth */
+    max-width: 380px;
+    height: 100vh;
+    background: #fff;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    /* Animation Initial State */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px); /* Small slide distance */
+    transition: 
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
+      opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.28s;
+      
+    box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+  }
+  
+  .custom-mobile-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  /* Backdrop */
+  .cmm-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.2);
+    z-index: 999998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s;
+    backdrop-filter: blur(2px);
+  }
+
+  .cmm-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Header - OTTO Style with colored background */
+  .cmm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #00513a;
+    border-bottom: none;
+  }
+  
+  .cmm-icons {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .cmm-icon-btn {
+    position: relative;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .cmm-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #fff;
+    color: #00513a;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    border: none;
+  }
+
+  .cmm-close-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  /* Tabs - Clean underline style */
+  .cmm-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e5e5;
+    background: #fff;
+    padding: 0 16px;
+  }
+  
+  .cmm-tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 16px 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #999;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;
+  }
+  
+  .cmm-tab-item.active {
+    color: #000;
+  }
+  
+  .cmm-tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent-color, #000);
+  }
+
+  /* Scroll Content */
+  .cmm-content-scroller {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #f5f5f5;
+  }
+
+  /* Search - OTTO style rounded input */
+  .cmm-search-wrapper {
+    padding: 16px;
+    background: #fff;
+  }
+  
+  .cmm-search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .cmm-search-input {
+    width: 100%;
+    height: 48px;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 24px;
+    padding: 0 20px 0 48px;
+    font-size: 16px;
+    color: #333;
+    outline: none;
+  }
+  
+  .cmm-search-input::placeholder {
+    color: #999;
+  }
+  
+  .cmm-search-icon {
+    position: absolute;
+    left: 16px;
+    color: #666;
+  }
+
+  /* Coupon/Promo Banner - OTTO Style */
+  .cmm-coupon-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #00513a;
+    color: #fff;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    margin: 0;
+  }
+  
+  .cmm-coupon-text {
+    flex: 1;
+  }
+
+  /* Grid Container - OTTO Style */
+  .cmm-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 16px;
+    background: #f5f5f5;
+  }
+  
+  /* OTTO Style Category Card - White with product image */
+  .cmm-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px 14px;
+    min-height: 95px;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  
+  .cmm-card:hover, .cmm-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  
+  /* Large Card - Spans 2 columns */
+  .cmm-card--large {
+    grid-column: span 2;
+    min-height: 110px;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .cmm-card--large .cmm-card-title {
+    font-size: 17px;
+  }
+  
+  .cmm-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    display: block;
+    color: #1a1a1a;
+    z-index: 2;
+    max-width: 55%;
+  }
+  
+  .cmm-card-image {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cmm-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  /* SVG Icon styles */
+  .cmm-card-icon svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
+  
+  .cmm-card--large .cmm-card-image {
+    width: 85px;
+    height: 85px;
+    right: 12px;
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+  
+  .cmm-card--large .cmm-card-icon svg {
+    stroke: #fff;
+  }
+
+  /* Empty State */
+  .cmm-empty-state {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #999;
+  }
+  
+  .cmm-empty-state p {
+    margin: 12px 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+  }
+  
+  .cmm-empty-state span {
+    font-size: 13px;
+    color: #999;
+  }
+
+  @media (min-width: 769px) {
+    .custom-mobile-menu {
+      display: none !important;
+    }
+  }

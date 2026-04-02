@@ -1,0 +1,37 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  SCHEMA: VIDEO
+  Version: 1.0 | Created: 20.01.2026
+  Purpose: Video content rich snippets in Google Search/YouTube
+  Usage: {% render 'schema-video', video_url: 'url', video_title: 'title', ... %}
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+{% if video_url %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "{{ video_title | default: product.title | escape }}",
+  "description": "{{ video_description | default: product.description | strip_html | truncate: 200 | escape }}",
+  "thumbnailUrl": "{{ video_thumbnail | default: product.featured_image | image_url: width: 1280 }}",
+  "uploadDate": "{{ video_date | default: 'now' | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+  "duration": "{{ video_duration | default: 'PT5M' }}",
+  "contentUrl": "{{ video_url }}",
+  "embedUrl": "{{ video_embed_url | default: video_url }}",
+  "interactionStatistic": {
+    "@type": "InteractionCounter",
+    "interactionType": { "@type": "WatchAction" },
+    "userInteractionCount": {{ video_views | default: 0 }}
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "{{ shop.name }}",
+    "url": "{{ shop.url }}"
+  },
+  "publisher": {
+    "@id": "{{ shop.url }}/#organization"
+  }
+}
+</script>
+{% endif %}

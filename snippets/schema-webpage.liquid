@@ -1,0 +1,51 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  SCHEMA: WEBPAGE
+  Version: 1.0 | Created: 20.01.2026
+  Purpose: Define page type and breadcrumb context
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+{% liquid
+  assign page_type_schema = 'WebPage'
+  
+  if request.page_type == 'product'
+    assign page_type_schema = 'ItemPage'
+  elsif request.page_type == 'collection'
+    assign page_type_schema = 'CollectionPage'
+  elsif request.page_type == 'article'
+    assign page_type_schema = 'WebPage'
+  elsif request.page_type == 'index'
+    assign page_type_schema = 'WebPage'
+  endif
+  
+  assign page_url = canonical_url | default: request.origin
+  assign page_name = page_title | default: shop.name
+  assign page_desc = page_description | default: shop.description
+%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ page_type_schema }}",
+  "@id": "{{ page_url }}#webpage",
+  "url": "{{ page_url }}",
+  "name": "{{ page_name | escape }}",
+  "description": "{{ page_desc | escape }}",
+  "isPartOf": {
+    "@id": "{{ shop.url }}/#website"
+  },
+  "inLanguage": "de-DE",
+  "datePublished": "{{ page.published_at | default: 'now' | date: '%Y-%m-%d' }}",
+  "dateModified": "{{ page.updated_at | default: 'now' | date: '%Y-%m-%d' }}"
+  {% if page_image %}
+  ,
+  "primaryImageOfPage": {
+    "@type": "ImageObject",
+    "url": "https:{{ page_image | image_url: width: 800, format: 'webp' }}",
+    "width": 800,
+    "height": 630
+  }
+  {% endif %}
+}
+</script>

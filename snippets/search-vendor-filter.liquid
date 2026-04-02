@@ -1,0 +1,97 @@
+{%- doc -%}
+  Custom vendor/brand filter for search page.
+  Collects unique vendors from search results and renders checkboxes.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- liquid
+  assign current_vendor_filter = ''
+  if request.page_type == 'search'
+    assign current_vendor_filter = request.url | split: 'filter.p.vendor=' | last | split: '&' | first | url_decode
+  endif
+-%}
+
+{%- capture vendor_list -%}
+  {%- for product in search.results -%}
+    {%- if product.object_type == 'product' and product.vendor != blank -%}
+      {{ product.vendor | strip }}|||
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign vendor_array = vendor_list | split: '|||' -%}
+{%- assign unique_vendors = vendor_array | uniq | sort -%}
+
+{%- if unique_vendors.size > 0 -%}
+<accordion-custom
+  class="facets__item"
+  {% if filter_style == 'vertical' %}
+    open
+    open-by-default-on-mobile
+    open-by-default-on-desktop
+  {% endif %}
+  data-filter-param-name="vendor"
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-vendor"
+    class="facets__panel"
+    {% if filter_style == 'vertical' %}
+      open
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Marke</span>
+      <div class="facets__status-wrapper">
+        <facet-status-component class="facets__status" facet-type="list" data-filter-style="{{ filter_style }}">
+          <span {% if current_vendor_filter != blank %}class="bubble facets__bubble"{% endif %} hide-when-empty ref="facetStatus">
+            {%- if current_vendor_filter != blank -%}1{%- endif -%}
+          </span>
+        </facet-status-component>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+      id="facet-inputs-vendor"
+    >
+      <ul class="facets__list" role="list">
+        {%- for vendor in unique_vendors -%}
+          {%- assign vendor_stripped = vendor | strip -%}
+          {%- if vendor_stripped != blank -%}
+            {%- assign vendor_id = 'vendor-' | append: vendor_stripped | handleize -%}
+            {%- assign is_checked = false -%}
+            {%- if current_vendor_filter == vendor_stripped -%}
+              {%- assign is_checked = true -%}
+            {%- endif -%}
+            <li class="facets__list-item">
+              <label for="{{ vendor_id }}" class="facets__label-item">
+                <input
+                  type="checkbox"
+                  id="{{ vendor_id }}"
+                  value="{{ vendor_stripped | escape }}"
+                  {% if is_checked %}checked{% endif %}
+                  onchange="
+                    var url = new URL(window.location.href);
+                    if (this.checked) {
+                      url.searchParams.set('filter.p.vendor', this.value);
+                    } else {
+                      url.searchParams.delete('filter.p.vendor');
+                    }
+                    window.location.href = url.toString();
+                  "
+                >
+                <span class="facets__label-text">{{ vendor_stripped }}</span>
+              </label>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+{%- endif -%}

@@ -1,0 +1,337 @@
+/* ==============================================
+   WIDERRUFSBELEHRUNG - Enterprise Legal Design
+   Clean, trustworthy, legally compliant
+   ============================================== */
+
+/* Page Container */
+.widerruf-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.widerruf-hero {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  text-align: center;
+  background: #fff;
+  border: none;
+  box-shadow: none;
+  position: static !important;
+}
+
+.widerruf-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.widerruf-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.widerruf-meta svg {
+  opacity: 0.7;
+}
+
+.widerruf-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin: 0 0 12px;
+  font-weight: 400;
+}
+
+.widerruf-divider {
+  width: 48px;
+  height: 3px;
+  background: #111;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+/* Main Container */
+.widerruf-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Table of Contents */
+.widerruf-toc {
+  background: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 28px 0;
+  margin-bottom: 48px;
+}
+
+.widerruf-toc-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.widerruf-toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.widerruf-toc-list li {
+  padding: 8px 0;
+  border-bottom: none;
+}
+
+.widerruf-toc-list li:last-child {
+  border-bottom: none;
+}
+
+.widerruf-toc-list a {
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: color 0.15s;
+  line-height: 1.5;
+}
+
+.widerruf-toc-list a:hover {
+  color: #000;
+}
+
+.widerruf-toc-list .toc-number {
+  color: #888;
+  font-weight: 600;
+  flex-shrink: 0;
+  min-width: 24px;
+}
+
+/* Content Sections */
+.widerruf-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.widerruf-section {
+  margin-bottom: 48px;
+  scroll-margin-top: 100px;
+}
+
+.widerruf-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.widerruf-section p {
+  margin: 0 0 16px;
+}
+
+.widerruf-section p:last-child {
+  margin-bottom: 0;
+}
+
+/* Important Notice Box */
+.widerruf-notice {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 24px 0;
+}
+
+.widerruf-notice-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.widerruf-notice p {
+  margin: 0;
+  font-size: 15px;
+  color: #444;
+}
+
+/* Contact Info Box */
+.widerruf-contact {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin: 24px 0;
+}
+
+.widerruf-contact-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.widerruf-contact-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.widerruf-contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.widerruf-contact-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.widerruf-contact-value {
+  font-size: 15px;
+  color: #111;
+}
+
+.widerruf-contact-value a {
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.widerruf-contact-value a:hover {
+  color: #555;
+}
+
+/* Muster-Widerrufsformular */
+.widerruf-form-box {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 28px 32px;
+  margin: 24px 0;
+}
+
+.widerruf-form-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.widerruf-form-content {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 14px;
+  line-height: 2;
+  color: #333;
+}
+
+.widerruf-form-content p {
+  margin: 0 0 16px;
+}
+
+.widerruf-form-field {
+  display: block;
+  margin: 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted #ccc;
+  min-height: 24px;
+}
+
+.widerruf-form-address {
+  margin: 16px 0;
+  padding-left: 0;
+}
+
+.widerruf-form-note {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+/* Highlighted Frist */
+.widerruf-frist {
+  display: inline-block;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Trust Footer */
+.widerruf-trust-footer {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.widerruf-trust-text {
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .widerruf-hero {
+    padding: 40px 20px 32px;
+  }
+  
+  .widerruf-container {
+    padding: 0 20px 60px;
+  }
+  
+  .widerruf-toc {
+    padding: 20px;
+  }
+  
+  .widerruf-content {
+    font-size: 15px;
+  }
+  
+  .widerruf-section-title {
+    font-size: 18px;
+  }
+  
+  .widerruf-contact {
+    padding: 20px;
+  }
+  
+  .widerruf-form-box {
+    padding: 20px;
+  }
+  
+  .widerruf-form-content {
+    font-size: 13px;
+  }
+}

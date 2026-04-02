@@ -1,0 +1,1450 @@
+{% comment %}
+  Extracted Scripts and Styles for product-information.liquid to stay under 256KB limit.
+{% endcomment %}
+
+<!-- Block A: Back in Stock, ATC, Bell UI Styles -->
+<style>
+  .sale-badge {
+    position: relative;
+    top: auto;
+    right: auto;
+    z-index: 10;
+    background: #d32f2f;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transform: none;
+    margin-bottom: 24px;   
+  }
+
+  .sale-badge--promo {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Back In Stock UI */
+  .kx-back-in-stock-form {
+    margin-top: 20px;
+    width: 100%;
+  }
+  .kx-bis-title {
+    font-size: 16px; 
+    font-weight: 700; 
+    margin: 0 0 6px 0; 
+    color: #111;
+  }
+  .kx-bis-desc {
+    font-size: 14px; 
+    margin: 0 0 16px 0; 
+    color: #555;
+  }
+  .kx-bis-input-wrapper {
+    margin-bottom: 8px;
+    position: relative;
+    background: #f7f7f7;
+    border-radius: 4px;
+    padding-top: 6px;
+  }
+  .kx-bis-input {
+    width: 100%;
+    height: 52px;
+    background: transparent !important;
+    border: 1px solid transparent !important; /* Default invisible border, background provides shape */
+    border-radius: 4px;
+    padding: 16px 44px 0 16px;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #111 !important;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    position: relative;
+    z-index: 2;
+  }
+  .kx-bis-label {
+    position: absolute;
+    left: 17px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out;
+    pointer-events: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    z-index: 3;
+    background: transparent;
+    padding: 0 4px;
+    margin: 0;
+  }
+  /* Floating state when focused or has value */
+  .kx-bis-input:focus ~ .kx-bis-label,
+  .kx-bis-input:not(:placeholder-shown) ~ .kx-bis-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    background: #fff;
+    left: 12px;
+  }
+  .kx-bis-input:focus,
+  .kx-bis-input:not(:placeholder-shown) {
+    background: #fff !important;
+    border-color: #ccc !important;
+  }
+  .kx-bis-input-wrapper:has(.kx-bis-input:focus),
+  .kx-bis-input-wrapper:has(.kx-bis-input:not(:placeholder-shown)) {
+    background: transparent;
+    padding-top: 0;
+  }
+  /* Error state modifier */
+  .kx-bis-input-wrapper.has-error {
+    background: transparent;
+    padding-top: 0;
+  }
+  .kx-bis-input-wrapper.has-error .kx-bis-input {
+    border-color: #e13c4b !important;
+    background: #fff !important;
+  }
+  .kx-bis-input-wrapper.has-error .kx-bis-label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: 700;
+    color: #111;
+    background: #fff;
+    left: 12px;
+  }
+  .kx-bis-error-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #e13c4b;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+  }
+  .kx-bis-input-wrapper.has-error .kx-bis-error-icon {
+    display: flex; /* Show when input has error */
+  }
+  .kx-bis-error-text {
+    color: #e13c4b;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    display: none; /* Hidden by default */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  }
+  .kx-bis-error-text.is-visible {
+    display: block; /* Show when visible class is added */
+  }
+  
+  /* Success Message Styling (Toast Notification) */
+  .kx-bis-success {
+    display: none; /* Hidden by default */
+    align-items: center;
+    gap: 16px;
+    background-color: #f1fcf8;
+    border: 1px solid #107255;
+    border-radius: 4px;
+    padding: 16px 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    /* Fixed Toast Positioning */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: auto;
+    margin-top: 0;
+  }
+  .kx-bis-success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: #107255;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .kx-bis-input::placeholder {
+    color: #333;
+    font-weight: 600;
+  }
+  .kx-bis-input:focus {
+    border-color: #c93542 !important;
+  }
+  .kx-bis-btn {
+    width: 100%;
+    height: 52px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color .15s ease;
+    font-family: inherit;
+    padding: 0 16px;
+  }
+  .kx-bis-btn:hover {
+    background: #333;
+  }
+  .kx-bis-icon {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    flex-shrink: 0;
+  }
+  
+  /* Ensure Buy Now button takes full width and looks good below ATC */
+  .mobile-buy-now-form {
+    margin-top: 8px !important; /* Reduced from 12px */
+  }
+  .buy-now {
+    width: 100%;
+    margin-top: 0 !important;
+  }
+  /* Hide Jetzt kaufen button on mobile */
+  @media (max-width: 989px) {
+    .mobile-buy-now-form,
+    #buy-now-form {
+      display: none !important;
+    }
+  }
+
+  /* === ATC: modern SVG icon upgrade (mobile + desktop) === */
+  /* Hide Font Awesome icon everywhere */
+  #add-to-cart-form .buy-btn > i.fa-shopping-cart {
+    display: none !important;
+  }
+  /* Show + style the inline SVG icon */
+  #add-to-cart-form .buy-btn .atc-icon-svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    position: static;
+    transform: none;
+  }
+  /* Override absolute positioning, use inline flex */
+  #add-to-cart-form .buy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  /* Remove any pseudo-element artefacts */
+  #add-to-cart-form .buy-btn::before,
+  #add-to-cart-form .buy-btn::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* === Buy Now: modern SVG icon upgrade (mobile + desktop) === */
+  #buy-now-form .buy-btn > i.fa-rocket {
+    display: none !important;
+  }
+  #buy-now-form .buy-btn .buynow-icon-svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    position: static;
+    transform: none;
+  }
+  #buy-now-form .buy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  #buy-now-form .buy-btn::before,
+  #buy-now-form .buy-btn::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* ── Desktop Wishlist Heart Pill (top-right of image) ── */
+  /* ── Desktop PDP: Clean circle heart — top-right ── */
+  @media (min-width: 990px) {
+
+    .wishlist-pdp-wrapper {
+      position: absolute !important;
+      top: 16px !important;
+      right: -1px !important;
+      bottom: auto !important;
+      left: auto !important;
+      z-index: 20 !important;
+      display: inline-flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 7px 12px !important;
+      background: rgba(255, 255, 255, 0.95) !important;
+      border: none !important;
+      border-radius: 8px 0 0 8px !important;
+      box-shadow: -2px 2px 10px rgba(0,0,0,0.08) !important;
+      cursor: pointer !important;
+      transition: background 0.2s ease, box-shadow 0.2s ease, padding-right 0.2s ease !important;
+    }
+
+    .wishlist-pdp-wrapper:hover {
+      background: rgba(255,255,255,0.95) !important;
+      box-shadow: -4px 4px 18px rgba(0,0,0,0.12) !important;
+      padding-right: 16px !important;
+    }
+
+    /* ── Heart ── */
+    .wishlist-pdp-btn {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      cursor: pointer !important;
+      width: auto !important;
+      height: auto !important;
+      box-shadow: none !important;
+      flex-shrink: 0 !important;
+    }
+
+    .wishlist-pdp-btn svg {
+      width: 17px !important;
+      height: 17px !important;
+      stroke: #1a1a1a !important;
+      stroke-width: 1.4px !important;
+      fill: transparent !important;
+      transition: fill 0.2s ease, stroke 0.2s ease !important;
+      display: block !important;
+    }
+
+    .wishlist-pdp-wrapper:hover .wishlist-pdp-btn svg {
+      stroke: #1d4739 !important;
+    }
+
+    .wishlist-pdp-btn.active svg {
+      fill: #1d4739 !important;
+      stroke: #1d4739 !important;
+      animation: heartPulse 0.3s ease forwards !important;
+    }
+
+    @keyframes heartPulse {
+      0%   { transform: scale(1);   }
+      50%  { transform: scale(1.18); }
+      100% { transform: scale(1);   }
+    }
+
+    /* ── Count — inline beside heart ── */
+    .wishlist-social-proof {
+      display: none; /* JS sets to flex */
+      flex-direction: row !important;
+      align-items: center !important;
+      position: static !important;
+      background: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 0 0 0 6px !important;
+      border-left: 1px solid rgba(0,0,0,0.12) !important;
+      min-width: auto !important;
+      width: auto !important;
+      height: auto !important;
+      animation: countSlide 0.2s ease forwards !important;
+    }
+
+    @keyframes countSlide {
+      from { opacity: 0; transform: translateX(-3px); }
+      to   { opacity: 1; transform: translateX(0);    }
+    }
+
+    .wishlist-social-proof__count {
+      font-size: 11px !important;
+      font-weight: 500 !important;
+      color: #333 !important;
+      line-height: 1 !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, sans-serif !important;
+      display: block !important;
+    }
+
+    .wishlist-pdp-wrapper:has(.wishlist-pdp-btn.active) .wishlist-social-proof__count {
+      color: #1d4739 !important;
+      font-weight: 600 !important;
+    }
+
+    /* Hide old inner counter */
+    .wishlist-counter__value {
+      display: none !important;
+    }
+  }
+
+  /* ── Bell icon — same flush-left green tag on ALL screen sizes ── */
+  @media (min-width: 990px) {
+    .mobile-wishlist-pill { display: none !important; }
+
+    .pdp-bell-btn {
+      position: absolute !important;
+      top: 24px !important;       /* Moved to top-left of the product image */
+      bottom: auto !important;
+      left: 0 !important;
+      right: auto !important;
+      z-index: 55 !important;
+      display: flex !important;
+      align-items: center !important;
+      /* Removed gap, moved to pseudo-element margin */
+      padding: 6px 10px 6px 8px !important;
+      background: rgba(29, 71, 57, 0.98) !important;
+      border: none !important;
+      /* Rounded on the RIGHT side only — flush-left tab */
+      border-radius: 0 18px 18px 0 !important;
+      cursor: pointer !important;
+      color: #fff !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      line-height: 1 !important;
+      box-shadow: none !important;
+      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.4,0,0.2,1) !important;
+    }
+    .pdp-bell-btn:hover {
+      background: #143329 !important;
+      transform: translateX(3px) !important; /* subtle slide-right on hover */
+    }
+    .pdp-bell-btn:active {
+      transform: scale(0.96) translateX(2px) !important;
+      background: #0f2820 !important;
+    }
+    .pdp-bell-btn svg {
+      width: 10px !important;
+      height: 10px !important;
+      stroke: #ffffff !important;
+      stroke-width: 1.8px !important;
+      fill: none !important;
+      filter: none !important;
+      flex-shrink: 0 !important;
+    }
+    /* Label text */
+    .pdp-bell-btn::before {
+      content: "Preisalarm" !important;
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      color: #fff !important;
+      letter-spacing: 0.02em !important;
+      white-space: nowrap !important;
+      
+      display: inline-block !important;
+      overflow: hidden !important;
+      width: auto !important;
+      max-width: 0px;
+      margin-right: 0px;
+      opacity: 0;
+      animation: autoRevealBellText 3.8s cubic-bezier(0.87,0,0.13,1) 3s forwards !important;
+      transition: max-width 0.4s ease, opacity 0.4s ease, margin 0.4s ease !important;
+    }
+    .pdp-bell-btn:hover::before,
+    .pdp-bell-btn:active::before {
+      animation: hoverRevealBellText 2.8s cubic-bezier(0.87,0,0.13,1) forwards !important;
+    }
+  }
+  @media (max-width: 989px) {
+    /* Bell as a flush-left tag — mirrors the wishlist pill on the right */
+    .pdp-bell-btn {
+      position: absolute !important;
+      bottom: 52px !important;       /* same level as wishlist pill */
+      left: 0 !important;            /* flush to left edge */
+      right: auto !important;
+      top: auto !important;
+      z-index: 55 !important;
+      display: flex !important;
+      align-items: center !important;
+      /* Removed gap, moved to pseudo-element margin */
+      padding: 6px 12px 6px 10px !important;
+      background: rgba(29, 71, 57, 0.98) !important;
+      border: none !important;
+      /* Rounded on the RIGHT side only — tab effect from left edge */
+      border-radius: 0 16px 16px 0 !important;
+      cursor: pointer !important;
+      color: #fff !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      line-height: 1 !important;
+      box-shadow: none !important;
+      transform: none !important;
+      transition: transform 0.2s cubic-bezier(0.4,0,0.2,1),
+                  background 0.2s ease !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+    .pdp-bell-btn:active {
+      transform: scale(0.96) translateX(-2px) !important;
+      background: #143329 !important;
+    }
+    .pdp-bell-btn svg {
+      width: 13px !important;
+      height: 13px !important;
+      stroke: #ffffff !important;
+      stroke-width: 1.8px !important;
+      fill: none !important;
+      filter: none !important;
+    }
+    /* Label next to the icon */
+    .pdp-bell-btn::before {
+      content: "Preisalarm" !important;
+      font-size: 10px !important;
+      font-weight: 600 !important;
+      color: #fff !important;
+      letter-spacing: 0.01em !important;
+      white-space: nowrap !important;
+      
+      display: inline-block !important;
+      overflow: hidden !important;
+      width: auto !important;
+      max-width: 0px;
+      margin-right: 0px;
+      opacity: 0;
+      animation: autoRevealBellText 3.8s cubic-bezier(0.87,0,0.13,1) 3s forwards !important;
+      transition: max-width 0.4s ease, opacity 0.4s ease, margin 0.4s ease !important;
+    }
+    .pdp-bell-btn:hover::before,
+    .pdp-bell-btn:active::before {
+      animation: hoverRevealBellText 2.8s cubic-bezier(0.87,0,0.13,1) forwards !important;
+    }
+  }
+  
+  @keyframes autoRevealBellText {
+    0%   { max-width: 0;    opacity: 0; margin-right: 0;   }
+    15%  { max-width: 80px; opacity: 1; margin-right: 4px; }
+    75%  { max-width: 80px; opacity: 1; margin-right: 4px; }
+    90%  { max-width: 80px; opacity: 0; margin-right: 4px; }
+    100% { max-width: 0;    opacity: 0; margin-right: 0;   }
+  }
+
+  @keyframes hoverRevealBellText {
+    0%   { max-width: 0;    opacity: 0; margin-right: 0;   }
+    15%  { max-width: 80px; opacity: 1; margin-right: 4px; }
+    70%  { max-width: 80px; opacity: 1; margin-right: 4px; }
+    85%  { max-width: 80px; opacity: 0; margin-right: 4px; }
+    100% { max-width: 0;    opacity: 0; margin-right: 0;   }
+  }
+</style>
+
+<!-- Block B: Payment Icons & Meta List Styles -->
+<style>
+/* Reduce gap between ATC button and payment icons */
+.price-box {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+.kx-buybox-actions .buy-btn,
+.kx-buybox-actions .kx-atc-btn {
+  margin-bottom: 0 !important;
+}
+.kx-buybox-actions {
+  margin-bottom: 0 !important;
+}
+.payment-icons-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px !important;
+}
+
+.payment-icons-row .payment-icon {
+  height: 25px;
+  width: auto;
+  border-radius: 3px;
+}
+
+.payment-icon-custom {
+  height: 25px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Mobile Optimization */
+@media (max-width: 989px) {
+  .payment-icons-row {
+    display: flex !important;
+    flex-wrap: wrap !important; /* Allow wrapping for cleaner look */
+    justify-content: center !important; /* Center align */
+    gap: 8px !important; 
+    margin-top: 6px !important;
+    width: 100%;
+    max-width: 100%; /* Prevent overflow */
+    padding-right: 0;
+    overflow: hidden !important; /* Changed from visible to hidden */
+  }
+  
+  .payment-icons-row::-webkit-scrollbar {
+    display: none; 
+  }
+
+  .payment-icons-row .payment-icon,
+  .payment-icon-custom {
+    height: 24px !important; 
+    width: auto !important;
+    flex-shrink: 0 !important; 
+    display: inline-block !important;
+  }
+}
+/* Product Meta List - Unified Icon-Text Layout System */
+.product-meta-list,
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+}
+
+.benefits-list {
+  margin-top: 0;
+  padding-top: 2px;
+}
+
+.meta-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: calc(var(--row-gap, 8px)/2) 0;
+  line-height: 1.4;
+  font-size: 13px;
+  color: #222;
+}
+
+.meta-list-item i,
+.meta-list-item .benefit-icon-svg {
+  color: var(--primary, #1D4739);
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  padding-top: 2px;
+  font-size: 1rem;
+}
+
+.meta-list-item .benefit-icon-svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.meta-list-item .meta-text {
+  flex: 1;
+  min-width: 0;
+  /* Text wraps under itself, not under icon */
+}
+
+.meta-list-item .meta-label {
+  font-weight: 400;
+  margin-right: 4px;
+}
+
+.meta-list-item .meta-value {
+  font-weight: 400;
+}
+
+.meta-list-item a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 150ms ease;
+}
+
+/* Elegant hover: darker color, no underline (AboutYou/Zalando style) */
+.meta-list-item a:hover {
+  color: #143626; /* darker shade of primary #1D4739 */
+  text-decoration: none;
+}
+
+/* Mobile: no underline on tap */
+.meta-list-item a:active,
+.meta-list-item a:focus {
+  text-decoration: none;
+}
+
+/* Accessibility: visible focus outline */
+.meta-list-item a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Legacy highlights-list - now unified */
+.highlights-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+}
+
+.highlights-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: calc(var(--row-gap, 8px)/2) 0;
+  line-height: 1.4;
+  font-size: 13px;
+  color: #222;
+}
+
+.highlights-list li i {
+  color: var(--primary, #1D4739);
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+  padding-top: 2px;
+  font-size: 1rem;
+}
+
+.status-available { color: var(--success); font-weight: 600; }
+.status-delayed { color: #222; font-weight: 600; }
+.status-unavailable { color: var(--error); font-weight: 600; }
+.usk-warning { color: var(--error); font-weight: 600; }
+
+/* Benefits-specific overrides */
+.benefits-list .meta-list-item {
+  font-weight: 400;
+}
+
+.benefits-list .meta-list-item a {
+  font-weight: 400;
+  color: #222;
+  text-decoration: none;
+}
+
+.benefits-list .meta-list-item a:hover {
+  text-decoration: none;
+}
+
+/* ============================================
+   PDP INFO LIST - "Frage zum Artikel" Link Color
+   Force same color as other rows (#222)
+   ============================================ */
+.frage-trigger-btn,
+.frage-trigger-btn span,
+.frage-trigger-btn:hover,
+.frage-trigger-btn span:hover,
+.frage-trigger-btn:visited,
+button.frage-trigger-btn,
+button.frage-trigger-btn span {
+  color: #222 !important;
+  text-decoration: none !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .frage-trigger-btn:hover,
+  button.frage-trigger-btn:hover {
+    opacity: 0.85;
+  }
+}
+
+/* Larger return icon */
+.benefits-list .benefit-icon-return {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* Uniform icon sizing for all benefit icons */
+.benefits-list .benefit-icon-fa {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* ============================================
+   DESKTOP STOCK BADGES - Outside Gallery
+   ============================================ */
+
+/* ============================================
+   PREMIUM BREADCRUMB - Ultra-compact, no separators (Desktop only)
+   ============================================ */
+
+/* Hide breadcrumb completely in product header (PDP only) */
+.product-info .meta-breadcrumb,
+.product-info .meta-breadcrumb[aria-label="Breadcrumb"] {
+  display: none !important;
+}
+
+@media (min-width: 990px) {
+  /* Ultra-compact breadcrumb - continuous text */
+  .product-info .meta-breadcrumb,
+  .product-info .meta-breadcrumb[aria-label="Breadcrumb"] {
+    display: none !important;
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 18px 0 10px 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  /* All items inline with zero spacing */
+  .product-info .meta-breadcrumb > a,
+  .product-info .meta-breadcrumb > .current {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+  }
+
+  /* NO separators - remove chevrons completely */
+  .product-info .meta-breadcrumb > a::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Previous items - neutral gray */
+  .product-info .meta-breadcrumb > a {
+    color: #8a8a8a;
+    transition: color 0.15s ease;
+  }
+
+  .product-info .meta-breadcrumb > a:hover {
+    color: #555;
+  }
+
+  /* Current item - darker, no bold */
+  .product-info .meta-breadcrumb > .current {
+    color: #1f1f1f;
+    font-weight: 400;
+  }
+}
+
+/* Mobile: Hide desktop badge container */
+.desktop-stock-badge {
+  display: none !important;
+}
+
+/* =================================================================
+   UNIFIED MOBILE PDP GALLERY – single source of truth
+   AboutYou-style: clean stage, badge OUTSIDE, icons on right of stage
+   ================================================================= */
+@media (max-width: 989px) {
+  /* 0. Main gallery wrapper becomes relative positioning context */
+  .gallery-main {
+    position: relative;
+  }
+
+  /* 1. Gallery breaks out of container padding → edge-to-edge via transform */
+  .product-gallery,
+  .product-media-wrapper {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    background: #f3f3f3 !important;
+  }
+
+  /* 2. Stage fills full width, no side border-radius, grey strictly bounded */
+  .gallery-stage-container {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden; /* cleanly clips grey background */
+  }
+
+  /* 3. Stage wrapper = positioning context for floating icons */
+  .gallery-stage-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  /* 4. Floating icons anchored to stage-wrapper, right side, vertically centered */
+  .mobile-gallery-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    bottom: 90px;
+    right: 10px;
+    z-index: 30;
+    pointer-events: auto;
+  }
+
+  /* 4. Badge OUTSIDE stage – below stage, flush-left at 16px */
+  .mobile-stock-badge-outside {
+    display: block;
+    margin: 8px 0 2px 0;
+    padding-left: 16px;
+  }
+
+  /* 5. Badge pill styles */
+  .product-badges__badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  .product-badges__badge--low-stock {
+    background: #FDE74C;
+    color: #111111;
+  }
+
+  .product-badges__badge--sold-out {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  /* 6. ABOUTYOU STYLE MOBILE THUMBNAILS (HIDDEN FOR DOTS) */
+  .product-thumbnails,
+  .gallery-thumbs,
+  .thumbs-rail {
+    display: none !important;
+  }
+
+  /* 7. ABOUTYOU STYLE MOBILE DOTS (OVERLAY) */
+  #carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    position: absolute !important;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 20;
+  }
+
+  /* Hide custom carousel dots if there is only 1 image (robust fallback) */
+  #carousel-dots:has(.dot:only-child) {
+    display: none !important;
+  }
+
+  /* Support for DOM edge cases */
+  #carousel-dots:empty {
+    display: none !important;
+  }
+
+  /* Hide the dot itself if the browser doesn't support :has */
+  #carousel-dots .dot:only-child {
+    display: none !important;
+  }
+
+  #carousel-dots .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    transition: background 0.3s ease, transform 0.3s ease;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 1;
+  }
+
+  #carousel-dots .dot.active {
+    background: #000;
+    width: 7px;
+    height: 7px;
+  }
+
+  /* 7. Prevent pagination/counter from blocking clicks */
+  .swiper-pagination,
+  .gallery-counter {
+    pointer-events: none;
+  }
+
+  /* Hide Swiper automatic class when only one slide */
+  .swiper-pagination.swiper-pagination-lock {
+    display: none !important;
+  }
+
+  /* Fallback: Hide if only one slide */
+  .swiper:has(.swiper-slide:only-child) .swiper-pagination {
+    display: none !important;
+  }
+
+  /* Fallback (Safer Method) */
+  .swiper-slide:only-child ~ .swiper-pagination {
+    display: none !important;
+  }
+}
+
+/* Desktop: hide mobile-only elements */
+@media (min-width: 990px) {
+  .mobile-stock-badge-outside {
+    display: none;
+  }
+}
+
+/* Desktop: Reposition badges outside gallery */
+@media (min-width: 990px) {
+  /* Hide gallery badges on desktop */
+  .gallery-overlay .product-badges {
+    display: none !important;
+  }
+
+  /* Hide desktop badge container as we use the image badge now */
+  .desktop-stock-badge {
+    display: none !important;
+  }
+
+  /* Clean pill badge styles */
+  .desktop-stock-badge .stock-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  /* Sold out badge - dark premium style */
+  .desktop-stock-badge .stock-badge--sold-out {
+    background: #1f1f1f;
+    color: #ffffff;
+  }
+
+  /* Low stock badge - soft yellow */
+  .desktop-stock-badge .stock-badge--low-stock {
+    background: #fef9c3;
+    color: #111111;
+  }
+}
+</style>
+
+<!-- Block C: Variants, Price, Drawer Scripts -->
+<script>
+  (function(){
+    /* === Drawer === */
+    const drawer = document.getElementById('returnPolicyDrawer');
+    if(drawer){
+      const panel = drawer.querySelector('.krx-drawer__panel');
+      const backdrop = drawer.querySelector('.krx-drawer__backdrop');
+      const openers = document.querySelectorAll('.open-return-drawer');
+      const closeSel = '[data-close-drawer]';
+      const closeEls = drawer.querySelectorAll(closeSel);
+      let lastFocused = null;
+      function openDrawer(e){ if(e) e.preventDefault(); lastFocused=document.activeElement; drawer.hidden=false; requestAnimationFrame(()=>drawer.classList.add('is-open')); panel&&panel.focus(); openers.forEach(o=>o.setAttribute('aria-expanded','true')); document.addEventListener('keydown', onKeydown); }
+      function closeDrawer(){ drawer.classList.remove('is-open'); setTimeout(()=>{ drawer.hidden=true; },220); openers.forEach(o=>o.setAttribute('aria-expanded','false')); if(lastFocused){ try{ lastFocused.focus(); }catch(e){} } document.removeEventListener('keydown', onKeydown); }
+      function onKeydown(ev){
+        if(ev.key==='Escape') closeDrawer();
+        if(ev.key==='Tab'){
+          const focusables = drawer.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
+          if(!focusables.length) return;
+          const first = focusables[0], last = focusables[focusables.length-1];
+          if(ev.shiftKey && document.activeElement===first){ ev.preventDefault(); last.focus(); }
+          else if(!ev.shiftKey && document.activeElement===last){ ev.preventDefault(); first.focus(); }
+        }
+      }
+      openers.forEach(btn=>btn.addEventListener('click', openDrawer));
+      closeEls.forEach(el=>el.addEventListener('click', closeDrawer));
+      drawer.addEventListener('click', e=>{ if(e.target===backdrop) return closeDrawer(); if(e.target.closest && e.target.closest(closeSel)) return closeDrawer(); });
+    }
+    /* === Varianten === */
+    const hasVariants = {{ product.variants.size | json }} > 1;
+    const variantPickers = document.querySelectorAll('[id^="variantPicker-"]');
+    const legendValues = document.querySelectorAll('.variantLegendValue');
+    const eanEl = document.getElementById('eanValue');
+    const availEl = document.getElementById('availabilityValue');
+    const shipEl = document.getElementById('shippingDateValue');
+    const variants   = {{ product.variants | json }};
+    const selectedId = {{ product.selected_or_first_available_variant.id }};
+    const isDigital  = {{ is_digital | json }};
+    
+    // Track selected options for each dimension
+    let currentOptions = {{ product.selected_or_first_available_variant.options | json }} || [];
+    const allFilterOptions = [
+      {%- for option in product.options_with_values -%}
+        {%- assign name = option.name | downcase -%}
+        {%- if name == 'farbe' or name == 'color' or name == 'modell' or name == 'model' or name == 'stil' or name == 'style' or name == 'größe' or name == 'size' -%}
+          {%- for value in option.values -%}"{{ value | downcase }}"{% unless forloop.last %},{% endunless %}{%- endfor -%}{% unless forloop.last %},{% endunless %}
+        {%- endif -%}
+      {%- endfor -%}
+    ];
+
+    const shippingByVariantId = {
+      {%- for v in product.variants -%}
+      "{{ v.id }}": "{{ v.metafields.custom.versand_datum
+        | default: v.metafields.custom.versanddatum
+        | default: v.metafields.custom.datum_und_uhrzeit_versand
+        | default: v.metafields.custom.shipping_date
+      }}"{% if forloop.last == false %},{% endif %}
+      {%- endfor -%}
+    };
+    
+    const variantFeaturedMedia = {
+      {%- for v in product.variants -%}
+        "{{ v.id }}": {{ v.featured_media.id | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    };
+
+    const variantTitleOverrides = {
+      {%- for v in product.variants -%}
+        "{{ v.id }}": {
+          "full_title": {{ v.metafields.custom.display_title | json }},
+          "sku": {{ v.sku | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    };
+    const moneyFormat = (function(){
+      const cartMoneyFormat = "{{ cart.currency.money_format | escape }}";
+      if (window.Shopify && typeof Shopify.formatMoney === 'function') {
+        return function(cents){ return Shopify.formatMoney(cents, cartMoneyFormat); };
+      }
+      const currencySymbol = "{{ cart.currency.symbol | escape }}";
+      return function(cents){
+        try { return (Number(cents)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) + currencySymbol; }
+        catch(e){ return (Number(cents)/100).toFixed(2) + currencySymbol; }
+      };
+    })();
+    function renderPriceForVariant(variant){
+      const el = document.querySelector('.kvp-pro__price[data-variant-id="'+ variant.id +'"]');
+      if(!el) return;
+      const price = Number(variant.price);
+      const cap   = Number(variant.compare_at_price || 0);
+      if (cap && cap > price){ el.innerHTML = '<span>'+ moneyFormat(price) +'</span> <del>'+ moneyFormat(cap) +'</del>'; }
+      else { el.textContent = moneyFormat(price); }
+    }
+    if (hasVariants) { (variants || []).forEach(renderPriceForVariant); }
+    function formatDateDE(iso){
+      if(!iso) return '';
+      const d = new Date(iso);
+      if(isNaN(d)) return '';
+      const monthsDE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+      return d.getDate() + '. ' + monthsDE[d.getMonth()];
+    }
+    function updateUI(variant){
+      if(!variant) return;
+      currentOptions = [...variant.options];
+      variantPickers.forEach(picker => {
+        const optionIndex = parseInt(picker.getAttribute('id').split('-')[1]);
+        picker.querySelectorAll('.kvp-pro__card').forEach(card => {
+          const isActive = card.getAttribute('data-option-value') === variant.options[optionIndex];
+          card.classList.toggle('is-active', isActive);
+          const input = card.querySelector('input[type="radio"]');
+          if(input) input.checked = isActive;
+        });
+      });
+      legendValues.forEach(legend => {
+        const optionIndex = parseInt(legend.getAttribute('data-option-index'));
+        legend.textContent = variant.options[optionIndex] || '';
+      });
+      if(eanEl) eanEl.textContent = variant.barcode || '—';
+      const shipRaw = shippingByVariantId[String(variant.id)];
+      const shipTxt = (shipRaw && shipRaw.indexOf('T') !== -1) ? formatDateDE(shipRaw) : formatDateDE(shipRaw);
+      if(shipEl && shipRaw){ shipEl.textContent = shipTxt; }
+      if(availEl){
+        const isFutureDate = (function(){
+          if(!shipRaw) return false;
+          const shipDate = new Date(shipRaw);
+          if(isNaN(shipDate)) return false;
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          return shipDate >= today;
+        })();
+        const isPreorder = (function(){
+          if(!shipRaw) return false;
+          const shipDate = new Date(shipRaw);
+          if(isNaN(shipDate)) return false;
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const diffDays = Math.floor((shipDate - today) / 86400000);
+          return diffDays > 15;
+        })();
+        if(isDigital){
+          availEl.innerHTML = '<span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>';
+        }else if(!variant.available){
+          availEl.innerHTML = '<span class="out-of-stock">Zurzeit nicht verfügbar</span>';
+        }else if(isFutureDate && shipRaw){
+          const preorderPrefix = isPreorder ? '<span style="font-weight:700;">Vorbestellung</span> ' : '';
+          availEl.innerHTML = '<span class="status-delayed" id="shipping-date-display">' + preorderPrefix + 'Versand am ' + shipTxt + '</span>';
+        }else{
+          availEl.innerHTML = '<span class="in-stock" id="delivery-status-text">in 1–3 Werktagen bei dir</span>';
+        }
+      }
+      if(window.history && window.history.replaceState){
+        const url = new URL(window.location.href);
+        url.searchParams.set('variant', variant.id);
+        window.history.replaceState({}, '', url.toString());
+      }
+      const select = document.querySelector('form [name="id"]');
+      if(select){
+        const opt = select.querySelector('option[value="'+variant.id+'"]');
+        if(opt){ select.value = String(variant.id); select.dispatchEvent(new Event('change', {bubbles:true})); }
+      }
+      const buyContainer = document.getElementById('buyButtonsContainer');
+      const bisForm = document.getElementById('backInStockForm');
+      if (buyContainer && bisForm) {
+        if (variant.available) { buyContainer.style.display = 'block'; bisForm.style.display = 'none'; }
+        else { buyContainer.style.display = 'none'; bisForm.style.display = 'block'; }
+      }
+      document.dispatchEvent(new CustomEvent('variant:change', { detail:{ variant } }));
+      const mainTitleEl = document.querySelector('.product-title');
+      if (mainTitleEl && variant) {
+        const overrides = variantTitleOverrides[String(variant.id)];
+        let newTitle = {{ product.title | json }};
+        if (overrides && overrides.full_title) { newTitle = overrides.full_title; } 
+        else {
+          const currentSku = variant.sku;
+          if (currentSku) {
+            variants.forEach(v => {
+              if (v.sku && v.sku.length > 3 && newTitle.includes(v.sku)) { newTitle = newTitle.replace(v.sku, currentSku); }
+            });
+          }
+          // Skip appending variant title if it contains gender/age descriptors
+          const genderAgePattern = /(Männlich|Weiblich|Erwachsene|Kinder|Kind|Jungen|Mädchen)/i;
+          if (variant.title && variant.title !== "Default Title" && !genderAgePattern.test(variant.title)) { 
+            newTitle += " - " + variant.title; 
+          }
+        }
+        mainTitleEl.textContent = newTitle;
+      }
+      const selectedFilterValues = (variant.options || []).map(opt => opt.toLowerCase());
+      let firstVisibleIndex = -1;
+      const thumbs = document.querySelectorAll('.thumb-item');
+      thumbs.forEach(thumb => {
+        const alt = (thumb.getAttribute('data-variant-alt') || '').toLowerCase();
+        let shouldShow = true;
+        const mentionedFilterValue = allFilterOptions.find(val => alt.includes(val));
+        if (mentionedFilterValue) {
+          const isCurrentMatch = selectedFilterValues.some(val => alt.includes(val));
+          if (!isCurrentMatch) shouldShow = false;
+        }
+        thumb.style.display = shouldShow ? 'block' : 'none';
+        if (shouldShow && firstVisibleIndex === -1) firstVisibleIndex = parseInt(thumb.getAttribute('data-index'));
+      });
+      if (variant && window.updateMainImage) {
+        const mediaId = variantFeaturedMedia[String(variant.id)];
+        if (mediaId) {
+          const thumb = document.querySelector(`.thumb-item[data-media-id="${mediaId}"]`);
+          if (thumb) window.updateMainImage(parseInt(thumb.getAttribute('data-index')));
+          else if (firstVisibleIndex !== -1) window.updateMainImage(firstVisibleIndex);
+        } else if (firstVisibleIndex !== -1) window.updateMainImage(firstVisibleIndex);
+      }
+    }
+    function updateForms(variantId){
+      document.querySelectorAll('#add-to-cart-form input[name="id"], #buy-now-form input[name="id"]').forEach(el => el.value = String(variantId));
+    }
+    function renderMainPrice(variant){
+      var priceBox = document.querySelector('.price-container');
+      if(!priceBox || !variant) return;
+      var curEl  = priceBox.querySelector('.current-price');
+      var oldEl  = priceBox.querySelector('.old-price');
+      var subRow = priceBox.querySelector('.price-sub-row');
+      var saveFullTextEl = priceBox.querySelector('.savings-text');
+      var pillEl = priceBox.querySelector('.discount-pill-simple');
+      var saleBadge = priceBox.querySelector('.sale-badge');
+      var hasStaticBadge = saleBadge && saleBadge.getAttribute('data-static-badge') === 'true';
+      var price = Number(variant.price);
+      var cap   = Number(variant.compare_at_price || 0);
+      if(curEl) curEl.textContent = moneyFormat(price);
+      if(cap && cap > price){
+        if(subRow) subRow.style.display = 'flex';
+        if(oldEl) oldEl.textContent = moneyFormat(cap);
+        var save = cap - price;
+        if(saveFullTextEl) saveFullTextEl.textContent = 'Preisvorteil: ' + moneyFormat(save);
+        if(pillEl){
+          var pct = Math.round(((cap - price) / cap) * 100);
+          pillEl.textContent = '-' + pct + '%';
+          pillEl.style.display = 'inline-block';
+        }
+        if(saleBadge) saleBadge.style.display = 'inline-flex';
+      } else {
+        if(subRow) subRow.style.display = 'none';
+        if(pillEl) pillEl.style.display = 'none';
+        if(saleBadge) saleBadge.style.display = hasStaticBadge ? 'inline-flex' : 'none';
+      }
+    }
+    document.addEventListener('variant:change', function(e){
+      var v = e.detail && e.detail.variant;
+      if(v) { renderMainPrice(v); updateForms(v.id); }
+    });
+    const mainContainer = document.querySelector('.kx-selection-group');
+    if (mainContainer) {
+      mainContainer.addEventListener('click', function(e){
+        const card = e.target.closest('.kvp-pro__card');
+        if(!card) return;
+        const optionIndex = parseInt(card.getAttribute('data-option-index'));
+        const optionValue = card.getAttribute('data-option-value');
+        const newOptions = [...currentOptions];
+        newOptions[optionIndex] = optionValue;
+        const variant = (variants || []).find(v => v.options.every((opt, index) => opt === newOptions[index])) || null;
+        if(variant) updateUI(variant);
+        else {
+          const fallback = (variants || []).find(v => v.options[optionIndex] === optionValue && v.available) || (variants || []).find(v => v.options[optionIndex] === optionValue);
+          if (fallback) updateUI(fallback);
+        }
+      });
+    }
+    const initial = (variants || []).find(v => v.id === selectedId) || (variants || [])[0] || null;
+    if(initial) updateUI(initial);
+  })();
+</script>
+
+<!-- Block D: Description Toggle, Tabs, FAQ, Mobile Logic Scripts -->
+<script>
+function toggleDesc() {
+  var t = document.getElementById('watchDescText');
+  var g = document.getElementById('watchDescGradient');
+  var b = document.getElementById('watchMehrBtn');
+  var isDesktop = window.innerWidth >= 990;
+  var maxHeight = isDesktop ? 380 : 250;
+
+  if (t.classList.contains('open')) {
+    t.classList.remove('open');
+    t.style.maxHeight = maxHeight + 'px';
+    g.classList.remove('hide');
+    b.classList.remove('open');
+    b.innerHTML = 'Mehr anzeigen <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+    t.closest('.watch-layout').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    t.classList.add('open');
+    t.style.maxHeight = t.scrollHeight + 'px';
+    g.classList.add('hide');
+    b.classList.add('open');
+    b.innerHTML = 'Weniger anzeigen <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+    setTimeout(function() { if(t.classList.contains('open')) t.style.maxHeight = 'none'; }, 550);
+  }
+}
+
+// Auto-init for physical layout
+(function() {
+  function initWatchDesc() {
+    var t = document.getElementById('watchDescText');
+    var b = document.getElementById('watchMehrBtn');
+    if(!t || !b) return;
+    var isDesktop = window.innerWidth >= 990;
+    var maxHeight = isDesktop ? 380 : 250;
+    
+    if(t.scrollHeight > maxHeight + 60) {
+      b.style.display = 'inline-flex';
+      if(!t.classList.contains('open')) t.style.maxHeight = maxHeight + 'px';
+    } else {
+      b.style.display = 'none';
+      t.style.maxHeight = 'none';
+      t.classList.add('open');
+      var g = document.getElementById('watchDescGradient');
+      if(g) g.classList.add('hide');
+    }
+  }
+  setTimeout(initWatchDesc, 600);
+  window.addEventListener('resize', initWatchDesc);
+})();
+
+function openWatchTab(evt, tabName) {
+  var contents = document.getElementsByClassName("w-tab-content");
+  for (var i = 0; i < contents.length; i++) contents[i].style.display = "none";
+  var tablinks = document.getElementsByClassName("w-tab-btn");
+  for (var i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+function toggleMobileAccordion(header) {
+  const item = header.parentElement;
+  const content = item.querySelector('.w-accordion-content');
+  const isActive = item.classList.contains('active');
+  const scrollY = window.scrollY;
+  
+  document.querySelectorAll('.w-accordion-container .w-accordion-item').forEach(el => {
+    if (el !== item && el.classList.contains('active')) {
+      const otherContent = el.querySelector('.w-accordion-content');
+      if (otherContent) {
+        otherContent.style.maxHeight = otherContent.scrollHeight + 'px';
+        requestAnimationFrame(() => { otherContent.style.maxHeight = '0px'; });
+      }
+      el.classList.remove('active');
+    }
+  });
+  
+  if (isActive) {
+    content.style.maxHeight = content.scrollHeight + 'px';
+    requestAnimationFrame(() => { content.style.maxHeight = '0px'; });
+    item.classList.remove('active');
+  } else {
+    item.classList.add('active');
+    content.style.maxHeight = '0px';
+    requestAnimationFrame(() => {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      content.addEventListener('transitionend', function handler() {
+        if (item.classList.contains('active')) content.style.maxHeight = 'none';
+        content.removeEventListener('transitionend', handler);
+      });
+    });
+  }
+  requestAnimationFrame(() => { window.scrollTo(0, scrollY); });
+}
+
+// FAQ Logic
+document.addEventListener('click', (e) => {
+  const summary = e.target.closest('.kx-faq__btn');
+  if (!summary) return;
+  const details = summary.parentElement;
+  const content = details ? details.querySelector('.kx-faq__panel') : null;
+  if (!details || details.tagName !== 'DETAILS' || !content) return;
+
+  const container = details.closest('.kx-faq__list');
+  if (container) {
+    container.querySelectorAll('details[open]').forEach(other => {
+      if (other !== details) {
+        const oc = other.querySelector('.kx-faq__panel');
+        if (oc) {
+          oc.style.maxHeight = oc.scrollHeight + "px";
+          requestAnimationFrame(() => { requestAnimationFrame(() => { oc.style.maxHeight = '0px'; }); });
+          setTimeout(() => { other.open = false; }, 300);
+        } else other.open = false;
+      }
+    });
+  }
+
+  if (details.open) {
+    e.preventDefault();
+    content.style.maxHeight = content.scrollHeight + "px";
+    requestAnimationFrame(() => { requestAnimationFrame(() => { content.style.maxHeight = '0px'; }); });
+    setTimeout(() => { details.open = false; content.style.maxHeight = ''; }, 300);
+  } else {
+    e.preventDefault();
+    details.open = true;
+    content.style.maxHeight = '0px';
+    requestAnimationFrame(() => { requestAnimationFrame(() => { content.style.maxHeight = content.scrollHeight + "px"; }); });
+    setTimeout(() => { content.style.maxHeight = 'none'; }, 350);
+  }
+});
+</script>

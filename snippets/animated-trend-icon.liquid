@@ -1,0 +1,96 @@
+{%- comment -%}
+Animated Trend Icon Component
+Usage: {% render 'animated-trend-icon' %}
+{%- endcomment -%}
+
+<div class="animated-trend-icon-wrapper">
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="16" 
+    height="16" 
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor" 
+    stroke-width="2"
+    class="trend-icon"
+  >
+    <path 
+      stroke-linecap="round" 
+      stroke-linejoin="round" 
+      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" 
+    />
+  </svg>
+</div>
+
+<style>
+  .animated-trend-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .animated-trend-icon-wrapper .trend-icon {
+    animation: trendBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    transform-origin: center;
+  }
+
+  @keyframes trendBounce {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Alternative: Rotation animation */
+  .animated-trend-icon-wrapper.rotation .trend-icon {
+    animation: trendRotate 2s linear infinite !important;
+  }
+
+  @keyframes trendRotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Alternative: Pulse animation */
+  .animated-trend-icon-wrapper.pulse .trend-icon {
+    animation: trendPulse 1.5s ease-in-out infinite !important;
+  }
+
+  @keyframes trendPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.8;
+    }
+  }
+
+  /* Alternative: Glow animation */
+  .animated-trend-icon-wrapper.glow .trend-icon {
+    animation: trendGlow 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+
+  @keyframes trendGlow {
+    0%, 100% {
+      filter: drop-shadow(0 0 2px currentColor);
+    }
+    50% {
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+  }
+</style>

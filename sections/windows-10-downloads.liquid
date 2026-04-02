@@ -1,0 +1,914 @@
+<style>
+  /* Wrapper */
+  .kx-office-wrapper {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    color: #111;
+  }
+
+  .kx-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 24px 0;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+  }
+
+  @media (max-width: 768px) {
+    .kx-page-title {
+      font-size: 22px;
+    }
+  }
+
+  .kx-office-wrapper h2,
+  .kx-office-wrapper h3 {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .kx-office-wrapper h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  /* Thank You Overlay */
+  .kx-thank-you-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+  }
+
+  .kx-thank-you-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .kx-thank-you-message {
+    text-align: center;
+    color: #333;
+    animation: text-fade-in 1s ease-in;
+  }
+
+  .kx-thank-you-message h1 {
+    font-size: 2.8em;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .kx-thank-you-message p {
+    font-size: 1.6em;
+    margin-top: 10px;
+    color: #555;
+  }
+
+  @keyframes text-fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .kx-thank-you-message h1 { font-size: 1.8em; }
+    .kx-thank-you-message p { font-size: 1.2em; }
+  }
+
+  .kx-office-box {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    background: #fafafa;
+  }
+
+  .kx-guides-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  /* Mobile: Buttons gleiche Breite */
+  @media (max-width: 768px) {
+    .kx-guides-container { flex-direction: column; width: 100%; }
+
+    .kx-office-guide-btn,
+    .kx-video-guide-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* ================== BUTTONS (Nur DOWNLOAD = #1D4739) ================== */
+
+  /* DE Installationsanleitung (bleibt ORANGE) */
+  .kx-office-guide-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    background: #ff9800;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 4px;
+    font-size: 14px;
+    gap: 6px;
+    transition: background .2s ease;
+  }
+  .kx-office-guide-btn:hover { background: #e68900; }
+
+  /* Video Button (bleibt ROT) */
+  .kx-video-guide-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    background: #c4302b;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 4px;
+    font-size: 14px;
+    gap: 8px;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .kx-video-guide-btn:hover { background: #af2a25; }
+
+  .kx-video-guide-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .kx-hint {
+    font-size: 13px;
+    color: #444;
+    margin-top: -4px;
+    margin-bottom: 12px;
+  }
+
+  .kx-office-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 900px) {
+    .kx-office-card-grid { grid-template-columns: 1fr; }
+  }
+
+  .kx-office-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 20px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .kx-office-card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .kx-badge {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 3px 7px;
+    background: #ffebcc;
+    border-radius: 10px;
+    color: #a66300;
+    border: 1px solid #ffcf80;
+  }
+
+  .kx-office-card-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    flex: 1;
+  }
+
+  .kx-office-card-image img {
+    max-width: 150px;
+    display: block;
+    border-radius: 6px;
+  }
+
+  .kx-office-card-downloads {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ✅ DOWNLOAD BUTTONS: ORANGE -> #1D4739 */
+  .kx-office-download-btn {
+    background: #1D4739;
+    padding: 10px 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+    font-size: 14px;
+    transition: background .2s ease;
+  }
+  .kx-office-download-btn:hover { background: #16362a; }
+
+  /* WhatsApp (bleibt GRÜN) */
+  .kx-whatsapp-btn {
+    background: #25D366;
+    padding: 10px 14px;
+    border-radius: 6px;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    font-weight: 600;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    margin-top: 4px;
+    transition: background .2s ease;
+  }
+  .kx-whatsapp-btn:hover { background: #1ebe5d; }
+
+  .kx-whatsapp-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     ULTRA-MODERN MINIMAL SELECTOR - Apple/Microsoft Style
+     ═══════════════════════════════════════════════════════════════ */
+  .kx-selector {
+    background: #fff;
+    border: 1px solid #EAEAEA;
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .kx-selector-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .kx-selector-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.3px;
+  }
+  .kx-selector-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin: 0;
+    font-weight: 400;
+  }
+  .kx-selector-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .kx-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid #EAEAEA;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 150ms ease;
+    user-select: none;
+  }
+  .kx-option:hover {
+    border-color: #D5D5D5;
+    background: #FAFAFA;
+  }
+  .kx-option.selected {
+    border-color: #1D4739;
+    background: rgba(29, 71, 57, 0.04);
+  }
+  .kx-option-radio {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #CCC;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease;
+  }
+  .kx-option.selected .kx-option-radio {
+    border-color: #1D4739;
+  }
+  .kx-option-radio::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #1D4739;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 150ms ease;
+  }
+  .kx-option.selected .kx-option-radio::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .kx-option-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .kx-option-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: #666;
+    transition: fill 150ms ease;
+  }
+  .kx-option.selected .kx-option-icon svg {
+    fill: #1D4739;
+  }
+  .kx-option-content {
+    flex: 1;
+  }
+  .kx-option-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 2px;
+  }
+  .kx-option-desc {
+    font-size: 13px;
+    color: #888;
+    font-weight: 400;
+  }
+  .kx-option-check {
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 150ms ease;
+  }
+  .kx-option.selected .kx-option-check {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .kx-option-check svg {
+    width: 20px;
+    height: 20px;
+    fill: #1D4739;
+  }
+  /* Download Button */
+  .kx-selector-action {
+    margin-top: 24px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 200ms ease;
+    pointer-events: none;
+  }
+  .kx-selector-action.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .kx-start-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: #1D4739;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 150ms ease;
+    text-decoration: none;
+  }
+  .kx-start-btn:hover {
+    background: #16362a;
+  }
+  .kx-start-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+  @media (max-width: 768px) {
+    .kx-selector {
+      padding: 24px 20px;
+    }
+    .kx-selector-title {
+      font-size: 20px;
+    }
+    .kx-option {
+      padding: 16px;
+    }
+  }
+
+  .kx-video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #000;
+  }
+  .kx-video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+
+  .kx-faq { margin-top: 32px; }
+  .kx-faq h3 { font-size: 20px; margin-bottom: 14px; }
+
+  .kx-accordion {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  .kx-accordion-item { border-bottom: 1px solid #e0e0e0; }
+  .kx-accordion-item:last-child { border-bottom: none; }
+
+  .kx-accordion-toggle { display: none; }
+
+  .kx-accordion-header {
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background .2s ease;
+  }
+
+  .kx-accordion-header:hover { background: #fafafa; }
+
+  .kx-accordion-icon {
+    font-size: 18px;
+    transition: transform .25s ease;
+  }
+
+  .kx-accordion-toggle:checked + .kx-accordion-header .kx-accordion-icon {
+    transform: rotate(180deg);
+  }
+
+  .kx-accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease-in-out;
+  }
+
+  .kx-accordion-toggle:checked ~ .kx-accordion-content { max-height: 500px; }
+
+  .kx-accordion-inner {
+    padding: 16px 18px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.55;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .kx-video-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.75);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .kx-modal-content {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+  }
+
+  .kx-modal-close {
+    position: absolute;
+    top: -35px;
+    right: -5px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .kx-office-card { 
+    /* DOWNLOADS */
+  }
+  .kx-office-card-header {
+    /* DOWNLOADS */
+  }
+  .kx-office-card-body {
+    /* DOWNLOADS */
+  }
+  .kx-office-card-image {
+    /* DOWNLOADS */
+  }
+  .kx-office-card-downloads {
+    /* DOWNLOADS */
+  }
+  .kx-office-download-btn {
+    /* DOWNLOADS */
+  }
+  .kx-whatsapp-btn {
+    /* DOWNLOADS */
+  }
+</style>
+
+<!-- Thank You Overlay -->
+<div id="kx-thank-you-overlay" class="kx-thank-you-overlay">
+  <div class="kx-thank-you-message">
+    <h1>Vielen Dank für Ihre Bestellung!</h1>
+    <p>und für Ihr Vertrauen.</p>
+  </div>
+</div>
+
+<div class="kx-office-wrapper">
+  <!-- PAGE TITLE -->
+  <h1 class="kx-page-title">Windows 10 Pro kaufen 32/64-Bit – Downloads & Installationsanleitung</h1>
+  
+  <!-- ANLEITUNGEN -->
+  <div class="kx-office-box">
+    <h2>Anleitungen</h2>
+    <div class="kx-guides-container">
+      <a class="kx-office-guide-btn" href="#" target="_blank" rel="noopener">
+        <span>DE</span> Installationsanleitung
+      </a>
+
+      <a id="openVideoModalBtn" class="kx-video-guide-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+        </svg>
+        <span>Video Anleitung</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ULTRA-MODERN SELECTOR: Welches Gerät nutzen Sie? -->
+  <div class="kx-selector">
+    <div class="kx-selector-header">
+      <h3 class="kx-selector-title">Welches Gerät nutzen Sie?</h3>
+      <p class="kx-selector-subtitle">Wir empfehlen automatisch die passende Version.</p>
+    </div>
+    
+    <div class="kx-selector-options">
+      <!-- Option 1: 64-Bit -->
+      <div class="kx-option" data-value="64bit" onclick="kxSelectOption(this)">
+        <div class="kx-option-radio"></div>
+        <div class="kx-option-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+          </svg>
+        </div>
+        <div class="kx-option-content">
+          <div class="kx-option-label">Windows 64-Bit</div>
+          <div class="kx-option-desc">Empfohlen für fast alle modernen Geräte</div>
+        </div>
+        <div class="kx-option-check">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Option 2: 32-Bit -->
+      <div class="kx-option" data-value="32bit" onclick="kxSelectOption(this)">
+        <div class="kx-option-radio"></div>
+        <div class="kx-option-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2V9h2zm-4 6H7V7h10v10z"/>
+          </svg>
+        </div>
+        <div class="kx-option-content">
+          <div class="kx-option-label">Älteres Gerät (32-Bit)</div>
+          <div class="kx-option-desc">Nur falls Ihr PC sehr alt ist</div>
+        </div>
+        <div class="kx-option-check">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Option 3: ARM -->
+      <div class="kx-option" data-value="arm64" onclick="kxSelectOption(this)">
+        <div class="kx-option-radio"></div>
+        <div class="kx-option-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+          </svg>
+        </div>
+        <div class="kx-option-content">
+          <div class="kx-option-label">ARM Gerät (Surface / Snapdragon)</div>
+          <div class="kx-option-desc">Für ARM-basierte Windows Geräte</div>
+        </div>
+        <div class="kx-option-check">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <div class="kx-selector-action" id="kxSelectorAction">
+      <a href="#downloads" class="kx-start-btn" id="kxStartBtn">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        Download starten
+      </a>
+    </div>
+  </div>
+
+  <!-- DOWNLOADS -->
+  <h2 id="downloads">DOWNLOADS</h2>
+
+  <div class="kx-office-card-grid">
+
+    <!-- DE -->
+    <div class="kx-office-card">
+      <div class="kx-office-card-header">
+        🇩🇪 <span>Windows 10 Pro<br>32/64-Bit</span><span class="kx-badge">Empfohlen</span>
+      </div>
+      <div class="kx-office-card-body">
+        <div class="kx-office-card-image">
+          <img
+            src="https://www.karinex.de/cdn/shop/files/microsoft-windows-10-professional-pro-original-32-64-bit-lizenz-download.webp?v=1770547596&width=800"
+            alt="Windows 10 Pro">
+        </div>
+        <div class="kx-office-card-downloads">
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/DE_Windows_10_Home_Pro_Edu_22H2_32Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>32 Bit | Download | 3,3 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/DE_Windows_10_Home_Pro_Edu_22H2_64Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit | Download | 4,6 GB</span><span>⇩</span>
+          </a>
+
+          <a class="kx-whatsapp-btn" href="https://wa.me/4915227322222" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 32 32" fill="currentColor">
+              <path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.487 2.028 7.798L0 32l8.384-2.182A15.913 15.913 0 0 0 16 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.455c-2.52 0-4.914-.693-6.961-1.898l-.498-.299-5.16 1.343 1.38-5.032-.33-.517A13.39 13.39 0 0 1 2.545 16c0-7.425 6.03-13.455 13.455-13.455S29.455 8.575 29.455 16 23.425 29.455 16 29.455zm7.382-10.073c-.404-.202-2.391-1.179-2.762-1.314-.371-.135-.641-.202-.911.202-.27.404-1.046 1.314-1.283 1.584-.236.27-.473.304-.877.101-.404-.202-1.706-.628-3.249-2.003-1.201-1.07-2.012-2.391-2.248-2.796-.236-.404-.025-.622.177-.823.182-.181.404-.473.606-.71.202-.236.27-.404.404-.674.135-.27.068-.505-.034-.71-.101-.202-.911-2.195-1.248-3.005-.329-.789-.663-.682-.911-.695-.236-.012-.505-.015-.775-.015s-.71.101-1.081.505c-.371.404-1.417 1.384-1.417 3.377s1.45 3.918 1.652 4.188c.202.27 2.85 4.351 6.906 6.099.965.416 1.718.664 2.305.85.969.308 1.85.264 2.547.16.777-.116 2.391-.977 2.728-1.921.337-.944.337-1.753.236-1.921-.101-.169-.371-.27-.775-.473z"></path>
+            </svg>
+            WhatsApp Support
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- EN -->
+    <div class="kx-office-card">
+      <div class="kx-office-card-header">🇬🇧 <span>Windows 10 Pro<br>32/64-Bit</span></div>
+      <div class="kx-office-card-body">
+        <div class="kx-office-card-image">
+          <img
+            src="https://www.karinex.de/cdn/shop/files/microsoft-windows-10-professional-pro-original-32-64-bit-lizenz-download.webp?v=1770547596&width=800"
+            alt="Windows 10 Pro">
+        </div>
+        <div class="kx-office-card-downloads">
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/EN_Windows_10_Home_Pro_Edu_22H2_32Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>32 Bit | Download | 3,3 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/EN_Windows_10_Home_Pro_Edu_22H2_64Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit | Download | 4,6 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10_Insider_Preview_ARM64/Windows10_InsiderPreview_Client_ARM64_en-us_21354.VHDX" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit ARM | Download | 9,06 GB</span><span>⇩</span>
+          </a>
+
+          </div>
+      </div>
+    </div>
+
+    <!-- FR -->
+    <div class="kx-office-card">
+      <div class="kx-office-card-header">🇫🇷 <span>Windows 10 Pro<br>32/64-Bit</span></div>
+      <div class="kx-office-card-body">
+        <div class="kx-office-card-image">
+          <img
+            src="https://www.karinex.de/cdn/shop/files/microsoft-windows-10-professional-pro-original-32-64-bit-lizenz-download.webp?v=1770547596&width=800"
+            alt="Windows 10 Pro">
+        </div>
+        <div class="kx-office-card-downloads">
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/FR_Windows_10_Home_Pro_Edu_22H2_32Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>32 Bit | Download | 3,3 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/FR_Windows_10_Home_Pro_Edu_22H2_64Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit | Download | 4,6 GB</span><span>⇩</span>
+          </a>
+
+          </div>
+      </div>
+    </div>
+
+    <!-- IT -->
+    <div class="kx-office-card">
+      <div class="kx-office-card-header">🇮🇹 <span>Windows 10 Pro<br>32/64-Bit</span></div>
+      <div class="kx-office-card-body">
+        <div class="kx-office-card-image">
+          <img
+            src="https://www.karinex.de/cdn/shop/files/microsoft-windows-10-professional-pro-original-32-64-bit-lizenz-download.webp?v=1770547596&width=800"
+            alt="Windows 10 Pro">
+        </div>
+        <div class="kx-office-card-downloads">
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/IT_Windows_10_Home_Pro_Edu_22H2_32Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>32 Bit | Download | 3,2 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/IT_Windows_10_Home_Pro_Edu_22H2_64Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit | Download | 4,5 GB</span><span>⇩</span>
+          </a>
+
+          </div>
+      </div>
+    </div>
+
+    <!-- ES -->
+    <div class="kx-office-card">
+      <div class="kx-office-card-header">🇪🇸 <span>Windows 10 Pro<br>32/64-Bit</span></div>
+      <div class="kx-office-card-body">
+        <div class="kx-office-card-image">
+          <img
+            src="https://www.karinex.de/cdn/shop/files/microsoft-windows-10-professional-pro-original-32-64-bit-lizenz-download.webp?v=1770547596&width=800"
+            alt="Windows 10 Pro">
+        </div>
+        <div class="kx-office-card-downloads">
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/ES_Windows_10_Home_Pro_Edu_22H2_32Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>32 Bit | Download | 3,3 GB</span><span>⇩</span>
+          </a>
+          <a class="kx-office-download-btn" href="https://software-delivery.de/Software/Microsoft/Windows/Client/Windows_10/ES_Windows_10_Home_Pro_Edu_22H2_64Bit.iso" target="_blank" rel="noopener noreferrer nofollow">
+            <span>64 Bit | Download | 4,6 GB</span><span>⇩</span>
+          </a>
+
+          </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FAQ -->
+  <div class="kx-faq">
+    <h3>Häufige Fragen (FAQ)</h3>
+    <div class="kx-accordion">
+
+      <div class="kx-accordion-item">
+        <input type="checkbox" id="faq1" class="kx-accordion-toggle">
+        <label for="faq1" class="kx-accordion-header">
+          <span>Wie installiere ich Windows 10?</span>
+          <span class="kx-accordion-icon">▼</span>
+        </label>
+        <div class="kx-accordion-content">
+          <div class="kx-accordion-inner">
+            Laden Sie die passende ISO herunter und erstellen Sie daraus einen bootfähigen USB-Stick (z.B. mit Rufus).
+            Danach im BIOS/Boot-Menü vom USB-Stick starten und Windows installieren.
+          </div>
+        </div>
+      </div>
+
+      <div class="kx-accordion-item">
+        <input type="checkbox" id="faq2" class="kx-accordion-toggle">
+        <label for="faq2" class="kx-accordion-header">
+          <span>Welche Version soll ich wählen: 32 Bit oder 64 Bit?</span>
+          <span class="kx-accordion-icon">▼</span>
+        </label>
+        <div class="kx-accordion-content">
+          <div class="kx-accordion-inner">
+            In den meisten Fällen ist <strong>64 Bit</strong> korrekt. <strong>32 Bit</strong> wird nur für sehr alte Systeme benötigt.
+            Für ARM-Geräte verwenden Sie <strong>ARM64</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="kx-accordion-item">
+        <input type="checkbox" id="faq3" class="kx-accordion-toggle">
+        <label for="faq3" class="kx-accordion-header">
+          <span>Bieten Sie Installationshilfe an?</span>
+          <span class="kx-accordion-icon">▼</span>
+        </label>
+        <div class="kx-accordion-content">
+          <div class="kx-accordion-inner">
+            Ja, selbstverständlich! Kontaktieren Sie uns einfach über WhatsApp, wir helfen Ihnen gerne weiter.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- VIDEO MODAL (POPUP) -->
+<div id="videoModal" class="kx-video-modal">
+  <div class="kx-modal-content">
+    <span id="closeModalBtn" class="kx-modal-close">×</span>
+    <div class="kx-video-container"></div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+  // Selector function - radio behavior
+  function kxSelectOption(element) {
+    const options = document.querySelectorAll('.kx-option');
+    const actionBtn = document.getElementById('kxSelectorAction');
+    
+    // Remove selected from all
+    options.forEach(opt => opt.classList.remove('selected'));
+    
+    // Add selected to clicked
+    element.classList.add('selected');
+    
+    // Show action button
+    if (actionBtn) {
+      actionBtn.classList.add('visible');
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Thank You Overlay - auto fade out after 3 seconds
+    const thankYouOverlay = document.getElementById("kx-thank-you-overlay");
+    
+    if (thankYouOverlay) {
+      setTimeout(() => {
+        thankYouOverlay.classList.add("hidden");
+        setTimeout(() => {
+          thankYouOverlay.style.display = "none";
+        }, 1000);
+      }, 3000);
+    }
+
+    // Video Modal
+    const videoModal = document.getElementById("videoModal");
+    const openBtn = document.getElementById("openVideoModalBtn");
+    const closeBtn = document.getElementById("closeModalBtn");
+    const modalVideoContainer = videoModal.querySelector(".kx-modal-content .kx-video-container");
+
+    const videoUrl = "https://www.youtube.com/embed/4gEbLlNwhZQ?autoplay=1&rel=0";
+
+    const openModal = (e) => {
+      if (e) e.preventDefault();
+      modalVideoContainer.innerHTML = '<iframe src="' + videoUrl + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+      videoModal.style.display = "flex";
+    };
+
+    const closeModal = () => {
+      videoModal.style.display = "none";
+      modalVideoContainer.innerHTML = "";
+    };
+
+    if (openBtn) openBtn.addEventListener("click", openModal);
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+
+    videoModal.addEventListener("click", function (event) {
+      if (event.target === videoModal) closeModal();
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeModal();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Windows 10 Downloads",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Windows 10 Downloads"
+    }
+  ]
+}
+{% endschema %}

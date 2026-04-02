@@ -1,0 +1,773 @@
+
+
+<script
+  src="{{ 'results-list.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% if collection %}
+  <h1 class="visually-hidden">{{ collection.title | escape }} kaufen – Günstige Angebote & Schneller Versand bei Karinex</h1>
+  
+  {%- comment -%} SEO: Include keywords from title in body text - ONLY on page 1 to avoid duplicate content {%- endcomment -%}
+  {%- unless current_page > 1 -%}
+  <p class="visually-hidden">
+    Willkommen im Karinex Online Shop! Entdecken Sie {{ collection.title }} - günstige Angebote, Rabatte und schneller Versand. 
+    {% if collection.handle == 'software' %}Software kaufen - Windows, Office & mehr bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'games' %}Games & Spiele - PC, PlayStation, Xbox bei karinex Online Shop.{% endif %}
+    {% if collection.handle contains 'lego' %}LEGO® Sets - Spielzeug & Bausteine bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'sale' %}SALE - Angebote & Rabatte bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'uhren' or collection.handle == 'damenuhren' or collection.handle == 'boss-uhren' %}Uhren - Boss, Michael Kors, Armbanduhren bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'all' %}Alle Produkte - Software, Games, Uhren bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'playstation' %}PlayStation - Spiele, Controller & Zubehör bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'xbox' %}Xbox - Spiele, Controller & Zubehör bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'microsoft' %}Microsoft Produkte - Windows, Office, 365 bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'adobe' %}Adobe Software - Photoshop, Acrobat & mehr bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'antivirus' %}Antivirus Software - Schutz für PC & Mac bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'herrenuhren' %}Herrenuhren - Boss, Diesel, Emporio Armani bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'luxus-uhren' %}Luxus Uhren - Premium Armbanduhren bei karinex Online Shop.{% endif %}
+    {% if collection.handle == 'michael-kors-damenuhr' %}Michael Kors Damenuhren - Elegante Uhren bei karinex Online Shop.{% endif %}
+  </p>
+  {%- endunless -%}
+{% endif %}
+
+{% if collection %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Startseite",
+        "item": "{{ shop.url }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ collection.title | escape }}",
+        "item": "{{ shop.url }}{{ collection.url }}"
+      }
+    ]
+  }
+  </script>
+{% endif %}
+
+{% javascript %}
+  const url = new URL(window.location.href);
+  if (url.hash) {
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+        const card = document.getElementById(url.hash.slice(1));
+        if (card) {
+          card.scrollIntoView({ behavior: 'instant' });
+        }
+      },
+      { once: true }
+    );
+  }
+{% endjavascript %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const headings = document.querySelectorAll('.section h2');
+    headings.forEach(function(h) {
+      const text = h.textContent.trim();
+      if (text.includes(',')) {
+        h.textContent = text.split(',')[0].trim();
+      }
+    });
+  });
+</script>
+
+{% comment %} Collection Banner Image - via metafield or collection image {% endcomment %}
+{%- assign banner_image = collection.metafields.custom.banner_image -%}
+{%- if banner_image == blank and collection.image -%}
+  {%- if collection.handle == 'herrenuhren' or collection.handle contains 'lego' -%}
+    {%- assign banner_image = collection.image -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if banner_image != blank -%}
+  <div class="collection-banner{% if section.settings.banner_full_width %} collection-banner--full-width{% endif %}">
+    <img
+          src="{{ banner_image | image_url: width: 1600, format: 'webp', quality: 82 }}"
+          srcset="{{ banner_image | image_url: width: 640, format: 'webp', quality: 72 }} 640w,
+            {{ banner_image | image_url: width: 960, format: 'webp', quality: 75 }} 960w,
+            {{ banner_image | image_url: width: 1280, format: 'webp', quality: 78 }} 1280w,
+            {{ banner_image | image_url: width: 1600, format: 'webp', quality: 82 }} 1600w"
+      sizes="100vw"
+      alt="{{ banner_image.alt | default: collection.title | escape }}"
+      {% if banner_image.width %}width="{{ banner_image.width }}"{% endif %}
+      {% if banner_image.height %}height="{{ banner_image.height }}"{% endif %}
+      loading="eager"
+      class="collection-banner__image"
+    >
+    {%- if section.settings.banner_link != blank -%}
+      <a href="{{ section.settings.banner_link }}" class="collection-banner__link" aria-label="{{ collection.title | escape }}"></a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% comment %} We always render this full-width, as the child blocks have width: page/full settings {% endcomment %}
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<results-list
+  class="section product-grid-container color-{{ section.settings.color_scheme }}"
+  style="--padding-block-start: {{ section.settings.padding-block-start }}px; --padding-block-end: {{ section.settings.padding-block-end }}px;"
+  section-id="{{ section.id }}"
+  infinite-scroll="{{ section.settings.enable_infinite_scroll }}"
+>
+  {% render 'skip-to-content-link', href: '#ResultsList', text: 'accessibility.skip_to_results_list' %}
+
+  <div
+    class="collection-wrapper grid gap-style{% if section.settings.product_grid_width == 'full-width' %} collection-wrapper--grid-full-width{% endif %}"
+  >
+    {% content_for 'block',
+      type: 'filters',
+      id: 'filters',
+      results: collection,
+      results_size: collection.products_count
+    %}
+
+    {% assign products_per_page = 36 %}
+
+    {% if section.settings.enable_infinite_scroll == false %}
+      {% assign products_per_page = section.settings.products_per_page %}
+    {% endif %}
+
+    {% paginate collection.products by products_per_page %}
+      {% capture children %}
+        {% for product in collection.products %}
+          {%- capture raw_age -%}{%- render 'product-age-value', product: product -%}{%- endcapture -%}
+          {%- assign product_age = raw_age | strip -%}
+          {%- capture raw_gender -%}{%- render 'product-gender-value', product: product -%}{%- endcapture -%}
+          {%- assign product_gender = raw_gender | strip -%}
+          {%- capture raw_discount -%}{%- render 'product-discount-value', product: product -%}{%- endcapture -%}
+          {%- assign product_discount = raw_discount | strip -%}
+          {%- capture raw_color -%}{%- render 'product-color-value', product: product -%}{%- endcapture -%}
+          {%- assign product_color = raw_color | strip -%}
+          {%- capture raw_durchmesser -%}{%- render 'product-durchmesser-value', product: product -%}{%- endcapture -%}
+          {%- assign product_durchmesser = raw_durchmesser | strip -%}
+          {%- capture raw_zubehoerstyp -%}{%- render 'product-zubehoerstyp-value', product: product -%}{%- endcapture -%}
+          {%- assign product_zubehoerstyp = raw_zubehoerstyp | strip -%}
+          {%- assign product_category = product.type | strip -%}
+          <li
+            id="{{ section.id }}-{{ product.id }}"
+            class="product-grid__item product-grid__item--{{ forloop.index0 }}"
+            data-page="{{ paginate.current_page }}"
+            data-product-id="{{ product.id }}"
+            data-vendor="{{ product.vendor | escape }}"
+            data-sold="{{ product.metafields.custom.recently_sold_count.value | default: 0 }}"
+            {% if product_age != '' %}data-age="{{ product_age }}"{% endif %}
+            {% if product_gender != '' %}data-gender="{{ product_gender | escape }}"{% endif %}
+            {% if product_discount != '' %}data-discount="{{ product_discount }}"{% endif %}
+            {% if product_category != '' %}data-category="{{ product_category | escape }}"{% endif %}
+            {% if product_color != '' %}data-color="{{ product_color | escape }}"{% endif %}
+            {% if product_durchmesser != '' %}data-durchmesser="{{ product_durchmesser | escape }}"{% endif %}
+            {% if product_zubehoerstyp != '' %}data-zubehoerstyp="{{ product_zubehoerstyp | escape }}"{% endif %}
+            ref="cards[]"
+          >
+            {% # theme-check-disable %}
+            {% content_for 'block', type: '_product-card', id: 'product-card', closest.product: product %}
+            {% # theme-check-enable %}
+          </li>
+        {% endfor %}
+      {% endcapture %}
+
+      {% render 'product-grid',
+        section: section,
+        children: children,
+        products: collection.products,
+        paginate: paginate,
+        enable_infinite_scroll: section.settings.enable_infinite_scroll
+      %}
+    {% endpaginate %}
+  </div>
+</results-list>
+
+<script>
+  if (!window.__collectionFilterInit) {
+    window.__collectionFilterInit = true;
+    document.addEventListener('DOMContentLoaded', function() {
+
+      function syncCheckboxes(changed, cls, attr) {
+        if (!changed) return;
+        var val = changed.getAttribute(attr);
+        var checked = changed.checked;
+        document.querySelectorAll('.' + cls + '[' + attr + '="' + val + '"]').forEach(function(cb) {
+          cb.checked = checked;
+        });
+      }
+
+      function applyFilters() {
+        var selectedVendors = new Set();
+        document.querySelectorAll('.js-vendor-checkbox:checked').forEach(function(cb) {
+          selectedVendors.add(cb.getAttribute('data-vendor-name'));
+        });
+
+        var selectedAges = new Set();
+        document.querySelectorAll('.js-age-checkbox:checked').forEach(function(cb) {
+          selectedAges.add(cb.getAttribute('data-age-value'));
+        });
+
+        var selectedGenders = new Set();
+        document.querySelectorAll('.js-gender-checkbox:checked').forEach(function(cb) {
+          selectedGenders.add(cb.getAttribute('data-gender-value'));
+        });
+
+        var selectedDiscounts = new Set();
+        document.querySelectorAll('.js-discount-checkbox:checked').forEach(function(cb) {
+          selectedDiscounts.add(cb.getAttribute('data-discount-value'));
+        });
+
+        var selectedCategories = new Set();
+        document.querySelectorAll('.js-category-checkbox:checked').forEach(function(cb) {
+          selectedCategories.add(cb.getAttribute('data-category-value'));
+        });
+
+        var selectedColors = new Set();
+        document.querySelectorAll('.js-color-checkbox:checked').forEach(function(cb) {
+          selectedColors.add(cb.getAttribute('data-color-value'));
+        });
+
+        var selectedDurchmessers = new Set();
+        document.querySelectorAll('.js-durchmesser-checkbox:checked').forEach(function(cb) {
+          selectedDurchmessers.add(cb.getAttribute('data-durchmesser-value'));
+        });
+
+        var selectedZubehoerstyps = new Set();
+        document.querySelectorAll('.js-zubehoerstyp-checkbox:checked').forEach(function(cb) {
+          selectedZubehoerstyps.add(cb.getAttribute('data-zubehoerstyp-value'));
+        });
+
+        // Update vendor count badges
+        document.querySelectorAll('.vendor-filter-count').forEach(function(el) {
+          if (selectedVendors.size > 0) {
+            el.textContent = selectedVendors.size;
+            el.className = 'vendor-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update age count badges
+        document.querySelectorAll('.age-filter-count').forEach(function(el) {
+          if (selectedAges.size > 0) {
+            el.textContent = selectedAges.size;
+            el.className = 'age-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update gender count badges
+        document.querySelectorAll('.gender-filter-count').forEach(function(el) {
+          if (selectedGenders.size > 0) {
+            el.textContent = selectedGenders.size;
+            el.className = 'gender-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update discount count badges
+        document.querySelectorAll('.discount-filter-count').forEach(function(el) {
+          if (selectedDiscounts.size > 0) {
+            el.textContent = selectedDiscounts.size;
+            el.className = 'discount-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update category count badges
+        document.querySelectorAll('.category-filter-count').forEach(function(el) {
+          if (selectedCategories.size > 0) {
+            el.textContent = selectedCategories.size;
+            el.className = 'category-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update color count badges
+        document.querySelectorAll('.color-filter-count').forEach(function(el) {
+          if (selectedColors.size > 0) {
+            el.textContent = selectedColors.size;
+            el.className = 'color-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update durchmesser count badges
+        document.querySelectorAll('.durchmesser-filter-count').forEach(function(el) {
+          if (selectedDurchmessers.size > 0) {
+            el.textContent = selectedDurchmessers.size;
+            el.className = 'durchmesser-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Update zubehoerstyp count badges
+        document.querySelectorAll('.zubehoerstyp-filter-count').forEach(function(el) {
+          if (selectedZubehoerstyps.size > 0) {
+            el.textContent = selectedZubehoerstyps.size;
+            el.className = 'zubehoerstyp-filter-count bubble facets__bubble';
+            el.style.display = '';
+          } else {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
+        });
+
+        // Filter items — AND logic: must match all active filters
+        var items = document.querySelectorAll('.product-grid__item');
+        items.forEach(function(item) {
+          var vendorMatch = selectedVendors.size === 0 || selectedVendors.has(item.getAttribute('data-vendor'));
+          var itemAge = item.getAttribute('data-age') || '';
+          var ageMatch = selectedAges.size === 0 || selectedAges.has(itemAge);
+          var itemGender = item.getAttribute('data-gender') || '';
+          var genderMatch = selectedGenders.size === 0 || selectedGenders.has(itemGender);
+          var itemDiscount = item.getAttribute('data-discount') || '';
+          var discountMatch = selectedDiscounts.size === 0 || selectedDiscounts.has(itemDiscount);
+          var itemCategory = item.getAttribute('data-category') || '';
+          var categoryMatch = selectedCategories.size === 0 || selectedCategories.has(itemCategory);
+          var itemColor = item.getAttribute('data-color') || '';
+          var colorMatch = selectedColors.size === 0 || selectedColors.has(itemColor);
+          var itemDurchmesser = item.getAttribute('data-durchmesser') || '';
+          var durchmesserMatch = selectedDurchmessers.size === 0 || selectedDurchmessers.has(itemDurchmesser);
+          var itemZubehoerstyp = item.getAttribute('data-zubehoerstyp') || '';
+          var zubehoerstypMatch = selectedZubehoerstyps.size === 0 || selectedZubehoerstyps.has(itemZubehoerstyp);
+          item.style.display = (vendorMatch && ageMatch && genderMatch && discountMatch && categoryMatch && colorMatch && durchmesserMatch && zubehoerstypMatch) ? '' : 'none';
+        });
+      }
+
+      // Event delegation for all filters
+      document.addEventListener('change', function(e) {
+        if (e.target.classList && e.target.classList.contains('js-vendor-checkbox')) {
+          syncCheckboxes(e.target, 'js-vendor-checkbox', 'data-vendor-name');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-age-checkbox')) {
+          syncCheckboxes(e.target, 'js-age-checkbox', 'data-age-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-gender-checkbox')) {
+          syncCheckboxes(e.target, 'js-gender-checkbox', 'data-gender-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-discount-checkbox')) {
+          syncCheckboxes(e.target, 'js-discount-checkbox', 'data-discount-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-category-checkbox')) {
+          syncCheckboxes(e.target, 'js-category-checkbox', 'data-category-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-color-checkbox')) {
+          syncCheckboxes(e.target, 'js-color-checkbox', 'data-color-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-durchmesser-checkbox')) {
+          syncCheckboxes(e.target, 'js-durchmesser-checkbox', 'data-durchmesser-value');
+          applyFilters();
+        }
+        if (e.target.classList && e.target.classList.contains('js-zubehoerstyp-checkbox')) {
+          syncCheckboxes(e.target, 'js-zubehoerstyp-checkbox', 'data-zubehoerstyp-value');
+          applyFilters();
+        }
+      });
+
+      // Re-apply filters when infinite scroll loads new items
+      var observer = new MutationObserver(function() {
+        var hasActive = document.querySelector('.js-vendor-checkbox:checked') ||
+                        document.querySelector('.js-age-checkbox:checked') ||
+                        document.querySelector('.js-gender-checkbox:checked') ||
+                        document.querySelector('.js-discount-checkbox:checked') ||
+                        document.querySelector('.js-category-checkbox:checked') ||
+                        document.querySelector('.js-color-checkbox:checked') ||
+                        document.querySelector('.js-durchmesser-checkbox:checked') ||
+                        document.querySelector('.js-zubehoerstyp-checkbox:checked');
+        if (hasActive) {
+          applyFilters();
+        }
+      });
+
+      var productGrid = document.querySelector('.product-grid');
+      if (productGrid) {
+        observer.observe(productGrid, { childList: true, subtree: true });
+      }
+
+      // Live Popularity Sorting
+      function sortProductsByMetafield() {
+        var grid = document.querySelector('.collection-wrapper.grid');
+        if (!grid) {
+          grid = document.querySelector('results-list .collection-wrapper');
+        }
+        var searchStr = window.location.search || '';
+        
+        // Only auto-sort if no manual sort_by is enforced, or if it's best-selling/manual
+        if (!searchStr.includes('sort_by') || searchStr.includes('sort_by=manual') || searchStr.includes('sort_by=best-selling')) {
+          var itemsContainer = document.querySelector('.product-grid') || grid;
+          if (!itemsContainer) return;
+          
+          var items = Array.from(itemsContainer.querySelectorAll('li.product-grid__item'));
+          if (items.length <= 1) return;
+          
+          items.sort(function(a, b) {
+            var countA = parseInt(a.getAttribute('data-sold') || '0', 10);
+            var countB = parseInt(b.getAttribute('data-sold') || '0', 10);
+            return countB - countA;
+          });
+          
+          // Using a DocumentFragment ensures reflow is minimized
+          var df = document.createDocumentFragment();
+          items.forEach(function(item) {
+            df.appendChild(item);
+          });
+          itemsContainer.appendChild(df);
+        }
+      }
+      
+      // Execute the sorting immediately
+      sortProductsByMetafield();
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .collection-banner {
+    position: relative;
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto 24px;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .collection-banner--full-width {
+    max-width: 100vw;
+    border-radius: 0;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+  }
+
+  .collection-banner__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .collection-banner__link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .collection-banner {
+      margin-bottom: 16px;
+    }
+
+    .collection-banner--full-width {
+      margin-left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+    }
+  }
+
+  .main-collection-grid {
+    grid-column: var(--grid-column--mobile);
+
+    @media screen and (min-width: 750px) {
+      grid-column: var(--grid-column--desktop);
+    }
+  }
+
+  .collection-wrapper {
+    @media screen and (min-width: 750px) {
+      grid-template-columns:
+        1fr repeat(
+          var(--centered-column-number),
+          minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))
+        )
+        1fr;
+    }
+  }
+
+  .collection-wrapper:has(.facets-block-wrapper--full-width),
+  .collection-wrapper:has(.collection-wrapper--full-width) {
+    @media screen and (min-width: 750px) {
+      grid-column: 1 / -1;
+      grid-template-columns:
+        minmax(var(--page-margin), 1fr) repeat(
+          var(--centered-column-number),
+          minmax(0, calc((var(--page-width) - var(--page-margin) * 2) / var(--centered-column-number)))
+        )
+        minmax(var(--page-margin), 1fr);
+    }
+  }
+
+  .collection-wrapper:has(.facets--vertical) .facets-block-wrapper--vertical:not(.hidden) ~ .main-collection-grid {
+    @media screen and (min-width: 750px) {
+      grid-column: var(--facets-vertical-col-width) / var(--full-width-column-number);
+    }
+  }
+
+  .collection-wrapper:has(.facets-block-wrapper--vertical:not(#filters-drawer)):has(.collection-wrapper--full-width) {
+    @media screen and (min-width: 750px) {
+      grid-column: 1 / -1;
+      grid-template-columns: 0fr repeat(var(--centered-column-number), minmax(0, 1fr)) 0fr;
+    }
+  }
+
+  :is(.collection-wrapper--full-width, .collection-wrapper--full-width-on-mobile)
+    [product-grid-view='default']
+    .product-grid__card {
+    @media screen and (max-width: 749px) {
+      padding-inline-start: max(var(--padding-xs), var(--padding-inline-start));
+      padding-inline-end: max(var(--padding-xs), var(--padding-inline-end));
+    }
+  }
+
+  :is(.collection-wrapper--full-width, .collection-wrapper--full-width-on-mobile)
+    [product-grid-view='mobile-single']
+    .product-grid__card {
+    @media screen and (max-width: 749px) {
+      padding-inline-start: max(var(--padding-xs), var(--padding-inline-start));
+      padding-inline-end: max(var(--padding-xs), var(--padding-inline-end));
+    }
+  }
+
+  /* Make product media go edge-to-edge by using negative margins */
+  :is(.collection-wrapper--full-width) .card-gallery,
+  :is(.collection-wrapper--full-width-on-mobile) .card-gallery {
+    @media screen and (max-width: 749px) {
+      margin-inline-start: calc(-1 * max(var(--padding-xs), var(--padding-inline-start)));
+      margin-inline-end: calc(-1 * max(var(--padding-xs), var(--padding-inline-end)));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.collection_container",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:settings.type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:options.grid"
+        },
+        {
+          "value": "organic",
+          "label": "t:options.editorial"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "product_card_size",
+      "label": "t:settings.card_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        },
+        {
+          "value": "extra-large",
+          "label": "t:options.extra_large"
+        }
+      ],
+      "default": "medium",
+      "visible_if": "{{ section.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "select",
+      "id": "mobile_product_card_size",
+      "label": "t:settings.mobile_card_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:options.small"
+        },
+        {
+          "value": "large",
+          "label": "t:options.large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_infinite_scroll",
+      "label": "t:settings.auto_load_products",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "t:settings.products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 24,
+      "visible_if": "{{ section.settings.enable_infinite_scroll == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "product_grid_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "centered",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "centered"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width_on_mobile",
+      "label": "t:settings.full_width_on_mobile",
+      "default": true,
+      "visible_if": "{{ section.settings.product_grid_width != 'full-width' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_horizontal",
+      "label": "t:settings.horizontal_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_vertical",
+      "label": "t:settings.vertical_gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Collection Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_banner_image",
+      "label": "Standardbild (wird überschrieben von Collection-Metafield)",
+      "info": "Empfohlene Größe: 2000x370px. Für individuelle Banner pro Collection, erstelle ein Metafield custom.banner_image"
+    },
+    {
+      "type": "checkbox",
+      "id": "banner_full_width",
+      "label": "Banner volle Breite",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Banner Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "t:content.section_layout"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom_padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    }
+  ],
+  "presets": []
+}
+{% endschema %}

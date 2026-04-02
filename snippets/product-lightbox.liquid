@@ -1,0 +1,305 @@
+<div id="ProductLightbox" class="product-lightbox" aria-hidden="true" role="dialog">
+    <div class="product-lightbox__backdrop"></div>
+    <div class="product-lightbox__thumbs"></div>
+    <div class="product-lightbox__main">
+        <img class="product-lightbox__image" src="" alt="Produktbild vergrößert">
+    </div>
+    <button class="product-lightbox__nav product-lightbox__nav--prev" aria-label="Vorheriges Bild">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button class="product-lightbox__nav product-lightbox__nav--next" aria-label="Nächstes Bild">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <button class="product-lightbox__close" aria-label="Schließen">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    {%- comment -%}Embed all image URLs from Liquid so JS doesn't need to scrape the DOM{%- endcomment -%}
+    {%- assign lb_images = product.media | where: 'media_type', 'image' -%}
+    <script type="application/json" id="ProductLightboxData">
+      [{%- for media in lb_images -%}{%- capture zoom_src -%}{% render 'cloudinary-image', image: media, product: product, width: 2000 %}{%- endcapture -%}{%- capture thumb_src -%}{% render 'cloudinary-image', image: media, product: product, width: 200 %}{%- endcapture -%}{%- unless forloop.first -%},{%- endunless -%}{"zoom":{{ zoom_src | strip | json }},"thumb":{{ thumb_src | strip | json }},"alt":{{ media.alt | default: product.title | json }}}{%- endfor -%}]
+    </script>
+</div>
+
+<style>
+/* AboutYou-Style Full Screen Lightbox */
+.product-lightbox { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 10000; 
+    display: none; 
+    background: #fff;
+}
+.product-lightbox[aria-hidden="false"] { display: flex; }
+.product-lightbox__backdrop { display: none; }
+
+/* Thumbnails - Left Side */
+.product-lightbox__thumbs {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    z-index: 5;
+}
+.product-lightbox__thumbs::-webkit-scrollbar { width: 0; }
+
+.product-lightbox__thumb {
+    width: 70px;
+    height: 70px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #fff;
+    transition: border-color 0.15s;
+}
+.product-lightbox__thumb:hover { border-color: #ccc; }
+.product-lightbox__thumb--active { border-color: #000; }
+.product-lightbox__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Main Image Area */
+.product-lightbox__main {
+    position: absolute;
+    left: 100px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 80px;
+}
+
+.product-lightbox__image { 
+    max-width: 100%; 
+    max-height: 100%; 
+    width: auto; 
+    height: auto; 
+    object-fit: contain; 
+}
+
+/* Close Button */
+.product-lightbox__close { 
+    position: absolute; 
+    top: 24px; 
+    right: 24px; 
+    background: transparent; 
+    border: none; 
+    color: #000; 
+    font-size: 24px; 
+    width: 44px; 
+    height: 44px; 
+    cursor: pointer; 
+    z-index: 10; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: opacity 0.15s; 
+}
+.product-lightbox__close:hover { opacity: 0.6; }
+
+/* Navigation Arrows */
+.product-lightbox__nav { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: #fff; 
+    border: 1px solid #e5e5e5; 
+    color: #000; 
+    font-size: 16px; 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: all 0.15s; 
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.product-lightbox__nav:hover { 
+    background: #f5f5f5; 
+}
+.product-lightbox__nav[disabled] { 
+    opacity: 0.3; 
+    pointer-events: none; 
+}
+.product-lightbox__nav--prev { left: 120px; }
+.product-lightbox__nav--next { right: 24px; }
+
+/* Mobile */
+@media (max-width: 989px) {
+    .product-lightbox__thumbs { 
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: 80px;
+        flex-direction: row;
+        padding: 10px 15px;
+        background: #fff;
+        border-top: 1px solid #eee;
+    }
+    .product-lightbox__thumb { width: 50px; height: 50px; }
+    .product-lightbox__main {
+        left: 0;
+        bottom: 80px;
+        padding: 20px;
+    }
+    .product-lightbox__nav--prev { left: 12px; }
+    .product-lightbox__nav--next { right: 12px; }
+    .product-lightbox__nav { width: 40px; height: 40px; font-size: 14px; }
+    .product-lightbox__close { top: 12px; right: 12px; }
+}
+</style>
+
+<script>
+(function() {
+    const lightbox = document.getElementById('ProductLightbox');
+    if (!lightbox) return;
+
+    const lbImage = lightbox.querySelector('.product-lightbox__image');
+    const lbThumbs = lightbox.querySelector('.product-lightbox__thumbs');
+    const lbClose = lightbox.querySelector('.product-lightbox__close');
+    const lbPrev = lightbox.querySelector('.product-lightbox__nav--prev');
+    const lbNext = lightbox.querySelector('.product-lightbox__nav--next');
+    
+    const zoomSelector = '.main-image, #zoom-image'; 
+    
+    let currentLbIndex = 0;
+    let lbItems = [];
+
+    function collectLbItems() {
+        lbItems = [];
+        /* Read from embedded JSON — reliable across all gallery implementations */
+        try {
+            var dataEl = document.getElementById('ProductLightboxData');
+            if (dataEl) {
+                var parsed = JSON.parse(dataEl.textContent);
+                parsed.forEach(function(item) {
+                    if (item.zoom) lbItems.push({ src: item.zoom, thumb: item.thumb, alt: item.alt || 'Produktbild' });
+                });
+            }
+        } catch(e) {}
+
+        /* Fallback: scrape thumb-items if JSON embed failed */
+        if (lbItems.length === 0) {
+            const thumbItems = document.querySelectorAll('.thumb-item[data-type="image"]');
+            thumbItems.forEach((thumb) => {
+                const img = thumb.querySelector('img');
+                lbItems.push({
+                    src: thumb.getAttribute('data-zoom') || thumb.getAttribute('data-src') || img?.src,
+                    thumb: img?.src || '',
+                    alt: img?.alt || 'Produktbild'
+                });
+            });
+        }
+
+        /* Last resort: use the current main image */
+        if (lbItems.length === 0) {
+            const main = document.querySelector(zoomSelector);
+            if (main) lbItems.push({ src: main.src, thumb: main.src, alt: main.alt });
+        }
+    }
+
+    function updateThumbs() {
+        if (!lbThumbs) return;
+        lbThumbs.innerHTML = '';
+        
+        lbItems.forEach((item, i) => {
+            const thumb = document.createElement('button');
+            thumb.className = 'product-lightbox__thumb';
+            if (i === currentLbIndex) thumb.classList.add('product-lightbox__thumb--active');
+            thumb.innerHTML = `<img src="${item.thumb}" alt="${item.alt}">`;
+            thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentLbIndex = i;
+                updateLightbox();
+            });
+            lbThumbs.appendChild(thumb);
+        });
+    }
+
+    function updateLightbox() {
+        if (!lbItems[currentLbIndex]) return;
+        const item = lbItems[currentLbIndex];
+        
+        lbImage.src = item.src;
+        lbImage.alt = item.alt;
+        
+        // Update thumbnail active states
+        const thumbBtns = lbThumbs?.querySelectorAll('.product-lightbox__thumb');
+        thumbBtns?.forEach((btn, i) => {
+            btn.classList.toggle('product-lightbox__thumb--active', i === currentLbIndex);
+        });
+        
+        if (lbPrev) lbPrev.disabled = currentLbIndex === 0;
+        if (lbNext) lbNext.disabled = currentLbIndex === lbItems.length - 1;
+    }
+
+    function openLightbox(startIdx = 0) {
+        collectLbItems();
+        if (lbItems.length === 0) return;
+        
+        if (startIdx < 0) startIdx = 0;
+        if (startIdx >= lbItems.length) startIdx = 0;
+
+        currentLbIndex = startIdx;
+        updateThumbs();
+        updateLightbox();
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        lbImage.src = '';
+    }
+
+    // Click on main image opens lightbox — but NOT when a video is active
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest(zoomSelector);
+        if (!target) return;
+        /* If main-image is hidden (video is showing), don't open lightbox */
+        if (target.style.display === 'none' || getComputedStyle(target).display === 'none') return;
+        /* Also check gallery-icons-hidden class (set by gallery script for videos) */
+        if (document.querySelector('.gallery-stage-wrapper.gallery-icons-hidden')) return;
+
+        const activeThumb = document.querySelector('.thumb-item.active[data-type="image"]');
+        let idx = 0;
+        if (activeThumb) {
+            const allImageThumbs = Array.from(document.querySelectorAll('.thumb-item[data-type="image"]'));
+            idx = allImageThumbs.indexOf(activeThumb);
+            if (idx === -1) idx = 0;
+        }
+        openLightbox(idx);
+    });
+
+    if (lbClose) lbClose.addEventListener('click', closeLightbox);
+    if (lbPrev) lbPrev.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex > 0) { currentLbIndex--; updateLightbox(); } });
+    if (lbNext) lbNext.addEventListener('click', (e) => { e.stopPropagation(); if (currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); } });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.getAttribute('aria-hidden') === 'false') {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft' && currentLbIndex > 0) { currentLbIndex--; updateLightbox(); }
+            if (e.key === 'ArrowRight' && currentLbIndex < lbItems.length - 1) { currentLbIndex++; updateLightbox(); }
+        }
+    });
+})();
+</script>

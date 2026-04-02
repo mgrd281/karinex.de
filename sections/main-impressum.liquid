@@ -1,0 +1,108 @@
+{{ 'main-impressum.css' | asset_url | stylesheet_tag }}
+
+<div class="impressum-page">
+  
+  <!-- Hero Section -->
+  <header class="impressum-hero">
+    <h1 class="impressum-title">Impressum</h1>
+    <p class="impressum-subtitle">Anbieterkennzeichnung gemäß § 5 TMG</p>
+    <div class="impressum-divider"></div>
+    <p class="impressum-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 6px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Zuletzt aktualisiert: 9. Februar 2026
+    </p>
+  </header>
+
+  <div class="impressum-container">
+    
+    <!-- Company Information -->
+    <section class="impressum-section">
+      <h2 class="impressum-section-title">Angaben gemäß § 5 TMG</h2>
+      
+      <div class="impressum-info">
+        <div class="impressum-info-row">
+          <span class="impressum-label">Name</span>
+          <span class="impressum-value"><strong>Karina Khrystych</strong></span>
+        </div>
+        
+        <div class="impressum-info-row">
+          <span class="impressum-label">Geschäftsname</span>
+          <span class="impressum-value">karinex</span>
+        </div>
+        
+        <div class="impressum-address">
+          <span class="impressum-label">Anschrift</span>
+          <div class="impressum-address-lines">
+            Havighorster Redder 51<br>
+            22115 Hamburg<br>
+            Deutschland
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Information -->
+    <section class="impressum-section">
+      <h2 class="impressum-section-title">Kontakt</h2>
+      
+      <div class="impressum-contact-grid">
+        <div class="impressum-contact-item">
+          <span class="impressum-label">Telefon</span>
+          <a href="tel:+4915563133956" class="impressum-contact-link">+49 1556 3133956</a>
+        </div>
+        
+        <div class="impressum-contact-item">
+          <span class="impressum-label">E-Mail</span>
+          <a href="mailto:shop@karinex.de" class="impressum-contact-link">shop@karinex.de</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tax Information -->
+    <section class="impressum-section">
+      <h2 class="impressum-section-title">Umsatzsteuer-ID</h2>
+      
+      <div class="impressum-info">
+        <div class="impressum-info-row">
+          <span class="impressum-label">Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG</span>
+          <span class="impressum-tax-value">DE452578048</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dispute Resolution -->
+    <section class="impressum-section">
+      <h2 class="impressum-section-title">Streitbeilegung</h2>
+      
+      <p class="impressum-dispute-text">Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:</p>
+      
+      <a href="https://consumer-redress.ec.europa.eu/" target="_blank" rel="noopener noreferrer" class="impressum-external-link">
+        https://consumer-redress.ec.europa.eu/
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/>
+          <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
+      
+      <p class="impressum-dispute-text" style="margin-top: 20px;">Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+    </section>
+
+    <!-- Final Note -->
+    <footer class="impressum-final-note">
+      <p class="impressum-note-text">Dieses Impressum gilt für den Online-Shop www.karinex.de.</p>
+    </footer>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Impressum (Enterprise)",
+  "tag": "section",
+  "class": "section-impressum",
+  "settings": []
+}
+{% endschema %}

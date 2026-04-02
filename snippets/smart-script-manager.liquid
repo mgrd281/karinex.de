@@ -1,0 +1,99 @@
+{%- comment -%}
+  Smart Script Manager v1.0
+  Mitigates TBT by intercepting and delaying heavy third-party scripts.
+  Intercepts: TrustedShops, GTM, Tidio, Usercentrics.
+{%- endcomment -%}
+
+<script>
+(function() {
+  const BLACKLIST = [
+    'widgets.trustedshops.com',
+    'www.googletagmanager.com',
+    'code.tidio.co',
+    'web.cmp.usercentrics.eu'
+  ];
+
+  const DEFERRED_SCRIPTS = [];
+  let interactionLoaded = false;
+
+  // 1. Intercept document.createElement to catch async/lazy scripts
+  const nativeCreateElement = document.createElement;
+  document.createElement = function(tagName) {
+    const element = nativeCreateElement.apply(document, arguments);
+    if (tagName.toLowerCase() === 'script') {
+      const originalSetAttribute = element.setAttribute;
+      element.setAttribute = function(name, value) {
+        if (name === 'src' && BLACKLIST.some(d => value.includes(d))) {
+          element.__deferredSrc = value;
+          return;
+        }
+        originalSetAttribute.apply(element, arguments);
+      };
+      
+      Object.defineProperty(element, 'src', {
+        get: function() { return element.__deferredSrc || element.getAttribute('src'); },
+        set: function(value) {
+          if (BLACKLIST.some(d => value.includes(d))) {
+            element.__deferredSrc = value;
+          } else {
+            element.setAttribute('src', value);
+          }
+        }
+      });
+    }
+    return element;
+  };
+
+  // 2. Intercept appendChild and insertBefore to halt execution
+  const nativeAppendChild = Node.prototype.appendChild;
+  const nativeInsertBefore = Node.prototype.insertBefore;
+
+  Node.prototype.appendChild = function(newChild) {
+    if (newChild.tagName === 'SCRIPT' && newChild.__deferredSrc && !interactionLoaded) {
+      DEFERRED_SCRIPTS.push({ parent: this, node: newChild, next: null });
+      return newChild;
+    }
+    return nativeAppendChild.apply(this, arguments);
+  };
+
+  Node.prototype.insertBefore = function(newChild, refChild) {
+    if (newChild.tagName === 'SCRIPT' && newChild.__deferredSrc && !interactionLoaded) {
+      DEFERRED_SCRIPTS.push({ parent: this, node: newChild, next: refChild });
+      return newChild;
+    }
+    return nativeInsertBefore.apply(this, arguments);
+  };
+
+  function loadAllDeferred() {
+    if (interactionLoaded) return;
+    interactionLoaded = true;
+    console.log('Smart Script Manager: Triggering deferred scripts (' + DEFERRED_SCRIPTS.length + ')');
+    
+    DEFERRED_SCRIPTS.forEach(s => {
+      const actualScript = nativeCreateElement.call(document, 'script');
+      // Copy attributes
+      Array.from(s.node.attributes).forEach(attr => {
+        if (attr.name !== 'src') actualScript.setAttribute(attr.name, attr.value);
+      });
+      actualScript.src = s.node.__deferredSrc;
+      actualScript.async = true;
+      
+      if (s.next) {
+        nativeInsertBefore.call(s.parent, actualScript, s.next);
+      } else {
+        nativeAppendChild.call(s.parent, actualScript);
+      }
+    });
+  }
+
+  // Interaction listeners
+  ['mousemove', 'scroll', 'touchstart', 'click'].forEach(ev => {
+    window.addEventListener(ev, loadAllDeferred, { once: true, passive: true });
+  });
+
+  // Safe fallback (8s desktop, 18s mobile)
+  const fallbackDelay = (window.innerWidth < 768) ? 18000 : 8000;
+  setTimeout(loadAllDeferred, fallbackDelay);
+
+})();
+</script>

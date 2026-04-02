@@ -1,0 +1,1304 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign ay_is_sold_out = false
+  assign ay_has_real_size_options = false
+  assign ay_size_option_position = 0
+  if current_variant.available == false
+    assign ay_is_sold_out = true
+  endif
+  for opt in product.options_with_values
+    assign _opt_name_dc = opt.name | downcase | strip
+    if _opt_name_dc == 'größe' or _opt_name_dc == 'groesse' or _opt_name_dc == 'size' or _opt_name_dc == 'grösse'
+      assign ay_size_option_position = opt.position
+      if opt.values.size > 1
+        assign ay_has_real_size_options = true
+      elsif opt.values.size == 1
+        assign _single_val = opt.values[0] | strip | downcase
+        unless _single_val == 'default title' or _single_val == blank
+          assign ay_has_real_size_options = true
+        endunless
+      endif
+    endif
+  endfor
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+
+{{ 'product-aboutyou.css' | asset_url | stylesheet_tag }}
+<style>
+  .ay-gallery__main-img { object-fit: cover !important; }
+</style>
+
+<div class="ay-product" data-section-id="{{ section.id }}">
+  <div class="ay-product__wrapper">
+
+    {%- comment -%} ========== LEFT: GALLERY ========== {%- endcomment -%}
+    <div class="ay-gallery{% if ay_is_sold_out %} is-soldout{% endif %}">
+      {%- comment -%} Count all visual media (images + video) for grid layout {%- endcomment -%}
+      {%- assign ay_gallery_count = 0 -%}
+      {%- for _m in product.media -%}
+        {%- if _m.media_type == 'image' or _m.media_type == 'video' or _m.media_type == 'external_video' -%}
+          {%- assign ay_gallery_count = ay_gallery_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign ay_row_pattern = '2' -%}
+      {%- case ay_gallery_count -%}
+        {%- when 1 -%}{%- assign ay_row_pattern = '1' -%}
+        {%- when 2 -%}{%- assign ay_row_pattern = '2' -%}
+        {%- when 3 -%}{%- assign ay_row_pattern = '2,1' -%}
+        {%- when 4 -%}{%- assign ay_row_pattern = '2,2' -%}
+        {%- when 5 -%}{%- assign ay_row_pattern = '2,3' -%}
+        {%- when 6 -%}{%- assign ay_row_pattern = '2,2,2' -%}
+        {%- when 7 -%}{%- assign ay_row_pattern = '2,2,3' -%}
+        {%- when 8 -%}{%- assign ay_row_pattern = '2,2,2,2' -%}
+        {%- when 9 -%}{%- assign ay_row_pattern = '2,2,2,3' -%}
+        {%- when 10 -%}{%- assign ay_row_pattern = '2,2,3,3' -%}
+        {%- when 11 -%}{%- assign ay_row_pattern = '2,3,3,3' -%}
+      {%- endcase -%}
+      {%- assign ay_row_sizes = ay_row_pattern | split: ',' -%}
+
+      <div class="ay-gallery__grid">
+        {%- assign ay_cell_index = 0 -%}
+        {%- assign ay_row_idx = 0 -%}
+        {%- assign ay_in_row = 0 -%}
+        {%- assign ay_row_cols = ay_row_sizes[0] | plus: 0 -%}
+
+        {%- for media in product.media -%}
+          {%- unless media.media_type == 'image' or media.media_type == 'video' or media.media_type == 'external_video' -%}{%- continue -%}{%- endunless -%}
+
+          {%- comment -%} Open new row if needed {%- endcomment -%}
+          {%- if ay_in_row == 0 -%}
+            <div class="ay-gallery__row ay-gallery__row--{{ ay_row_cols }}">
+          {%- endif -%}
+
+              <div class="ay-gallery__cell">
+                {%- if media.media_type == 'image' -%}
+                  <img
+                    class="ay-gallery__main-img"
+                    src="{{ media | image_url: width: 800 }}"
+                    alt="{{ media.alt | escape }}"
+                    loading="{% if ay_cell_index < 2 %}eager{% else %}lazy{% endif %}"
+                    width="{{ media.width }}"
+                    height="{{ media.height }}"
+                    data-index="{{ ay_cell_index }}"
+                    data-full="{{ media | image_url: width: 1600 }}"
+                    data-type="image"
+                    onclick="ayLightbox.open({{ ay_cell_index }})"
+                  >
+                {%- elsif media.media_type == 'video' -%}
+                  <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video">
+                    <div class="ay-gallery__video-hidden">
+                      {{ media | media_tag: autoplay: false, controls: true, preload: 'metadata', image_size: '800x' }}
+                    </div>
+                    <img
+                      class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
+                      src="{{ media.preview_image | image_url: width: 800 }}"
+                      alt="{{ media.alt | default: product.title | escape }} - Video"
+                      loading="lazy"
+                    >
+                    <button class="ay-gallery__play-btn ay-gallery__play-btn--native" aria-label="Video abspielen">
+                      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.55)"/><polygon points="19,14 36,24 19,34" fill="#fff"/></svg>
+                    </button>
+                  </div>
+                {%- elsif media.media_type == 'external_video' -%}
+                  {%- liquid
+                    assign ay_ext_host = media.host
+                    assign ay_embed_url = ''
+                    if ay_ext_host == 'youtube'
+                      assign ay_embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&autoplay=1&modestbranding=1&playsinline=1'
+                    elsif ay_ext_host == 'vimeo'
+                      assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=1&title=0&byline=0&portrait=0'
+                    endif
+                  -%}
+                  <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video">
+                    <img
+                      class="ay-gallery__main-img ay-gallery__video-poster"
+                      src="{{ media.preview_image | image_url: width: 800 }}"
+                      alt="{{ media.alt | default: product.title | escape }} - Video"
+                      loading="lazy"
+                    >
+                    <button class="ay-gallery__play-btn" aria-label="Video abspielen" onclick="ayPlayVideo(this, 'external', '{{ ay_embed_url }}')">
+                      <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="rgba(0,0,0,0.55)"/><polygon points="19,14 36,24 19,34" fill="#fff"/></svg>
+                    </button>
+                  </div>
+                {%- endif -%}
+                {%- if ay_cell_index == 1 -%}
+                  {%- assign has_unisex_tag = false -%}
+                  {%- assign has_fast_tag = false -%}
+                  {%- if product.tags contains 'Unisex' or product.tags contains 'unisex' -%}
+                    {%- assign has_unisex_tag = true -%}
+                  {%- endif -%}
+                  {%- if product.tags contains 'Fast Ausverkauft' -%}
+                    {%- assign has_fast_tag = true -%}
+                  {%- endif -%}
+                  {%- if has_fast_tag or has_unisex_tag -%}
+                    <div class="ay-badge-stack">
+                      {%- if has_fast_tag -%}
+                        <span class="ay-badge-fast">Fast ausverkauft</span>
+                      {%- endif -%}
+                      {%- if has_unisex_tag -%}
+                        <span class="ay-badge-fast ay-badge-fast--white">Unisex</span>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+              </div>
+
+          {%- assign ay_cell_index = ay_cell_index | plus: 1 -%}
+          {%- assign ay_in_row = ay_in_row | plus: 1 -%}
+
+          {%- comment -%} Close row when full {%- endcomment -%}
+          {%- if ay_in_row >= ay_row_cols -%}
+            </div>
+            {%- assign ay_in_row = 0 -%}
+            {%- assign ay_row_idx = ay_row_idx | plus: 1 -%}
+            {%- if ay_row_idx < ay_row_sizes.size -%}
+              {%- assign ay_row_cols = ay_row_sizes[ay_row_idx] | plus: 0 -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- comment -%} Close last row if not full {%- endcomment -%}
+        {%- if ay_in_row > 0 -%}
+          </div>
+        {%- endif -%}
+      </div>
+      {%- if ay_is_sold_out -%}
+        <div class="ay-gallery__soldout-overlay" aria-hidden="true">
+          <span class="ay-gallery__soldout-sub">Leider ausverkauft</span>
+          <strong class="ay-gallery__soldout-title">Ausverkauft</strong>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ========== RIGHT: PRODUCT INFO ========== {%- endcomment -%}
+    <div class="ay-info">
+
+      {%- comment -%} Breadcrumb {%- endcomment -%}
+      <nav class="ay-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ _root }}">Startseite</a>
+        <span class="ay-breadcrumb__sep">&gt;</span>
+        {%- if product.collections.size > 0 -%}
+          <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+          <span class="ay-breadcrumb__sep">&gt;</span>
+        {%- endif -%}
+        {%- if product.vendor != blank -%}
+          <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+        {%- else -%}
+          <span>{{ product.title | truncate: 40 }}</span>
+        {%- endif -%}
+      </nav>
+
+      {%- comment -%} Brand Logo {%- endcomment -%}
+      {%- if product.vendor != blank -%}
+        {%- assign _vendor_down = product.vendor | downcase -%}
+        {%- assign _brand_logo_url = nil -%}
+        {%- case _vendor_down -%}
+          {%- when 'diesel' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/diesel-logo-schwarz-modern-minimalistisch.png?v=1775040423' -%}
+          {%- when 'boss' or 'hugo boss' -%}
+            {%- assign _brand_logo_url = 'boss-logo-schwarz-minimalistisch.png' | file_url -%}
+          {%- when 'michael kors' -%}
+            {%- assign _brand_logo_url = 'Michael_Kors_Logo_MK_rundes_Symbol_minimalistisches_Design_transparenter_Hintergrund.png' | file_url -%}
+          {%- when 'emporio armani' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/emporio-armani-logo-adler-schwarz.png?v=1775040479' -%}
+          {%- when 'armani exchange' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/armani-exchange-logo-ax-schwarz-minimalistisch.png?v=1775040305' -%}
+          {%- when 'tag heuer' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/id5F7blhtm_1775072189371.png?v=1775072223' -%}
+          {%- when 'casio' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/casio-logo-blau-marke.png?v=1775120369' -%}
+          {%- when 'maserati' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/maserati-logo-dreizack-schwarz.jpg?v=1775121692' -%}
+          {%- when 'daniel wellington' -%}
+            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/daniel-wellington-logo-schriftzug-minimalistisch.png?v=1775122666' -%}
+        {%- endcase -%}
+        <div class="ay-brand">
+          {%- if _brand_logo_url -%}
+            <a href="{{ product.vendor | url_for_vendor }}" aria-label="{{ product.vendor | escape }} Produkte" style="text-decoration:none;display:inline-block;">
+              <img class="ay-brand__logo{% if _vendor_down == 'emporio armani' or _vendor_down == 'casio' %} ay-brand__logo--half{% endif %}{% if _vendor_down == 'michael kors' %} ay-brand__logo--mk{% endif %}{% if _vendor_down == 'tag heuer' %} ay-brand__logo--tag{% endif %}" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}">
+            </a>
+          {%- else -%}
+            <a href="{{ product.vendor | url_for_vendor }}" class="ay-brand__text" style="text-decoration:none;">{{ product.vendor }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Title {%- endcomment -%}
+      <h1 class="ay-title">{{ product.title }}</h1>
+
+      {%- comment -%} Rating {%- endcomment -%}
+      <div class="ay-rating" id="ay-product-rating" style="display: none;">
+        <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
+      </div>
+
+      {%- comment -%} Sale Badge + Price {%- endcomment -%}
+      <div class="ay-price">
+        {%- if current_variant.compare_at_price > current_variant.price -%}
+          <span class="ay-sale-badge">SALE</span><br>
+          <div class="ay-price__line">
+            <span class="ay-price__current ay-price__current--sale">{{ current_variant.price | money }}</span>
+            <span class="ay-price__tax">inkl. MwSt.</span>
+          </div>
+          {%- assign _saved_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
+          <span class="ay-price__compare">
+            <s>{{ current_variant.compare_at_price | money }}</s>
+            <span class="ay-price__discount">-{{ _saved_pct }}%</span>
+          </span>
+        {%- else -%}
+          <div class="ay-price__line">
+            <span class="ay-price__current">{{ current_variant.price | money }}</span>
+            <span class="ay-price__tax">inkl. MwSt.</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Siblings (AboutYou-style color swatches) {%- endcomment -%}
+      {%- assign sibling_products = product.metafields.custom.siblings.value -%}
+      {%- if sibling_products != blank -%}
+        {%- assign _display_color = product.metafields.custom.display_color.value | default: product.metafields.custom.display_color | strip -%}
+        <div class="ay-siblings">
+          {%- if ay_is_sold_out and ay_has_real_size_options -%}
+            <div class="ay-siblings__headline">Entdecke andere Farben</div>
+          {%- endif -%}
+          <div class="ay-siblings__label">
+            Farbe: <strong id="ay-sibling-color-label">{{ _display_color }}</strong>
+          </div>
+          <div class="ay-siblings__grid">
+            {%- for sibling in sibling_products -%}
+              {%- assign _is_current = false -%}
+              {%- if sibling.id == product.id -%}{%- assign _is_current = true -%}{%- endif -%}
+              {%- assign _sib_color = sibling.metafields.custom.display_color.value | default: sibling.metafields.custom.display_color | default: sibling.title -%}
+              {%- assign _sib_unavailable = false -%}
+              {%- if sibling.selected_or_first_available_variant.available == false -%}
+                {%- assign _sib_unavailable = true -%}
+              {%- endif -%}
+              <a href="{{ sibling.url }}"
+                 class="ay-siblings__swatch{% if _is_current %} is-active{% endif %}{% if _sib_unavailable or ay_is_sold_out and _is_current %} is-unavailable{% endif %}"
+                 title="{{ sibling.title | escape }}"
+                 data-color="{{ _sib_color | escape }}">
+                <img src="{{ sibling.featured_image | image_url: width: 150 }}" alt="{{ sibling.title | escape }}" loading="lazy">
+                {%- if _sib_unavailable or ay_is_sold_out and _is_current -%}
+                  <span class="ay-siblings__mail-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M4 7l8 6 8-6"/></svg>
+                  </span>
+                {%- endif -%}
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Size Selector (AboutYou style) {%- endcomment -%}
+      {%- unless ay_is_sold_out -%}
+        {%- if ay_has_real_size_options -%}
+          {%- comment -%} Get current size value from the correct option position {%- endcomment -%}
+          {%- assign _cur_size = '' -%}
+          {%- if ay_size_option_position == 1 -%}{%- assign _cur_size = current_variant.option1 -%}
+          {%- elsif ay_size_option_position == 2 -%}{%- assign _cur_size = current_variant.option2 -%}
+          {%- elsif ay_size_option_position == 3 -%}{%- assign _cur_size = current_variant.option3 -%}
+          {%- endif -%}
+          <div class="ay-size">
+            <div class="ay-size__label">Größe</div>
+            <div class="ay-size__dropdown" id="ay-size-dropdown">
+              <button type="button" class="ay-size__trigger" id="ay-size-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span id="ay-size-value">{{ _cur_size }}</span>
+                <svg class="ay-size__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="ay-size__panel" id="ay-size-panel" data-option-position="{{ ay_size_option_position }}">
+                <div class="ay-size__tabs">
+                  <button type="button" class="ay-size__tab is-active" data-tab="international">International</button>
+                  <button type="button" class="ay-size__tab" data-tab="hersteller">Herstellergröße</button>
+                </div>
+                <ul class="ay-size__list" id="ay-size-list" role="listbox" aria-label="Größe wählen">
+                  {%- assign _seen_sizes = '' -%}
+                  {%- for v in product.variants -%}
+                    {%- if ay_size_option_position == 1 -%}{%- assign _sz = v.option1 | strip -%}
+                    {%- elsif ay_size_option_position == 2 -%}{%- assign _sz = v.option2 | strip -%}
+                    {%- elsif ay_size_option_position == 3 -%}{%- assign _sz = v.option3 | strip -%}
+                    {%- endif -%}
+                    {%- if _sz != blank and _sz != 'Default Title' -%}
+                      {%- assign _sz_key = _sz | append: '|||' -%}
+                      {%- unless _seen_sizes contains _sz_key -%}
+                        {%- assign _seen_sizes = _seen_sizes | append: _sz_key -%}
+                        {%- comment -%} Check if any variant with this size is available {%- endcomment -%}
+                        {%- assign _sz_available = false -%}
+                        {%- assign _sz_variant_id = v.id -%}
+                        {%- for v2 in product.variants -%}
+                          {%- if ay_size_option_position == 1 -%}{%- assign _v2sz = v2.option1 | strip -%}
+                          {%- elsif ay_size_option_position == 2 -%}{%- assign _v2sz = v2.option2 | strip -%}
+                          {%- elsif ay_size_option_position == 3 -%}{%- assign _v2sz = v2.option3 | strip -%}
+                          {%- endif -%}
+                          {%- if _v2sz == _sz and v2.available -%}
+                            {%- assign _sz_available = true -%}
+                            {%- assign _sz_variant_id = v2.id -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        <li class="ay-size__option{% if _sz == _cur_size %} is-active{% endif %}{% unless _sz_available %} is-unavailable{% endunless %}"
+                            role="option"
+                            data-value="{{ _sz | escape }}"
+                            data-variant-id="{{ _sz_variant_id }}"
+                            data-available="{{ _sz_available }}"
+                            aria-selected="{% if _sz == _cur_size %}true{% else %}false{% endif %}">
+                          <span class="ay-size__radio">
+                            <span class="ay-size__radio-inner"></span>
+                          </span>
+                          <span class="ay-size__option-value">{{ _sz }}</span>
+                          {%- unless _sz_available -%}
+                            <span class="ay-size__option-oos" data-size="{{ _sz | escape }}" data-variant-id="{{ _sz_variant_id }}">
+                              Benachrichtige mich
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                            </span>
+                          {%- endunless -%}
+                        </li>
+                      {%- endunless -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endunless -%}
+
+      {%- comment -%} Back-in-Stock Modal (AboutYou style) {%- endcomment -%}
+      <div class="ay-bis-overlay" id="ay-bis-overlay" style="display:none">
+        <div class="ay-bis-modal">
+          <button type="button" class="ay-bis-modal__close" id="ay-bis-close" aria-label="Schließen">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <h2 class="ay-bis-modal__title">Bei Verfügbarkeit<br>erinnern</h2>
+          <div class="ay-bis-modal__product">
+            <div class="ay-bis-modal__img-wrap">
+              <img class="ay-bis-modal__img" src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title | escape }}">
+            </div>
+            <div class="ay-bis-modal__info">
+              {%- if _brand_logo_url -%}
+                <img class="ay-bis-modal__brand" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}">
+              {%- else -%}
+                <span class="ay-bis-modal__brand-text">{{ product.vendor }}</span>
+              {%- endif -%}
+              <span class="ay-bis-modal__name">{{ product.title | truncate: 40 }}</span>
+              <span class="ay-bis-modal__size-badge" id="ay-bis-size-badge"></span>
+            </div>
+          </div>
+          <div class="ay-bis-modal__divider"></div>
+          <input type="email" class="ay-bis-modal__email" id="ay-bis-email" placeholder="Deine E-Mail-Adresse" autocomplete="email" required>
+          <p class="ay-bis-modal__status" id="ay-bis-status"></p>
+          <div class="ay-bis-modal__actions">
+            <button type="button" class="ay-bis-modal__btn ay-bis-modal__btn--back" id="ay-bis-back">Zurück</button>
+            <button type="button" class="ay-bis-modal__btn ay-bis-modal__btn--submit" id="ay-bis-submit">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M4 7l8 6 8-6"/></svg>
+              Erinnern
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} Add to Cart {%- endcomment -%}
+      {%- if ay_is_sold_out -%}
+        <div class="ay-stockout-box">
+          <h3 class="ay-stockout-box__title">Deine Farbe ist ausverkauft</h3>
+          <p class="ay-stockout-box__text">Wir können Dich benachrichtigen, sobald das Produkt wieder verfügbar ist.</p>
+          <form id="ay-stockout-form" class="ay-stockout-box__form" onsubmit="return false;">
+            <input type="hidden" id="ay-stockout-body" value="">
+            <input type="hidden" id="ay-backinstock-webapp-url" value="{{ section.settings.backinstock_webapp_url | escape }}">
+            <input type="hidden" id="ay-backinstock-seller-email" value="{{ section.settings.backinstock_seller_email | default: shop.email | escape }}">
+            <input type="hidden" id="ay-backinstock-product-title" value="{{ product.title | escape }}">
+            <input type="hidden" id="ay-backinstock-variant-title" value="{{ current_variant.title | escape }}">
+            <input type="hidden" id="ay-backinstock-product-handle" value="{{ product.handle | escape }}">
+            <input type="hidden" id="ay-backinstock-variant-id" value="{{ current_variant.id }}">
+            <input type="hidden" id="ay-backinstock-product-url" value="{{ shop.url }}{{ product.url }}">
+            <input type="hidden" id="ay-backinstock-product-image" value="{{ product.featured_media.preview_image | image_url: width: 800 }}">
+            <input type="hidden" id="ay-backinstock-product-vendor" value="{{ product.vendor | escape }}">
+            <input type="hidden" id="ay-backinstock-shop-name" value="{{ shop.name | escape }}">
+
+            {%- if ay_has_real_size_options -%}
+              <select class="ay-stockout-box__select" id="ay-stockout-size" name="contact[Größe]" aria-label="Größe wählen">
+                <option selected disabled>Größe wählen</option>
+                {%- assign _seen_stockout = '' -%}
+                {%- for v in product.variants -%}
+                  {%- if ay_size_option_position == 1 -%}{%- assign _sov = v.option1 | strip -%}
+                  {%- elsif ay_size_option_position == 2 -%}{%- assign _sov = v.option2 | strip -%}
+                  {%- elsif ay_size_option_position == 3 -%}{%- assign _sov = v.option3 | strip -%}
+                  {%- endif -%}
+                  {%- if _sov != blank and _sov != 'Default Title' -%}
+                    {%- assign _sov_key = _sov | append: '|||' -%}
+                    {%- unless _seen_stockout contains _sov_key -%}
+                      {%- assign _seen_stockout = _seen_stockout | append: _sov_key -%}
+                      <option>{{ _sov }}</option>
+                    {%- endunless -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+            {%- endif -%}
+
+            <input class="ay-stockout-box__email" id="ay-stockout-email" type="email" name="contact[email]" placeholder="Deine E-Mail-Adresse" aria-label="Deine E-Mail-Adresse" autocomplete="email" required>
+            <button type="submit" class="ay-stockout-box__btn" id="ay-stockout-submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M4 7l8 6 8-6"/></svg>
+              <span>Bei Verfügbarkeit erinnern</span>
+            </button>
+            <p class="ay-stockout-box__status" id="ay-stockout-status" aria-live="polite"></p>
+          </form>
+        </div>
+      {%- else -%}
+        <div class="ay-atc-row">
+          <form method="post" action="{{ _root }}cart/add" id="ay-add-to-cart-form" data-type="add-to-cart-form">
+            <input type="hidden" name="id" id="ay-variant-id" value="{{ current_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="ay-atc-btn" {% unless current_variant.available %}disabled{% endunless %}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              {%- if current_variant.available -%}
+                In den Warenkorb
+              {%- else -%}
+                Nicht verfügbar
+              {%- endif -%}
+            </button>
+          </form>
+          <button type="button" class="ay-wishlist-btn" id="ay-wishlist-btn" data-product-handle="{{ product.handle }}" aria-label="Auf Wunschliste" aria-pressed="false">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Shipping Info Card (AboutYou style) {%- endcomment -%}
+      <div class="ay-shipping">
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <strong>Kostenloser Versand</strong>
+          </span>
+          <span class="ay-shipping__badge ay-shipping__badge--free">Kostenlos</span>
+        </div>
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+            <strong>1–3 Werktage</strong>
+          </span>
+          <span class="ay-shipping__badge ay-shipping__badge--fast">Schnelle Lieferung</span>
+        </div>
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+            <strong>14 Tage Rückgaberecht</strong>
+          </span>
+        </div>
+      </div>
+
+      {%- comment -%} Accordions {%- endcomment -%}
+      <div class="ay-accordions">
+        {%- if product.description != blank -%}
+          <details class="ay-accordion">
+            <summary class="ay-accordion__trigger">
+              Produktbeschreibung
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="ay-accordion__content">
+              {{ product.description }}
+            </div>
+          </details>
+        {%- endif -%}
+
+        {%- if product.metafields.custom.highlights != blank -%}
+          <details class="ay-accordion">
+            <summary class="ay-accordion__trigger">
+              Highlights
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="ay-accordion__content">
+              {{ product.metafields.custom.highlights }}
+            </div>
+          </details>
+        {%- endif -%}
+
+        {%- if product.metafields.custom.lieferumfang != blank -%}
+          <details class="ay-accordion">
+            <summary class="ay-accordion__trigger">
+              Lieferumfang
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="ay-accordion__content">
+              {{ product.metafields.custom.lieferumfang }}
+            </div>
+          </details>
+        {%- endif -%}
+
+        <details class="ay-accordion">
+          <summary class="ay-accordion__trigger">
+            Häufig gestellte Fragen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="ay-accordion__content">
+            <ul>
+              <li><strong>Wie schnell ist der Versand?</strong><br>Deine Bestellung wird in der Regel innerhalb von 1–3 Werktagen geliefert.</li>
+              <li><strong>Kann ich den Artikel zurückgeben?</strong><br>Ja, du hast ein 14-tägiges Widerrufsrecht mit kostenloser Retoure.</li>
+              <li><strong>Ist der Artikel sofort verfügbar?</strong><br>Die Verfügbarkeit siehst du direkt bei Größe und Warenkorb-Button auf dieser Seite.</li>
+              <li><strong>Wie finde ich die richtige Größe?</strong><br>Nutze die Größenauswahl auf der Produktseite und orientiere dich an den Produktdetails im Bereich Beschreibung.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="ay-accordion">
+          <summary class="ay-accordion__trigger">
+            Versand & Rückgabe
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="ay-accordion__content">
+            <ul>
+              <li>Kostenloser Versand innerhalb Deutschlands</li>
+              <li>Lieferung in 1–3 Werktagen</li>
+              <li>14 Tage Widerrufsrecht</li>
+              <li>Kostenfreie Retoure</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Zoom Dialog (AboutYou lightbox: thumbs left, main image right) {%- endcomment -%}
+<dialog class="ay-zoom-dialog" id="ay-zoom-dialog">
+  <div class="ay-zoom-dialog__thumbs-col" id="ay-zoom-thumbs-wrap">
+    <div class="ay-zoom-dialog__thumbs" id="ay-zoom-thumbs"></div>
+  </div>
+  <div class="ay-zoom-dialog__main" id="ay-zoom-gallery">
+    <button class="ay-zoom-dialog__close" id="ay-zoom-close" aria-label="Schließen">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="ay-zoom-dialog__nav ay-zoom-dialog__nav--next" id="ay-zoom-next" aria-label="Nächstes Bild">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
+    <button class="ay-zoom-dialog__nav ay-zoom-dialog__nav--prev" id="ay-zoom-prev" aria-label="Vorheriges Bild">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 6 9 12 15 18"/></svg>
+    </button>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  /* ---- Zoom Dialog (AboutYou-style: thumbs left, single image, prev/next) ---- */
+  (function() {
+    var imgEls = Array.prototype.slice.call(document.querySelectorAll('.ay-gallery__main-img[data-type="image"]'));
+    var dialog = document.getElementById('ay-zoom-dialog');
+    var galleryEl = document.getElementById('ay-zoom-gallery');
+    var thumbsEl = document.getElementById('ay-zoom-thumbs');
+    var closeBtn = document.getElementById('ay-zoom-close');
+    var prevBtn = document.getElementById('ay-zoom-prev');
+    var nextBtn = document.getElementById('ay-zoom-next');
+    if (!dialog || !galleryEl) return;
+
+    var dialogItems = [];
+    var currentIdx = 0;
+
+    imgEls.forEach(function(img, i) {
+      var src = img.getAttribute('data-full') || img.src;
+      var alt = img.alt || '';
+
+      var item = document.createElement('div');
+      item.className = 'ay-zoom-dialog__item';
+      item.setAttribute('data-idx', i);
+
+      var dImg = document.createElement('img');
+      dImg.className = 'ay-zoom-dialog__img';
+      dImg.src = src;
+      dImg.alt = alt;
+      dImg.loading = 'lazy';
+      dImg.addEventListener('click', function() { dialog.close(); });
+      item.appendChild(dImg);
+      galleryEl.appendChild(item);
+      dialogItems.push(item);
+
+      var thumbBtn = document.createElement('button');
+      thumbBtn.type = 'button';
+      thumbBtn.className = 'ay-zoom-dialog__thumb-btn';
+      thumbBtn.setAttribute('data-idx', i);
+      var tImg = document.createElement('img');
+      tImg.src = img.src;
+      tImg.alt = alt;
+      tImg.className = 'ay-zoom-dialog__thumb-img';
+      thumbBtn.appendChild(tImg);
+      thumbBtn.addEventListener('click', function() {
+        goTo(parseInt(this.getAttribute('data-idx'), 10));
+      });
+      thumbsEl.appendChild(thumbBtn);
+    });
+
+    function goTo(idx) {
+      if (idx < 0) idx = dialogItems.length - 1;
+      if (idx >= dialogItems.length) idx = 0;
+      currentIdx = idx;
+      dialogItems.forEach(function(item, i) {
+        item.classList.toggle('is-visible', i === idx);
+      });
+      thumbsEl.querySelectorAll('.ay-zoom-dialog__thumb-btn').forEach(function(btn, i) {
+        btn.classList.toggle('is-active', i === idx);
+      });
+      var activeThumb = thumbsEl.querySelector('.ay-zoom-dialog__thumb-btn.is-active');
+      if (activeThumb) activeThumb.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      prevBtn.style.display = dialogItems.length > 1 ? '' : 'none';
+      nextBtn.style.display = dialogItems.length > 1 ? '' : 'none';
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function() { goTo(currentIdx - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function() { goTo(currentIdx + 1); });
+
+    window.ayLightbox = {
+      open: function(cellIdx) {
+        var targetIdx = 0;
+        imgEls.forEach(function(img, i) {
+          if (parseInt(img.getAttribute('data-index'), 10) === cellIdx) { targetIdx = i; }
+        });
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+        goTo(targetIdx);
+      },
+      close: function() {
+        dialog.close();
+        document.body.style.overflow = '';
+      }
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', function() { dialog.close(); });
+    dialog.addEventListener('close', function() { document.body.style.overflow = ''; });
+    dialog.addEventListener('click', function(e) { if (e.target === dialog) dialog.close(); });
+    document.addEventListener('keydown', function(e) {
+      if (!dialog.open) return;
+      if (e.key === 'Escape') dialog.close();
+      if (e.key === 'ArrowRight') goTo(currentIdx + 1);
+      if (e.key === 'ArrowLeft') goTo(currentIdx - 1);
+    });
+  })();
+
+  /* ---- Inline Video Player (external videos) ---- */
+  window.ayPlayVideo = function (btn, type, src) {
+    var wrap = btn.closest('.ay-gallery__video-wrap');
+    if (!wrap || !src) return;
+    btn.style.display = 'none';
+    var poster = wrap.querySelector('.ay-gallery__video-poster');
+    if (poster) poster.style.display = 'none';
+
+    var iframe = document.createElement('iframe');
+    iframe.className = 'ay-gallery__inline-video';
+    iframe.src = src;
+    iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.style.border = '0';
+    wrap.appendChild(iframe);
+  };
+
+  /* ---- Native Video Player (Shopify-hosted videos) ---- */
+  document.querySelectorAll('.ay-gallery__play-btn--native').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var wrap = btn.closest('.ay-gallery__video-wrap--native');
+      if (!wrap) return;
+      var hidden = wrap.querySelector('.ay-gallery__video-hidden');
+      var poster = wrap.querySelector('.ay-gallery__video-poster--native');
+      var video = hidden ? hidden.querySelector('video') : null;
+
+      if (poster) poster.style.display = 'none';
+      btn.style.display = 'none';
+
+      if (hidden) {
+        hidden.style.position = 'absolute';
+        hidden.style.inset = '0';
+        hidden.style.width = '100%';
+        hidden.style.height = '100%';
+        hidden.style.opacity = '1';
+        hidden.style.pointerEvents = 'auto';
+      }
+      if (video) {
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        video.play();
+      }
+    });
+  });
+
+  /* ---- Variant Selection ---- */
+  var productJson = {{ product.variants | json }};
+  var selectedOptions = {};
+  {%- for option in product.options_with_values -%}
+    selectedOptions[{{ option.position }}] = {{ option.selected_value | json }};
+  {%- endfor -%}
+
+  function findVariant() {
+    for (var i = 0; i < productJson.length; i++) {
+      var v = productJson[i];
+      var match = true;
+      for (var pos in selectedOptions) {
+        var optIdx = parseInt(pos, 10) - 1;
+        if (v.options[optIdx] !== selectedOptions[pos]) { match = false; break; }
+      }
+      if (match) return v;
+    }
+    return null;
+  }
+
+  function updateVariant(variant) {
+    if (!variant) return;
+    var idInput = document.getElementById('ay-variant-id');
+    if (idInput) idInput.value = variant.id;
+
+    var atcBtn = document.querySelector('.ay-atc-btn');
+    if (atcBtn) {
+      atcBtn.disabled = !variant.available;
+      atcBtn.querySelector('span, .ay-atc-text') ||
+        (atcBtn.lastChild.nodeType === 3 &&
+          (atcBtn.lastChild.textContent = variant.available ? ' In den Warenkorb' : ' Nicht verfügbar'));
+    }
+
+    var url = new URL(window.location);
+    url.searchParams.set('variant', variant.id);
+    history.replaceState(null, '', url.toString());
+  }
+
+  document.querySelectorAll('.ay-variants__swatch').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pos = this.getAttribute('data-option-position');
+      var val = this.getAttribute('data-value');
+      selectedOptions[pos] = val;
+
+      this.closest('.ay-variants__grid').querySelectorAll('.ay-variants__swatch').forEach(function (s) {
+        s.classList.remove('is-active');
+      });
+      this.classList.add('is-active');
+
+      var label = this.closest('.ay-variants').querySelector('.ay-variants__label span');
+      if (label) label.textContent = val;
+
+      var variant = findVariant();
+      updateVariant(variant);
+
+      if (this.getAttribute('data-variant-url')) {
+        window.location.href = this.getAttribute('data-variant-url');
+      }
+    });
+  });
+
+  var sizeSelect = document.getElementById('ay-size-select');
+  if (sizeSelect) {
+    sizeSelect.addEventListener('change', function () {
+      selectedOptions[this.getAttribute('data-option-position')] = this.value;
+      var variant = findVariant();
+      updateVariant(variant);
+    });
+  }
+
+  /* ---- Size Dropdown (AboutYou style) ---- */
+  (function () {
+    var trigger = document.getElementById('ay-size-trigger');
+    var panel = document.getElementById('ay-size-panel');
+    var list = document.getElementById('ay-size-list');
+    if (!trigger || !panel) return;
+
+    function toggle(open) {
+      var isOpen = typeof open === 'boolean' ? open : !panel.classList.contains('is-open');
+      panel.classList.toggle('is-open', isOpen);
+      trigger.setAttribute('aria-expanded', isOpen);
+    }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggle();
+    });
+
+    panel.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+
+    document.addEventListener('click', function () {
+      toggle(false);
+    });
+
+    /* Tab switching */
+    panel.querySelectorAll('.ay-size__tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        panel.querySelectorAll('.ay-size__tab').forEach(function (t) { t.classList.remove('is-active'); });
+        this.classList.add('is-active');
+      });
+    });
+
+    list.querySelectorAll('.ay-size__option').forEach(function (opt) {
+      opt.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var val = this.getAttribute('data-value');
+
+        list.querySelectorAll('.ay-size__option').forEach(function (o) {
+          o.classList.remove('is-active');
+          o.setAttribute('aria-selected', 'false');
+        });
+        this.classList.add('is-active');
+        this.setAttribute('aria-selected', 'true');
+
+        document.getElementById('ay-size-value').textContent = val;
+        toggle(false);
+
+        /* Update variant selection using correct option position */
+        var optPos = parseInt(panel.getAttribute('data-option-position'), 10) || 1;
+        selectedOptions[optPos] = val;
+        var variant = findVariant();
+        if (variant) {
+          updateVariant(variant);
+          /* Update price display */
+          var priceEl = document.querySelector('.ay-price__current');
+          if (priceEl) {
+            var formatted = (variant.price / 100).toFixed(2).replace('.', ',') + ' €';
+            priceEl.textContent = formatted;
+          }
+          var compareEl = document.querySelector('.ay-price__compare s');
+          if (compareEl && variant.compare_at_price) {
+            var compFormatted = (variant.compare_at_price / 100).toFixed(2).replace('.', ',') + ' €';
+            compareEl.textContent = compFormatted;
+          }
+        }
+      });
+    });
+  })();
+
+  /* ---- Back-in-Stock Modal (size dropdown → notify) ---- */
+  (function () {
+    var overlay = document.getElementById('ay-bis-overlay');
+    var closeBtn = document.getElementById('ay-bis-close');
+    var backBtn = document.getElementById('ay-bis-back');
+    var submitBtn = document.getElementById('ay-bis-submit');
+    var emailInput = document.getElementById('ay-bis-email');
+    var statusEl = document.getElementById('ay-bis-status');
+    var sizeBadge = document.getElementById('ay-bis-size-badge');
+    if (!overlay) return;
+
+    var currentSize = '';
+    var currentVariantId = '';
+
+    function openModal(size, variantId) {
+      currentSize = size;
+      currentVariantId = variantId;
+      if (sizeBadge) sizeBadge.textContent = size;
+      if (emailInput) emailInput.value = '';
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'ay-bis-modal__status'; }
+      if (submitBtn) submitBtn.disabled = false;
+      overlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      if (emailInput) setTimeout(function () { emailInput.focus(); }, 100);
+    }
+
+    function closeModal() {
+      overlay.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backBtn) backBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    /* Open modal when clicking "Benachrichtige mich" */
+    document.querySelectorAll('.ay-size__option-oos').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var li = this.closest('.ay-size__option');
+        var size = this.getAttribute('data-size') || (li && li.getAttribute('data-value')) || '';
+        var variantId = this.getAttribute('data-variant-id') || (li && li.getAttribute('data-variant-id')) || '';
+        openModal(size, variantId);
+      });
+    });
+
+    /* Submit notification */
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function () {
+        var email = (emailInput.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          statusEl.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.';
+          statusEl.className = 'ay-bis-modal__status is-error';
+          emailInput.focus();
+          return;
+        }
+
+        submitBtn.disabled = true;
+        statusEl.textContent = 'Wird gesendet...';
+        statusEl.className = 'ay-bis-modal__status';
+
+        var webAppUrl = (document.getElementById('ay-backinstock-webapp-url') || { value: '' }).value.trim();
+        if (!webAppUrl) {
+          /* Fallback: use section settings value from hidden inputs if they exist */
+          webAppUrl = {{ section.settings.backinstock_webapp_url | json }};
+        }
+
+        var payload = {
+          action: 'subscribe',
+          email: email,
+          size: currentSize,
+          productTitle: {{ product.title | json }},
+          variantTitle: currentSize,
+          productHandle: {{ product.handle | json }},
+          variantId: currentVariantId,
+          productUrl: window.location.href,
+          productImage: {{ product.featured_image | image_url: width: 800 | json }},
+          productVendor: {{ product.vendor | json }},
+          sellerEmail: {{ section.settings.backinstock_seller_email | default: shop.email | json }},
+          shopName: {{ shop.name | json }}
+        };
+
+        fetch(webAppUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        })
+        .then(function () {
+          statusEl.textContent = 'Du wirst erinnert!';
+          statusEl.className = 'ay-bis-modal__status is-success';
+          submitBtn.disabled = false;
+          setTimeout(closeModal, 1800);
+        })
+        .catch(function () {
+          statusEl.textContent = 'Fehler. Bitte später erneut versuchen.';
+          statusEl.className = 'ay-bis-modal__status is-error';
+          submitBtn.disabled = false;
+        });
+      });
+    }
+  })();
+
+  /* ---- ATC Ajax (same behaviour as Standard-Produkt) ---- */
+  var atcForm = document.getElementById('ay-add-to-cart-form');
+  if (atcForm) {
+    atcForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = atcForm.querySelector('.ay-atc-btn');
+      var origHTML = btn.innerHTML;
+      var variantId = document.getElementById('ay-variant-id').value;
+      btn.disabled = true;
+      btn.textContent = 'Wird hinzugefügt...';
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({
+          id: parseInt(variantId, 10),
+          quantity: 1,
+          sections: 'cart-drawer,cart-icon-bubble',
+          sections_url: window.location.pathname
+        })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (response) {
+        btn.textContent = '✓ Hinzugefügt';
+        setTimeout(function () {
+          btn.disabled = false;
+          btn.innerHTML = origHTML;
+        }, 1500);
+
+        /* Dispatch cart:update — opens the cart drawer exactly like the standard product page */
+        var evt = new CustomEvent('cart:update', { bubbles: true, detail: {
+          resource: response,
+          sourceId: 'ay-add-to-cart-form',
+          data: {
+            source: 'product-form-component',
+            itemCount: 1,
+            productId: '{{ product.id }}',
+            variantId: variantId,
+            sections: response.sections
+          }
+        }});
+        document.dispatchEvent(evt);
+
+        /* Update cart counter badges */
+        document.querySelectorAll('cart-counter').forEach(function (el) {
+          if (el.update) el.update();
+        });
+      })
+      .catch(function () {
+        btn.textContent = 'Fehler';
+        setTimeout(function () { btn.disabled = false; btn.innerHTML = origHTML; }, 2000);
+      });
+    });
+  }
+
+  /* ---- Back in Stock submit (sold out state) ---- */
+  var stockoutForm = document.getElementById('ay-stockout-form');
+  if (stockoutForm) {
+    stockoutForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var emailInput = document.getElementById('ay-stockout-email');
+      var sizeSelect = document.getElementById('ay-stockout-size');
+      var bodyInput = document.getElementById('ay-stockout-body');
+      var submitBtn = document.getElementById('ay-stockout-submit');
+      var statusEl = document.getElementById('ay-stockout-status');
+      var btnLabel = submitBtn ? submitBtn.querySelector('span') : null;
+      var defaultBtnText = btnLabel ? btnLabel.textContent : '';
+      var webAppUrl = ((document.getElementById('ay-backinstock-webapp-url') || {}).value || '').trim();
+      var sellerEmail = ((document.getElementById('ay-backinstock-seller-email') || {}).value || '').trim();
+      var productTitle = ((document.getElementById('ay-backinstock-product-title') || {}).value || '').trim();
+      var variantTitle = ((document.getElementById('ay-backinstock-variant-title') || {}).value || '').trim();
+      var productHandle = ((document.getElementById('ay-backinstock-product-handle') || {}).value || '').trim();
+      var variantId = ((document.getElementById('ay-backinstock-variant-id') || {}).value || '').trim();
+      var productUrl = ((document.getElementById('ay-backinstock-product-url') || {}).value || '').trim() || window.location.href;
+      var productImage = ((document.getElementById('ay-backinstock-product-image') || {}).value || '').trim();
+      var productVendor = ((document.getElementById('ay-backinstock-product-vendor') || {}).value || '').trim();
+      var shopName = ((document.getElementById('ay-backinstock-shop-name') || {}).value || '').trim();
+
+      if (!emailInput || !submitBtn || !statusEl || !bodyInput) return;
+
+      var email = (emailInput.value || '').trim();
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      if (!emailOk) {
+        statusEl.textContent = 'Bitte gib eine gueltige E-Mail-Adresse ein.';
+        statusEl.className = 'ay-stockout-box__status is-error';
+        emailInput.focus();
+        return;
+      }
+
+      var sizeText = sizeSelect && sizeSelect.value ? sizeSelect.value : 'nicht angegeben';
+      bodyInput.value = 'Bitte benachrichtigen, wenn wieder verfuegbar: {{ product.title | escape }} | Variante: {{ current_variant.title | escape }} | Groesse: ' + sizeText + ' | URL: ' + window.location.href;
+
+      function setSuccess() {
+        statusEl.textContent = 'Du wirst erinnert';
+        statusEl.className = 'ay-stockout-box__status is-success';
+        if (btnLabel) btnLabel.textContent = 'Du wirst erinnert';
+        emailInput.value = '';
+      }
+
+      function setError() {
+        statusEl.textContent = 'Senden fehlgeschlagen. Bitte spaeter erneut versuchen.';
+        statusEl.className = 'ay-stockout-box__status is-error';
+      }
+
+      function finalizeButton(success) {
+        if (success) {
+          setTimeout(function () {
+            submitBtn.disabled = false;
+            if (btnLabel) btnLabel.textContent = defaultBtnText;
+          }, 2500);
+          return;
+        }
+        submitBtn.disabled = false;
+      }
+
+      submitBtn.disabled = true;
+      statusEl.textContent = 'Wird gesendet...';
+      statusEl.className = 'ay-stockout-box__status';
+
+      if (!webAppUrl) {
+        statusEl.textContent = 'Web App URL fehlt. Bitte Theme-Einstellung pruefen.';
+        statusEl.className = 'ay-stockout-box__status is-error';
+        finalizeButton(false);
+        return;
+      }
+
+      var payload = {
+        action: 'subscribe',
+        email: email,
+        size: sizeText,
+        productTitle: productTitle,
+        variantTitle: variantTitle,
+        productHandle: productHandle,
+        variantId: variantId,
+        productUrl: productUrl,
+        productImage: productImage,
+        productVendor: productVendor,
+        sellerEmail: sellerEmail,
+        shopName: shopName
+      };
+
+      fetch(webAppUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+      .then(function () {
+        setSuccess();
+        finalizeButton(true);
+      })
+      .catch(function () {
+        setError();
+        finalizeButton(false);
+      });
+    });
+  }
+})();
+
+// Only show rating stars at top if there are reviews; otherwise hide completely (no link)
+(function() {
+  function cleanTopRatingText() {
+    var wrapper = document.getElementById('ay-product-rating');
+    if (!wrapper) return;
+    var links = wrapper.querySelectorAll('a');
+    links.forEach(function(link) {
+      if ((link.textContent || '').toLowerCase().indexOf('bewertung schreiben') !== -1) {
+        link.remove();
+      }
+    });
+    var stars = wrapper.querySelector('.rechnung-profi-stars');
+    if (stars && stars.childNodes.length) {
+      stars.childNodes.forEach(function(node) {
+        if (node.nodeType === 3 && (node.textContent || '').toLowerCase().indexOf('bewertung schreiben') !== -1) {
+          node.textContent = node.textContent.replace(/bewertung schreiben/gi, '').trim();
+        }
+      });
+    }
+  }
+
+  function handleRating() {
+    var wrapper = document.getElementById('ay-product-rating');
+    if (!wrapper) return;
+    cleanTopRatingText();
+    var stars = wrapper.querySelector('.rechnung-profi-stars');
+    if (!stars || stars.children.length === 0) { wrapper.style.display = 'none'; return; }
+    var txt = stars.textContent || '';
+    var match = txt.match(/\((\d+)/);
+    var count = match ? parseInt(match[1], 10) : 0;
+    if (count > 0) {
+      wrapper.style.display = '';
+    } else {
+      wrapper.style.display = 'none';
+    }
+  }
+  handleRating();
+  var obs = new MutationObserver(handleRating);
+  var target = document.getElementById('ay-product-rating');
+  if (target) obs.observe(target, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', handleRating);
+  window.addEventListener('load', function() {
+    handleRating();
+    setTimeout(handleRating, 500);
+    setTimeout(handleRating, 1500);
+  });
+})();
+
+// Siblings: show color name on hover
+(function() {
+  var label = document.getElementById('ay-sibling-color-label');
+  if (!label) return;
+  var defaultColor = label.textContent;
+  document.querySelectorAll('.ay-siblings__swatch').forEach(function(swatch) {
+    swatch.addEventListener('mouseenter', function() {
+      label.textContent = this.getAttribute('data-color') || defaultColor;
+    });
+    swatch.addEventListener('mouseleave', function() {
+      label.textContent = defaultColor;
+    });
+  });
+})();
+
+// Wishlist button: sync with theme localStorage wishlist and animate on toggle
+(function() {
+  var button = document.getElementById('ay-wishlist-btn');
+  if (!button) return;
+
+  var productHandle = button.getAttribute('data-product-handle');
+  if (!productHandle) return;
+
+  function getWishlist() {
+    try {
+      var raw = localStorage.getItem('wishlist');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function setWishlist(items) {
+    try {
+      localStorage.setItem('wishlist', JSON.stringify(items));
+      window.dispatchEvent(new CustomEvent('wishlist:update', {
+        detail: {
+          productHandle: productHandle,
+          isSaved: items.indexOf(productHandle) !== -1
+        }
+      }));
+      window.dispatchEvent(new Event('wishlist-updated'));
+    } catch (e) {}
+  }
+
+  function syncButtonState() {
+    var wishlisted = getWishlist().indexOf(productHandle) !== -1;
+    button.classList.toggle('is-active', wishlisted);
+    button.setAttribute('aria-pressed', wishlisted ? 'true' : 'false');
+  }
+
+  button.addEventListener('click', function() {
+    var items = getWishlist();
+    var index = items.indexOf(productHandle);
+
+    button.classList.remove('is-burst');
+    void button.offsetWidth;
+    button.classList.add('is-burst');
+
+    if (index === -1) {
+      items.push(productHandle);
+    } else {
+      items.splice(index, 1);
+    }
+
+    setWishlist(items);
+    syncButtonState();
+  });
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'wishlist') syncButtonState();
+  });
+
+  syncButtonState();
+})();
+
+// Move reviews section BELOW "DAS PASST DAZU" (custom-similar-products in footer-group)
+(function() {
+  function moveReviews() {
+    var similarSection = document.querySelector('.custom-similar-products-wrapper');
+    if (!similarSection) return false;
+    var similarShopifySection = similarSection.closest('[id^="shopify-section-"]');
+    if (!similarShopifySection) return false;
+    var reviewWidget = document.querySelector('.kx-reviews-widget-wrapper');
+    if (!reviewWidget) return false;
+    var reviewSection = reviewWidget.closest('[id^="shopify-section-"]');
+    if (!reviewSection) return false;
+    if (similarShopifySection.nextElementSibling === reviewSection) return true;
+    similarShopifySection.after(reviewSection);
+    return true;
+  }
+  function tryMove() {
+    if (!moveReviews()) setTimeout(moveReviews, 500);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryMove);
+  } else {
+    tryMove();
+  }
+  window.addEventListener('load', moveReviews);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "AboutYou Produkt",
+  "tag": "section",
+  "class": "section-aboutyou-product",
+  "settings": [
+    {
+      "type": "text",
+      "id": "backinstock_webapp_url",
+      "label": "Back in stock Web App URL",
+      "default": "https://script.google.com/macros/s/AKfycbzJPrYFa_QE6rpG5GPmySgxQA_HM-wpuJCmNIZ3EX5qcbuje03Au2zd2mGKlYfnFEg1/exec"
+    },
+    {
+      "type": "text",
+      "id": "backinstock_seller_email",
+      "label": "Back in stock Empfaenger E-Mail"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AboutYou Produkt"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,730 @@
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Unsere Empfehlungen" },
+    { "type": "collection", "id": "collection", "label": "Kategorie auswählen" },
+    { "type": "collection_list", "id": "collection_list", "label": "Zufällige Kategorien (Überschreibt Auswahl)" },
+    { "type": "checkbox", "id": "show_subheading", "label": "Untertitel anzeigen", "default": false },
+    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Entdecke unsere besten Produkte." },
+    { "type": "checkbox", "id": "zoom_enable", "default": true, "label": "Zoom beim Hover aktivieren" },
+    {
+      "type": "select",
+      "id": "zoom_scale",
+      "label": "Zoom-Stärke",
+      "default": "1.05",
+      "options": [
+        { "value": "1.05", "label": "Leicht (1.05)" },
+        { "value": "1.15", "label": "Mittel (1.15)" },
+        { "value": "1.30", "label": "Stark (1.30)" }
+      ]
+    },
+    { "type": "range", "id": "max_products", "min": 4, "max": 24, "step": 1, "default": 8, "label": "Max. Anzahl Produkte" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "default": 4, "label": "Spalten (Desktop)" },
+    { "type": "checkbox", "id": "show_badge", "default": true, "label": "Sale Badge anzeigen" },
+    { "type": "checkbox", "id": "show_rating", "label": "Bewertungen anzeigen", "default": true },
+    {
+      "type": "header",
+      "content": "Mobile Einstellungen"
+    },
+    { "type": "checkbox", "id": "mobile_carousel", "default": true, "label": "Karussell auf Mobilgeräten", "info": "Zeigt Produkte als horizontalen Slider auf Mobilgeräten (ähnlich Amazon/Zalando)" },
+    { "type": "text", "id": "button_label", "label": "Button-Text (optional)", "default": "Alle anzeigen" },
+    { "type": "url", "id": "button_link", "label": "Button-Link (optional)" }
+  ],
+  "presets": [
+    { "name": "Featured Collection Grid" }
+  ]
+}
+{% endschema %}
+
+{%- liquid
+  assign _zoom_enabled = section.settings.zoom_enable
+  assign _zoom_scale   = section.settings.zoom_scale | default: '1.05'
+  assign _max_products = section.settings.max_products | default: 8
+  assign _columns      = section.settings.columns_desktop | default: 4
+  assign _mobile_carousel = section.settings.mobile_carousel | default: true
+-%}
+
+<section
+  id="fc-{{ section.id }}"
+  class="fc-wrap{% unless _zoom_enabled %} fc-nozoom{% endunless %}{% if _mobile_carousel %} fc-mobile-carousel{% endif %}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="fc-container">
+    <div class="fc-head">
+      {% if section.settings.heading != blank %}
+        <h2 class="fc-h2">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.show_subheading and section.settings.subheading != blank %}
+        <p class="fc-subtitle">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+
+    {% assign static_coll = section.settings.collection %}
+    {% assign random_colls = section.settings.collection_list %}
+    
+    {% if random_colls != blank %}
+      <!-- Client-Side Random Mode (Bypasses Cache) -->
+      <div id="fc-random-{{ section.id }}" class="fc-random-wrapper">
+        {% for coll in random_colls %}
+          <div class="fc-random-item" style="display:none;" data-index="{{ forloop.index0 }}">
+             <div class="fc-grid" style="--columns-desktop: {{ _columns }};">
+                {% for product in coll.products limit: _max_products %}
+                  {% assign price = product.price %}
+                  {% assign compare_at = product.compare_at_price %}
+                  {% assign first_available_variant = product.selected_or_first_available_variant %}
+
+                  {%- assign discount = nil -%}
+                  {% if compare_at and compare_at > price %}
+                    {% assign diff          = compare_at | minus: price %}
+                    {% assign discount_raw  = diff | times: 100 %}
+                    {% assign discount      = discount_raw | divided_by: compare_at | round %}
+                  {% endif %}
+
+                  {% assign rating_val = 0 %}
+                  {% assign rating_count = 0 %}
+                  {% if section.settings.show_rating and product.metafields.reviews.rating.value %}
+                    {% assign rating_val   = product.metafields.reviews.rating.value | default: 0 %}
+                    {% assign rating_count = product.metafields.reviews.rating_count | default: 0 %}
+                  {% endif %}
+
+                  <article class="fc-card">
+
+                    <a class="fc-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                      <div class="fc-card__img-wrap">
+                        {% if product.featured_image %}
+                          {% render 'optimized-image',
+                            image: product.featured_image,
+                            width: 600,
+                            class: 'fc-card__img',
+                            alt: product.title,
+                            loading: 'lazy'
+                          %}
+                        {% else %}
+                          {{ 'image' | placeholder_svg_tag: 'fc-card__img' }}
+                        {% endif %}
+                        
+                        {% if section.settings.show_badge and discount %}
+                          <div class="fc-badge">-{{ discount }}%</div>
+                        {% endif %}
+                      </div>
+
+                  <div class="fc-card__body">
+                    {% if product.vendor %}
+                      <span class="fc-vendor">{{ product.vendor }}</span>
+                    {% endif %}
+                    <span class="fc-card__title">{{ product.title }}</span>
+                        <div class="fc-price-row">
+                          {% if compare_at and compare_at > price %}
+                            <s class="fc-price-compare">{{ compare_at | money }}</s>
+                          {% endif %}
+                          <span class="fc-price-main">{{ price | money }}</span>
+                        </div>
+                      </div>
+                    </a>
+                    
+                    {% if first_available_variant %}
+                      <button
+                        class="fc-card__cart"
+                        type="button"
+                        data-fc-add-to-cart
+                        data-variant-id="{{ first_available_variant.id }}"
+                        aria-label="In den Warenkorb"
+                      >
+                        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                          <path d="M6 6h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                          <circle cx="17" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                          <path d="M5 6H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                      </button>
+                    {% endif %}
+                  </article>
+                {% endfor %}
+              </div>
+          </div>
+        {% endfor %}
+      </div>
+      <script>
+    (function(){
+      try {
+        var items = document.querySelectorAll('#fc-random-{{ section.id }} .fc-random-item');
+        console.log('Random Collection Debug (Featured Grid): Found ' + items.length + ' collections.');
+        if(items.length > 0) {
+           var idx = Math.floor(Math.random() * items.length);
+           console.log('Random Collection Debug: Showing index ' + idx);
+           items[idx].style.display = 'block';
+        }
+      } catch(e) { console.error(e); }
+    })();
+  </script>
+
+    {% else %}
+      <!-- Static Mode -->
+      {% assign coll = static_coll %}
+      {% if coll == blank %}
+        <p class="fc-message">Bitte im Theme Editor eine Kategorie auswählen.</p>
+      {% else %}
+        <div class="fc-grid" style="--columns-desktop: {{ _columns }};">
+          {% for product in coll.products limit: _max_products %}
+            {% assign price = product.price %}
+            {% assign compare_at = product.compare_at_price %}
+            {% assign first_available_variant = product.selected_or_first_available_variant %}
+
+            {%- assign discount = nil -%}
+            {% if compare_at and compare_at > price %}
+              {% assign diff          = compare_at | minus: price %}
+              {% assign discount_raw  = diff | times: 100 %}
+              {% assign discount      = discount_raw | divided_by: compare_at | round %}
+            {% endif %}
+
+            {% assign rating_val = 0 %}
+            {% assign rating_count = 0 %}
+            {% if section.settings.show_rating and product.metafields.reviews.rating.value %}
+              {% assign rating_val   = product.metafields.reviews.rating.value | default: 0 %}
+              {% assign rating_count = product.metafields.reviews.rating_count | default: 0 %}
+            {% endif %}
+
+            <article class="fc-card">
+              <a class="fc-card__link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                <div class="fc-card__img-wrap">
+                  {% if product.featured_image %}
+                    {% render 'optimized-image',
+                      image: product.featured_image,
+                      width: 600,
+                      class: 'fc-card__img',
+                      alt: product.title,
+                      loading: 'lazy'
+                    %}
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'fc-card__img' }}
+                  {% endif %}
+                  
+                  {% if section.settings.show_badge and discount %}
+                    <div class="fc-badge">-{{ discount }}%</div>
+                  {% endif %}
+                </div>
+
+                <div class="fc-card__body">
+                  <span class="fc-card__title">{{ product.title }}</span>
+                  <div class="fc-price-row">
+                    {% if compare_at and compare_at > price %}
+                      <s class="fc-price-compare">{{ compare_at | money }}</s>
+                    {% endif %}
+                    <span class="fc-price-main">{{ price | money }}</span>
+                  </div>
+                </div>
+              </a>
+              
+              {% if first_available_variant %}
+                <button
+                  class="fc-card__cart"
+                  type="button"
+                  data-fc-add-to-cart
+                  data-variant-id="{{ first_available_variant.id }}"
+                  aria-label="In den Warenkorb"
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M6 6h15l-1.5 9h-12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <circle cx="17" cy="20" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M5 6H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              {% endif %}
+            </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <div class="fc-footer">
+          <a href="{{ section.settings.button_link }}" class="fc-button">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      {% endif %}
+  </div>
+</section>
+
+<style>
+#fc-{{ section.id }} .fc-wrap {
+  padding: 4rem 0 5rem; /* More vertical breathing room */
+  background-color: #ffffff;
+}
+
+#fc-{{ section.id }} .fc-container {
+  max-width: 100%; /* Wider display */
+  margin: 0 auto;
+  padding: 0 40px; /* More distinctive side padding */
+}
+
+/* Header */
+#fc-{{ section.id }} .fc-head {
+  text-align: center;
+  margin-bottom: 3.5rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#fc-{{ section.id }} .fc-h2 {
+  font-size: 2.2rem;
+  font-weight: 600; /* Slightly lighter for elegance */
+  margin: 0 0 0.8rem;
+  color: #111;
+  letter-spacing: -0.02em;
+}
+#fc-{{ section.id }} .fc-subtitle {
+  font-size: 1.05rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+}
+#fc-{{ section.id }} .fc-message {
+  text-align: center;
+  color: #666;
+}
+
+/* Grid */
+#fc-{{ section.id }} .fc-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns-desktop), 1fr);
+  gap: 40px 24px; /* Distinct gap: Vertical 40px, Horizontal 24px */
+  margin-bottom: 3rem;
+}
+
+/* Card Container - Matching 'Similar Products' Style */
+#fc-{{ section.id }} .fc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #f8f8f8; /* Light Grey matching reference */
+  border-radius: 4px; /* Matches reference */
+  overflow: visible;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+  border: none;
+  box-shadow: none;
+  min-height: 420px; /* Increased for taller 4:5 ratio */
+  height: 100%;
+  padding-bottom: 10px;
+}
+
+/* Subtle Hover Effect */
+#fc-{{ section.id }} .fc-card:hover {
+  transform: translateY(-4px); 
+}
+
+#fc-{{ section.id }} .fc-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  outline: none;
+}
+
+/* Image */
+#fc-{{ section.id }} .fc-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 4/5; /* 125% Height matching reference */
+  background: #f4f6f8; /* Darker grey for image bg */
+  margin-bottom: 10px;
+  border-radius: 4px 4px 0 0;
+}
+
+#fc-{{ section.id }} .fc-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  background-color: transparent; 
+  mix-blend-mode: multiply; /* Key for 'cutout' look on grey */
+}
+
+/* Zoom Effect */
+#fc-{{ section.id }}.fc-wrap:not(.fc-nozoom) .fc-card:hover .fc-card__img {
+  transform: scale(1.05);
+}
+
+/* Badge */
+#fc-{{ section.id }} .fc-badge {
+  position: absolute;
+  bottom: 8px; /* Matches Similar Products reference */
+  left: 0px;   
+  top: auto;
+  right: auto;
+  background-color: #e30613; 
+  color: #ffffff;
+  border: none;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 0 2px 2px 0; /* Slight rounding on right edge */
+  z-index: 2;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+/* Body */
+#fc-{{ section.id }} .fc-card__body {
+  text-align: center; /* Centered in reference */
+  padding: 0 8px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Vendor */
+#fc-{{ section.id }} .fc-vendor {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b6b6b; /* WCAG AAA: 7.2:1 */
+  margin-bottom: 2px;
+  display: block;
+  text-align: center;
+}
+
+/* Title */
+#fc-{{ section.id }} .fc-card__title {
+  font-size: 11px; /* Smaller match */
+  font-weight: 400;
+  margin: 0 0 6px;
+  color: #000;
+  line-height: 1.3;
+  /* 2-Line Limit */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.6em; 
+  text-align: center;
+}
+
+/* Rating */
+#fc-{{ section.id }} .fc-rating {
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+#fc-{{ section.id }} .fc-star { color: #e0e0e0; }
+#fc-{{ section.id }} .fc-star--full { color: #111; }
+
+/* Price */
+#fc-{{ section.id }} .fc-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+  margin-top: auto; 
+  padding-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#fc-{{ section.id }} .fc-price-main {
+  font-weight: 700;
+  font-size: 12px; /* Smaller match */
+  color: #e30613; /* Red match */
+  white-space: nowrap;
+}
+
+#fc-{{ section.id }} .fc-price-compare {
+  font-size: 10px;
+  color: #999;
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+/* Footer Button */
+#fc-{{ section.id }} .fc-footer {
+  text-align: center;
+  margin-top: 3.5rem;
+}
+#fc-{{ section.id }} .fc-button {
+  display: inline-block;
+  text-decoration: none;
+  color: #111;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  padding: 12px 32px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+#fc-{{ section.id }} .fc-button:hover {
+  border-color: #111;
+  background-color: #111;
+  color: #fff;
+}
+
+/* Cart Button Style */
+#fc-{{ section.id }} .fc-card__cart {
+  position: absolute;
+  bottom: 0px; 
+  right: 0px;
+  /* Position it relative to image for cleaner look? 
+     Actually, let's overlap the image bottom-right corner */
+  bottom: 12px;
+  right: 12px;
+  
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  z-index: 3;
+}
+
+#fc-{{ section.id }} .fc-card:hover .fc-card__cart {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#fc-{{ section.id }} .fc-card__cart:hover {
+  background: #000;
+  color: #fff;
+  transform: scale(1.1);
+}
+#fc-{{ section.id }} .fc-card__cart.loading {
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  #fc-{{ section.id }} .fc-grid {
+    gap: 30px 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  #fc-{{ section.id }} .fc-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  #fc-{{ section.id }} .fc-wrap {
+    padding: 3rem 0;
+  }
+  #fc-{{ section.id }} .fc-container {
+    padding: 0 16px;
+  }
+  
+  /* Mobile: 2 Columns for "Store" feel (default non-carousel) */
+  #fc-{{ section.id }}:not(.fc-mobile-carousel) .fc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 12px;
+  }
+
+  #fc-{{ section.id }} .fc-h2 {
+    font-size: 1.6rem;
+  }
+  
+  /* Reduce font sizes slightly for mobile */
+  #fc-{{ section.id }} .fc-card__title {
+    font-size: 0.85rem;
+    height: 2.6em;
+  }
+  #fc-{{ section.id }} .fc-price-main {
+    font-size: 0.9rem;
+  }
+
+  /* ========================================
+     MOBILE CAROUSEL - Enterprise UX (Amazon/Zalando Style)
+     ======================================== */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-container {
+    padding: 0;
+  }
+  
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-head {
+    padding: 0 16px;
+  }
+
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid {
+    /* Transform grid into horizontal scroller */
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    gap: 0;
+    padding: 0 16px 16px;
+    margin: 0 -16px;
+    width: calc(100% + 32px);
+    
+    /* Hide scrollbar for cleaner look */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid > article,
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid > a,
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid > .fc-card {
+    /* Show ~1.2 products = peek next card */
+    flex: 0 0 calc(78% - 8px);
+    max-width: calc(78% - 8px);
+    min-width: calc(78% - 8px);
+    scroll-snap-align: start;
+    margin-right: 12px;
+    min-height: auto;
+  }
+  
+  /* First item padding */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid > *:first-child {
+    margin-left: 0;
+  }
+  
+  /* Last item extra padding for scroll end */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-grid > *:last-child {
+    margin-right: 16px;
+  }
+
+  /* Adjust card heights for carousel */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-card {
+    min-height: 340px;
+  }
+  
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-card__img-wrap {
+    aspect-ratio: 1/1;
+  }
+
+  /* Show cart button on mobile carousel (always visible) */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-card__cart {
+    opacity: 1;
+    transform: translateY(0);
+    bottom: 8px;
+    right: 8px;
+    height: 36px;
+    width: 36px;
+  }
+
+  /* Footer button padding */
+  #fc-{{ section.id }}.fc-mobile-carousel .fc-footer {
+    padding: 0 16px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var wrap = document.getElementById('fc-{{ section.id }}');
+  if (!wrap) return;
+
+  function openCartDrawer() {
+    const drawerComp = document.querySelector('cart-drawer-component');
+    const dialog = drawerComp ? drawerComp.querySelector('dialog') : null;
+    
+    if (drawerComp && typeof drawerComp.open === 'function') {
+       drawerComp.open();
+    } else if (dialog && typeof dialog.showModal === 'function') {
+       dialog.showModal();
+    } else {
+       // Dispatch events for theme listeners
+       document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
+       // Fallback redirect
+       // window.location.href = '/cart';
+    }
+  }
+
+  function addToCart(variantId, btn) {
+    if (!variantId) return;
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    // Fetch 'header' section which contains both cart icon and drawer in this theme
+    const config = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        items: [{ id: Number(variantId), quantity: 1 }],
+        sections: 'header' 
+      })
+    };
+
+    fetch(window.Shopify.routes.root + 'cart/add.js', config)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status) throw new Error(data.description);
+
+      const parser = new DOMParser();
+      
+      // We expect 'header' section logic
+      if (data.sections['header']) {
+         const doc = parser.parseFromString(data.sections['header'], 'text/html');
+         
+         // 1. Update Cart Icon
+         const newIcon = doc.querySelector('cart-icon');
+         const currentIcon = document.querySelector('cart-icon');
+         if (newIcon && currentIcon) {
+            currentIcon.innerHTML = newIcon.innerHTML;
+            // Update classes (e.g. to show dot)
+            currentIcon.className = newIcon.className; 
+         }
+
+         // 2. Update Cart Drawer Component
+         const newDrawer = doc.querySelector('cart-drawer-component');
+         const currentDrawer = document.querySelector('cart-drawer-component');
+         if (newDrawer && currentDrawer) {
+            // Replace the 'cart-items-component' inside the drawer to keep dialog state
+            const newInner = newDrawer.querySelector('cart-items-component');
+            const currentInner = currentDrawer.querySelector('cart-items-component');
+            
+            if (newInner && currentInner) {
+               currentInner.replaceWith(newInner);
+            } else {
+               // Fallback: replace inner HTML of drawer content
+               const newContent = newDrawer.querySelector('.cart-drawer__inner') || newDrawer.querySelector('dialog');
+               const currentContent = currentDrawer.querySelector('.cart-drawer__inner') || currentDrawer.querySelector('dialog');
+               if (newContent && currentContent) currentContent.innerHTML = newContent.innerHTML;
+            }
+         }
+      }
+
+      openCartDrawer();
+      document.dispatchEvent(new CustomEvent('cart:updated', { bubbles: true, detail: { cart: data } }));
+    })
+    .catch(err => {
+      console.error('AJAX Cart Error:', err);
+      // window.location.href = '/cart'; 
+    })
+    .finally(() => {
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    });
+  }
+
+  const cartButtons = wrap.querySelectorAll('[data-fc-add-to-cart]');
+  cartButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      addToCart(this.getAttribute('data-variant-id'), this);
+    });
+  });
+});
+</script>

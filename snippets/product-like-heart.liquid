@@ -1,0 +1,39 @@
+{% doc %}
+  Product Like Heart Component
+  
+  Renders a heart icon with like counter that is shared across all users.
+  Similar to Skroutz.de like functionality.
+  
+  @param {string} product_handle - Product handle for tracking likes
+  @param {string} aria_label - Accessibility label
+  
+  @example
+  {% render 'product-like-heart', product_handle: product.handle %}
+{% enddoc %}
+
+{%- liquid
+  assign product_handle = product_handle | default: ''
+  assign aria_label = aria_label | default: 'Dieses Produkt gefällt mir'
+-%}
+
+<link rel="stylesheet" href="{{ 'product-like-heart.css' | asset_url }}">
+
+<!-- Load Global Manager First (synchronously) -->
+<script src="{{ 'global-like-manager.js' | asset_url }}"></script>
+
+<!-- Load Custom Element Module -->
+<script src="{{ 'product-like-heart.js' | asset_url }}" type="module"></script>
+
+<product-like-heart data-product-handle="{{ product_handle }}">
+  <button 
+    type="button" 
+    class="like-heart__button" 
+    aria-label="{{ aria_label }}" 
+    title="{{ aria_label }}"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+  </button>
+  <span class="like-heart__counter"></span>
+</product-like-heart>

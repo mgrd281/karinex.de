@@ -1,0 +1,542 @@
+{% schema %}
+{
+  "name": "Popular Categories (AY)",
+  "class": "section-popular-categories",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "number",
+      "id": "columns_desktop",
+      "label": "Columns (Desktop)",
+      "default": 4,
+      "info": "Anzahl der sichtbaren Karten (unbegrenzt)"
+    },
+    {
+      "type": "select",
+      "id": "card_size",
+      "label": "Card Size Preset",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_incomplete_cards",
+      "label": "Auto-hide incomplete cards",
+      "default": true,
+      "info": "Hides cards without image, title, or link"
+    },
+    {
+      "type": "header",
+      "content": "Section Headings"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "VON UNSERER COMMUNITY"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Beliebte Kategorien"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading Font Size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading Font Size",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#444444"
+    },
+    {
+      "type": "header",
+      "content": "Card Typography"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Card Title Font Size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Card Title Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "CTA Bar Colors"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "CTA Bar Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Bar Text Color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "cta_arrow_color",
+      "label": "CTA Bar Arrow Color",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Product Thumbnails"
+    },
+    {
+      "type": "range",
+      "id": "products_per_card",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "label": "Products per Card",
+      "default": 3,
+      "info": "Set to 0 to hide thumbnails"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card Title"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card Link"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Card Image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection (for auto products)",
+          "info": "Used if manual products not selected"
+        },
+        {
+          "type": "header",
+          "content": "Manual Product Selection"
+        },
+        {
+          "type": "product",
+          "id": "product_1",
+          "label": "Product 1"
+        },
+        {
+          "type": "product",
+          "id": "product_2",
+          "label": "Product 2"
+        },
+        {
+          "type": "product",
+          "id": "product_3",
+          "label": "Product 3"
+        },
+        {
+          "type": "product",
+          "id": "product_4",
+          "label": "Product 4"
+        },
+        {
+          "type": "product",
+          "id": "product_5",
+          "label": "Product 5"
+        },
+        {
+          "type": "product",
+          "id": "product_6",
+          "label": "Product 6"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popular Categories",
+      "blocks": [
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" },
+        { "type": "category" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .ay-section-wrapper {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: var(--font-body-family, sans-serif);
+  }
+
+  .ay-header {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .ay-subheading {
+    font-size: {{ section.settings.subheading_size }}px;
+    color: {{ section.settings.subheading_color }};
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+    display: block;
+    line-height: normal;
+  }
+
+  .ay-heading {
+    font-size: {{ section.settings.heading_size }}px;
+    color: {{ section.settings.heading_color }};
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .ay-grid {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .ay-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ay-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 0 0 calc((100% - 100px) / 6);
+    min-width: 160px;
+    scroll-snap-align: start;
+  }
+
+  .ay-main-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ay-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .ay-main-image-wrapper:hover .ay-main-image {
+    transform: scale(1.04);
+  }
+
+  .ay-overlay-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .ay-overlay-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .ay-btn-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ay-overlay-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2px;
+  }
+
+  .ay-thumbs-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.products_per_card }}, 1fr);
+    gap: 6px;
+  }
+
+  .ay-thumb-item {
+    aspect-ratio: 3 / 4;
+    background: #f8f8f8;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ay-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    transition: opacity 0.3s ease;
+  }
+
+  .ay-thumb-item:hover .ay-thumb-img {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 1200px) {
+    .ay-card {
+      flex: 0 0 calc((100% - 80px) / 5);
+      min-width: 150px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .ay-card {
+      flex: 0 0 calc((100% - 60px) / 4);
+      min-width: 140px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ay-section-wrapper {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .ay-grid {
+      gap: 12px;
+    }
+
+    .ay-card {
+      flex: 0 0 75vw;
+      min-width: 75vw;
+    }
+
+    .ay-heading {
+      font-size: 16px;
+    }
+
+    .ay-subheading {
+      font-size: 9px;
+    }
+  }
+</style>
+
+<div class="ay-section-wrapper">
+  {% if section.settings.heading != blank or section.settings.subheading != blank %}
+    <div class="ay-header">
+      {% if section.settings.subheading != blank %}
+        <span class="ay-subheading">{{ section.settings.subheading }}</span>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="ay-heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="ay-grid">
+    {% for block in section.blocks %}
+      {% assign collection = block.settings.collection %}
+      {% assign target_image = block.settings.image | default: collection.image | default: collection.products.first.featured_image %}
+      {% assign target_title = block.settings.title | default: collection.title | default: "Kategorie" %}
+      {% assign target_link = block.settings.link | default: collection.url | default: "#" %}
+
+      <div class="ay-card" {{ block.shopify_attributes }}>
+        <div class="ay-main-image-wrapper">
+          <a href="{{ target_link | default: '#' }}" style="display:block; width:100%; height:100%;">
+            {% if target_image %}
+              <img
+                src="{{ target_image | image_url: width: 600 }}"
+                alt="{{ target_title }}"
+                class="ay-main-image"
+                loading="lazy"
+                width="600"
+                height="600"
+              >
+            {% else %}
+              {{ 'collection-1' | placeholder_svg_tag: 'ay-main-image' }}
+            {% endif %}
+
+            <div class="ay-overlay-btn">
+              <span class="ay-btn-text">{{ target_title }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        {% if section.settings.products_per_card > 0 %}
+          <div class="ay-thumbs-grid">
+            {% comment %} Manual products take priority {% endcomment %}
+            {% assign manual_products = '' | split: '' %}
+            {% for i in (1..6) %}
+              {% capture product_key %}product_{{ i }}{% endcapture %}
+              {% assign manual_product = block.settings[product_key] %}
+              {% if manual_product != blank %}
+                {% assign manual_products = manual_products | push: manual_product %}
+              {% endif %}
+            {% endfor %}
+
+            {% if manual_products.size > 0 %}
+              {% for product in manual_products limit: section.settings.products_per_card %}
+                <div class="ay-thumb-item">
+                  <a href="{{ product.url }}" title="{{ product.title }}" style="display:block; width:100%; height:100%;">
+                    <img
+                      src="{{ product.featured_image | image_url: width: 200 }}"
+                      alt="{{ product.title }}"
+                      class="ay-thumb-img"
+                      loading="lazy"
+                      width="200"
+                      height="266"
+                    >
+                  </a>
+                </div>
+              {% endfor %}
+              {% comment %} Fill remaining slots {% endcomment %}
+              {% assign remaining = section.settings.products_per_card | minus: manual_products.size %}
+              {% if remaining > 0 %}
+                {% for i in (1..remaining) %}
+                  <div class="ay-thumb-item"></div>
+                {% endfor %}
+              {% endif %}
+            {% elsif collection != blank and collection.products_count > 0 %}
+              {% for product in collection.products limit: section.settings.products_per_card %}
+                <div class="ay-thumb-item">
+                  <a href="{{ product.url }}" title="{{ product.title }}" style="display:block; width:100%; height:100%;">
+                    <img
+                      src="{{ product.featured_image | image_url: width: 200 }}"
+                      alt="{{ product.title }}"
+                      class="ay-thumb-img"
+                      loading="lazy"
+                      width="200"
+                      height="266"
+                    >
+                  </a>
+                </div>
+              {% endfor %}
+              {% assign product_count = collection.products.count %}
+              {% if product_count < section.settings.products_per_card %}
+                {% assign remaining = section.settings.products_per_card | minus: product_count %}
+                {% for i in (1..remaining) %}
+                  <div class="ay-thumb-item"></div>
+                {% endfor %}
+              {% endif %}
+            {% else %}
+              {% comment %} Fill with empty slots if no products {% endcomment %}
+              {% for i in (1..section.settings.products_per_card) %}
+                <div class="ay-thumb-item"></div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>

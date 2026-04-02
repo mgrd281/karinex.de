@@ -1,0 +1,1475 @@
+{% comment %}
+  Hero Product Slider Section
+{% endcomment %}
+
+{%- liquid
+  assign fallback_collections = section.settings.fallback_collections
+  assign fallback_picked_collection = blank
+
+  if fallback_collections != blank and fallback_collections.size > 0
+    assign valid_colls = fallback_collections | where: 'products_count'
+    assign valid_list = ''
+    assign valid_count = 0
+    for c in fallback_collections
+      if c != blank and c.products_count > 0
+        assign valid_count = valid_count | plus: 1
+      endif
+    endfor
+
+    if valid_count > 1
+      assign time_seed = 'now' | date: '%N' | times: 1
+      assign random_index = time_seed | modulo: valid_count
+      assign vi = 0
+      for c in fallback_collections
+        if c != blank and c.products_count > 0
+          if vi == random_index
+            assign fallback_picked_collection = c
+            break
+          endif
+          assign vi = vi | plus: 1
+        endif
+      endfor
+    elsif valid_count == 1
+      for c in fallback_collections
+        if c != blank and c.products_count > 0
+          assign fallback_picked_collection = c
+          break
+        endif
+      endfor
+    endif
+
+    if fallback_picked_collection == blank
+      assign fallback_picked_collection = fallback_collections.first
+    endif
+  endif
+
+  assign show_countdown = section.settings.show_countdown
+  assign countdown_end = section.settings.countdown_end
+  assign show_badge = section.settings.show_badge
+-%}
+
+{%- comment -%} PERFORMANCE: Font & Preconnects moved to theme.liquid deferred loading {%- endcomment -%}
+
+<style>
+  #hero-slider-{{ section.id }} {
+    --primary: #1D4739;
+    --bg1: #0F2E22;
+    --bg2: #1D4739;
+    --bg3: #2A5F47;
+    --orange: #D4AF37;
+    --pink: #1D4739;
+    --blue: #3A6B5C;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,.75);
+    --btn: #2E7D32;
+    --btn2: #1B5E20;
+  }
+
+  .hero-slider-section {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    min-height: 560px;
+    background:
+      radial-gradient(1200px 700px at 10% 50%, rgba(255,255,255,.06), transparent 60%),
+      linear-gradient(120deg, var(--bg1) 0%, var(--bg2) 40%, var(--bg3) 100%);
+  }
+
+  /* Colorful Ribbons */
+  .hero-slider__ribbon {
+    position: absolute;
+    inset: -20% -5% -20% -5%;
+    pointer-events: none;
+    filter: saturate(0.8);
+    opacity: 0.6;
+  }
+  .hero-slider__ribbon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Inner Content */
+  .hero-slider__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 32px;
+    align-items: center;
+    padding: 72px clamp(20px, 4vw, 80px) 90px;
+  }
+
+  .hero-slider__headline {
+    font-family: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: clamp(28px, 3vw, 56px);
+    line-height: 1.1;
+    letter-spacing: -0.6px;
+    margin: 0 0 16px 0;
+    font-weight: 700;
+    text-shadow: 0 2px 16px rgba(0,0,0,.3);
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 90%;
+  }
+
+  .hero-slider__sub {
+    font-size: clamp(16px, 1.1vw, 20px);
+    line-height: 1.4;
+    margin: 0 0 20px 0;
+    color: var(--muted);
+    text-shadow: 0 1px 8px rgba(0,0,0,.20);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 400;
+    opacity: 0.9;
+  }
+
+  .hero-slider__price {
+    margin: 0 0 28px 0;
+    font-size: clamp(32px, 2.5vw, 48px);
+    font-weight: 700;
+    text-shadow: 0 2px 12px rgba(0,0,0,.20);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .hero-slider__price s {
+    font-size: 0.55em;
+    font-weight: 400;
+    color: rgba(255,255,255,.5);
+    margin-right: 8px;
+    text-decoration: line-through;
+  }
+  .hero-slider__price .price-prefix {
+    font-size: 0.5em;
+    font-weight: 500;
+    color: rgba(255,255,255,.7);
+    margin-right: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-slider__cta:active {
+    transform: translateY(0);
+  }
+
+  /* Product Box - Premium Transparent Integration */
+
+  /* Product Box - Premium Transparent Integration */
+  .hero-slider__product {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .hero-slider__box-wrap {
+    position: relative;
+    width: min(520px, 100%);
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background: transparent !important;
+    isolation: isolate;
+  }
+  .hero-slider__box-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    left: 15%;
+    right: 15%;
+    height: 25%;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 80%);
+    filter: blur(20px);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.6;
+  }
+  .hero-slider__box {
+    width: min(420px, 84%);
+    max-width: 420px;
+    transform: translateY(-8px);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    /* No background - let image blend with slide background */
+    background: transparent;
+  }
+  .hero-slider__box::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.08) 0%, transparent 70%);
+    filter: blur(30px);
+    pointer-events: none;
+    z-index: -2;
+    opacity: 0.5;
+  }
+  .hero-slider__box:hover {
+    transform: translateY(-12px) scale(1.02);
+  }
+  .hero-slider__box img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    mix-blend-mode: normal;
+    isolation: isolate;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+  }
+  .hero-slider__box img[data-bg-processed],
+  .hero-slider__box img.hero-transparent-img {
+    visibility: visible;
+  }
+  .hero-slider__box img,
+  .hero-slider__box img[src*=".jpg"],
+  .hero-slider__box img[src*=".jpeg"],
+  .hero-slider__box img[src*=".png"],
+  .hero-slider__box img[src*=".webp"] {
+    background: transparent !important;
+    mix-blend-mode: normal;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+  }
+  
+  /* Target image wrapper to prevent any white background */
+  .hero-slider__box a,
+  .hero-slider__box-link {
+    background: transparent !important;
+    display: block;
+    line-height: 0;
+    font-size: 0;
+  }
+  /* Extra aggressive - target all possible parent elements */
+  .hero-slider__product,
+  .hero-slider__product > div,
+  .hero-slider__box-wrap,
+  .hero-slider__box,
+  .hero-slider__box > a,
+  .hero-slider__box > a > img {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* Navigation Arrows */
+  .hero-slider__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,.35);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    cursor: pointer;
+    z-index: 3;
+    user-select: none;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s ease;
+  }
+  .hero-slider__nav:hover {
+    background: rgba(0,0,0,.55);
+  }
+  .hero-slider__nav--left { left: 20px; }
+  .hero-slider__nav--right { right: 20px; }
+  .hero-slider__nav svg {
+    width: 18px;
+    height: 18px;
+    opacity: 0.95;
+  }
+
+  /* Dots */
+  .hero-slider__dots {
+    display: flex;
+    gap: 10px;
+  }
+  .hero-slider__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.45);
+    cursor: pointer;
+    transition: width 0.2s ease, background-color 0.2s ease;
+    pointer-events: auto;
+    position: relative;
+    z-index: 25;
+  }
+  /* Larger touch target around each dot */
+  .hero-slider__dot::before {
+    content: '';
+    position: absolute;
+    top: -10px; left: -6px; right: -6px; bottom: -10px;
+  }
+  .hero-slider__dot.active {
+    width: 16px;
+    background: rgba(255,255,255,0.95);
+  }
+
+  /* Bottom Bar */
+  .hero-slider__bar {
+    position: relative;
+    z-index: 4;
+    background: linear-gradient(180deg, rgba(13,31,24,.92) 0%, rgba(10,26,20,.98) 100%);
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 22px clamp(20px, 4vw, 80px);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr auto;
+    gap: 18px;
+    align-items: center;
+  }
+
+  .hero-slider__sale-text {
+    font-family: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.38em;
+    font-weight: 800;
+    font-size: 14px;
+    color: rgba(255,255,255,.85);
+    text-transform: uppercase;
+  }
+
+  /* Countdown Timer - Premium Secondary Style */
+  .hero-slider__timer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    align-items: baseline;
+    font-family: 'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    opacity: 0.85;
+    transition: opacity .3s;
+  }
+  .hero-slider__block {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .hero-slider__timer--urgent {
+    opacity: 1;
+  }
+  .hero-slider__timer--urgent .hero-slider__num {
+    color: #ff4444;
+    animation: hero-timer-pulse 1s ease-in-out infinite;
+  }
+  @keyframes hero-timer-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .65; }
+  }
+  .hero-slider__unit {
+    text-align: center;
+    min-width: 56px;
+  }
+  .hero-slider__num {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--text);
+  }
+  .hero-slider__label {
+    margin-top: 4px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.6);
+    font-weight: 500;
+  }
+  .hero-slider__sep {
+    font-size: 18px;
+    opacity: 0.35;
+    transform: translateY(-2px);
+    color: var(--text);
+  }
+
+  /* Buy Button — Premium Glassmorphism */
+  .hero-slider__buy:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 16px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+
+  /* Trust Badge */
+  .hero-slider__badge {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    width: 112px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.92);
+    color: #111;
+    padding: 10px 10px 8px;
+    box-shadow: 0 16px 30px rgba(0,0,0,.35);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    z-index: 5;
+  }
+  .hero-slider__badge-title {
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 6px;
+  }
+  .hero-slider__badge-stars {
+    color: #f2a034;
+    letter-spacing: 0.08em;
+    font-size: 14px;
+  }
+  .hero-slider__badge-rating {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #222;
+    opacity: 0.9;
+  }
+
+  /* Slide Track for Multiple Products */
+  .hero-slider__track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+  .hero-slider__slide {
+    min-width: 100%;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 32px;
+    align-items: center;
+    padding: 72px clamp(20px, 4vw, 80px) 90px;
+  }
+
+  /* Dots - Bottom center position */
+  .hero-slider__dots-wrapper {
+    position: absolute;
+    left: 50%;
+    bottom: 96px; 
+    transform: translateX(-50%);
+    z-index: 25;
+    pointer-events: auto;
+  }
+  .hero-slider__dots {
+    pointer-events: auto;
+  }
+  .hero-slider__dot {
+    pointer-events: auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 989px) { /* Harmonized to Shopify standard */
+    .hero-slider__inner,
+    .hero-slider__slide {
+      grid-template-columns: 1fr;
+      padding-bottom: 48px;
+    }
+    .hero-slider__product {
+      justify-content: center;
+    }
+    .hero-slider__bar {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .hero-slider__timer {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-slider__buy {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      justify-self: center;
+    }
+    .hero-slider__sale-text {
+      text-align: center;
+    }
+    .hero-slider__badge {
+      display: none;
+    }
+    .hero-slider__dots-wrapper {
+      bottom: 18px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero-slider__timer {
+      gap: 12px;
+    }
+    .hero-slider__unit {
+      min-width: 60px;
+    }
+    .hero-slider__num {
+      font-size: 32px;
+    }
+    .hero-slider__sep {
+      font-size: 20px;
+    }
+  }
+
+
+  /* ============================================================
+     HERO SLIDER LUX UI - FINAL CONSOLIDATED FIXES
+     ============================================================ */
+
+  /* 1) MOBILE/TABLET LAYOUT (Shopify Standard 989px) */
+  @media (max-width: 989px) {
+    .hero-slider-section { min-height: auto; overflow: hidden; }
+    .hero-slider__ribbon { opacity: 0.3; }
+    
+    .hero-slider__inner,
+    .hero-slider__slide {
+      display: flex;
+      flex-direction: column;
+      padding: 18px 20px 14px 0;
+      min-height: auto;
+      gap: 0;
+    }
+
+    .hero-slider__content {
+      text-align: left !important;
+      align-items: flex-start !important;
+      padding-left: 16px !important;
+      width: 100%;
+    }
+
+    .hero-slider__headline { font-size: 24px; margin-bottom: 6px; }
+    .hero-slider__sub { display: none; }
+    .hero-slider__price { font-size: 26px; justify-content: flex-start !important; margin: 4px 0 16px; }
+
+    .hero-slider__product { order: 2; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
+    .hero-slider__box-wrap { width: 100%; max-width: 260px; aspect-ratio: 1; margin: 0 auto; }
+    .hero-slider__box img { max-height: 220px; }
+
+    /* Bottom Bar Mobile Layout */
+    .hero-slider__bar {
+      padding: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+    .hero-slider__sale-text { grid-column: 1 / -1; font-size: 11px; text-align: center; }
+    .hero-slider__timer { grid-column: 1; opacity: 1; gap: 4px; justify-content: center; width: 100%; }
+    .hero-slider__unit { min-width: 32px; }
+    .hero-slider__num { font-size: 18px; }
+    .hero-slider__label { font-size: 6px; }
+    .hero-slider__buy { grid-column: 2; width: 100%; height: 52px; }
+
+    .hero-slider__badge { display: none !important; }
+    .hero-slider__nav { display: none !important; }
+  }
+
+  /* 2) LUX BUTTON OVERRIDES - ULTRA HIGH SPECIFICITY */
+  #shopify-section-{{ section.id }} a.hero-slider__buy,
+  #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy {
+    background: rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(8px) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Arrow Integration */
+  #shopify-section-{{ section.id }} a.hero-slider__buy::after,
+  #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy::after {
+    content: '→' !important;
+    color: #FFFFFF !important;
+    font-size: 1.2em !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  /* Hover States */
+  #shopify-section-{{ section.id }} a.hero-slider__buy:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+  }
+  #shopify-section-{{ section.id }} a.hero-slider__buy:hover::after {
+    transform: translateX(3px) !important;
+  }
+
+  /* Desktop Specific Button Sizing */
+  @media (min-width: 990px) {
+    #shopify-section-{{ section.id }} a.hero-slider__buy {
+      height: 54px !important;
+      padding: 0 32px !important;
+      border-radius: 12px !important;
+      font-size: 14px !important;
+      letter-spacing: 0.1em !important;
+    }
+  }
+
+  /* Mobile Specific Button Sizing */
+  @media (max-width: 989px) {
+    #shopify-section-{{ section.id }} a.hero-slider__buy {
+      height: 48px !important;
+      padding: 0 24px !important;
+      border-radius: 24px !important;
+      font-size: 12px !important;
+      letter-spacing: 0.08em !important;
+    }
+  }
+
+  /* 3) DOT POSITIONING FIX - OVER THE BAR */
+  .hero-slider__dots-wrapper,
+  #shopify-section-{{ section.id }} .hero-slider__dots-wrapper,
+  #hero-slider-{{ section.id }} .hero-slider__dots-wrapper {
+    position: absolute !important;
+    left: 50% !important;
+    bottom: 96px !important; /* Standard Desktop Position */
+    transform: translateX(-50%) !important;
+    z-index: 50 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  @media (max-width: 989px) {
+    .hero-slider__dots-wrapper,
+    #shopify-section-{{ section.id }} .hero-slider__dots-wrapper {
+      position: relative !important;
+      bottom: auto !important;
+      margin: 10px auto 14px !important;
+      transform: none !important;
+      order: 3 !important;
+    }
+  }
+
+  /* Active Dot Styling */
+  #shopify-section-{{ section.id }} .hero-slider__dot.active {
+    background: #FFFFFF !important;
+    width: 24px !important;
+    opacity: 1 !important;
+  }
+</style>
+
+<section id="hero-slider-{{ section.id }}" class="hero-slider-section" data-section-id="{{ section.id }}">
+  {% if request.design_mode %}
+    <div style="display:none"
+      data-hero-slider-debug="true"
+      data-fallback-collections="{{ section.settings.fallback_collections | json | escape }}"
+      data-fallback-picked-handle="{{ fallback_picked_collection.handle | escape }}"
+      data-fallback-picked-products-count="{{ fallback_picked_collection.products_count | escape }}"
+    ></div>
+  {% endif %}
+  
+  {%- comment -%} Colorful Ribbons Background {%- endcomment -%}
+  <div class="hero-slider__ribbon" aria-hidden="true">
+    <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="gOrange-{{ section.id }}" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="{{ section.settings.ribbon_orange }}" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="{{ section.settings.ribbon_orange | color_darken: 15 }}" stop-opacity="0.85"/>
+        </linearGradient>
+        <linearGradient id="gPink-{{ section.id }}" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="{{ section.settings.ribbon_pink }}" stop-opacity="0.9"/>
+          <stop offset="1" stop-color="{{ section.settings.ribbon_purple }}" stop-opacity="0.6"/>
+        </linearGradient>
+        <linearGradient id="gBlue-{{ section.id }}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="{{ section.settings.ribbon_blue }}" stop-opacity="0.85"/>
+          <stop offset="1" stop-color="{{ section.settings.ribbon_blue | color_darken: 30 }}" stop-opacity="0.55"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Orange Sweep -->
+      <path d="M-150,600 C200,350 420,330 720,480 C930,585 1100,610 1750,420 L1750,620 C1100,770 920,720 720,645 C420,510 200,530 -150,760 Z"
+            fill="url(#gOrange-{{ section.id }})" opacity="0.9"/>
+      <!-- Pink/Purple Sweep -->
+      <path d="M-80,180 C260,80 540,120 790,220 C1080,340 1230,350 1750,190 L1750,0 L-80,0 Z"
+            fill="url(#gPink-{{ section.id }})" opacity="0.75"/>
+      <!-- Blue Sweep -->
+      <path d="M-120,860 C230,650 500,660 780,780 C1010,880 1220,900 1750,760 L1750,900 L-120,900 Z"
+            fill="url(#gBlue-{{ section.id }})" opacity="0.85"/>
+    </svg>
+  </div>
+
+  {%- comment -%} Navigation Arrows {%- endcomment -%}
+  {% if section.settings.show_arrows %}
+    <button class="hero-slider__nav hero-slider__nav--left" aria-label="{{ 'accessibility.previous' | t }}" data-action="prev">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <button class="hero-slider__nav hero-slider__nav--right" aria-label="{{ 'accessibility.next' | t }}" data-action="next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+  {% endif %}
+
+  {%- comment -%} Main Content {%- endcomment -%}
+
+  {%- assign fallback_has_products = false -%}
+  {%- if fallback_picked_collection != blank -%}
+    {%- if fallback_picked_collection.products != empty -%}
+      {%- assign fallback_has_products = true -%}
+    {%- elsif fallback_picked_collection.all_products_count != blank -%}
+      {%- if fallback_picked_collection.all_products_count > 0 -%}
+        {%- assign fallback_has_products = true -%}
+      {%- endif -%}
+    {%- elsif fallback_picked_collection.products_count != blank -%}
+      {%- if fallback_picked_collection.products_count > 0 -%}
+        {%- assign fallback_has_products = true -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {% if request.design_mode %}
+    <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" data-hero-slider-debug
+      data-picked-handle="{{ fallback_picked_collection.handle | default: '' }}"
+      data-products-size="{{ fallback_picked_collection.products.size | default: 0 }}"
+      data-has-products="{{ fallback_has_products }}">
+    </div>
+  {% endif %}
+
+  {% if fallback_has_products %}
+    {%- assign slider_products = fallback_picked_collection.products | shuffle -%}
+    <div class="hero-slider__track" data-track>
+      {% for item in slider_products limit: section.settings.max_products %}
+          <div class="hero-slider__slide" data-slide="{{ forloop.index0 }}" data-product-url="{{ item.url }}">
+            <div class="hero-slider__content">
+              <div class="hero-slider__category">{{ fallback_picked_collection.title }}</div>
+              <h2 class="hero-slider__headline">{{ item.title }}</h2>
+              <p class="hero-slider__sub">{{ item.metafields.custom.subtitle | default: item.type }}</p>
+              <p class="hero-slider__price">
+                {% if item.compare_at_price > item.price %}
+                  <span class="price-prefix">Ab</span> <s>{{ item.compare_at_price | money }}</s>
+                {% endif %}
+                {{ item.price | money }}
+              </p>
+              {%- liquid
+                assign cta_label = section.settings.button_text
+                assign type_lc = item.type | downcase
+                if type_lc contains 'software' or type_lc contains 'game' or type_lc contains 'spiele'
+                  assign cta_label = 'Sofort herunterladen'
+                elsif cta_label == blank
+                  assign cta_label = 'Jetzt ansehen'
+                endif
+              -%}
+              <a class="hero-slider__cta" href="{{ item.url }}">{{ cta_label }}</a>
+            </div>
+            <div class="hero-slider__product">
+              <div class="hero-slider__box-wrap">
+                <div class="hero-slider__box">
+                  <a class="hero-slider__box-link" href="{{ item.url }}" aria-label="{{ item.title | escape }}">
+                  {% assign custom_hero_image = item.metafields.custom.hero_transparent_image %}
+                  {% if forloop.first %}
+                    {% if custom_hero_image %}
+                      <link rel="preload" as="image" href="{{ custom_hero_image | image_url: width: 800, format: 'webp', quality: 65 }}">
+                    {% elsif item.featured_image %}
+                      <link rel="preload" as="image" href="{{ item.featured_image | image_url: width: 800, format: 'webp', quality: 65 }}">
+                    {% endif %}
+{%- comment -%} PERFORMANCE: remove.bg preconnect moved to interaction logic if necessary, removing link for PageSpeed {%- endcomment -%}
+                  {% endif %}
+                  {% if custom_hero_image %}
+                    <img 
+                      src="{{ custom_hero_image | image_url: width: 800, format: 'webp', quality: 65 }}" 
+                      alt="{{ item.title }}"
+                      loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                      {% if forloop.first %}fetchpriority="high"{% endif %}
+                      decoding="async"
+                      data-removebg-src="{{ custom_hero_image | image_url: width: 420, format: 'webp', quality: 65 }}"
+                      width="420"
+                      height="315"
+                      class="hero-transparent-img"
+                    />
+                  {% elsif item.featured_image %}
+                    <img 
+                      src="{{ item.featured_image | image_url: width: 800, format: 'webp', quality: 65 }}" 
+                      alt="{{ item.featured_image.alt | default: item.title }}"
+                      loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                      {% if forloop.first %}fetchpriority="high"{% endif %}
+                      decoding="async"
+                      data-removebg-src="{{ item.featured_image | image_url: width: 420, format: 'webp', quality: 65 }}"
+                      width="420"
+                      height="315"
+                    />
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+      {% endfor %}
+    </div>
+
+  {% endif %}
+
+  {%- comment -%} Bottom Bar with Countdown {%- endcomment -%}
+  {% if section.settings.show_bar and fallback_has_products %}
+    <div class="hero-slider__bar">
+      <div class="hero-slider__sale-text">{{ section.settings.sale_text | default: 'FINAL WINTER SALE' }}</div>
+
+      {% if show_countdown and countdown_end != blank %}
+        <div class="hero-slider__timer" role="timer" aria-label="Countdown" style="display:flex; align-items:center;">
+          {%- comment -%} Dots - Re-aligned inline next to timer module {%- endcomment -%}
+          {% if section.settings.show_dots %}
+            {%- assign dot_count = fallback_picked_collection.products_count | at_most: section.settings.max_products -%}
+            {% if dot_count > 1 %}
+              <div class="hero-slider__dots-wrapper" style="position:relative!important;left:auto!important;transform:none!important;bottom:auto!important;margin-right:24px!important;display:flex!important;align-items:center!important;">
+                <div class="hero-slider__dots" style="display:flex; gap:8px;">
+                  {% for i in (1..dot_count) %}
+                    <div class="hero-slider__dot{% if forloop.first %} active{% endif %}" data-dot="{{ forloop.index0 }}"></div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+          <div class="hero-slider__block" data-timer-block="days">
+            <div class="hero-slider__unit">
+              <div class="hero-slider__num" data-countdown-days>00</div>
+              <div class="hero-slider__label">{{ section.settings.days_label | default: 'TAGE' }}</div>
+            </div>
+            <div class="hero-slider__sep">:</div>
+          </div>
+          <div class="hero-slider__block" data-timer-block="hours">
+            <div class="hero-slider__unit">
+              <div class="hero-slider__num" data-countdown-hours>00</div>
+              <div class="hero-slider__label">{{ section.settings.hours_label | default: 'STUNDEN' }}</div>
+            </div>
+            <div class="hero-slider__sep">:</div>
+          </div>
+          <div class="hero-slider__block" data-timer-block="minutes">
+            <div class="hero-slider__unit">
+              <div class="hero-slider__num" data-countdown-minutes>00</div>
+              <div class="hero-slider__label">{{ section.settings.minutes_label | default: 'MINUTEN' }}</div>
+            </div>
+            <div class="hero-slider__sep">:</div>
+          </div>
+          <div class="hero-slider__block" data-timer-block="seconds">
+            <div class="hero-slider__unit">
+              <div class="hero-slider__num" data-countdown-seconds>00</div>
+              <div class="hero-slider__label">{{ section.settings.seconds_label | default: 'SEKUNDEN' }}</div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div style="display:flex; align-items:center; justify-content:center;">
+          {% if section.settings.show_dots %}
+            {%- assign dot_count = fallback_picked_collection.products_count | at_most: section.settings.max_products -%}
+            {% if dot_count > 1 %}
+              <div class="hero-slider__dots-wrapper" style="position:relative!important;left:auto!important;transform:none!important;bottom:auto!important;margin-right:24px!important;display:flex!important;align-items:center!important;">
+                <div class="hero-slider__dots" style="display:flex; gap:8px;">
+                  {% for i in (1..dot_count) %}
+                    <div class="hero-slider__dot{% if forloop.first %} active{% endif %}" data-dot="{{ forloop.index0 }}"></div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <a class="hero-slider__buy" id="hero-buy-btn-{{ section.id }}" href="{{ section.settings.buy_button_link | default: slider_products.first.url }}" data-current-slide="0">
+        {{ section.settings.buy_button_text | default: 'JETZT KAUFEN' }}
+      </a>
+    </div>
+  {% endif %}
+
+  {%- comment -%} Trust Badge - Deaktiviert {%- endcomment -%}
+  {%- comment -%}
+  {% if show_badge %}
+    <div class="hero-slider__badge" aria-hidden="true">
+      <div class="hero-slider__badge-title">{{ section.settings.badge_title | default: 'Käuferschutz' }}</div>
+      <div class="hero-slider__badge-stars">★★★★★</div>
+      <div class="hero-slider__badge-rating">{{ section.settings.badge_rating | default: '4,73 • Hervorragend' }}</div>
+    </div>
+  {% endif %}
+  {%- endcomment -%}
+</section>
+
+<script>
+  (function() {
+    var section = document.getElementById('hero-slider-{{ section.id }}');
+    if (!section) return;
+
+    /* ═══ 1. COUNTDOWN (Europe/Berlin) ═══ */
+    (function initCountdown() {
+      var timerEl = section.querySelector('.hero-slider__timer');
+      if (!timerEl) return;
+
+      // Build end-date: prefer Theme Editor value, fallback to 28.02.2026
+      var raw = '{{ countdown_end }}';
+      if (!raw || raw === '') raw = '2026-02-28T23:59:59';
+      // Ensure Berlin offset (+01:00 CET / +02:00 CEST)
+      if (raw.indexOf('+') === -1 && raw.indexOf('Z') === -1) {
+        // Detect current Berlin offset dynamically
+        try {
+          var berlinNow = new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin' });
+          var berlinDate = new Date(berlinNow);
+          var utcNow = new Date();
+          var offsetMin = Math.round((berlinDate - utcNow) / 60000);
+          var absH = Math.abs(Math.floor(offsetMin / 60));
+          var absM = Math.abs(offsetMin % 60);
+          var sign = offsetMin >= 0 ? '+' : '-';
+          raw += sign + String(absH).padStart(2,'0') + ':' + String(absM).padStart(2,'0');
+        } catch(e) {
+          raw += '+01:00'; // fallback CET
+        }
+      }
+
+      var endMs = new Date(raw).getTime();
+      if (isNaN(endMs)) return;
+
+      var daysEl  = section.querySelector('[data-countdown-days]');
+      var hoursEl = section.querySelector('[data-countdown-hours]');
+      var minsEl  = section.querySelector('[data-countdown-minutes]');
+      var secsEl  = section.querySelector('[data-countdown-seconds]');
+      var daysBlock  = section.querySelector('[data-timer-block="days"]');
+      var hoursBlock = section.querySelector('[data-timer-block="hours"]');
+      var minsBlock  = section.querySelector('[data-timer-block="minutes"]');
+      var secsBlock  = section.querySelector('[data-timer-block="seconds"]');
+      var p = function(n) { return (n < 10 ? '0' : '') + n; };
+
+      function tick() {
+        var diff = endMs - Date.now();
+        if (diff <= 0) {
+          timerEl.innerHTML = '<div style="font-size:18px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.85)">Sale beendet</div>';
+          return;
+        }
+        var d = Math.floor(diff / 86400000); diff %= 86400000;
+        var h = Math.floor(diff / 3600000);  diff %= 3600000;
+        var m = Math.floor(diff / 60000);    diff %= 60000;
+        var s = Math.floor(diff / 1000);
+
+        if (daysEl)  daysEl.textContent  = p(d);
+        if (hoursEl) hoursEl.textContent = p(h);
+        if (minsEl)  minsEl.textContent  = p(m);
+        if (secsEl)  secsEl.textContent  = p(s);
+
+        /* Adaptive display: hide zero-value leading units */
+        var totalSec = d * 86400 + h * 3600 + m * 60 + s;
+        if (daysBlock)  daysBlock.style.display  = (d > 0) ? '' : 'none';
+        if (hoursBlock) hoursBlock.style.display = (d > 0 || h > 0) ? '' : 'none';
+        /* Always show minutes and seconds */
+        if (minsBlock)  minsBlock.style.display  = '';
+        if (secsBlock)  secsBlock.style.display  = '';
+
+        /* Urgency: <1 hour → add class for red pulse styling */
+        if (totalSec < 3600) {
+          timerEl.classList.add('hero-slider__timer--urgent');
+        } else {
+          timerEl.classList.remove('hero-slider__timer--urgent');
+        }
+      }
+
+      // Use setInterval (more reliable than rAF for background tabs)
+      tick();
+      setInterval(tick, 1000);
+    })();
+
+    /* ═══ 2. SLIDER + AUTOPLAY ═══ */
+    var _sliderReady = false;
+
+    function initHeroSlider() {
+      var track  = section.querySelector('[data-track]');
+      var slides = section.querySelectorAll('[data-slide]');
+      var dots   = section.querySelectorAll('[data-dot]');
+      var prevBtn = section.querySelector('[data-action="prev"]');
+      var nextBtn = section.querySelector('[data-action="next"]');
+
+      if (!track || slides.length <= 1) return;
+      if (_sliderReady) return;
+      _sliderReady = true;
+
+      var current = 0;
+      var total   = slides.length;
+      var autoplayMs = {{ section.settings.autoplay_speed | default: 5000 }};
+      var autoTimer  = null;
+      var pauseTimer = null;
+
+      function go(idx) {
+        current = ((idx % total) + total) % total;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach(function(dot, i) { dot.classList.toggle('active', i === current); });
+        
+        // Update buy button to link to current product
+        var buyBtn = document.getElementById('hero-buy-btn-{{ section.id }}');
+        var currentSlide = slides[current];
+        if (buyBtn && currentSlide) {
+          var productUrl = currentSlide.getAttribute('data-product-url');
+          if (productUrl) {
+            buyBtn.href = productUrl;
+            buyBtn.setAttribute('data-current-slide', current);
+          }
+        }
+      }
+
+      /* — Autoplay — */
+      function startAutoplay() {
+        stopAutoplay();
+        autoTimer = setInterval(function() { go(current + 1); }, autoplayMs);
+      }
+      function stopAutoplay() {
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+      }
+      function pauseAndResume() {
+        stopAutoplay();
+        if (pauseTimer) clearTimeout(pauseTimer);
+        pauseTimer = setTimeout(startAutoplay, 8000); // resume after 8s idle
+      }
+
+      /* — Navigation — */
+      if (prevBtn) prevBtn.addEventListener('click', function() { go(current - 1); pauseAndResume(); });
+      if (nextBtn) nextBtn.addEventListener('click', function() { go(current + 1); pauseAndResume(); });
+      dots.forEach(function(dot, i) {
+        dot.addEventListener('click', function() { go(i); pauseAndResume(); });
+      });
+
+      /* — Touch / Swipe — */
+      var touchX = 0;
+      section.addEventListener('touchstart', function(e) {
+        touchX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      section.addEventListener('touchend', function(e) {
+        var dx = touchX - e.changedTouches[0].screenX;
+        if (Math.abs(dx) > 50) {
+          go(current + (dx > 0 ? 1 : -1));
+          pauseAndResume();
+        }
+      }, { passive: true });
+
+      /* — Initial slide — */
+      {% if section.settings.random_start %}
+        go(Math.floor(Math.random() * total));
+      {% else %}
+        go(0);
+      {% endif %}
+
+      /* — Start autoplay — */
+      startAutoplay();
+    }
+
+    // Robust init: try multiple times to ensure DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroSlider);
+    } else {
+      initHeroSlider();
+    }
+    window.addEventListener('load', initHeroSlider);
+
+    // Theme Editor support
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e && e.target && e.target.id === section.id) { _sliderReady = false; initHeroSlider(); }
+    });
+    document.addEventListener('shopify:section:select', function(e) {
+      if (e && e.target && e.target.id === section.id) { _sliderReady = false; initHeroSlider(); }
+    });
+
+    // ─── Remove.bg with IndexedDB Cache ───
+    // NOTE: API keys are rendered server-side by Liquid but appear in page source.
+    // For production, consider a Shopify App Proxy or Cloudflare Worker to hide keys.
+    var REMOVE_BG_API_KEY = {{ section.settings.remove_bg_api_key | json }};
+    var REMOVE_BG_API_KEYS_RAW = {{ section.settings.remove_bg_api_keys | json }};
+    var ENABLE_REMOVE_BG = {{ section.settings.enable_remove_bg | default: false }};
+    var CACHE_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+    function getRemoveBgKeys() {
+      var keys = (REMOVE_BG_API_KEYS_RAW || '').split(/\r?\n|,/g).map(function(s){return (s||'').trim();}).filter(Boolean);
+      if (REMOVE_BG_API_KEY && keys.indexOf(REMOVE_BG_API_KEY) === -1) keys.unshift(REMOVE_BG_API_KEY);
+      return keys;
+    }
+
+    // IndexedDB helpers
+    function openCacheDB() {
+      return new Promise(function(resolve, reject) {
+        var req = indexedDB.open('RemoveBGCache', 1);
+        req.onupgradeneeded = function(e) { e.target.result.createObjectStore('images', {keyPath:'url'}); };
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror = function() { reject(req.error); };
+      });
+    }
+
+    function getCached(db, url) {
+      return new Promise(function(resolve) {
+        var tx = db.transaction('images','readonly');
+        var req = tx.objectStore('images').get(url);
+        req.onsuccess = function() {
+          var r = req.result;
+          if (r && (Date.now() - r.ts < CACHE_EXPIRY_MS)) resolve(r.data);
+          else resolve(null);
+        };
+        req.onerror = function() { resolve(null); };
+      });
+    }
+
+    function putCached(db, url, arrayBuffer) {
+      try {
+        var tx = db.transaction('images','readwrite');
+        tx.objectStore('images').put({url:url, data:arrayBuffer, ts:Date.now()});
+      } catch(e) { /* quota exceeded - ignore */ }
+    }
+
+    async function removeBackgroundWithAPI(img, db) {
+      var keys = getRemoveBgKeys();
+      if (!ENABLE_REMOVE_BG || keys.length === 0 || img.dataset.bgProcessed) return;
+      var sourceUrl = img.dataset.removebgSrc || img.currentSrc || img.src;
+
+      // 1) Check IndexedDB cache
+      if (db) {
+        try {
+          var cached = await getCached(db, sourceUrl);
+          if (cached) {
+            img.src = URL.createObjectURL(new Blob([cached], {type:'image/png'}));
+            img.dataset.bgProcessed = 'cached';
+            return;
+          }
+        } catch(e) { /* cache miss */ }
+      }
+
+      // 2) Fetch source image once
+      try {
+        var imgResp = await fetch(sourceUrl);
+        if (!imgResp.ok) { img.dataset.bgProcessed='fetch_failed'; return; }
+        var imgBuf = await imgResp.arrayBuffer();
+        var lastStatus = null;
+
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          try {
+            var fd = new FormData();
+            fd.append('image_file', new Blob([imgBuf],{type:'image/png'}), 'img.png');
+            fd.append('size', 'preview');
+            var resp = await fetch('https://api.remove.bg/v1.0/removebg', {
+              method:'POST', headers:{'X-Api-Key':key}, body:fd
+            });
+            if (resp.ok) {
+              var resultBuf = await resp.arrayBuffer();
+              // Store in IndexedDB for next time
+              if (db) putCached(db, sourceUrl, resultBuf);
+              img.src = URL.createObjectURL(new Blob([resultBuf], {type:'image/png'}));
+              img.dataset.bgProcessed = 'api';
+              return;
+            }
+            lastStatus = resp.status;
+            if (resp.status === 402 || resp.status === 403) continue;
+            break;
+          } catch(e2) { continue; }
+        }
+        img.dataset.bgProcessed = 'api_failed_' + (lastStatus||'unknown');
+      } catch(error) {
+        img.dataset.bgProcessed = 'api_failed';
+      }
+    }
+
+    async function processProductImages() {
+      var imgs = section.querySelectorAll('.hero-slider__box img:not([data-bg-processed]):not(.hero-transparent-img)');
+      var keys = getRemoveBgKeys();
+      if (!ENABLE_REMOVE_BG || keys.length === 0 || imgs.length === 0) {
+        imgs.forEach(function(img){ img.dataset.bgProcessed='skipped'; });
+        return;
+      }
+      var db = null;
+      try { db = await openCacheDB(); } catch(e) { /* no IDB support */ }
+
+      imgs.forEach(function(img) {
+        var run = function() {
+          // Keep image VISIBLE — don't hide during processing
+          removeBackgroundWithAPI(img, db);
+        };
+        if (img.complete) run();
+        else { img.onload=run; img.onerror=function(){ img.dataset.bgProcessed='load_failed'; }; }
+      });
+    }
+
+    // Run immediately
+    processProductImages();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero Product Slider",
+  "tag": "section",
+  "class": "hero-product-slider-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Remove.bg API"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_remove_bg",
+      "label": "Automatische Hintergrundentfernung",
+      "default": false,
+      "info": "Remove.bg API aktivieren. Erfordert API-Schlüssel."
+    },
+    {
+      "type": "text",
+      "id": "remove_bg_api_key",
+      "label": "API-Schlüssel",
+      "info": "API-Key von remove.bg (50 Credits/Monat kostenlos)"
+    },
+    {
+      "type": "textarea",
+      "id": "remove_bg_api_keys",
+      "label": "Mehrere API-Schlüssel (optional)",
+      "info": "Mehrere remove.bg API-Keys. Ein Key pro Zeile oder mit Komma trennen. Wird automatisch durchprobiert bei 402/403."
+    },
+    {
+      "type": "header",
+      "content": "Produkt / Inhalt"
+    },
+    {
+      "type": "collection_list",
+      "id": "fallback_collections",
+      "label": "Kollektionen für Slider",
+      "limit": 8,
+      "info": "Wähle mehrere Kollektionen. Bei jedem Laden wird eine Kollektion zufällig gewählt und deren Produkte werden als Slider angezeigt."
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Anzahl der Produkte",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Überschrift",
+      "default": "Microsoft Office 2024 für Windows"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Untertitel",
+      "default": "Professional Plus Standard"
+    },
+    {
+      "type": "text",
+      "id": "price",
+      "label": "Preis (Text)",
+      "default": "Ab 9,90 €"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Produktbild (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button-Text",
+      "default": "Jetzt herunterladen"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button-Link"
+    },
+    {
+      "type": "text",
+      "id": "buy_button_text",
+      "label": "Kaufen-Button Text",
+      "default": "JETZT KAUFEN"
+    },
+    {
+      "type": "url",
+      "id": "buy_button_link",
+      "label": "Kaufen-Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Countdown-Timer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Countdown anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_end",
+      "label": "Angebots-Enddatum (ISO)",
+      "default": "2026-02-28T23:59:59",
+      "info": "Format: JJJJ-MM-TTTHH:MM:SS (Berlin-Zeit CET/CEST). Beispiel: 2026-12-31T23:59:59"
+    },
+    {
+      "type": "text",
+      "id": "sale_text",
+      "label": "Aktionstext",
+      "default": "FINAL WINTER SALE"
+    },
+    {
+      "type": "text",
+      "id": "days_label",
+      "label": "Tage-Beschriftung",
+      "default": "TAGE"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Stunden-Beschriftung",
+      "default": "STUNDEN"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minuten-Beschriftung",
+      "default": "MINUTEN"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Sekunden-Beschriftung",
+      "default": "SEKUNDEN"
+    },
+    {
+      "type": "header",
+      "content": "Slider"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Pfeile anzeigen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Punkte anzeigen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Automatisch abspielen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "random_start",
+      "label": "Bei jedem Laden zufällige Slide starten",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay-Geschwindigkeit (ms)",
+      "min": 2000,
+      "max": 9000,
+      "step": 1000,
+      "default": 5000,
+      "info": "5000 = 5 Sekunden"
+    },
+    {
+      "type": "header",
+      "content": "Käuferschutz-Leiste"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bar",
+      "label": "Untere Leiste anzeigen",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Vertrauens-Badge anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_title",
+      "label": "Badge-Titel",
+      "default": "Käuferschutz"
+    },
+    {
+      "type": "text",
+      "id": "badge_rating",
+      "label": "Bewertung",
+      "default": "4,73 • Hervorragend"
+    },
+    {
+      "type": "header",
+      "content": "Farben"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_1",
+      "label": "Hintergrundfarbe 1",
+      "default": "#0A1F18"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_2",
+      "label": "Hintergrundfarbe 2",
+      "default": "#1D4739"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_3",
+      "label": "Hintergrundfarbe 3",
+      "default": "#2C3E50"
+    },
+    {
+      "type": "color",
+      "id": "ribbon_orange",
+      "label": "Band-Farbe Gold",
+      "default": "#C9A96E"
+    },
+    {
+      "type": "color",
+      "id": "ribbon_pink",
+      "label": "Band-Farbe Rosé",
+      "default": "#A3516C"
+    },
+    {
+      "type": "color",
+      "id": "ribbon_purple",
+      "label": "Band-Farbe Lila",
+      "default": "#5B3A6B"
+    },
+    {
+      "type": "color",
+      "id": "ribbon_blue",
+      "label": "Band-Farbe Petrol",
+      "default": "#34698A"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button-Farbe",
+      "default": "#27AE60"
+    },
+    {
+      "type": "color",
+      "id": "button_color_hover",
+      "label": "Button-Farbe (Hover)",
+      "default": "#1E8449"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Product Slider",
+      "category": "Image"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer"]
+  }
+}
+{% endschema %}

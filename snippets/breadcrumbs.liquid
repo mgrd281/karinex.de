@@ -1,0 +1,281 @@
+{%- unless template == 'index' or template == 'cart' or template == 'list-collections' -%}
+  <!-- BREADCRUMBS V2 - 2026-02-09 -->
+  <div class="mobile-back-nav mobile-only">
+    {%- if template contains 'product' -%}
+      {%- liquid
+        assign best_col = nil
+        for col in product.collections
+          assign h = col.handle
+          unless h == 'all' or h == 'alle' or h == 'frontpage'
+            assign best_col = col
+            break
+          endunless
+        endfor
+      -%}
+      {%- if best_col -%}
+        <a href="{{ best_col.url }}" class="mobile-back-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span>{{ best_col.title }}</span>
+        </a>
+      {%- else -%}
+        <a href="/" class="mobile-back-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          <span>Startseite</span>
+        </a>
+      {%- endif -%}
+    {%- elsif template contains 'collection' -%}
+      <a href="/collections" class="mobile-back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>Kategorien</span>
+      </a>
+    {%- elsif template contains 'blog' or template contains 'article' -%}
+      <a href="{{ blog.url | default: '/' }}" class="mobile-back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>{{ blog.title | default: 'Blog' }}</span>
+      </a>
+    {%- else -%}
+      <a href="/" class="mobile-back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>Startseite</span>
+      </a>
+    {%- endif -%}
+  </div>
+
+  <nav class="breadcrumbs-wrapper desktop-only" role="navigation" aria-label="breadcrumbs">
+    <ol class="breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="/" itemprop="item" title="Home">
+          <span itemprop="name">Startseite</span>
+        </a>
+        <meta itemprop="position" content="1" />
+      </li>
+      
+      {%- if template contains 'product' -%}
+      {%- liquid
+        assign breadcrumb_brand = product.vendor | default: product.title
+        assign best_collection = nil
+        assign primary_title = nil
+        
+        comment
+          Find Herrenuhren or Damenuhren first - check ALL collections
+        endcomment
+        for col in product.collections
+          assign col_title_clean = col.title | downcase | strip
+          if col_title_clean contains 'herrenuhren'
+            assign best_collection = col
+            assign primary_title = 'Herrenuhren'
+            break
+          endif
+        endfor
+        
+        if best_collection == nil
+          for col in product.collections
+            assign col_title_clean = col.title | downcase | strip
+            if col_title_clean contains 'damenuhren'
+              assign best_collection = col
+              assign primary_title = 'Damenuhren'
+              break
+            endif
+          endfor
+        endif
+        
+        comment
+          Second pass if no match: look for other good categories
+        endcomment
+        if best_collection == nil
+          for col in product.collections
+            assign h = col.handle | downcase
+            
+            if h == 'all' or h == 'alle' or h == 'frontpage'
+              continue
+            endif
+            if h contains 'alle-produkte' or h contains 'alle_produkte'
+              continue
+            endif
+            
+            if h == 'boss-uhren'
+              assign best_collection = col
+              assign primary_title = 'BOSS Uhren'
+              break
+            elsif h == 'michael-kors-damenuhr'
+              assign best_collection = col
+              assign primary_title = 'Michael Kors Uhren'
+              break
+            elsif h == 'luxus-uhren'
+              assign best_collection = col
+              assign primary_title = 'Luxus Uhren'
+              break
+            elsif h == 'uhren'
+              assign best_collection = col
+              assign primary_title = 'Uhren'
+            elsif h == 'software'
+              assign best_collection = col
+              assign primary_title = 'Software'
+              break
+            elsif h == 'games'
+              assign best_collection = col
+              assign primary_title = 'Games'
+              break
+            elsif h == 'playstation'
+              assign best_collection = col
+              assign primary_title = 'PlayStation'
+            elsif h == 'xbox'
+              assign best_collection = col
+              assign primary_title = 'Xbox'
+            elsif h == 'lego'
+              assign best_collection = col
+              assign primary_title = 'LEGO'
+            endif
+          endfor
+        endif
+        
+        comment
+          Fallback - use product type as category
+        endcomment
+        if best_collection == nil and product.type != blank
+          assign primary_title = product.type
+        endif
+      -%}
+      {%- if primary_title != blank -%}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          {%- if best_collection -%}
+            <a href="{{ best_collection.url }}" itemprop="item" title="{{ primary_title }}">
+              <span itemprop="name">{{ primary_title }}</span>
+            </a>
+          {%- else -%}
+            <span itemprop="name">{{ primary_title }}</span>
+          {%- endif -%}
+          <meta itemprop="position" content="2" />
+        </li>
+      {%- endif -%}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span itemprop="name">{{ breadcrumb_brand }}</span>
+          <meta itemprop="position" content="3" />
+        </li>
+        
+      {%- elsif template contains 'collection' and collection.handle -%}
+        {%- liquid
+          assign breadcrumb_names = 'herrenuhren:Herrenuhren,damenuhren:Damenuhren,uhren:Uhren,boss-uhren:BOSS Uhren,michael-kors-damenuhr:Michael Kors Uhren,michael-kors:Michael Kors,luxus-uhren:Luxus Uhren,software:Software,microsoft:Microsoft,adobe:Adobe,games:Games,playstation:PlayStation,xbox:Xbox,lego:LEGO,spielzeug:Spielzeug,sale:Sale,bestseller:Bestseller,antivirus:Antivirus,chronographen:Chronographen' | split: ','
+          assign clean_collection_title = nil
+          for mapping in breadcrumb_names
+            assign parts = mapping | split: ':'
+            if parts[0] == collection.handle
+              assign clean_collection_title = parts[1]
+              break
+            endif
+          endfor
+          if clean_collection_title == nil
+            assign clean_collection_title = collection.title | split: ' – ' | first | split: ' günstig' | first | split: ' bei ' | first | split: ' von ' | first
+          endif
+        -%}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span itemprop="name">{{ clean_collection_title }}</span>
+          <meta itemprop="position" content="2" />
+        </li>
+        
+      {%- elsif template contains 'blog' -%}
+        {%- if current_tags -%}
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ blog.url }}" itemprop="item" title="{{ blog.title }}">
+              <span itemprop="name">{{ blog.title }}</span>
+            </a>
+            <meta itemprop="position" content="2" />
+          </li>
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">{{ current_tags | join: " + " }}</span>
+            <meta itemprop="position" content="3" />
+          </li>
+        {%- else -%}
+          <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span itemprop="name">{{ blog.title }}</span>
+            <meta itemprop="position" content="2" />
+          </li>
+        {%- endif -%}
+        
+      {%- elsif template contains 'article' -%}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <a href="{{ blog.url }}" itemprop="item" title="{{ blog.title }}">
+            <span itemprop="name">{{ blog.title }}</span>
+          </a>
+          <meta itemprop="position" content="2" />
+        </li>
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span itemprop="name">{{ article.title }}</span>
+          <meta itemprop="position" content="3" />
+        </li>
+        
+      {%- elsif template contains 'page' -%}
+        <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+          <span itemprop="name">{{ page.title }}</span>
+          <meta itemprop="position" content="2" />
+        </li>
+      {%- endif -%}
+    </ol>
+  </nav>
+
+  <style>
+    .mobile-only { display: none; }
+    .desktop-only { display: block; }
+
+    @media (max-width: 989px) {
+      .mobile-only { display: block; }
+      .desktop-only { display: none; }
+    }
+
+    .breadcrumbs-wrapper {
+      background: transparent;
+      padding: 12px 0;
+      margin: 0 auto;
+      max-width: 1280px;
+    }
+    
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      list-style: none;
+      margin: 0;
+      padding: 0 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .breadcrumbs a {
+      color: #1D4739;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .breadcrumbs a:hover {
+      color: #2e7d32;
+      text-decoration: underline;
+    }
+    
+    .breadcrumbs span[aria-hidden="true"] {
+      margin: 0 8px;
+      color: #999;
+    }
+    
+    .breadcrumbs span:last-child {
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Mobile Back Nav */
+    .mobile-back-nav {
+      padding: 12px 20px;
+    }
+    .mobile-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #1D4739;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .mobile-back-btn svg {
+      stroke-width: 2.5;
+    }
+  </style>
+{%- endunless -%}

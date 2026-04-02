@@ -1,0 +1,255 @@
+/* ==============================================
+   IMPRESSUM - Enterprise Legal Page
+   Clean, trustworthy, §5 TMG compliant
+   ============================================== */
+
+/* Page Container */
+.impressum-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.impressum-hero {
+  padding: 60px 20px 40px;
+  text-align: center;
+  background: #fff;
+  position: static !important;
+  border: none;
+  box-shadow: none;
+}
+
+.impressum-title {
+  font-size: clamp(28px, 5vw, 38px);
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.02em;
+}
+
+.impressum-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+}
+
+.impressum-divider {
+  width: 48px;
+  height: 3px;
+  background: #111;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+.impressum-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.impressum-meta svg {
+  opacity: 0.7;
+}
+
+/* Main Container */
+.impressum-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+  border: none;
+}
+
+/* Section Block */
+.impressum-section {
+  padding: 32px 0;
+  border-bottom: none;
+}
+
+.impressum-section:last-of-type {
+  border-bottom: none;
+}
+
+.impressum-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 20px 0;
+}
+
+/* Company Info Block */
+.impressum-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.impressum-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.impressum-label {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.impressum-value {
+  font-size: 16px;
+  color: #111;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.impressum-value strong {
+  font-weight: 600;
+}
+
+/* Address Block */
+.impressum-address {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: none;
+}
+
+.impressum-address-lines {
+  font-size: 16px;
+  color: #111;
+  line-height: 1.7;
+}
+
+/* Contact Links */
+.impressum-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.impressum-contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.impressum-contact-link {
+  font-size: 16px;
+  color: #111;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.impressum-contact-link:hover {
+  color: #555;
+}
+
+/* Tax ID */
+.impressum-tax-value {
+  font-size: 16px;
+  color: #111;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+/* Dispute Resolution */
+.impressum-dispute-text {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.7;
+  margin: 0 0 16px 0;
+}
+
+.impressum-dispute-text:last-of-type {
+  margin-bottom: 0;
+}
+
+.impressum-external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #111;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  transition: border-color 0.2s ease;
+}
+
+.impressum-external-link:hover {
+  border-color: #111;
+}
+
+.impressum-external-link svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Final Note */
+.impressum-final-note {
+  padding: 32px 0 0;
+  margin-top: 16px;
+}
+
+.impressum-note-text {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  margin: 0;
+}
+
+/* Represented By */
+.impressum-represented {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: none;
+}
+
+.impressum-represented-text {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Mobile Optimization */
+@media (max-width: 600px) {
+  .impressum-hero {
+    padding: 40px 20px 30px;
+  }
+
+  .impressum-container {
+    padding: 0 16px 60px;
+  }
+
+  .impressum-section {
+    padding: 24px 0;
+  }
+
+  .impressum-section-title {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .impressum-value,
+  .impressum-contact-link,
+  .impressum-tax-value {
+    font-size: 15px;
+  }
+
+  .impressum-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .impressum-dispute-text {
+    font-size: 14px;
+  }
+}

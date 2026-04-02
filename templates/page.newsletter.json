@@ -1,0 +1,55 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+    "sections": {
+        "main": {
+            "type": "modern-newsletter-page",
+            "blocks": {
+                "benefit_1": {
+                    "type": "benefit",
+                    "settings": {
+                        "text": "Exklusive Angebote",
+                        "icon": "gift"
+                    }
+                },
+                "benefit_2": {
+                    "type": "benefit",
+                    "settings": {
+                        "text": "Früher Zugang zu Sales",
+                        "icon": "clock"
+                    }
+                },
+                "benefit_3": {
+                    "type": "benefit",
+                    "settings": {
+                        "text": "Neuheiten & Trends",
+                        "icon": "trend"
+                    }
+                }
+            },
+            "block_order": [
+                "benefit_1",
+                "benefit_2",
+                "benefit_3"
+            ],
+            "settings": {
+                "heading": "Bleib immer auf dem Laufenden",
+                "subheading": "Erhalte exklusive Angebote & Trends direkt in dein Postfach.",
+                "voucher_text": "🎁 10 € Willkommensgutschein nach Anmeldung",
+                "button_label": "Jetzt anmelden & 10 € sichern",
+                "bg_color": "#f9fafb",
+                "accent_color": "#000000"
+            }
+        }
+    },
+    "order": [
+        "main"
+    ]
+}

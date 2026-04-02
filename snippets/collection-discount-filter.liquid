@@ -1,0 +1,118 @@
+{%- doc -%}
+  Custom Rabatt (discount) filter for collection pages.
+  Works entirely client-side via JavaScript.
+  Reads data-discount attributes from product grid items and hides/shows them.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- capture discount_list -%}
+  {%- for product in collection.products limit: 1000 -%}
+    {%- if product.compare_at_price > product.price -%}
+      {%- assign d_amount = product.compare_at_price | minus: product.price -%}
+      {%- assign d_pct = d_amount | times: 100 | divided_by: product.compare_at_price -%}
+      {%- assign d_tier = d_pct | divided_by: 10 | times: 10 -%}
+      {%- if d_tier >= 50 -%}
+        {%- assign d_tier = 50 -%}
+      {%- endif -%}
+      {%- if d_tier >= 10 -%}
+        |{{ d_tier }}|,
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign discount_items = discount_list | split: ',' -%}
+{%- assign unique_discounts = discount_items | uniq | sort -%}
+
+{%- assign sorted_discounts = '' -%}
+{%- assign sort_order = '10,20,30,40,50' | split: ',' -%}
+{%- for tier in sort_order -%}
+  {%- assign tier_wrapped = '|' | append: tier | append: '|' -%}
+  {%- assign tier_count = 0 -%}
+  {%- for d in discount_items -%}
+    {%- assign d_stripped = d | strip -%}
+    {%- if d_stripped == tier_wrapped -%}
+      {%- assign tier_count = tier_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if tier_count > 0 -%}
+    {%- assign tier_with_count = tier | append: ':' | append: tier_count -%}
+    {%- if sorted_discounts == '' -%}
+      {%- assign sorted_discounts = tier_with_count -%}
+    {%- else -%}
+      {%- assign sorted_discounts = sorted_discounts | append: ',' | append: tier_with_count -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign final_discounts = sorted_discounts | split: ',' -%}
+
+{%- if final_discounts.size > 0 -%}
+<accordion-custom
+  class="facets__item discount-filter-accordion"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  {% if filter_style == 'vertical' %}
+  {% endif %}
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-discount-{{ filter_style }}"
+    class="facets__panel"
+    {% if filter_style == 'horizontal' %}
+      data-auto-close-details="desktop"
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Reduzierung</span>
+      <div class="facets__status-wrapper">
+        <span class="discount-filter-count" style="display: none;"></span>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+    >
+      <div class="facets__inputs-wrapper">
+        <ul class="facets__inputs-list list-unstyled">
+          {%- for tier in final_discounts -%}
+            {%- assign tier_parts = tier | split: ':' -%}
+            {%- assign tier_stripped = tier_parts[0] | strip -%}
+            {%- assign tier_product_count = tier_parts[1] | strip -%}
+            {%- if tier_stripped != blank -%}
+              {%- assign discount_id = 'discount-filter-' | append: tier_stripped | append: '-' | append: filter_style -%}
+              {%- if tier_stripped == '50' -%}
+                {%- assign discount_label = '50%+' -%}
+              {%- else -%}
+                {%- assign next_tier = tier_stripped | plus: 9 -%}
+                {%- assign discount_label = tier_stripped | append: '% – ' | append: next_tier | append: '%' -%}
+              {%- endif -%}
+              <li class="facets__inputs-list-item" data-skip-node-update="true">
+                <div class="checkbox discount-filter-item">
+                  <input
+                    type="checkbox"
+                    id="{{ discount_id }}"
+                    class="checkbox__input js-discount-checkbox"
+                    data-discount-value="{{ tier_stripped }}"
+                    value="{{ tier_stripped }}"
+                  >
+                  <label class="checkbox__label" for="{{ discount_id }}" role="checkbox">
+                    {{ 'icon-checkmark.svg' | inline_asset_content }}
+                    <span class="checkbox__label-text">{{ discount_label }} <span style="color: #767676;">({{ tier_product_count }})</span></span>
+                  </label>
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+{%- endif -%}

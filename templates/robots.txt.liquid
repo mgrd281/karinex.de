@@ -1,0 +1,28 @@
+{%- comment -%}
+  CAUTION: To customize robots.txt, Shopify requires a file named robots.txt.liquid in the templates directory.
+  This file addresses the Google Search Console warning about 'Crawl-delay' being ignored.
+{%- endcomment -%}
+
+{%- for group in robots.rules -%}
+  {{ group.user_agent }}
+
+  {%- for rule in group.rules -%}
+    {%- unless group.user_agent contains 'Googlebot' and rule.directive == 'Crawl-delay' -%}
+      {{ rule.directive }}: {{ rule.value }}
+    {%- endunless -%}
+  {%- endfor -%}
+
+  {# Search result pages should not be crawled/indexed #}
+  Disallow: /search
+  Disallow: /search?*
+
+  {%- if group.user_agent contains 'Googlebot' -%}
+    {# Force disallow of dynamic vendor filter pages to save crawl budget #}
+    Disallow: /collections/vendors?q=*
+    Disallow: /collections/vendors?*q=*
+  {%- endif -%}
+
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{%- endfor -%}

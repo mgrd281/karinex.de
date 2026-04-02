@@ -1,0 +1,183 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-garantie.css' | asset_url | stylesheet_tag }}
+
+<div class="garantie-page">
+  {%- comment -%} HERO SECTION {%- endcomment -%}
+  <header class="garantie-hero">
+    <h1 class="garantie-title">Garantie</h1>
+    <p class="garantie-subtitle">
+      Informationen zur gesetzlichen Gewährleistung und zu freiwilligen Garantie-Leistungen.
+    </p>
+    <div class="garantie-divider"></div>
+    <p class="garantie-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 6px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Zuletzt aktualisiert: 9. Februar 2026
+    </p>
+  </header>
+
+  <main class="garantie-container">
+    {%- comment -%} LEGAL WARRANTY {%- endcomment -%}
+    <section class="garantie-section">
+      <h2 class="garantie-section-title">Gesetzliche Gewährleistung</h2>
+      <p class="garantie-section-text">
+        Als Verbraucher haben Sie bei Mängeln an der Kaufsache gesetzliche Gewährleistungsrechte gemäß §§ 434 ff. BGB gegenüber uns als Verkäufer.
+      </p>
+      <ul class="garantie-key-points">
+        <li>Gewährleistungsfrist: 24 Monate ab Lieferung (Neuware, B2C)</li>
+        <li>Anspruch auf Nacherfüllung (Reparatur oder Ersatzlieferung)</li>
+        <li>Bei Fehlschlagen der Nacherfüllung: Rücktritt oder Minderung</li>
+        <li>Beweislastumkehr in den ersten 12 Monaten zugunsten des Verbrauchers</li>
+      </ul>
+      <div class="garantie-info-box">
+        <p class="garantie-info-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+          Hinweis
+        </p>
+        <p class="garantie-info-text">
+          Die gesetzliche Gewährleistung richtet sich gegen uns als Verkäufer und ist unabhängig von eventuellen Herstellergarantien.
+        </p>
+      </div>
+    </section>
+
+    {%- comment -%} VOLUNTARY GUARANTEE {%- endcomment -%}
+    <section class="garantie-section">
+      <h2 class="garantie-section-title">Freiwillige Garantie</h2>
+      <p class="garantie-section-text">
+        Über die gesetzliche Gewährleistung hinaus bieten einige Hersteller freiwillige Garantieleistungen an. Ob und in welchem Umfang eine Herstellergarantie besteht, entnehmen Sie bitte den jeweiligen Produktinformationen oder den Garantiebedingungen des Herstellers.
+      </p>
+      <div class="garantie-info-box">
+        <p class="garantie-info-title">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+          </svg>
+          Ihre Rechte bleiben unberührt
+        </p>
+        <p class="garantie-info-text">
+          Eine freiwillige Herstellergarantie besteht neben den gesetzlichen Gewährleistungsrechten und schränkt diese nicht ein.
+        </p>
+      </div>
+    </section>
+
+    {%- comment -%} B2B NOTE {%- endcomment -%}
+    <section class="garantie-section">
+      <div class="garantie-b2b-notice">
+        <h2 class="garantie-b2b-title">Hinweis für Geschäftskunden (B2B)</h2>
+        <p class="garantie-b2b-text">
+          Für Unternehmer im Sinne des § 14 BGB gelten abweichende Gewährleistungsregelungen. Die Gewährleistungsfrist beträgt 12 Monate ab Lieferung.
+        </p>
+        <p class="garantie-b2b-text">
+          Weitere Informationen finden Sie in unseren <a href="{{ _root }}pages/agb" class="garantie-b2b-link">Allgemeinen Geschäftsbedingungen</a> sowie auf unserer <a href="{{ _root }}pages/b2b" class="garantie-b2b-link">B2B-Seite</a>.
+        </p>
+      </div>
+    </section>
+
+    {%- comment -%} COVERAGE {%- endcomment -%}
+    <section class="garantie-section">
+      <h2 class="garantie-section-title">Was ist abgedeckt?</h2>
+      <div class="garantie-coverage">
+        <div class="garantie-coverage-card garantie-coverage-card--covered">
+          <h3 class="garantie-coverage-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Abgedeckt
+          </h3>
+          <ul class="garantie-coverage-list">
+            <li>Herstellungsfehler</li>
+            <li>Materialfehler</li>
+            <li>Funktionsmängel bei Lieferung</li>
+            <li>Abweichung von der Produktbeschreibung</li>
+          </ul>
+        </div>
+        <div class="garantie-coverage-card garantie-coverage-card--not-covered">
+          <h3 class="garantie-coverage-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Nicht abgedeckt
+          </h3>
+          <ul class="garantie-coverage-list">
+            <li>Normaler Verschleiß</li>
+            <li>Unsachgemäße Nutzung</li>
+            <li>Schäden durch Dritte</li>
+            <li>Eigenmächtige Reparaturversuche</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} PROCESS {%- endcomment -%}
+    <section class="garantie-section">
+      <h2 class="garantie-section-title">So machen Sie Ihre Ansprüche geltend</h2>
+      <ol class="garantie-steps">
+        <li>
+          <div class="garantie-step-content">
+            <p class="garantie-step-title">Kontaktaufnahme</p>
+            <p class="garantie-step-desc">Kontaktieren Sie unseren Kundenservice per E-Mail oder Kontaktformular mit einer Beschreibung des Mangels.</p>
+          </div>
+        </li>
+        <li>
+          <div class="garantie-step-content">
+            <p class="garantie-step-title">Prüfung des Anspruchs</p>
+            <p class="garantie-step-desc">Wir prüfen Ihren Anspruch und informieren Sie zeitnah über das weitere Vorgehen.</p>
+          </div>
+        </li>
+        <li>
+          <div class="garantie-step-content">
+            <p class="garantie-step-title">Abwicklung</p>
+            <p class="garantie-step-desc">Je nach Fall erfolgt eine Reparatur, Ersatzlieferung oder Rückerstattung gemäß den gesetzlichen Bestimmungen.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {%- comment -%} CONTACT {%- endcomment -%}
+    <section class="garantie-section">
+      <div class="garantie-contact">
+        <h2 class="garantie-contact-title">Fragen zur Garantie?</h2>
+        <p class="garantie-contact-text">
+          Unser Kundenservice hilft Ihnen gerne bei Fragen zu Gewährleistung und Garantie.
+        </p>
+        <div class="garantie-contact-actions">
+          <a href="mailto:{{ shop.email }}" class="garantie-contact-link garantie-contact-link--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            E-Mail schreiben
+          </a>
+          <a href="{{ _root }}pages/kontakt" class="garantie-contact-link garantie-contact-link--secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+            </svg>
+            Kontaktformular
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} LEGAL FOOTER {%- endcomment -%}
+    <footer class="garantie-legal-note">
+      <p class="garantie-legal-text">
+        Stand: Februar 2026 · Diese Informationen ersetzen keine Rechtsberatung.
+      </p>
+    </footer>
+  </main>
+</div>
+
+{% schema %}
+{
+  "name": "Garantie",
+  "tag": "section",
+  "class": "section-garantie",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-cookie-policy",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

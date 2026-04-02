@@ -1,0 +1,18 @@
+<!-- Google Kundenrezensionen Opt-in Integration for Shopify Thank You Page -->
+<script src="https://apis.google.com/js/platform.js?onload=renderOptIn" async defer></script>
+<script>
+  window.renderOptIn = function() {
+    window.gapi.load('surveyoptin', function() {
+      window.gapi.surveyoptin.render({
+        // REQUIRED FIELDS
+        "merchant_id": 5701311588,
+        "order_id": "{{ order.name | escape }}",
+        "email": "{{ order.email | escape }}",
+        "delivery_country": "{{ order.shipping_address.country_code | escape }}",
+        "estimated_delivery_date": "{{ order.shipping_lines[0].delivery_date | date: '%Y-%m-%d' }}",
+        // OPTIONAL FIELDS
+        // "products": [{"gtin":"GTIN1"}, {"gtin":"GTIN2"}]
+      });
+    });
+  }
+</script>

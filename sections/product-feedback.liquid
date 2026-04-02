@@ -1,0 +1,309 @@
+{% schema %}
+{
+  "name": "Produktseiten-Feedback",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "Kurze Frage zu unserer Seite"
+    },
+    {
+      "type": "text",
+      "id": "question",
+      "label": "Frage",
+      "default": "Haben Sie alle Informationen gefunden, die Sie benötigen?"
+    },
+    {
+      "type": "url",
+      "id": "service_url",
+      "label": "Link zum Kundenservice"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Produktseiten-Feedback"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="kx-feedback" id="kx-feedback-{{ section.id }}" data-section-id="{{ section.id }}" style="content-visibility:auto;contain-intrinsic-size:auto 400px;">
+  <div class="kx-feedback__inner">
+
+    {%- comment -%} ── Hidden Shopify contact form (submits via iframe) ── {%- endcomment -%}
+    <iframe name="kx-fb-iframe-{{ section.id }}" style="display:none !important;width:0;height:0;border:0;"></iframe>
+    <form method="post" action="/contact#contact_form" target="kx-fb-iframe-{{ section.id }}" id="kx-fb-hidden-form-{{ section.id }}" style="display:none !important;">
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="hidden" name="contact[email]" id="kx-fb-hf-email-{{ section.id }}" value="feedback@karinex.de">
+      <input type="hidden" name="contact[subject]" id="kx-fb-hf-subject-{{ section.id }}" value="">
+      <input type="hidden" name="contact[body]" id="kx-fb-hf-body-{{ section.id }}" value="">
+    </form>
+
+    {%- comment -%} ── Step 1: emoji question ── {%- endcomment -%}
+    <div class="kx-feedback__step kx-feedback__step--ask" id="kx-fb-ask-{{ section.id }}">
+      <p class="kx-feedback__heading">{{ section.settings.heading }}</p>
+      <p class="kx-feedback__question">{{ section.settings.question }}</p>
+      <div class="kx-feedback__faces">
+        <button type="button" class="kx-feedback__face" data-score="1" aria-label="Sehr unzufrieden">
+          <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="14" r="1.4" fill="#999"/><circle cx="24" cy="14" r="1.4" fill="#999"/><path d="M11 25c1.5-3 5-5 7-5s5.5 2 7 5" fill="none" stroke="#999" stroke-width="1.4" stroke-linecap="round"/><line x1="9" y1="11" x2="14" y2="12" stroke="#999" stroke-width="1.2" stroke-linecap="round"/><line x1="27" y1="11" x2="22" y2="12" stroke="#999" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="kx-feedback__face" data-score="2" aria-label="Unzufrieden">
+          <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="15" r="1.4" fill="#999"/><circle cx="24" cy="15" r="1.4" fill="#999"/><path d="M12 25c2-2.5 4-3.5 6-3.5s4 1 6 3.5" fill="none" stroke="#999" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="kx-feedback__face" data-score="3" aria-label="Neutral">
+          <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="15" r="1.4" fill="#999"/><circle cx="24" cy="15" r="1.4" fill="#999"/><line x1="12" y1="23" x2="24" y2="23" stroke="#999" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="kx-feedback__face" data-score="4" aria-label="Zufrieden">
+          <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="15" r="1.4" fill="#999"/><circle cx="24" cy="15" r="1.4" fill="#999"/><path d="M12 21c2 2.5 4 3.5 6 3.5s4-1 6-3.5" fill="none" stroke="#999" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="kx-feedback__face" data-score="5" aria-label="Sehr zufrieden">
+          <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="15" r="1.4" fill="#999"/><circle cx="24" cy="15" r="1.4" fill="#999"/><path d="M10 20c2 4 5 6 8 6s6-2 8-6" fill="none" stroke="#999" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    {%- comment -%} ── Step 2: follow-up textarea ── {%- endcomment -%}
+    <div class="kx-feedback__step kx-feedback__step--followup" id="kx-fb-followup-{{ section.id }}" style="display:none;">
+      <p class="kx-feedback__followup-title" id="kx-fb-followup-title-{{ section.id }}"></p>
+      <textarea class="kx-feedback__textarea" id="kx-fb-text-{{ section.id }}" rows="4" maxlength="1000" placeholder="Bitte hinterlassen Sie hier Ihr Feedback..."></textarea>
+      <button type="button" class="kx-feedback__submit" id="kx-fb-submit-{{ section.id }}">Absenden</button>
+      <p class="kx-feedback__disclaimer">
+        Wir nutzen Ihr Feedback, um unsere Produktseiten zu verbessern. Bitte haben Sie Verständnis, dass wir Ihnen keine Rückmeldung geben können. Falls Sie Kontakt mit uns aufnehmen möchten, können Sie sich aber gerne an unseren Kund*innenservice wenden.
+      </p>
+      <a href="{{ section.settings.service_url | default: '/pages/kontakt' }}" class="kx-feedback__service-link">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        zum Kundenservice
+      </a>
+    </div>
+
+    {%- comment -%} ── Step 3: thank you ── {%- endcomment -%}
+    <div class="kx-feedback__step kx-feedback__step--thanks" id="kx-fb-thanks-{{ section.id }}" style="display:none;">
+      <p class="kx-feedback__thanks-text">Vielen Dank für Ihr Feedback!</p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .kx-feedback {
+    background: #f0f0f0;
+    border-top: 3px solid var(--color-primary, #1d4739);
+    margin-top: 40px;
+  }
+  .kx-feedback__inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 48px;
+  }
+
+  /* ── Step 1 ── */
+  .kx-feedback__heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 6px;
+    line-height: 1.3;
+  }
+  .kx-feedback__question {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 20px;
+    line-height: 1.5;
+  }
+  .kx-feedback__faces {
+    display: flex;
+    gap: 12px;
+  }
+  .kx-feedback__face {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.2s ease, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .kx-feedback__face:hover {
+    transform: scale(1.18);
+    background: rgba(0,0,0,0.04);
+  }
+  .kx-feedback__face:active {
+    transform: scale(0.95);
+  }
+  .kx-feedback__face svg {
+    display: block;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* ── Step 2 ── */
+  .kx-feedback__followup-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 14px;
+    line-height: 1.4;
+  }
+  .kx-feedback__textarea {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    min-height: 80px;
+    padding: 12px 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    resize: vertical;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+  .kx-feedback__textarea:focus {
+    outline: none;
+    border-color: #1d4739;
+  }
+  .kx-feedback__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+    padding: 10px 28px;
+    background: #1d4739;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .kx-feedback__submit:hover {
+    background: #164030;
+  }
+  .kx-feedback__submit:active {
+    transform: scale(0.97);
+  }
+  .kx-feedback__disclaimer {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin: 20px 0 12px;
+    max-width: 560px;
+  }
+  .kx-feedback__service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .kx-feedback__service-link:hover {
+    color: #1d4739;
+  }
+
+  /* ── Step 3 ── */
+  .kx-feedback__thanks-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d4739;
+    margin: 0;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 749px) {
+    .kx-feedback__inner { padding: 28px 16px 36px; }
+    .kx-feedback__heading { font-size: 16px; }
+    .kx-feedback__face svg { width: 34px; height: 34px; }
+    .kx-feedback__faces { gap: 8px; }
+  }
+</style>
+
+<script>
+(function(){
+  var sid = "{{ section.id }}";
+  var askStep = document.getElementById('kx-fb-ask-' + sid);
+  var followStep = document.getElementById('kx-fb-followup-' + sid);
+  var thanksStep = document.getElementById('kx-fb-thanks-' + sid);
+  var followTitle = document.getElementById('kx-fb-followup-title-' + sid);
+  var textarea = document.getElementById('kx-fb-text-' + sid);
+  var submitBtn = document.getElementById('kx-fb-submit-' + sid);
+  var hiddenForm = document.getElementById('kx-fb-hidden-form-' + sid);
+  var hfSubject = document.getElementById('kx-fb-hf-subject-' + sid);
+  var hfBody = document.getElementById('kx-fb-hf-body-' + sid);
+  var selectedScore = 0;
+
+  /* Submit hidden form into iframe — real browser form POST */
+  function sendFeedback(subject, body) {
+    hfSubject.value = subject;
+    hfBody.value = body;
+    try { hiddenForm.submit(); } catch(e) {}
+  }
+
+  var positiveTitles = [
+    'Das freut uns! Haben Sie noch weitere Anregungen?',
+    'Schön, dass Sie zufrieden sind! Möchten Sie uns noch etwas mitteilen?'
+  ];
+  var negativeTitles = [
+    'Das tut uns leid. Was können wir besser machen?',
+    'Schade! Was hat Ihnen gefehlt?'
+  ];
+
+  askStep.addEventListener('click', function(e) {
+    var btn = e.target.closest('.kx-feedback__face');
+    if (!btn) return;
+    selectedScore = parseInt(btn.getAttribute('data-score'), 10);
+    followTitle.textContent = selectedScore >= 4 ? positiveTitles[0] : negativeTitles[0];
+    askStep.style.display = 'none';
+    followStep.style.display = 'block';
+
+    /* Send score-only email immediately */
+    var scoreLabels = { 1: 'Sehr unzufrieden', 2: 'Unzufrieden', 3: 'Neutral', 4: 'Zufrieden', 5: 'Sehr zufrieden' };
+    var label = scoreLabels[selectedScore] || ('Score ' + selectedScore);
+    var productTitle = document.querySelector('.product-title, h1.product__title, [data-product-title]');
+    var titleText = productTitle ? productTitle.textContent.trim() : window.location.pathname;
+    var quickBody = 'Schnell-Feedback (nur Bewertung)\n' +
+      'Bewertung: ' + selectedScore + '/5 (' + label + ')\n' +
+      'Seite: ' + titleText + '\n' +
+      'URL: ' + window.location.href + '\n' +
+      'Zeitpunkt: ' + new Date().toLocaleString('de-DE');
+    sendFeedback('Schnell-Feedback: ' + selectedScore + '/5 – ' + titleText, quickBody);
+  });
+
+  submitBtn.addEventListener('click', function() {
+    var text = (textarea.value || '').trim();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird gesendet...';
+
+    var scoreLabels = { 1: 'Sehr unzufrieden', 2: 'Unzufrieden', 3: 'Neutral', 4: 'Zufrieden', 5: 'Sehr zufrieden' };
+    var label = scoreLabels[selectedScore] || ('Score ' + selectedScore);
+    var page = window.location.pathname;
+    var productTitle = document.querySelector('.product-title, h1.product__title, [data-product-title]');
+    var titleText = productTitle ? productTitle.textContent.trim() : page;
+
+    var body = 'Seiten-Feedback (Produktseite)\n' +
+      'Bewertung: ' + selectedScore + '/5 (' + label + ')\n' +
+      'Seite: ' + titleText + '\n' +
+      'URL: ' + window.location.href + '\n' +
+      (text ? 'Kommentar: ' + text : '(Kein Kommentar)') + '\n' +
+      'Zeitpunkt: ' + new Date().toLocaleString('de-DE');
+
+    sendFeedback('Seiten-Feedback: ' + selectedScore + '/5 – ' + titleText, body);
+    setTimeout(function() {
+      followStep.style.display = 'none';
+      thanksStep.style.display = 'block';
+    }, 500);
+  });
+})();
+</script>

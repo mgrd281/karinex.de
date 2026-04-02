@@ -1,0 +1,383 @@
+/* ==============================================
+   B2B / GESCHÄFTSKUNDEN PAGE
+   Enterprise B2B Design - Professional & Serious
+   ============================================== */
+
+.b2b-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.b2b-hero {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  text-align: center;
+  background: #fff;
+  position: static !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.b2b-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.b2b-subtitle {
+  font-size: 16px;
+  color: #555;
+  margin: 0 0 24px;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.b2b-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.b2b-meta svg {
+  opacity: 0.7;
+}
+
+.b2b-divider {
+  width: 48px;
+  height: 3px;
+  background: #111;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+/* Main Container */
+.b2b-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Section Styling */
+.b2b-section {
+  margin-bottom: 48px;
+}
+
+.b2b-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.3px;
+}
+
+.b2b-section-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #444;
+  margin: 0 0 16px;
+}
+
+/* Target Audience List */
+.b2b-audience-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.b2b-audience-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #333;
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-radius: 6px;
+}
+
+.b2b-audience-list li::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #2e7d32;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Advantage Cards */
+.b2b-advantages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.b2b-advantage-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.b2b-advantage-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #2e7d32;
+}
+
+.b2b-advantage-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.b2b-advantage-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #222;
+  line-height: 1.4;
+}
+
+/* Payment Methods */
+.b2b-payment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.b2b-payment-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+  color: #333;
+}
+
+.b2b-payment-list li:last-child {
+  border-bottom: none;
+}
+
+.b2b-payment-list li::before {
+  content: '✓';
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+/* Notice Box */
+.b2b-notice {
+  background: #f8f9fa;
+  border-left: 3px solid #2e7d32;
+  padding: 16px 20px;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+}
+
+/* VAT Info Grid */
+.b2b-vat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.b2b-vat-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.b2b-vat-list li:last-child {
+  border-bottom: none;
+}
+
+.b2b-vat-list li::before {
+  content: '•';
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Process Steps */
+.b2b-steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.b2b-steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.b2b-steps li:last-child {
+  border-bottom: none;
+}
+
+.b2b-steps li::before {
+  content: counter(step);
+  width: 32px;
+  height: 32px;
+  background: #111;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.b2b-step-content {
+  flex: 1;
+}
+
+.b2b-step-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.b2b-step-desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Contact Box */
+.b2b-contact {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 28px;
+}
+
+.b2b-contact-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+.b2b-contact-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.b2b-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.b2b-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.b2b-contact-link--primary {
+  background: #111;
+  color: #fff;
+}
+
+.b2b-contact-link--primary:hover {
+  background: #333;
+}
+
+.b2b-contact-link--secondary {
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+.b2b-contact-link--secondary:hover {
+  border-color: #111;
+}
+
+.b2b-contact-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Legal Footer */
+.b2b-legal-note {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.b2b-legal-text {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .b2b-hero {
+    padding: 40px 20px 32px;
+  }
+  
+  .b2b-container {
+    padding: 0 20px 60px;
+  }
+  
+  .b2b-advantages {
+    grid-template-columns: 1fr;
+  }
+  
+  .b2b-audience-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .b2b-contact {
+    padding: 20px;
+  }
+  
+  .b2b-contact-actions {
+    flex-direction: column;
+  }
+  
+  .b2b-contact-link {
+    justify-content: center;
+  }
+}

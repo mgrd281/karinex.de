@@ -1,0 +1,84 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "modern_contact": {
+      "type": "modern-contact-form",
+      "blocks": {
+        "topic_1": {
+          "type": "topic",
+          "settings": {
+            "title": "Lieferung",
+            "subtitle": "Lieferzeiten · Lieferdetails · Lieferstatus",
+            "icon": "truck"
+          }
+        },
+        "topic_2": {
+          "type": "topic",
+          "settings": {
+            "title": "Rücksendung",
+            "subtitle": "Rücksendefrist · Etikett · QR-Code · Rücksendestatus",
+            "icon": "return"
+          }
+        },
+        "topic_3": {
+          "type": "topic",
+          "settings": {
+            "title": "Reklamation",
+            "subtitle": "Gewährleistung · Artikel defekt · Garantie",
+            "icon": "case"
+          }
+        },
+        "topic_4": {
+          "type": "topic",
+          "settings": {
+            "title": "Stornierung",
+            "subtitle": "Fristen · Stornierung anfragen",
+            "icon": "bag"
+          }
+        },
+        "topic_5": {
+          "type": "topic",
+          "settings": {
+            "title": "Produkteigenschaften",
+            "subtitle": "Produktberatung · Anleitungen",
+            "icon": "chat"
+          }
+        },
+        "topic_6": {
+          "type": "topic",
+          "settings": {
+            "title": "Zahlung",
+            "subtitle": "Zahlungsinformation · Zahlungserinnerung · Rückzahlung",
+            "icon": "euro"
+          }
+        }
+      },
+      "block_order": [
+        "topic_1",
+        "topic_2",
+        "topic_3",
+        "topic_4",
+        "topic_5",
+        "topic_6"
+      ],
+      "settings": {
+        "heading": "Kontakt",
+        "subheading": "Sie haben eine Frage oder benötigen Hilfe? Wählen Sie ein Thema oder schreiben Sie uns direkt.",
+        "button_label": "Nachricht senden",
+        "bg_color": "#F9FAFB",
+        "show_phone": true
+      }
+    }
+  },
+  "order": [
+    "modern_contact"
+  ]
+}

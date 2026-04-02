@@ -1,0 +1,41 @@
+{%- comment -%}
+  Cloudinary Image Snippet
+  Usage:
+  {% render 'cloudinary-image', image: product.featured_image, product: product, width: 800 %}
+  
+  Parameters:
+  - image: The image object (required)
+  - product: The product object (required for checking tags)
+  - width: Intended width (optional, defaults to master)
+{%- endcomment -%}
+
+{%- liquid
+  assign enable_bg_removal = settings.enable_background_removal
+  assign cloud_name = settings.cloudinary_cloud_name
+  assign exclude_tag = settings.background_removal_exclude_tag | default: 'lifestyle'
+  
+  assign use_cloudinary = false
+  if enable_bg_removal and cloud_name != blank
+    assign use_cloudinary = true
+    for tag in product.tags
+      assign tag_down = tag | downcase
+      assign exclude_down = exclude_tag | downcase
+      if tag_down == exclude_down
+        assign use_cloudinary = false
+        break
+      endif
+    endfor
+  endif
+
+  assign image_url = ''
+  if use_cloudinary
+    assign shopify_url = image | image_url: width: width | split: '?' | first
+    if shopify_url contains '//'
+      assign shopify_url = 'https:' | append: shopify_url
+    endif
+    assign image_url = 'https://res.cloudinary.com/' | append: cloud_name | append: '/image/fetch/f_auto,q_auto,e_background_removal/' | append: shopify_url
+  else
+    assign image_url = image | image_url: width: width, format: 'webp', quality: 65
+  endif
+-%}
+{{ image_url }}

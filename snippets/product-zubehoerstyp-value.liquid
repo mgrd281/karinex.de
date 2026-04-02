@@ -1,0 +1,36 @@
+{%- doc -%}
+  Outputs the Zubehörstyp (accessory type) value for a product.
+  Reads from: 1) product.type, 2) metafield custom.zubehoerstyp,
+  3) product option "Zubehörstyp".
+
+  @param {object} product - The product object
+{%- enddoc -%}
+{%- liquid
+  assign zt_value = ''
+
+  comment
+    1) Use product type (e.g. "Uhr", "Chronograph", "Herrenuhr", "Armband")
+  endcomment
+  if product.type != blank
+    assign zt_value = product.type | strip
+  endif
+
+  comment
+    2) Override with metafield if set
+  endcomment
+  assign meta_zt = product.metafields.custom.zubehoerstyp
+  if meta_zt != blank
+    assign zt_value = meta_zt | strip
+  endif
+
+  comment
+    3) Override with product option if set
+  endcomment
+  for option in product.options_with_values
+    if option.name == 'Zubehörstyp' or option.name == 'zubehörstyp' or option.name == 'Zubehoerstyp'
+      assign zt_value = option.values[0]
+      break
+    endif
+  endfor
+-%}
+{{- zt_value -}}

@@ -1,0 +1,138 @@
+{%- doc -%}
+  Farbe (Color) filter for collection pages.
+  Works entirely client-side via JavaScript — no Search & Discovery app needed.
+  Reads data-color attributes from product grid items and hides/shows them.
+  Shows color swatches with colored circles next to color names in a 2-column grid.
+  Shown on Uhren collections.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- capture color_list -%}
+  {%- for product in collection.products limit: 1000 -%}
+    {%- capture raw_color -%}{%- render 'product-color-value', product: product -%}{%- endcapture -%}
+    {%- assign p_color = raw_color | strip -%}
+    {%- if p_color != '' -%}|{{ p_color }}|,{%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign color_entries = color_list | split: ',' -%}
+{%- assign unique_colors = color_entries | uniq | sort -%}
+
+{%- comment -%} Remove blank entries and count {%- endcomment -%}
+{%- assign clean_colors = '' -%}
+{%- assign color_count = 0 -%}
+{%- for c in unique_colors -%}
+  {%- assign c_stripped = c | strip -%}
+  {%- if c_stripped != '' -%}
+    {%- assign c_value = c_stripped | remove: '|' -%}
+    {%- if c_value != '' -%}
+      {%- assign c_product_count = 0 -%}
+      {%- for entry in color_entries -%}
+        {%- assign entry_stripped = entry | strip -%}
+        {%- if entry_stripped == c_stripped -%}
+          {%- assign c_product_count = c_product_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign color_count = color_count | plus: 1 -%}
+      {%- assign color_with_count = c_value | append: ':' | append: c_product_count -%}
+      {%- if clean_colors == '' -%}
+        {%- assign clean_colors = color_with_count -%}
+      {%- else -%}
+        {%- assign clean_colors = clean_colors | append: '|||' | append: color_with_count -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign final_colors = clean_colors | split: '|||' -%}
+
+{%- if color_count > 0 -%}
+<accordion-custom
+  class="facets__item color-filter-accordion"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  {% if filter_style == 'vertical' %}
+  {% endif %}
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-color-{{ filter_style }}"
+    class="facets__panel"
+    {% if filter_style == 'horizontal' %}
+      data-auto-close-details="desktop"
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Farbe</span>
+      <div class="facets__status-wrapper">
+        <span class="color-filter-count" style="display: none;"></span>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+    >
+      <div class="facets__inputs-wrapper">
+        <ul class="facets__inputs-list list-unstyled" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px;">
+          {%- for col in final_colors -%}
+            {%- assign col_parts = col | split: ':' -%}
+            {%- assign col_value = col_parts[0] | strip -%}
+            {%- assign col_product_count = col_parts[1] | strip -%}
+            {%- if col_value != '' -%}
+              {%- assign col_id = 'color-filter-' | append: forloop.index | append: '-' | append: filter_style -%}
+              {%- assign col_lower = col_value | downcase -%}
+              {%- comment -%} Map color names to CSS colors {%- endcomment -%}
+              {%- case col_lower -%}
+                {%- when 'schwarz' -%}{%- assign swatch_color = '#000000' -%}{%- assign swatch_style = '' -%}
+                {%- when 'silber' -%}{%- assign swatch_color = '' -%}{%- assign swatch_style = 'background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 40%, #f5f5f5 60%, #a8a8a8 100%);' -%}
+                {%- when 'gold' -%}{%- assign swatch_color = '' -%}{%- assign swatch_style = 'background: linear-gradient(135deg, #f5d76e 0%, #d4a017 40%, #f7e98e 60%, #c8962e 100%);' -%}
+                {%- when 'blau' -%}{%- assign swatch_color = '#1a3a6b' -%}{%- assign swatch_style = '' -%}
+                {%- when 'braun' -%}{%- assign swatch_color = '#8B4513' -%}{%- assign swatch_style = '' -%}
+                {%- when 'grau' -%}{%- assign swatch_color = '#999999' -%}{%- assign swatch_style = '' -%}
+                {%- when 'weiß' or 'weiss' -%}{%- assign swatch_color = '#f8f8f8' -%}{%- assign swatch_style = 'border: 1px solid #ddd;' -%}
+                {%- when 'bunt' -%}{%- assign swatch_color = '' -%}{%- assign swatch_style = 'background: conic-gradient(#e63946, #f4a261, #e9c46a, #2a9d8f, #264653, #6a4c93, #e63946);' -%}
+                {%- when 'gelb' -%}{%- assign swatch_color = '#FFD700' -%}{%- assign swatch_style = '' -%}
+                {%- when 'grün' or 'gruen' -%}{%- assign swatch_color = '#1a6b2a' -%}{%- assign swatch_style = '' -%}
+                {%- when 'rot' -%}{%- assign swatch_color = '#e63946' -%}{%- assign swatch_style = '' -%}
+                {%- when 'rosa' -%}{%- assign swatch_color = '#f4a7bb' -%}{%- assign swatch_style = '' -%}
+                {%- when 'lila' -%}{%- assign swatch_color = '#800080' -%}{%- assign swatch_style = '' -%}
+                {%- when 'orange' -%}{%- assign swatch_color = '#e89b2d' -%}{%- assign swatch_style = '' -%}
+                {%- when 'roségold' or 'rosegold' or 'rose' or 'roségold' -%}{%- assign swatch_color = '' -%}{%- assign swatch_style = 'background: linear-gradient(135deg, #f5c4b8 0%, #e8a090 40%, #f7d5c9 60%, #d4917e 100%);' -%}
+                {%- when 'bicolor' or 'two-tone' -%}{%- assign swatch_color = '' -%}{%- assign swatch_style = 'background: linear-gradient(135deg, #c0c0c0 50%, #d4a017 50%);' -%}
+                {%- else -%}{%- assign swatch_color = '#cccccc' -%}{%- assign swatch_style = '' -%}
+              {%- endcase -%}
+              <li class="facets__inputs-list-item" data-skip-node-update="true" style="margin: 0;">
+                <label class="color-swatch-label" for="{{ col_id }}" style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 12px; border-radius: 999px; background: #f5f5f5; transition: background 0.2s;">
+                  <input
+                    type="checkbox"
+                    id="{{ col_id }}"
+                    class="checkbox__input js-color-checkbox"
+                    data-color-value="{{ col_value | escape }}"
+                    value="{{ col_value | escape }}"
+                    style="display: none;"
+                  >
+                  <span class="color-swatch" style="width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; {% if swatch_style != '' %}{{ swatch_style }}{% else %}background-color: {{ swatch_color }};{% endif %}"></span>
+                  <span style="font-size: 13px; font-weight: 500;">{{ col_value }}</span>
+                </label>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+
+<style>
+  .color-swatch-label:has(input:checked) {
+    background: #e0e0e0 !important;
+    box-shadow: 0 0 0 1.5px #333;
+  }
+</style>
+{%- endif -%}

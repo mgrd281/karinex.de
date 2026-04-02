@@ -1,0 +1,168 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{% comment %}
+  Compact Product Meta Info (EAN, Brand, Availability)
+  Refactored Layout: List style with fixed icon column, label top, value bottom.
+  
+  Shipping Date Logic:
+  - Uses variant metafield custom.versand_datum (or versanddatum)
+  - Future date: "Versand am: 08. Mai 2026"
+  - Past date or blank: "in 1–3 Werktagen bei dir"
+{% endcomment %}
+
+<!-- Design-Token mapping (inferred from context/user request) -->
+
+
+<ul class="product-meta-list" data-nosnippet>
+
+  {%- assign tags_string = product.tags | join: ',' -%}
+  {%- assign usk_age = nil -%}
+  {%- if tags_string contains 'usk-18' -%}{%- assign usk_age = '18' -%}{%- endif -%}
+
+  {% if usk_age == '18' %}
+    <li class="meta-list-item">
+      <i class="fa-solid fa-exclamation-triangle usk-warning"></i>
+      <span class="meta-text"><span class="meta-label">Altersprüfung:</span> <span class="meta-value usk-warning">Erforderlich (ab 18)</span></span>
+    </li>
+  {% endif %}
+
+  <!-- Lieferbar / Versanddatum — MOST IMPORTANT -->
+  {%- assign current_variant = product.selected_or_first_available_variant -%}
+  {%- assign ship_date_raw = current_variant.metafields.custom.versand_datum
+    | default: current_variant.metafields.custom.versanddatum
+    | default: current_variant.metafields.custom.datum_und_uhrzeit_versand
+    | default: current_variant.metafields.custom.shipping_date
+  -%}
+  {%- assign ship_date = nil -%}
+  {%- assign is_future_date = false -%}
+  {%- assign ship_is_datetime = false -%}
+  {%- assign is_preorder = false -%}
+  
+  {%- if ship_date_raw != blank -%}
+    {%- assign ship_date_str = ship_date_raw | append: '' -%}
+    {%- if ship_date_str contains 'T' -%}
+      {%- assign ship_is_datetime = true -%}
+    {%- endif -%}
+
+    {%- assign ship_date = ship_date_raw | date: "%s" | times: 1 -%}
+    {%- assign today_midnight_ts = "now" | date: "%Y-%m-%d" | date: "%s" | times: 1 -%}
+    {%- if ship_date >= today_midnight_ts -%}
+      {%- assign is_future_date = true -%}
+      {%- assign diff_seconds = ship_date | minus: today_midnight_ts -%}
+      {%- assign diff_days = diff_seconds | divided_by: 86400 -%}
+      {%- if diff_days > 15 -%}
+        {%- assign is_preorder = true -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+  
+  <li class="meta-list-item">
+    <i class="fa-solid {% if is_digital %}fa-download{% else %}fa-box-open{% endif %}"></i>
+    <span class="meta-text">
+      <span class="meta-label">{% if is_digital %}Verfügbarkeit:{% else %}Lieferbar:{% endif %}</span> 
+      <span class="meta-value" id="availabilityValue">
+        <!-- DBG: is_digital={{ is_digital }} avail={{ current_variant.available }} -->
+        {% if current_variant.available %}
+          {% if is_digital %}
+            <span class="status-available">Versand per E-Mail sofort nach Zahlung</span>
+          {% elsif is_future_date and ship_date_raw != blank %}
+            {%- assign ship_month_num = ship_date_raw | date: "%-m" | plus: 0 -%}
+            {%- case ship_month_num -%}
+              {%- when 1 -%}{%- assign ship_month_de = "Januar" -%}
+              {%- when 2 -%}{%- assign ship_month_de = "Februar" -%}
+              {%- when 3 -%}{%- assign ship_month_de = "März" -%}
+              {%- when 4 -%}{%- assign ship_month_de = "April" -%}
+              {%- when 5 -%}{%- assign ship_month_de = "Mai" -%}
+              {%- when 6 -%}{%- assign ship_month_de = "Juni" -%}
+              {%- when 7 -%}{%- assign ship_month_de = "Juli" -%}
+              {%- when 8 -%}{%- assign ship_month_de = "August" -%}
+              {%- when 9 -%}{%- assign ship_month_de = "September" -%}
+              {%- when 10 -%}{%- assign ship_month_de = "Oktober" -%}
+              {%- when 11 -%}{%- assign ship_month_de = "November" -%}
+              {%- when 12 -%}{%- assign ship_month_de = "Dezember" -%}
+            {%- endcase -%}
+            <span class="status-delayed" id="shipping-date-display">
+              {% if is_preorder %}<span style="font-weight:700;">Vorbestellung</span> {% endif %}Versand am {{ ship_date_raw | date: "%-d" }}. {{ ship_month_de }}
+            </span>
+          {% else %}
+            <span class="status-available" id="delivery-status-text">in 1–3 Werktagen bei dir</span>
+          {% endif %}
+        {% else %}
+          <span class="status-unavailable">Nicht verfügbar</span>
+        {% endif %}
+      </span>
+    </span>
+  </li>
+
+  <!-- Marke -->
+  {% if product.vendor != blank %}
+    <li class="meta-list-item">
+      <i class="fa-solid fa-tag"></i>
+      <span class="meta-text"><span class="meta-label">Marke:</span> <a class="meta-value" href="{{ _root }}collections/vendors?q={{ product.vendor | url_param_escape }}">{{ product.vendor }}</a></span>
+    </li>
+  {% endif %}
+
+  <!-- Artikelnummer -->
+  <li class="meta-list-item">
+    <i class="fa-solid fa-hashtag"></i>
+    <span class="meta-text"><span class="meta-label">Artikelnummer:</span> <span class="meta-value" id="custom-sku">
+      {%- if product.metafields.custom.artikelnummer -%}
+        {{ product.metafields.custom.artikelnummer }}
+      {%- else -%}
+        {%- assign pid_str = product.id | append: '' -%}
+        {%- assign pid_len = pid_str | size -%}
+        {%- if pid_len >= 6 -%}
+          {{ product.id | slice: -6, 6 }}
+        {%- else -%}
+          {{ product.id }}
+        {%- endif -%}
+      {%- endif -%}
+    </span></span>
+  </li>
+
+  <!-- EAN (only if barcode exists) -->
+  {%- assign _barcode = product.selected_or_first_available_variant.barcode -%}
+  {%- if _barcode != blank and _barcode != '—' and _barcode != '-' -%}
+  <li class="meta-list-item">
+    <i class="fa-solid fa-barcode"></i>
+    <span class="meta-text"><span class="meta-label">EAN:</span> <span class="meta-value" id="eanValue">{{ _barcode }}</span></span>
+  </li>
+  {%- endif -%}
+
+</ul>
+
+<script>
+  (function(){
+    const deliveryEl = document.getElementById('delivery-status-text');
+    if (!deliveryEl) return;
+  
+    const today = new Date();
+    const yr = today.getFullYear();
+    const christmas = new Date(yr + '-12-24');
+    const dec22 = new Date(yr + '-12-22');
+    
+    let text = 'in 1–3 Werktagen bei dir';
+    
+    if (today >= dec22 && today <= christmas) {
+      text += ' (nach Weihnachten)';
+    }
+    else if (today < christmas) {
+      let deliveryDate = new Date(today);
+      deliveryDate.setDate(deliveryDate.getDate() + 1); 
+      if (deliveryDate.getDay() === 0) {
+        deliveryDate.setDate(deliveryDate.getDate() + 1);
+      }
+      if (deliveryDate < christmas) {
+        text += ' (vor Weihnachten)';
+      } else {
+        text += ' (nach Weihnachten)';
+      }
+    }
+    
+    deliveryEl.textContent = text;
+  })();
+</script>

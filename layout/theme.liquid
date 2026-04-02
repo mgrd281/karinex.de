@@ -1,0 +1,763 @@
+
+
+
+<!doctype html>
+<!-- Deployment ID: FIX-FINAL-SYNC-V5 -->
+<html
+  {% if request.design_mode %}
+    class="shopify-design-mode"
+  {% endif %}
+  lang="{{ request.locale.iso_code }}"
+>
+  <head>
+    {%- comment -%} ════ CORE PERFORMANCE PRECONNECTS (MAX 4) ════ {%- endcomment -%}
+    {%- render 'affiliate-tracker' -%}
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    <style>
+      :root {
+        {%- assign g_rating_color = settings.global_rating_star_color | default: '#1D4739' -%}
+        {%- assign g_rating_shadow = g_rating_color | color_modify: 'alpha', 0.40 -%}
+        --rating-star-color: {{ g_rating_color }};
+        --rating-star-shadow: 0 1px 3px {{ g_rating_shadow }};
+      }
+    </style>
+    
+    {%- render 'smart-script-manager' -%}
+    {%- render 'local-fonts' -%}
+
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#1D4739" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1D4739" media="(prefers-color-scheme: dark)">
+    {% render 'mobile-detector' %}
+    <!-- Sync Trigger: Retry at 18:25 -->
+    
+    {%- comment -%}
+    Third-party scripts (Usercentrics, GTM, Tidio, etc.) are managed 
+    by smart-script-manager.liquid to optimize TBT.
+    {%- endcomment -%}
+    <script>
+      (function() {
+        function loadThemeBasics() {
+          // 1. Font Awesome
+          const fa = document.createElement('link');
+          fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+          fa.rel = 'stylesheet';
+          document.head.appendChild(fa);
+
+          // 2. Usercentrics - Intercepted by manager
+          const uc = document.createElement('script');
+          uc.id = 'usercentrics-cmp';
+          uc.src = 'https://web.cmp.usercentrics.eu/ui/loader.js';
+          uc.dataset.settingsId = 'DDgih5qHx1UO7E';
+          uc.async = true;
+          document.head.appendChild(uc);
+        }
+        
+        // Load basics after a short idle
+        if ('requestIdleCallback' in window) {
+           requestIdleCallback(loadThemeBasics, { timeout: 2000 });
+        } else {
+           setTimeout(loadThemeBasics, 2000);
+        }
+      })();
+    </script>
+
+    {%- comment -%} ═══ GEO-LANGUAGE REDIRECT ════ {%- endcomment -%}
+    {%- unless request.design_mode -%}
+    <script>
+      (function() {
+        // Country → Locale mapping
+        var GEO_LOCALES = {
+          // German → /de (default, no prefix needed)
+          'DE': 'de', 'AT': 'de', 'CH': 'de', 'LI': 'de', 'LU': 'de',
+          // English
+          'US': 'en', 'GB': 'en', 'AU': 'en', 'CA': 'en', 'NZ': 'en', 
+          'IE': 'en', 'ZA': 'en', 'SG': 'en',
+          // Polish
+          'PL': 'pl'
+        };
+
+        var DEFAULT_LOCALE = 'de';
+        var SUPPORTED_LOCALES = ['de', 'en', 'pl'];
+
+        // Current locale from Shopify
+        var currentLocale = '{{ request.locale.iso_code | downcase }}';
+
+        // Cookie helpers
+        function getCookie(name) {
+          var match = document.cookie.match(new RegExp('(?:^|;)\\s*' + name + '=([^;]*)'));
+          return match ? decodeURIComponent(match[1]) : null;
+        }
+        function setCookie(name, value, days) {
+          var d = new Date();
+          d.setTime(d.getTime() + days * 86400000);
+          document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+        }
+
+        // If user manually changed language, remember it and don't override
+        var MANUAL_COOKIE = 'karinex_lang_set';
+        var manualLang = getCookie(MANUAL_COOKIE);
+        
+        // Detect if user navigated to locale via URL manually (language switcher)
+        var pathLocale = window.location.pathname.match(/^\/(en|pl)(\/|$)/);
+        if (pathLocale) {
+          setCookie(MANUAL_COOKIE, pathLocale[1], 30);
+          return; // User chose this locale manually
+        }
+        if (currentLocale === DEFAULT_LOCALE && !window.location.pathname.match(/^\/(en|pl)/)) {
+          // Check if they manually chose German
+          if (manualLang === 'de') return;
+        }
+        
+        // If user has a manual cookie set, respect it
+        if (manualLang && SUPPORTED_LOCALES.indexOf(manualLang) !== -1) {
+          // Already on correct locale?
+          if (currentLocale === manualLang) return;
+          if (manualLang === DEFAULT_LOCALE) {
+            // Redirect to German (root path)
+            var targetPath = window.location.pathname.replace(/^\/(en|pl)/, '') || '/';
+            if (window.location.pathname !== targetPath) {
+              window.location.replace(targetPath + window.location.search);
+            }
+            return;
+          } else {
+            var targetPath = '/' + manualLang + window.location.pathname.replace(/^\/(en|pl)/, '');
+            if (window.location.pathname !== targetPath) {
+              window.location.replace(targetPath + window.location.search);
+            }
+            return;
+          }
+        }
+
+        // First visit: fetch geo and redirect
+        var GEO_COOKIE = 'karinex_geo_done';
+        if (getCookie(GEO_COOKIE)) return; // Already did geo redirect
+        setCookie(GEO_COOKIE, '1', 1); // Only run once per day
+
+        fetch('https://ipapi.co/json/', { cache: 'no-store', signal: AbortSignal.timeout(3000) })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var country = (data.country_code || '').toUpperCase();
+            var targetLocale = GEO_LOCALES[country] || null;
+
+            if (!targetLocale || targetLocale === currentLocale) return;
+
+            var currentPath = window.location.pathname;
+            var cleanPath = currentPath.replace(/^\/(en|pl)/, '') || '/';
+            var targetPath;
+
+            if (targetLocale === DEFAULT_LOCALE) {
+              targetPath = cleanPath;
+            } else {
+              targetPath = '/' + targetLocale + cleanPath;
+            }
+
+            if (currentPath !== targetPath) {
+              // Remember the geo-detected lang as manual so future navigations keep it
+              setCookie(MANUAL_COOKIE, targetLocale, 30);
+              window.location.replace(targetPath + window.location.search);
+            }
+          })
+          .catch(function() { /* Silently fail — keep current locale */ });
+      })();
+    </script>
+    {%- endunless -%}
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         USERCENTRICS SHADOW DOM STYLE INJECTOR
+         Injects Thalia-like CSS directly into UC CMP v3 Shadow Root.
+         Shadow DOM blocks external CSS — this is the only way to style it.
+         ═══════════════════════════════════════════════════════════════════ -->
+    <script>
+      (function() {
+        var UC_CSS = [
+          /* ── GLOBALS (SCOPED) ── */
+          '#uc-main-dialog.cmp *, #uc-main-dialog.cmp *::before, #uc-main-dialog.cmp *::after {',
+          '  font-family: inherit !important;',
+          '}',
+
+          /* ── OVERLAY ── */
+          '#uc-overlay, .uc-overlay, .sc-overlay {',
+          '  background: rgba(0,0,0,0.55) !important;',
+          '}',
+
+          /* ── MODAL CONTAINER — DESKTOP (Precision Luxury) ── */
+          '#uc-main-dialog.cmp {',
+          '  position: relative !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;',
+          '  transform: none !important; width: 90vw !important; max-width: 680px !important;',
+          '  max-height: 80vh !important; overflow-y: auto !important;',
+          '  background: #FFFFFF !important; border-radius: 18px !important;',
+          '  box-shadow: 0 25px 70px rgba(0,0,0,0.30) !important;',
+          '  pointer-events: all !important;',
+          '  display: flex !important; flex-direction: column !important;',
+          '  margin: 7vh auto 0 !important; box-sizing: border-box !important;',
+          '}',
+
+          /* Inner padding via body */
+          '#uc-main-dialog.cmp .sections-body, #uc-main-dialog.cmp #uc-sections-body, #uc-main-dialog.cmp .first {',
+          '  padding: 0 32px !important; margin-top: 0 !important;',
+          '}',
+
+          /* ── MODAL CONTAINER — MOBILE (Bottom Sheet) ── */
+          '#uc-main-dialog.cmp.mobile {',
+          '  width: 100vw !important; max-width: 100vw !important; max-height: 85vh !important;',
+          '  border-radius: 18px 18px 0 0 !important; margin: 0 !important;',
+          '}',
+          '#uc-main-dialog.cmp.mobile .sections-body, #uc-main-dialog.cmp.mobile .first {',
+          '  padding: 0 24px !important; margin-top: 0 !important;',
+          '}',
+
+          /* ── KARINEX BRAND LOGO (PRECISION EMPHASIS) ── */
+          '#uc-main-dialog.cmp::before {',
+          '  content: "" !important; display: block !important;',
+          '  background-image: url("https://cdn.shopify.com/s/files/1/0917/5328/3851/files/KARINEX-Brand-Banner.webp") !important;',
+          '  background-size: contain !important; background-repeat: no-repeat !important; background-position: left center !important;',
+          '  height: 38px !important; width: 166px !important;',
+          '  margin: 28px 32px 20px !important; flex-shrink: 0 !important;',
+          '}',
+          '#uc-main-dialog.cmp.mobile::before { margin: 24px 24px 16px !important; height: 32px !important; width: 140px !important; }',
+
+          /* ── LAYER 1 / SECOND LAYER CLEANUPS ── */
+          /* Hide Default usercentrics stuff everywhere */
+          '#uc-main-dialog.cmp header, header { display: none !important; }',
+          '.category-count, .badge, [data-testid="uc-category-count"] { display: none !important; }',
+          '.sc-eCImPb.iUSZkF { display: none !important; }',
+
+          /* ONLY First Layer Cleanup */
+          '#uc-main-dialog.first .sections-header, #uc-main-dialog.first #uc-tabs-header, #uc-main-dialog.first [role="tablist"], #uc-main-dialog.first .tab-header, #uc-main-dialog.first .categories-header { display: none !important; }',
+          '#uc-main-dialog.first [data-testid="uc-categories-list"], #uc-main-dialog.first .categories-section, #uc-main-dialog.first .toggles-section { display: none !important; }',
+          '#uc-main-dialog.first #save, #uc-main-dialog.first .save, #uc-main-dialog.first .uc-save-button { display: none !important; }',
+          '#uc-main-dialog.first .powered-by-wrapper, #uc-main-dialog.first [data-testid="uc-powered-by"] { display: none !important; }',
+
+          /* SHOW ONLY SECTIONS BODY */
+          '.sections-body, #uc-sections-body { display: flex !important; flex-direction: column !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }',
+          '.cb-dialog-intro, #uc-cmp-description, .overflow { display: flex !important; flex-direction: column !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }',
+
+          /* ── TEXT & CUSTOM HTML OVERRIDES ── */
+          /* Hide native texts */
+          '#uc-main-dialog.cmp h1, #uc-main-dialog.cmp h2, .headline, .privacy-title, #uc-privacy-title { display: none !important; }',
+          '.privacy-text, #uc-privacy-description, .description { display: none !important; }',
+
+          /* Show injected HTML only on Layer 1 */
+          '#karinex-thalia-text { display: none !important; text-align: left !important; }',
+          '#uc-main-dialog.first #karinex-thalia-text { display: block !important; }',
+
+          /* ── INLINE LINKS ── */
+          '.cb-dialog-intro .links, .links {',
+          '  display: flex !important; flex-wrap: wrap !important; gap: 12px 24px !important; margin: 0 0 32px !important;',
+          '  justify-content: flex-start !important;',
+          '}',
+          '.links a, .links button, #uc-more-link, .uc-button-link, a.more-info-link, a[data-id="moreInformation"], button.uc-button-link {',
+          '  font-size: 13px !important; color: #555555 !important; text-decoration: none !important;',
+          '  background: none !important; border: none !important; padding: 0 !important; cursor: pointer !important; opacity: 1 !important; transition: color 0.2s ease !important;',
+          '}',
+          '.links a:hover, .links button:hover, #uc-more-link:hover, .uc-button-link:hover, a.more-info-link:hover, a[data-id="moreInformation"]:hover, button.uc-button-link:hover { color: #1a1a1a !important; }',
+
+          /* ── BUTTON ROWS (First Layer) ── */
+          'footer { width: 100% !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: none !important; }',
+          
+          /* Layer 1 Buttons */
+          '#uc-main-dialog.first .buttons-row, #uc-main-dialog.first .buttons {',
+          '  display: flex !important; flex-direction: row !important; gap: 18px !important;',
+          '  align-items: stretch !important; justify-content: space-between !important; width: 100% !important; margin: 0 !important; padding-bottom: 32px !important;',
+          '}',
+          '@media (max-width: 600px) { #uc-main-dialog.first .buttons-row, #uc-main-dialog.first .buttons { flex-direction: column !important; gap: 12px !important; padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important; } }',
+
+          /* All Buttons Base */
+          '.buttons-row button, footer button {',
+          '  font-size: 0 !important; color: transparent !important; /* Hide original text cleanly */',
+          '  font-family: inherit !important; font-weight: 600 !important; cursor: pointer !important;',
+          '  border-radius: 14px !important; height: 46px !important; padding: 0 24px !important;',
+          '  transition: transform 0.2s ease, filter 0.2s ease, background 0.2s ease, border-color 0.2s ease !important;',
+          '  display: flex !important; align-items: center !important; justify-content: center !important;',
+          '  box-sizing: border-box !important; border: 1px solid transparent !important;',
+          '}',
+          '#uc-main-dialog.first footer button { width: 100% !important; flex: 1 !important; }',
+
+          /* PRIMARY — Accept All (Layer 1 & 2) */
+          '#accept, .accept, .uc-accept-button {',
+          '  background: #1D4739 !important; border-color: #1D4739 !important; order: 3 !important; display: flex !important;',
+          '}',
+          '#accept::before, .accept::before, .uc-accept-button::before {',
+          '  content: "Alles akzeptieren" !important; font-size: 14.5px !important; font-weight: 600 !important; color: #FFFFFF !important; white-space: nowrap !important;',
+          '}',
+          '#accept:hover, .accept:hover, .uc-accept-button:hover { filter: brightness(0.92) !important; }',
+
+          /* SECONDARY — Deny All (Acts as "Nur... akzeptieren") */
+          '#deny, .deny, .uc-deny-button {',
+          '  background: #F0F0F0 !important; border-color: #F0F0F0 !important; order: 2 !important; display: flex !important;',
+          '}',
+          '#deny::before, .deny::before, .uc-deny-button::before {',
+          '  content: "Nur technisch Erforderliches" !important; font-size: 14px !important; font-weight: 500 !important; color: #1a1a1a !important; white-space: nowrap !important;',
+          '}',
+          '#deny:hover, .deny:hover, .uc-deny-button:hover { background: #E5E5E5 !important; border-color: #E5E5E5 !important; }',
+
+          /* ── SECOND LAYER (SETTINGS VIEW) ── */
+          
+          /* Tabs */
+          '.sections-header, #uc-tabs-header, [role="tablist"], .tab-header {',
+          '  display: flex !important; justify-content: flex-start !important; gap: 40px !important; margin: 0 32px 24px !important; border-bottom: 2px solid #EAEAEA !important;',
+          '}',
+          '@media (max-width: 600px) { .sections-header, #uc-tabs-header, [role="tablist"], .tab-header { margin: 0 24px 24px !important; } }',
+          '[role="tab"], .tab {',
+          '  background: transparent !important; border: none !important; font-size: 16px !important; font-weight: 600 !important; color: #888888 !important; padding: 12px 0 10px !important; cursor: pointer !important; position: relative !important;',
+          '}',
+          '[role="tab"][aria-selected="true"], .tab.active, [aria-selected="true"] {',
+          '  color: #1a1a1a !important;',
+          '}',
+          '[role="tab"][aria-selected="true"]::after, .tab.active::after, [aria-selected="true"]::after {',
+          '  content: "" !important; position: absolute !important; bottom: -2px !important; left: 0 !important; right: 0 !important; height: 3px !important; background: #1D4739 !important; border-radius: 3px 3px 0 0 !important;',
+          '}',
+          '[role="tab"]:nth-child(n+3), .tab:nth-child(n+3) { display: none !important; }',
+
+          /* Category Cards Redesign */
+          '.categories-section, .toggles-section { padding-bottom: 40px !important; }',
+          '.category-row, .toggle-wrapper, [data-testid="uc-category-row"], div[role="group"] > div {',
+          '  background: #F8F8F8 !important; border-radius: 14px !important; padding: 20px 24px !important; margin-bottom: 16px !important; border: 1px solid transparent !important;',
+          '}',
+          'div[role="group"] > div { border-bottom: none !important; }',
+          '.toggle-name, .uc-category-name { font-size: 15px !important; font-weight: 700 !important; color: #1a1a1a !important; margin-bottom: 4px !important; }',
+          '.toggle-description, .uc-category-description { font-size: 13.5px !important; color: #6a6a6a !important; line-height: 1.5 !important; }',
+
+          /* Toggles (iOS Elegant — exact Usercentrics selectors from live DOM) */
+          /* Toggle container = .uc-toggle-container, Toggle button = button.uc-switch */
+          '.uc-toggle-container {',
+          '  display: flex !important; align-items: center !important;',
+          '}',
+          'button.uc-switch {',
+          '  position: relative !important; width: 42px !important; height: 24px !important;',
+          '  border-radius: 24px !important; border: none !important; cursor: pointer !important;',
+          '  background-color: #D1D1D1 !important;',
+          '  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15) !important;',
+          '  transition: background-color 0.25s ease, box-shadow 0.25s ease !important;',
+          '  padding: 0 !important; outline: none !important;',
+          '  flex-shrink: 0 !important;',
+          '}',
+          'button.uc-switch::after {',
+          '  content: "" !important; position: absolute !important;',
+          '  width: 18px !important; height: 18px !important; border-radius: 50% !important;',
+          '  background: #FFFFFF !important;',
+          '  box-shadow: 0 1px 4px rgba(0,0,0,0.25) !important;',
+          '  top: 3px !important; left: 3px !important;',
+          '  transition: left 0.25s ease !important;',
+          '}',
+          'button.uc-switch[aria-checked="true"] {',
+          '  background-color: #1D4739 !important;',
+          '  box-shadow: inset 0 1px 3px rgba(29,71,57,0.4) !important;',
+          '}',
+          'button.uc-switch[aria-checked="true"]::after {',
+          '  left: 21px !important;',
+          '}',
+          'button.uc-switch.disabled { opacity: 0.6 !important; cursor: default !important; }',
+          /* Reset any default button text in toggle — hide SVG children */
+          'button.uc-switch svg, button.uc-switch span { display: none !important; }',
+          'button.uc-switch div { display: none !important; }',
+
+          
+          /* Chevron alignment */
+          '.chevron, .sc-iJCRLp svg, svg[direction], button svg { vertical-align: middle !important; margin-left: auto !important; }',
+          '.flex-row { display: flex !important; align-items: center !important; }',
+
+          /* Bottom Sticky Button Bar (Layer 2) */
+          '#uc-main-dialog:not(.first) footer {',
+          '  margin-top: 0 !important; padding: 24px 32px !important; background: #FFFFFF !important; border-top: 1px solid #EAEAEA !important;',
+          '  height: auto !important; min-height: 70px !important; flex-shrink: 0 !important;',
+          '}',
+          '#uc-main-dialog:not(.first) .buttons-row, #uc-main-dialog:not(.first) .buttons {',
+          '  display: flex !important; flex-wrap: nowrap !important; gap: 16px !important; flex-direction: row !important; justify-content: space-between !important; width: 100% !important; margin: 0 !important;',
+          '}',
+          '#uc-main-dialog:not(.first) footer button { flex: 1 !important; height: 46px !important; width: auto !important; }',
+
+          /* SAVE BUTTON */
+          '#save, .save, .uc-save-button {',
+          '  background: transparent !important; border-color: #D0D0D0 !important; order: 1 !important; display: flex !important;',
+          '}',
+          '#save::before, .save::before, .uc-save-button::before {',
+          '  content: "Speichern" !important; font-size: 14px !important; font-weight: 500 !important; color: #1a1a1a !important; white-space: nowrap !important;',
+          '}',
+          '#save:hover, .save:hover, .uc-save-button:hover { background: #FAFAFA !important; border-color: #111111 !important; }',
+
+          /* Powered by at bottom */
+          '.powered-by-wrapper, [data-testid="uc-powered-by"] {',
+          '  display: block !important; text-align: center !important; margin-top: 20px !important; opacity: 0.5 !important; font-size: 12px !important;',
+          '}',
+          '#uc-main-dialog.first .powered-by-wrapper, #uc-main-dialog.first [data-testid="uc-powered-by"] { display: none !important; }',
+
+          /* ── SCROLLBAR ── */
+          '#uc-main-dialog.cmp::-webkit-scrollbar { width: 4px; }',
+          '#uc-main-dialog.cmp::-webkit-scrollbar-track { background: transparent; }',
+          '#uc-main-dialog.cmp::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 4px; }',
+          
+          /* ── MOBILE OVERRIDES FOR LAYER 2 ── */
+          '@media (max-width: 768px) {',
+          '  #uc-main-dialog:not(.first) footer { padding: 20px 24px calc(24px + env(safe-area-inset-bottom)) !important; }',
+          '  #uc-main-dialog:not(.first) .buttons-row { flex-direction: column !important; gap: 12px !important; }',
+          '  #uc-main-dialog:not(.first) footer button { width: 100% !important; flex: none !important; }',
+          '}',
+          
+          /* ── HIDE FLOATING PRIVACY BUTTON (Fingerprint Icon) ── */
+          '#uc-privacy-button, #uc-corner-modal-button, [data-testid="uc-privacy-button"], .uc-privacy-button {',
+          '  display: none !important;',
+          '}'
+
+        ].join('\n');
+
+        var UC_HTML = '<div id="karinex-thalia-text" style="text-align: left; margin-bottom: 24px;">' +
+                      '<div style="font-size: 20px; font-weight: 700; margin: 0 0 20px; color: #1a1a1a; letter-spacing: -0.01em;">Helfen Sie uns, Ihr KARINEX Erlebnis zu verbessern!</div>' +
+                      '<p style="font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px;">Wir möchten Ihr Shopping-Erlebnis einzigartig und persönlich machen. Dafür verwenden wir und unsere Partner (auch Dritte) Cookies, Pixel und ähnliche Dienste („Services“), die Informationen und Daten speichern und/oder von Ihrem Endgerät abrufen.</p>' +
+                      '<p style="font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px;">Diese Informationen und Daten werden von uns z.B. zur Identifikation auf Drittseiten, zur Personalisierung, Marktforschung, Analyse und zur Produktentwicklung genutzt und können auch im EU-Ausland (Drittstaaten) verarbeitet werden.</p>' +
+                      '<p style="font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px;"><strong>Sie haben die Wahl:</strong> Durch einen Klick auf „Alles akzeptieren“ stimmen Sie der Verwendung und Verarbeitung insgesamt zu.</p>' +
+                      '<p style="font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0 0 16px;">Lehnen Sie die Verwendung von Cookies ab, sind nur die Dienste aktiv, die wir brauchen, um unsere Website für Sie sicher, zuverlässig und leistungsstark zu halten.</p>' +
+                      '<p style="font-size: 14px; line-height: 1.6; color: #4a4a4a; margin: 0;"><strong>Wichtig:</strong> Diese Auswahl können Sie jederzeit und mit Wirkung für die Zukunft widerrufen. Weitere Details finden Sie in unseren Datenschutzhinweisen.</p>' +
+                      '</div>';
+
+        // ═══════════════════════════════════════════════════════════════════
+        // ELEGANT SHADOW DOM INJECTION (MutationObserver)
+        // Replaces polling setInterval with efficient event-based detection
+        // ═══════════════════════════════════════════════════════════════════
+        let injectionDone = false;
+        function tryInject() {
+          if (injectionDone) return true;
+          var host = document.getElementById('usercentrics-root') || document.getElementById('usercentrics-cmp-ui');
+          if (!host || !host.shadowRoot) return false;
+          
+          // Inject Styles
+          if (!host.shadowRoot.getElementById('uc-karinex-custom-styles')) {
+            var style = document.createElement('style');
+            style.id = 'uc-karinex-custom-styles';
+            style.textContent = UC_CSS;
+            host.shadowRoot.appendChild(style);
+          }
+
+          // Inject Custom HTML
+          var introContainer = host.shadowRoot.querySelector('.cb-dialog-intro') || host.shadowRoot.querySelector('#uc-cmp-description');
+          if (introContainer && !host.shadowRoot.getElementById('karinex-thalia-text')) {
+             var div = document.createElement('div');
+             div.innerHTML = UC_HTML;
+             introContainer.insertBefore(div.firstChild, introContainer.firstChild);
+          }
+          
+          // If we found both, we are likely done (but UC v3 re-renders, so we might keep watching)
+          // For now, let's mark as successful for this cycle
+          return !!(host && host.shadowRoot && host.shadowRoot.getElementById('uc-karinex-custom-styles'));
+        }
+
+        // Use MutationObserver on body to detect when Usercentrics initializes
+        const observer = new MutationObserver((mutations, obs) => {
+          if (tryInject()) {
+            // Note: UC UI V3 often re-renders or changes views, so we don't disconnect immediately 
+            // but we avoid setInterval performance tax. Once fully loaded, we can disconnect.
+            const isFullyLoaded = document.querySelector('#usercentrics-root')?.shadowRoot?.querySelector('.accept');
+            if (isFullyLoaded) {
+              // obs.disconnect(); // Optional: Keep watching for view changes if needed
+            }
+          }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Backup: Interaction triggers
+        window.addEventListener('UC_UI_VIEW_CHANGED', tryInject);
+        window.addEventListener('UC_UI_INITIALIZED', tryInject);
+        
+        // Final fallback (one-time)
+        setTimeout(tryInject, 4000);
+      })();
+    </script>
+    
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    {%- assign favicon = settings.favicon | default: settings.logo -%}
+    {%- if favicon != blank -%}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ favicon | image_url: width: 32, height: 32 }}"
+      >
+      <link
+        rel="apple-touch-icon"
+        href="{{ favicon | image_url: width: 180, height: 180 }}"
+      >
+    {%- endif -%}
+
+    <!-- GLOBAL URL REDIRECT HANDLER - Fixes broken login/auth URLs -->
+    <script>
+      (function() {
+        const path = window.location.pathname.toLowerCase();
+        const search = window.location.search;
+        const urlParams = new URLSearchParams(search);
+        
+        // Handle customer_authentication/login URLs
+        if (path.includes('customer_authentication') || path.includes('/account/login')) {
+          const returnTo = urlParams.get('return_to');
+          if (returnTo) {
+            // Decode and clean the return_to URL
+            let targetPath = decodeURIComponent(returnTo);
+            
+            // Remove /en/ prefix if present
+            targetPath = targetPath.replace(/^\/en\/?/, '/');
+            
+            // Remove double /products/products/ if present
+            targetPath = targetPath.replace(/\/products\/products-/, '/products/');
+            targetPath = targetPath.replace(/\/products\/products\//, '/products/');
+            
+            // Remove variant and other query params for cleaner URL
+            targetPath = targetPath.split('?')[0];
+            
+            // Handle special paths
+            if (targetPath === '/index.html' || targetPath === '/') {
+              targetPath = '/';
+            }
+            
+            // Instant redirect
+            window.location.replace(targetPath);
+            return;
+          } else {
+            // No return_to - go to account or homepage
+            window.location.replace('/account');
+            return;
+          }
+        }
+        
+        // Handle /discount/ URLs
+        if (path.includes('/discount/')) {
+          const redirect = urlParams.get('redirect');
+          window.location.replace(redirect || '/cart');
+          return;
+        }
+      })();
+    </script>
+
+    <!-- Performance Optimization - Resource Hints -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://web.cmp.usercentrics.eu">
+    <link rel="dns-prefetch" href="https://www.trustami.com">
+    <link rel="dns-prefetch" href="https://widgets.trustedshops.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+
+
+    {%- render 'meta-tags' -%}
+    {%- render 'critical-css' -%}
+    
+    <!-- Fix: Prevent FOUC (Flash of Unstyled Content) in Header -->
+    <style>
+      /* Hide header elements until Web Components are defined */
+      header-component:not(:defined) {
+        visibility: hidden;
+        min-height: 60px;
+      }
+      header-component:not(:defined) * {
+        visibility: hidden;
+      }
+      /* Smooth transition when header becomes visible */
+      header-component:defined {
+        visibility: visible;
+        animation: headerFadeIn 0.15s ease-out;
+      }
+      @keyframes headerFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    </style>
+    
+    {%- render 'performance-preload' -%}
+    {%- render 'stylesheets' -%}
+    {{ 'safari-fix.css' | asset_url | stylesheet_tag }}
+    {{ 'usercentrics-custom.css' | asset_url | stylesheet_tag }}
+    {%- render 'fonts' -%}
+    {%- render 'scripts' -%}
+    {%- render 'theme-styles-variables' -%}
+    {%- render 'color-schemes' -%}
+    
+    {%- comment -%} Advanced Schema Markup - Elite SEO {%- endcomment -%}
+    {%- render 'schema-website' -%}
+    {%- render 'schema-webpage' -%}
+
+
+    {% if request.design_mode %}
+      {%- render 'theme-editor' -%}
+    {% endif %}
+
+    {% capture content_for_header_no_title %}{{ content_for_header }}{% endcapture %}
+    {{ content_for_header_no_title | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' }}
+  <!-- Performance Optimization: Preload Critical Fonts -->
+  <link rel="preload" href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low">
+  
+  <!-- Google Fonts: Roboto - Load on interaction for better TTFB -->
+
+
+  
+
+
+  <!-- SEO Optimization: Prevent indexing of dynamic, slow vendor filter pages (Ahrefs Fix) -->
+  {%- if request.page_type == 'collection' and request.path contains '/vendors' and request.path contains 'q=' -%}
+    <meta name="robots" content="noindex, follow">
+  {%- endif -%}
+
+  <!-- SEO: noindex + nofollow for search result pages (Ahrefs Nofollow Fix) -->
+  {%- if request.page_type == 'search' -%}
+    <meta name="robots" content="noindex, nofollow">
+  {%- endif -%}
+
+  <!-- Ahrefs Web Analytics -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="GzfQYRK7vmnwuekczK8sjw" async></script>
+
+  <!-- Trusted Shops Integration Code -->
+  <script
+    async
+    data-desktop-y-offset="0"
+    data-mobile-y-offset="0"
+    data-desktop-disable-reviews="false"
+    data-desktop-enable-custom="false"
+    data-desktop-position="right"
+    data-desktop-custom-width="156"
+    data-desktop-enable-fadeout="false"
+    data-disable-mobile="false"
+    data-disable-trustbadge="false"
+    data-mobile-custom-width="156"
+    data-mobile-disable-reviews="false"
+    data-mobile-enable-custom="false"
+    data-mobile-position="right"
+    data-color-scheme="os-default"
+    charset="UTF-8"
+    src="//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js">
+  </script>
+  </head>
+
+
+{%- comment -%} Moved to head {%- endcomment -%}
+
+
+    <!-- Elite SEO - Schema Markup -->
+    {% render 'schema-organization' %}
+    {% if request.page_type == 'page' and page.handle == 'faq' %}
+      {% render 'schema-faq' %}
+    {% endif %}
+    {% if request.page_type == 'article' %}
+      {% render 'schema-article' %}
+    {% endif %}
+      
+  <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">
+    
+    {%- comment -%} SEO: Keywords from page title in body for homepage {%- endcomment -%}
+    {% if request.page_type == 'index' %}
+      <p class="visually-hidden">Willkommen bei Karinex® - Ihr Online-Shop für Software, Games, LEGO, Boss & Michael Kors Uhren. Microsoft Office & Windows Lizenzen günstig kaufen. Spiele, Sets und mehr - schneller Versand aus Deutschland. Angebote, Rabatte, Sale - Favoriten speichern in der Wunschliste.</p>
+    {% endif %}
+    
+    {% section 'global-sale-bar' %}
+    {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+    {% render 'screen-reader-announcements' %}
+    <div id="header-group">
+      {% sections 'header-group' %}
+    </div>
+
+    <script>
+      // Inline header height calculation to prevent layout shift
+      (function setHeaderHeighCustomProperties() {
+        const header = document.querySelector('header-component');
+        const headerGroup = document.querySelector('#header-group');
+        const hasHeaderSection = headerGroup?.querySelector('.header-section');
+
+        if (!header || !headerGroup) return;
+
+        const headerHeight = header.offsetHeight;
+        let headerGroupHeight = 0;
+        const children = headerGroup.children;
+        for (let i = 0; i < children.length; i++) {
+          const element = children[i];
+          if (element === header || !(element instanceof HTMLElement)) continue;
+          headerGroupHeight += element.offsetHeight;
+        }
+
+        if (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
+          headerGroupHeight += headerHeight;
+        }
+
+        document.body.style.setProperty('--header-height', `${headerHeight}px`);
+        document.body.style.setProperty('--header-group-height', `${headerGroupHeight}px`);
+
+        if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
+          document.body.style.setProperty('--transparent-header-offset-boolean', '0');
+          return;
+        }
+
+        const hasImmediateSection = hasHeaderSection.nextElementSibling?.classList.contains('shopify-section');
+        const shouldApplyOffset = !hasImmediateSection ? '1' : '0';
+        document.body.style.setProperty('--transparent-header-offset-boolean', shouldApplyOffset);
+      })();
+    </script>
+
+    <main
+      id="MainContent"
+      class="content-for-layout"
+      role="main"
+      data-page-transition-enabled="{{ settings.page_transition_enabled }}"
+      data-product-transition="{{ settings.transition_to_main_product }}"
+      data-template="{{ template }}"
+    >
+      {{ content_for_layout }}
+    </main>
+
+    <div id="footer-group-wrapper">
+      {% sections 'footer-group' %}
+    </div>
+
+    {% render 'search-modal' %}
+
+    {% if settings.quick_add or settings.mobile_quick_add %}
+      {% render 'quick-add-modal' %}
+    {% endif %}
+
+    <!-- Tidio Chat - Handled by smart-script-manager -->
+    <script>
+      (function() {
+        setTimeout(function() {
+          var script = document.createElement('script');
+          script.src = "//code.tidio.co/4q9iv8qyklejixqbmjpsr94lrexejico.js";
+          script.async = true;
+          document.body.appendChild(script);
+        }, 100); // Manager intercepts this immediately
+      })();
+    </script>
+
+    {% section 'custom-mobile-menu' %}
+
+    <!-- 🟢 SMART DEVICE TRACKING FOR ABANDONED CARTS -->
+
+    <!-- ⭐ Review Widget Script (Rechnung Profi Reviews App) -->
+    <script src="https://invoice-production-8cd6.up.railway.app/review-widget.js" async></script>
+
+  </body>
+
+
+  <script>
+
+    // Global Review Form Toggle
+    window.toggleReviewForm = function(btn) {
+        const reviewForm = document.getElementById('review-form'); if (!reviewForm) return;
+        const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
+        const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
+        const willOpen = !reviewForm.classList.contains('active');
+        reviewForm.classList.toggle('active'); btn.innerHTML = willOpen ? closeLabel : openLabel;
+        if (willOpen) reviewForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    // Global Tab Switcher
+    window.switchTab = function(btn) {
+        if (!btn) return;
+        const targetId = btn.getAttribute('data-tab'); if (!targetId) return;
+        const nav = btn.closest('.tab-nav'); if (!nav) return;
+        const container = nav.parentElement; if (!container) return;
+        nav.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
+        container.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+        const target = container.querySelector('#' + targetId); if (target) target.classList.add('active');
+    };
+
+    // Usercentrics: no custom widget toggle needed (Cookiebot helper removed)
+  </script>
+
+</html>
+

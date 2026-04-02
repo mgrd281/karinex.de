@@ -1,0 +1,188 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-b2b.css' | asset_url | stylesheet_tag }}
+
+<div class="b2b-page">
+  {%- comment -%} HERO SECTION {%- endcomment -%}
+  <header class="b2b-hero">
+    <h1 class="b2b-title">B2B / Geschäftskunden</h1>
+    <p class="b2b-subtitle">
+      Individuelle Lösungen, flexible Zahlungsarten und professionelle Betreuung für Unternehmen.
+    </p>
+    <div class="b2b-divider"></div>
+    <p class="b2b-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 6px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Zuletzt aktualisiert: 9. Februar 2026
+    </p>
+  </header>
+
+  <main class="b2b-container">
+    {%- comment -%} WHO IS THIS FOR {%- endcomment -%}
+    <section class="b2b-section">
+      <h2 class="b2b-section-title">Für wen ist unser B2B-Angebot gedacht?</h2>
+      <ul class="b2b-audience-list">
+        <li>Unternehmen</li>
+        <li>Selbstständige</li>
+        <li>Händler</li>
+        <li>Wiederverkäufer</li>
+        <li>Behörden & Organisationen</li>
+      </ul>
+    </section>
+
+    {%- comment -%} B2B ADVANTAGES {%- endcomment -%}
+    <section class="b2b-section">
+      <h2 class="b2b-section-title">Ihre Vorteile als Geschäftskunde</h2>
+      <div class="b2b-advantages">
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Rechnungskauf (14 Tage Zahlungsziel)</span>
+        </div>
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Netto-Preise (zzgl. MwSt.)</span>
+        </div>
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Persönlicher Ansprechpartner</span>
+        </div>
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Größere Bestellmengen möglich</span>
+        </div>
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Individuelle Angebote</span>
+        </div>
+        <div class="b2b-advantage-card">
+          <span class="b2b-advantage-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
+          <span class="b2b-advantage-text">Zuverlässige Abwicklung</span>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} PAYMENT METHODS {%- endcomment -%}
+    <section class="b2b-section">
+      <h2 class="b2b-section-title">Zahlungsarten für Geschäftskunden</h2>
+      <ul class="b2b-payment-list">
+        <li>Rechnung (B2B)</li>
+        <li>Kreditkarte</li>
+        <li>Vorkasse / Banküberweisung</li>
+      </ul>
+      <div class="b2b-notice">
+        Der Rechnungskauf ist ausschließlich für verifizierte Geschäftskunden verfügbar.
+      </div>
+    </section>
+
+    {%- comment -%} VAT & INVOICING {%- endcomment -%}
+    <section class="b2b-section">
+      <h2 class="b2b-section-title">Rechnung & Umsatzsteuer</h2>
+      <ul class="b2b-vat-list">
+        <li>Ausweisung der Umsatzsteuer gemäß §14 UStG</li>
+        <li>Angabe der USt-ID erforderlich</li>
+        <li>Rechtssichere Rechnungen für Unternehmen</li>
+      </ul>
+    </section>
+
+    {%- comment -%} ORDER PROCESS {%- endcomment -%}
+    <section class="b2b-section">
+      <h2 class="b2b-section-title">So funktioniert der B2B-Bestellprozess</h2>
+      <ol class="b2b-steps">
+        <li>
+          <div class="b2b-step-content">
+            <p class="b2b-step-title">Registrierung als Geschäftskunde</p>
+            <p class="b2b-step-desc">Erstellen Sie ein Kundenkonto und geben Sie Ihre Unternehmensdaten an.</p>
+          </div>
+        </li>
+        <li>
+          <div class="b2b-step-content">
+            <p class="b2b-step-title">Prüfung der Unternehmensdaten</p>
+            <p class="b2b-step-desc">Wir prüfen Ihre Angaben zeitnah und sorgfältig.</p>
+          </div>
+        </li>
+        <li>
+          <div class="b2b-step-content">
+            <p class="b2b-step-title">Freischaltung für B2B-Zahlungsarten</p>
+            <p class="b2b-step-desc">Nach erfolgreicher Prüfung erhalten Sie Zugang zu B2B-Konditionen.</p>
+          </div>
+        </li>
+        <li>
+          <div class="b2b-step-content">
+            <p class="b2b-step-title">Bestellung & Abwicklung</p>
+            <p class="b2b-step-desc">Bestellen Sie bequem mit Ihren B2B-Vorteilen.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    {%- comment -%} CONTACT {%- endcomment -%}
+    <section class="b2b-section">
+      <div class="b2b-contact">
+        <h2 class="b2b-contact-title">B2B-Kontakt</h2>
+        <p class="b2b-contact-text">
+          Für individuelle Anfragen, größere Bestellungen oder Kooperationen kontaktieren Sie uns gerne direkt.
+        </p>
+        <div class="b2b-contact-actions">
+          <a href="mailto:{{ shop.email }}" class="b2b-contact-link b2b-contact-link--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            E-Mail schreiben
+          </a>
+          <a href="{{ _root }}pages/kontakt" class="b2b-contact-link b2b-contact-link--secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+            </svg>
+            Kontaktformular
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} LEGAL NOTE {%- endcomment -%}
+    <footer class="b2b-legal-note">
+      <p class="b2b-legal-text">
+        Dieses Angebot richtet sich ausschließlich an Unternehmer im Sinne des §14 BGB.
+      </p>
+    </footer>
+  </main>
+</div>
+
+{% schema %}
+{
+  "name": "B2B Geschäftskunden",
+  "tag": "section",
+  "class": "section-b2b",
+  "settings": []
+}
+{% endschema %}

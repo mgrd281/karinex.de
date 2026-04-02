@@ -1,0 +1,520 @@
+
+{%- assign _top_bar_cat = 'default' -%}
+
+{%- if request.page_type == 'product' -%}
+  {%- assign tb_type = product.type | downcase -%}
+  {%- assign tb_vendor = product.vendor | downcase -%}
+  {%- assign tb_tags = product.tags | join: ',' | downcase -%}
+  
+  {%- for _col in product.collections -%}
+    {%- assign _ch = _col.handle | downcase -%}
+    {%- assign _ct = _col.title | downcase -%}
+    {%- if _ch contains 'lego' or _ct contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}{%- break -%}
+    {%- elsif _ch contains 'uhr' or _ct contains 'uhr' or _ch contains 'watch' or _ch contains 'damenuhr' or _ch contains 'herrenuhr' or _ch contains 'luxus-uhr' -%}{%- assign _top_bar_cat = 'uhren' -%}{%- break -%}
+    {%- elsif _ch contains 'game' or _ct contains 'game' or _ch contains 'games' or _ch contains 'spielzeug' or _ch contains 'playstation' or _ch contains 'nintendo' or _ch contains 'xbox' -%}{%- assign _top_bar_cat = 'games' -%}{%- break -%}
+    {%- elsif _ch contains 'digital' or _ct contains 'software' or _ch contains 'lizenz' or _ch contains 'microsoft' or _ch contains 'antivirus' or _ch contains 'office' -%}{%- assign _top_bar_cat = 'digital' -%}{%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if _top_bar_cat == 'default' -%}
+    {%- if tb_vendor == 'lego' or tb_tags contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}
+    {%- elsif tb_type contains 'uhr' or tb_type contains 'watch' or tb_tags contains 'uhr' or tb_tags contains 'watch' or tb_vendor contains 'michael kors' or tb_vendor contains 'fossil' or tb_vendor contains 'emporio armani' or tb_vendor contains 'diesel' or tb_vendor contains 'casio' or tb_vendor contains 'tag heuer' or tb_vendor contains 'daniel wellington' -%}{%- assign _top_bar_cat = 'uhren' -%}
+    {%- elsif tb_type contains 'game' or tb_type contains 'spiel' or tb_tags contains 'game' or tb_tags contains 'games' -%}{%- assign _top_bar_cat = 'games' -%}
+    {%- elsif tb_type contains 'digital' or tb_type contains 'software' or tb_type contains 'lizenz' or tb_tags contains 'digital' or tb_tags contains 'software' or product.requires_shipping == false -%}{%- assign _top_bar_cat = 'digital' -%}
+    {%- endif -%}
+  {%- endif -%}
+
+{%- elsif request.page_type == 'collection' -%}
+  {%- assign _ch = collection.handle | downcase -%}
+  {%- assign _ct = collection.title | downcase -%}
+  {%- if _ch contains 'lego' or _ct contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}
+  {%- elsif _ch contains 'uhr' or _ct contains 'uhr' or _ch contains 'watch' or _ch contains 'damenuhr' or _ch contains 'herrenuhr' or _ch contains 'luxus-uhr' -%}{%- assign _top_bar_cat = 'uhren' -%}
+  {%- elsif _ch contains 'game' or _ct contains 'game' or _ch contains 'games' or _ch contains 'spielzeug' or _ch contains 'playstation' or _ch contains 'nintendo' or _ch contains 'xbox' -%}{%- assign _top_bar_cat = 'games' -%}
+  {%- elsif _ch contains 'digital' or _ct contains 'software' or _ch contains 'lizenz' or _ch contains 'microsoft' or _ch contains 'antivirus' or _ch contains 'office' -%}{%- assign _top_bar_cat = 'digital' -%}
+  {%- endif -%}
+{%- endif -%}
+
+<div id="announcement-bar-{{ section.id }}" class="announcement-bar-wrapper {% if request.page_type == 'product' %}on-product-page{% endif %}" role="region" aria-label="Ankündigung">
+  <div class="announcement-bar-content">
+    
+    <!-- LEFT: MESSAGE -->
+    <div class="announcement-left">
+      {%- if _top_bar_cat == 'uhren' -%}
+        <div class="announcement-message active">
+          <span class="announcement-text">Geprüfte Echtheit. Volle Garantie. Versicherter Wertversand.</span>
+        </div>
+      {%- elsif _top_bar_cat == 'lego' -%}
+        <div class="announcement-message active">
+          <span class="announcement-text">Werkseitig versiegelt (MISB). Sammlerschutz & sicherer Versand.</span>
+        </div>
+      {%- elsif _top_bar_cat == 'digital' -%}
+        <div class="announcement-message active">
+          <span class="announcement-text">100 % legale Lizenzen. Blitzversand & deutscher Support.</span>
+        </div>
+      {%- elsif _top_bar_cat == 'games' -%}
+        <div class="announcement-message active">
+          <span class="announcement-text">Factory Sealed. Offizielle deutsche Verkaufsversionen (USK).</span>
+        </div>
+      {%- else -%}
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            <div class="announcement-message {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+              <span class="announcement-text">{{ block.settings.text }}</span>
+              {% if block.settings.link != blank %}
+                <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'JETZT KAUFEN' }}</a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="announcement-message active">
+            <span class="announcement-text">{{ section.settings.sale_bar_text | default: 'Kompromisslose Qualität. Garantierte Originale. Trusted in DACH.' }}</span>
+          </div>
+        {% endif %}
+      {%- endif -%}
+    </div>
+
+    <!-- RIGHT: TIMER + CLOSE -->
+    <div class="announcement-right-wrapper">
+      {% if section.settings.show_timer %}
+        <div class="announcement-timer-wrapper">
+          <div class="countdown-timer" data-date="{{ section.settings.timer_date }}">
+            <div class="timer-group" data-timer-group="days">
+              <div class="timer-block">
+                <span class="timer-value" id="days">00</span>
+                <span class="timer-label">TAGE</span>
+              </div>
+              <span class="timer-separator">:</span>
+            </div>
+            <div class="timer-group" data-timer-group="hours">
+              <div class="timer-block">
+                <span class="timer-value" id="hours">00</span>
+                <span class="timer-label">STD</span>
+              </div>
+              <span class="timer-separator">:</span>
+            </div>
+            <div class="timer-group" data-timer-group="minutes">
+              <div class="timer-block">
+                <span class="timer-value" id="minutes">00</span>
+                <span class="timer-label">MIN</span>
+              </div>
+              <span class="timer-separator">:</span>
+            </div>
+            <div class="timer-group" data-timer-group="seconds">
+              <div class="timer-block">
+                <span class="timer-value" id="seconds">00</span>
+                <span class="timer-label">SEK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_close_button %}
+        <button class="announcement-close" aria-label="Banner schließen">
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* GLOBAL STICKY & STYLE */
+  .announcement-bar-wrapper {
+    background-color: {{ section.settings.sale_bar_bg_color | default: section.settings.bg_color }};
+    color: {{ section.settings.sale_bar_text_color | default: section.settings.text_color }};
+    font-family: var(--font-body-family);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    width: 100%;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    transition: none !important;
+    will-change: transform;
+    min-height: 21px; /* SUPER SLIM DESKTOP */
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  }
+
+  .announcement-bar-wrapper.is-hidden {
+    display: none !important;
+  }
+
+  .announcement-bar-content {
+    width: 100%;
+    max-width: var(--page-width, 1400px);
+    padding: 0 var(--page-margin, 20px);
+    display: flex; /* Flexbox for layout */
+    justify-content: space-between; /* Space beween Text and Timer */
+    align-items: center;
+    margin: 0 auto;
+    gap: 10px;
+    height: 100%;
+  }
+
+  /* Product Page Alignment Sync */
+  .announcement-bar-wrapper.on-product-page .announcement-bar-content {
+    max-width: 1200px;
+    padding: 0 5px; /* Reduced to push content further outward */
+  }
+
+  /* LEFT: MESSAGE */
+  .announcement-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1; /* Take up available space */
+    min-width: 0; /* Allow shrinking */
+  }
+
+  .announcement-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .announcement-text {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  .announcement-cta {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 700;
+    font-size: 9px;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+
+  /* RIGHT: TIMER + CLOSE */
+  .announcement-right-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+    flex-shrink: 0; /* Do not shrink */
+    flex: 1;
+  }
+
+  .announcement-timer-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .countdown-timer {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-variant-numeric: tabular-nums; /* Prevent jitter */
+    transition: opacity .3s;
+  }
+  .countdown-timer.countdown--urgent .timer-value {
+    color: #ff4444;
+    animation: sale-bar-pulse 1s ease-in-out infinite;
+  }
+  @keyframes sale-bar-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .6; }
+  }
+  .timer-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .timer-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    min-width: 20px;
+  }
+
+  .timer-value {
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .timer-label {
+    font-size: 5px;
+    margin-top: 1px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .timer-separator {
+    font-weight: 700;
+    font-size: 10px;
+    margin: 0 1px;
+    padding-bottom: 3px;
+    opacity: 0.6;
+    line-height: 1;
+  }
+
+  /* CLOSE BUTTON */
+  .announcement-close {
+    background: transparent;
+    border: none;
+    color: currentColor;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    margin-right: -4px; /* Offset alignment */
+  }
+  
+  .announcement-close:hover {
+    opacity: 1;
+  }
+
+  /* MOBILE OPTIMIZATION */
+  @media (max-width: 768px) {
+    .announcement-bar-wrapper {
+      display: none !important; /* Hide entire bar on mobile */
+    }
+
+    .announcement-bar-content {
+      padding: 0 16px;
+      gap: 6px;
+    }
+
+    .announcement-message {
+      white-space: normal;
+      overflow: visible;
+    }
+
+    .announcement-text {
+      font-size: 10px;
+      white-space: normal; /* Allow wrap on mobile if absolutely needed */
+      text-overflow: clip;
+      display: block;
+      line-height: 1.1;
+      max-height: 2.4em; /* Max 2 lines */
+      overflow: hidden;
+    }
+    
+    .announcement-cta {
+       display: none; /* Hide CTA on mobile to save space */
+    }
+
+    /* Timer specific adjustments for mobile */
+    .announcement-right-wrapper {
+      gap: 8px; 
+    }
+    
+    .announcement-timer-wrapper {
+      display: none !important; /* Hide countdown completely on mobile */
+    }
+
+    .timer-block { min-width: 14px; }
+    .timer-value { font-size: 10px; }
+    .timer-label { font-size: 5px; }
+    .timer-separator { font-size: 9px; padding-bottom: 2px; }
+  }
+</style>
+
+<script>
+  (function() {
+    const wrapper = document.getElementById('announcement-bar-{{ section.id }}');
+    if (!wrapper) return;
+
+    // 1. Check LocalStorage
+    const isClosed = localStorage.getItem('announcement-closed') === 'true';
+    if (isClosed) {
+      wrapper.classList.add('is-hidden');
+      document.documentElement.style.setProperty('--announcement-height', '0px');
+      return; 
+    }
+
+    // 2. Publish Height for Sticky Header
+    function updateHeight() {
+      if (wrapper.classList.contains('is-hidden')) {
+         document.documentElement.style.setProperty('--announcement-height', '0px');
+      } else {
+         const height = wrapper.offsetHeight;
+         document.documentElement.style.setProperty('--announcement-height', height + 'px');
+      }
+    }
+    
+    // Initial height set
+    // Use requestAnimationFrame to ensure DOM is painted
+    requestAnimationFrame(updateHeight);
+    window.addEventListener('resize', updateHeight);
+
+    // 3. Close Button Logic
+    const closeBtn = wrapper.querySelector('.announcement-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function() {
+        wrapper.style.transform = 'translateY(-100%)';
+        // After animation, hide and set 0 height
+        setTimeout(() => {
+          wrapper.classList.add('is-hidden');
+          updateHeight();
+          localStorage.setItem('announcement-closed', 'true');
+        }, 300);
+      });
+    }
+
+    // 4. Countdown Timer
+    const timerElement = wrapper.querySelector('.countdown-timer');
+    if (timerElement) {
+      const targetDateStr = timerElement.getAttribute('data-date');
+      if (targetDateStr) {
+        // Auto-fix invalid time: clamp hours > 23 to 23:59:59
+        var fixedDateStr = targetDateStr;
+        var tMatch = fixedDateStr.match(/T(\d{2}):(\d{2}):(\d{2})/);
+        if (tMatch) {
+          var h = Math.min(parseInt(tMatch[1], 10), 23);
+          var m = Math.min(parseInt(tMatch[2], 10), 59);
+          var s = Math.min(parseInt(tMatch[3], 10), 59);
+          fixedDateStr = fixedDateStr.replace(/T\d{2}:\d{2}:\d{2}/, 'T' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'));
+        }
+        const targetDate = new Date(fixedDateStr).getTime();
+        
+        // Hide timer only if date is still invalid after fix
+        if (isNaN(targetDate)) {
+          timerElement.closest('.announcement-timer-wrapper').style.display = 'none';
+        } else {
+          function updateTimer() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const elDays = document.getElementById('days');
+            const elHours = document.getElementById('hours');
+            const elMinutes = document.getElementById('minutes');
+            const elSeconds = document.getElementById('seconds');
+
+            if (distance < 0) {
+              if(elDays) elDays.innerText = '00';
+              if(elHours) elHours.innerText = '00';
+              if(elMinutes) elMinutes.innerText = '00';
+              if(elSeconds) elSeconds.innerText = '00';
+              return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if(elDays) elDays.innerText = days < 10 ? '0' + days : days;
+            if(elHours) elHours.innerText = hours < 10 ? '0' + hours : hours;
+            if(elMinutes) elMinutes.innerText = minutes < 10 ? '0' + minutes : minutes;
+            if(elSeconds) elSeconds.innerText = seconds < 10 ? '0' + seconds : seconds;
+
+            /* Adaptive: hide zero-value leading units */
+            const daysGroup = timerElement.querySelector('[data-timer-group="days"]');
+            const hoursGroup = timerElement.querySelector('[data-timer-group="hours"]');
+            if (daysGroup) daysGroup.style.display = days > 0 ? '' : 'none';
+            if (hoursGroup) hoursGroup.style.display = (days > 0 || hours > 0) ? '' : 'none';
+
+            /* Urgency: red pulse when < 1 hour */
+            if (days === 0 && hours === 0) {
+              timerElement.classList.add('countdown--urgent');
+            } else {
+              timerElement.classList.remove('countdown--urgent');
+            }
+          }
+          
+          setInterval(updateTimer, 1000);
+          updateTimer();
+        }
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Global Sale Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_close_button",
+      "label": "Schließen-Button anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sale_bar_text",
+      "label": "Sale Bar Text",
+      "default": "Super Sale: Bis zu 90% Rabatt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Countdown-Timer anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "timer_date",
+      "label": "Enddatum (YYYY-MM-DDTHH:MM)",
+      "default": "2026-03-01T23:59",
+      "info": "Format: 2026-03-01T23:59"
+    },
+    {
+      "type": "header",
+      "content": "🎨 Farben"
+    },
+    {
+      "type": "color",
+      "id": "sale_bar_bg_color",
+      "label": "Hintergrund",
+      "default": "#1D4739"
+    },
+    {
+      "type": "color",
+      "id": "sale_bar_text_color",
+      "label": "Textfarbe",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Ankündigung",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Super Sale: Bis zu 90% Rabatt"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text (CTA)",
+          "default": "JETZT KAUFEN"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Global Sale Bar"
+    }
+  ]
+}
+{% endschema %}

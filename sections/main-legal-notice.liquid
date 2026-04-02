@@ -1,0 +1,212 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-legal-notice.css' | asset_url | stylesheet_tag }}
+
+<div class="legal-page">
+  
+  <!-- HERO SECTION -->
+  <section class="legal-hero">
+    <div class="legal-hero-content">
+      <h1 class="legal-hero-title">Rechtliche Hinweise</h1>
+      <p class="legal-hero-subtitle">Transparente Informationen zu rechtlichen Grundlagen, Verbraucherschutz und Unternehmenspflichten.</p>
+      <div class="legal-hero-divider"></div>
+    </div>
+  </section>
+
+  <div class="legal-container">
+    
+    <!-- CONTENT SECTIONS -->
+    <article class="legal-content">
+      
+      <!-- Allgemeine Hinweise -->
+      <section class="legal-section" id="allgemeine-hinweise">
+        <h2 class="legal-section-title">Allgemeine Hinweise</h2>
+        <p>Die auf dieser Website bereitgestellten Informationen dienen ausschließlich allgemeinen Informationszwecken. Wir sind bemüht, die Inhalte aktuell, vollständig und richtig zu halten.</p>
+        <p>Die Nutzung der Website und der darauf enthaltenen Informationen erfolgt auf eigene Verantwortung des Nutzers. Mit dem Zugriff auf diese Website akzeptieren Sie unsere Nutzungsbedingungen.</p>
+      </section>
+
+      <!-- Haftungsausschluss -->
+      <section class="legal-section" id="haftungsausschluss">
+        <h2 class="legal-section-title">Haftungsausschluss</h2>
+        <p>Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+        <p>Als Diensteanbieter sind wir gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Eine Verpflichtung zur Überwachung übermittelter oder gespeicherter fremder Informationen besteht nicht.</p>
+        <p>Die Haftung für Schäden, die direkt oder indirekt durch die Nutzung dieser Website entstehen, ist – soweit gesetzlich zulässig – ausgeschlossen. Dies gilt nicht für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit sowie bei vorsätzlichem oder grob fahrlässigem Handeln.</p>
+      </section>
+
+      <!-- Aktualität & Änderungen -->
+      <section class="legal-section" id="aktualitaet">
+        <h2 class="legal-section-title">Aktualität & Änderungen</h2>
+        <p>Wir behalten uns das Recht vor, die Inhalte dieser Website jederzeit ohne vorherige Ankündigung zu ändern, zu ergänzen oder zu entfernen.</p>
+        <p>Es besteht keine Verpflichtung, die Inhalte dieser Website regelmäßig zu aktualisieren. Veraltete Informationen werden nach Kenntnisnahme schnellstmöglich korrigiert oder entfernt.</p>
+        <div class="legal-update-notice">
+          <span class="update-label">Letzte Aktualisierung:</span>
+          <span class="update-date">Februar 2026</span>
+        </div>
+      </section>
+
+      <!-- Gesetzliche Grundlagen -->
+      <section class="legal-section" id="gesetzliche-grundlagen">
+        <h2 class="legal-section-title">Gesetzliche Grundlagen</h2>
+        <p>Diese Website unterliegt dem Recht der Bundesrepublik Deutschland. Für alle Rechtsbeziehungen zwischen uns und unseren Kunden gilt ausschließlich deutsches Recht unter Ausschluss des UN-Kaufrechts.</p>
+        <p>Relevante gesetzliche Grundlagen umfassen insbesondere:</p>
+        <ul class="legal-list">
+          <li>Bürgerliches Gesetzbuch (BGB)</li>
+          <li>Telemediengesetz (TMG)</li>
+          <li>Datenschutz-Grundverordnung (DSGVO)</li>
+          <li>Bundesdatenschutzgesetz (BDSG)</li>
+          <li>Preisangabenverordnung (PAngV)</li>
+          <li>Verpackungsgesetz (VerpackG)</li>
+        </ul>
+      </section>
+
+      <!-- Verbraucherrechte -->
+      <section class="legal-section" id="verbraucherrechte">
+        <h2 class="legal-section-title">Verbraucherrechte</h2>
+        <p>Als Verbraucher stehen Ihnen umfassende Rechte zu, die wir selbstverständlich respektieren und einhalten. Dazu gehören insbesondere:</p>
+        <ul class="legal-list">
+          <li><strong>Widerrufsrecht (Digitale Produkte):</strong> 100-tägiges erweitertes Widerrufsrecht für Software & Lizenzen</li>
+          <li><strong>Widerrufsrecht (Waren):</strong> 14-tägiges gesetzliches Widerrufsrecht für physische Produkte</li>
+          <li><strong>Gewährleistung:</strong> Gesetzliche Gewährleistungsrechte bei Mängeln</li>
+          <li><strong>Transparenz:</strong> Klare Preisangaben inkl. aller Steuern und Versandkosten</li>
+          <li><strong>Datenschutz:</strong> Schutz Ihrer personenbezogenen Daten gemäß DSGVO</li>
+        </ul>
+        <p>Detaillierte Informationen zu Ihren Rechten finden Sie in unseren nachfolgend verlinkten Dokumenten.</p>
+      </section>
+
+      <!-- Reference Boxes -->
+      <section class="legal-section" id="weitere-dokumente">
+        <h2 class="legal-section-title">Weitere rechtliche Dokumente</h2>
+        <p>Für vollständige Informationen zu Ihren Rechten und unseren Pflichten verweisen wir auf folgende Dokumente:</p>
+        
+        <div class="legal-references">
+          <a href="/policies/terms-of-service" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Allgemeine Geschäftsbedingungen</span>
+              <span class="reference-desc">Vertragliche Grundlagen für Bestellungen</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="/policies/refund-policy" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Widerrufsrecht</span>
+              <span class="reference-desc">Informationen zu Ihrem Widerrufsrecht</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="{{ _root }}policies/privacy-policy" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Datenschutzerklärung</span>
+              <span class="reference-desc">Verarbeitung personenbezogener Daten</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="/policies/legal-notice" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Impressum</span>
+              <span class="reference-desc">Anbieterkennzeichnung gemäß § 5 TMG</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- TRUST SECTION -->
+    <section class="legal-trust">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Deutsche Gesetzgebung</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Verbraucherschutzkonform</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Regelmäßig aktualisiert</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Transparente Kommunikation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT BLOCK -->
+    <section class="legal-contact">
+      <div class="contact-content">
+        <h2 class="contact-title">Fragen zu rechtlichen Themen?</h2>
+        <p class="contact-text">Unser Team steht Ihnen bei rechtlichen Fragen jederzeit zur Verfügung.</p>
+        <div class="contact-actions">
+          <a href="{{ _root }}pages/kontakt" class="contact-btn contact-btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Kontaktseite
+          </a>
+          <a href="mailto:info@karinex.de" class="contact-btn contact-btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            E-Mail schreiben
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Legal Notice",
+  "tag": "section",
+  "class": "section-legal-notice",
+  "settings": []
+}
+{% endschema %}

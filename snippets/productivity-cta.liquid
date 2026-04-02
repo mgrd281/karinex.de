@@ -1,0 +1,140 @@
+        <!-- CTA -->
+        <style>
+          .productivity-cta {
+            text-align: center;
+            background-color: #2D463C; /* Dark Green - matching screenshot */
+            color: #fff; /* White text */
+            padding: 60px 40px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            position: relative;
+          }
+          
+          .productivity-cta h2 {
+             color: #fff; 
+             margin-bottom: 16px; 
+             font-size: 2.2rem; 
+             font-weight: 800;
+          }
+          
+          .productivity-cta p {
+             margin-bottom: 32px; 
+             font-size: 1.1rem; 
+             color: #fff;
+             opacity: 0.95; 
+             max-width: 600px; 
+             margin-left: auto; 
+             margin-right: auto;
+             line-height: 1.6;
+          }
+          
+          .productivity-cta .buy-btn {
+             background-color: #fff; /* White button */
+             color: #2D463C; /* Dark Green Text */
+             border: none;
+             font-weight: 700;
+             padding: 16px 40px;
+             font-size: 1.1rem;
+             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+             transition: transform 0.2s ease, box-shadow 0.2s ease;
+             display: flex;
+             width: 100%;
+             max-width: 600px;
+             margin: 0 auto;
+             align-items: center;
+             justify-content: center;
+             position: relative;
+             text-decoration: none;
+             border-radius: 50px;
+             cursor: pointer;
+             font-family: inherit;
+          }
+          .productivity-cta .buy-form {
+             width: 100%;
+             max-width: 600px;
+             margin: 0 auto;
+          }
+          
+          .productivity-cta .buy-btn:hover {
+             transform: translateY(-3px);
+             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+             filter: brightness(1.1);
+          }
+
+          @media (max-width: 989px) {
+            .productivity-cta {
+              padding: 24px 16px !important;
+              margin: 20px 0 10px 0 !important; /* Remove side margins because container has padding, reduce bottom margin */
+              width: 100% !important; /* Fill the container width */
+              border-radius: var(--radius-sm, 8px) !important;
+              box-sizing: border-box !important;
+            }
+            .buy-btn {
+              width: 100% !important;
+              max-width: none !important;
+            }
+          }
+        </style>
+        
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md);">
+        <section class="productivity-cta" data-nosnippet>
+            <div class="cta-inner">
+                {% comment %} Dynamic category-aware CTA content {% endcomment %}
+                {% assign cta_category = '' %}
+                
+                {% comment %} Detection logic: type, collections, tags {% endcomment %}
+                {% assign product_type_downcase = product.type | downcase %}
+                {% assign product_tags_downcase = product.tags | join: ',' | downcase %}
+                
+                {% comment %} Check for Digital/Software {% endcomment %}
+                {% if product_type_downcase contains 'digital' or product_type_downcase contains 'software' or product_type_downcase contains 'key' or product_tags_downcase contains 'digital' or product_tags_downcase contains 'software' or product_tags_downcase contains 'download' %}
+                  {% assign cta_category = 'digital' %}
+                {% comment %} Check for Games {% endcomment %}
+                {% elsif product_type_downcase contains 'game' or product_type_downcase contains 'spiel' or product_tags_downcase contains 'game' or product_tags_downcase contains 'spiel' or product_tags_downcase contains 'games' %}
+                  {% assign cta_category = 'games' %}
+                {% comment %} Check for LEGO/Toys {% endcomment %}
+                {% elsif product_type_downcase contains 'lego' or product_type_downcase contains 'spielzeug' or product_type_downcase contains 'toy' or product_tags_downcase contains 'lego' or product_tags_downcase contains 'spielzeug' or product_tags_downcase contains 'toys' %}
+                  {% assign cta_category = 'lego' %}
+                {% comment %} Check for Watches (Uhren) {% endcomment %}
+                {% elsif product_type_downcase contains 'uhr' or product_type_downcase contains 'watch' or product_tags_downcase contains 'uhr' or product_tags_downcase contains 'watch' or product_tags_downcase contains 'uhren' or product_tags_downcase contains 'watches' %}
+                  {% assign cta_category = 'watches' %}
+                {% endif %}
+                
+                {% comment %} WATCHES - Premium/Fashion tone {% endcomment %}
+                {% if cta_category == 'watches' %}
+                  <h2>Zeit für einen neuen Klassiker.</h2>
+                  <p>Geprüfte Originalware & Echtheits-Garantie. Inklusive Markenrechnung und versichertem Expressversand aus Deutschland. 14 Tage kostenfreie Retoure.</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt sichern</button></form>
+                
+                {% comment %} DIGITAL - Technical/Instant tone {% endcomment %}
+                {% elsif cta_category == 'digital' %}
+                  <h2>Sofort startklar.</h2>
+                  <p>100% legale Lizenzschlüssel per E-Mail in wenigen Sekunden. Sofort-Download & Aktivierung inklusive deutschem Support. Rechtlich geprüft.</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt herunterladen</button></form>
+                
+                {% comment %} LEGO/TOYS - Emotional/Gift tone {% endcomment %}
+                {% elsif cta_category == 'lego' %}
+                  <h2>Bereit zum Bauen?</h2>
+                  <p>100% Originalware in versiegelter OVP. Perfekt zum Sammeln oder Verschenken. Sicher verpackt & schneller Versand aus Deutschland.</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt entdecken</button></form>
+                
+                {% comment %} GAMES - Entertainment tone {% endcomment %}
+                {% elsif cta_category == 'games' %}
+                  <h2>Dein nächstes Abenteuer wartet.</h2>
+                  <p>Neu & werkseitig versiegelt. USK-geprüfte Handelsversion. Sofortiger Versand aus Deutschland. 14 Tage Retoure bei ungeöffnetem Siegel.</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt spielen</button></form>
+                
+                {% comment %} DEFAULT - Generic fallback {% endcomment %}
+                {% else %}
+                  <h2>Jetzt sicher bestellen.</h2>
+                  <p>Geprüfte Originalware & Echtheits-Garantie – mit offizieller Rechnung aus Deutschland. Schneller Versand in 1–3 Werktagen. 14 Tage kostenfreie Retoure.</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt sichern</button></form>
+                {% endif %}
+                
+                <div data-shop-id="{{shop.id}}" product-id="{{product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
+            </div>
+        </section>
+        </div>

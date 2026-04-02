@@ -1,0 +1,216 @@
+
+
+{% liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign rating = product.metafields.reviews.rating.value.rating | default: product.metafields.ddreviews.content.average_star | default: 5.0
+  assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
+  assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.ddreviews.content.total_reviews | default: 12
+
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+    assign rating = product.metafields.reviews.rating.value | default: product.metafields.ddreviews.content.average_star | default: 5
+    assign scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
+    assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.ddreviews.content.total_reviews | default: 12
+  endif
+  
+  assign rating = rating | plus: 0
+  if rating == 0
+    assign rating = 5.0
+  endif
+  
+  if rating_count == 0 or rating_count == blank or rating_count == null
+    assign rating_count = 1
+  endif
+-%}
+
+  <div
+    class="rating-wrapper rating-color--{{ block_settings.rating_color }} justify-{{ block_settings.alignment }} size-style"
+    style="{% render 'size-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
+  </div>
+
+{% stylesheet %}
+  .rating-wrapper {
+    gap: var(--gap-xs);
+    min-width: fit-content;
+  }
+
+  .rating-color--primary {
+    --star-fill-color: var(--color-primary);
+    --star-fill-color-rgb: var(--color-primary-rgb);
+    --color: var(--color-primary);
+  }
+
+  .rating-color--foreground {
+    --star-fill-color: var(--color-foreground);
+    --star-fill-color-rgb: var(--color-foreground-rgb);
+    --color: var(--color-foreground);
+  }
+
+  .rating-wrapper,
+  .rating {
+    display: flex;
+    align-items: center;
+  }
+
+  .rating-wrapper.justify-right {
+    flex-direction: row-reverse;
+  }
+
+  .rating {
+    gap: var(--gap-3xs);
+  }
+
+  .rating-wrapper .rating-count,
+  .rating-wrapper .rating-count-separator {
+    color: var(--star-fill-color);
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .rating-count-separator {
+    opacity: var(--opacity-20);
+    padding-left: calc(var(--padding-xs) / 2);
+    padding-right: var(--padding-xs);
+  }
+
+  .stars {
+    height: var(--star-size);
+    fill: var(--empty-star-fill-color);
+  }
+
+  .filled-star {
+    fill: var(--star-fill-color);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.product_review_stars",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:content.resource_reference_product_review"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.app_required_for_ratings"
+    },
+    {
+      "type": "select",
+      "id": "stars_style",
+      "label": "t:settings.style",
+      "options": [
+        {
+          "value": "outline",
+          "label": "t:options.outline"
+        },
+        {
+          "value": "shaded",
+          "label": "t:options.shaded"
+        },
+        {
+          "value": "single",
+          "label": "t:options.single"
+        }
+      ],
+      "default": "shaded"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_number",
+      "label": "t:settings.review_count",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "rating_color",
+      "label": "t:settings.color",
+      "options": [
+        {
+          "value": "foreground",
+          "label": "t:options.text"
+        },
+        {
+          "value": "primary",
+          "label": "t:options.link"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "paragraph"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "t:options.fit"
+        },
+        {
+          "value": "100%",
+          "label": "t:options.fill"
+        }
+      ],
+      "default": "100%"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left",
+      "visible_if": "{{ block.settings.width != 'fit-content' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.product_review_stars",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

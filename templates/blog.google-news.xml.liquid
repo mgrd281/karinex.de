@@ -1,0 +1,26 @@
+{%- comment -%}Google News Sitemap{%- endcomment -%}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  {%- assign current_date = 'now' | date: "%Y-%m-%dT%H:%M:%S%z" -%}
+  {%- for article in blog.articles limit: 50 -%}
+    <url>
+      <loc>{{ shop.url }}{{ article.url }}</loc>
+      <lastmod>{{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" }}</lastmod>
+      <news:news>
+        <news:publication>
+          <news:name>{{ shop.name | escape }}</news:name>
+          <news:language>{{ shop.locale | slice: 0, 2 }}</news:language>
+        </news:publication>
+        <news:publication_date>{{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" }}</news:publication_date>
+        <news:title>{{ article.title | escape }}</news:title>
+        {%- if article.tags.size > 0 -%}
+          <news:keywords>{{ article.tags | join: ', ' | escape }}</news:keywords>
+        {%- elsif article.excerpt -%}
+          <news:keywords>{{ article.excerpt | strip_html | truncate: 160 | replace: ',', ' ' | escape }}</news:keywords>
+        {%- endif -%}
+        <news:stock_tickers></news:stock_tickers>
+      </news:news>
+    </url>
+  {%- endfor -%}
+</urlset>

@@ -1,0 +1,399 @@
+
+{%- comment -%}
+  ============================================================
+  Zusatzinformationen — Dynamic Spec Table Renderer
+  ============================================================
+  Parses "Zusatzinformationen" from product.description and
+  renders specs using the original .spec-cell grid design.
+
+  Separator support:
+    "Label: Value"   — standard format
+    "Label / Value"  — legacy format
+
+  Full-row (span 2 columns) — prefix the label with "#":
+    "#Garantie: 24 Monate"  → spans full row, value centered
+  ============================================================
+{%- endcomment -%}
+
+<style>
+/* Full-row cell — spans both grid columns, value normal spacing */
+.spec-cell--full {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+}
+
+/* Full-row cell — value CENTERED (bigger gap, ## prefix) */
+.spec-cell--full-center {
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+}
+.spec-cell--full-center .s-value {
+  flex: 1;
+  text-align: center;
+}
+
+/* Tooltip Styles */
+.zi-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.zi-tooltip-wrapper svg {
+  width: 16px;
+  height: 16px;
+  stroke: #1D4739;
+}
+.zi-tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 12px 16px;
+  width: max-content;
+  max-width: 320px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  z-index: 100;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  pointer-events: none;
+}
+/* Tooltip Arrow */
+.zi-tooltip-content::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+.zi-tooltip-wrapper:hover .zi-tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (max-width: 768px) {
+  .zi-tooltip-content {
+    max-width: 260px;
+    white-space: normal;
+  }
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ════════════════════════════════════════════════════════
+     1. HTML → Lines
+     ════════════════════════════════════════════════════════ */
+  function htmlToLines(html) {
+    var text = html
+      .replace(/<\/p>/gi,      '\n')
+      .replace(/<\/div>/gi,    '\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/li>/gi,     '\n')
+      .replace(/<\/h[1-6]>/gi, '\n')
+      .replace(/<\/?(strong|b|em|i|u|s|span)[^>]*>/gi, '')
+      .replace(/<[^>]+>/g, '');
+
+    text = text
+      .replace(/&amp;/g,   '&')
+      .replace(/&lt;/g,    '<')
+      .replace(/&gt;/g,    '>')
+      .replace(/&nbsp;/g,  ' ')
+      .replace(/&#39;/g,   "'")
+      .replace(/&quot;/g,  '"')
+      .replace(/&auml;/g,  'ä')
+      .replace(/&ouml;/g,  'ö')
+      .replace(/&uuml;/g,  'ü')
+      .replace(/&Auml;/g,  'Ä')
+      .replace(/&Ouml;/g,  'Ö')
+      .replace(/&Uuml;/g,  'Ü')
+      .replace(/&szlig;/g, 'ß');
+
+    return text.split('\n');
+  }
+
+  /* ════════════════════════════════════════════════════════
+     2. Find & parse "Zusatzinformationen" section
+     ════════════════════════════════════════════════════════ */
+  var ZI_HEADINGS = [
+    'Technische Details',
+    'Zusatzinformationen',
+    'Zusatzinformation',
+    'Technische Spezifikationen',
+    'Spezifikationen',
+    'Technische Daten'
+  ];
+
+  function parseZusatzinformationen(html) {
+    var lines = htmlToLines(html);
+    var startIndex = -1;
+
+    for (var i = 0; i < lines.length; i++) {
+      var t = lines[i].trim();
+      for (var k = 0; k < ZI_HEADINGS.length; k++) {
+        if (t.toLowerCase() === ZI_HEADINGS[k].toLowerCase()) {
+          startIndex = i + 1;
+          break;
+        }
+      }
+      if (startIndex !== -1) break;
+    }
+
+    if (startIndex === -1) return null;
+
+    var specs = [];
+
+    for (var j = startIndex; j < lines.length; j++) {
+      var line = lines[j].trim();
+      if (!line) continue;
+
+      /* ── detect full-row markers:
+           "#"  → full-row, normal spacing
+           "##" → full-row, centered value (bigger gap)
+         ── */
+      var isFullRow = false;      /* # : full width, normal gap  */
+      var isFullCenter = false;   /* ## : full width, centered    */
+
+      if (line.charAt(0) === '#' && line.charAt(1) === '#') {
+        isFullCenter = true;
+        line = line.substring(2).trim();
+      } else if (line.charAt(0) === '#') {
+        isFullRow = true;
+        line = line.substring(1).trim();
+      }
+
+      var label = '';
+      var value = '';
+
+      /* try "Label: Value" */
+      var colonIdx = line.indexOf(':');
+      if (colonIdx > 0) {
+        label = line.substring(0, colonIdx).trim();
+        value = line.substring(colonIdx + 1).trim();
+      }
+
+      /* fallback: "Label / Value" */
+      if (!label || !value) {
+        var slashIdx = line.indexOf(' / ');
+        if (slashIdx > 0) {
+          label = line.substring(0, slashIdx).trim();
+          value = line.substring(slashIdx + 3).trim();
+        }
+      }
+
+      if (!label || !value) continue;
+
+      /* strip legacy positional markers R1, L1, etc. */
+      label = label.replace(/\s+[RL]\d+$/i, '').trim();
+
+      if (label.length > 60) continue;
+
+      /* ── Custom tooltip logic: "Value (i) Tooltip Text" ── */
+      var tooltip = '';
+      var tooltipIdx = value.indexOf('(i)');
+      if (tooltipIdx !== -1) {
+        tooltip = value.substring(tooltipIdx + 3).trim();
+        value = value.substring(0, tooltipIdx).trim();
+      }
+
+      specs.push({ label: label, value: value, tooltip: tooltip, full: isFullRow, center: isFullCenter });
+    }
+
+    return specs.length > 0 ? specs : null;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     3. Build HTML — same .spec-cell structure as static grid
+        Full-row cells get class "spec-cell--full"
+        which spans grid-column: 1 / -1
+     ════════════════════════════════════════════════════════ */
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,  '&amp;')
+      .replace(/</g,  '&lt;')
+      .replace(/>/g,  '&gt;')
+      .replace(/"/g,  '&quot;');
+  }
+
+  /* Specific tooltip for 24-month Warranty */
+  function getTooltipForValue(label, value) {
+    var cleanLabel = label.toLowerCase();
+    
+    if (cleanLabel.indexOf('garantie') !== -1 && value.indexOf('24') !== -1) {
+      var tooltipText = "Für diesen Artikel verfügen Sie über eine 24 monatige internationale Garantie, welche Sie im Falle einer Reparatur in Anspruch nehmen können. Sie können den Artikel bei jedem offiziellen Konzessionär vorzeigen und dieser wird für Sie die Reparatur in die Wege leiten.";
+      
+      var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+      
+      return '<span class="zi-tooltip-wrapper">' + svgIcon + '<span class="zi-tooltip-content">' + tooltipText + '</span></span>';
+    }
+    return '';
+  }
+
+  function buildSpecCells(specs) {
+    var html = '';
+    var pendingHalf = false;   /* track if previous half-row needs a sibling */
+
+    var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+    for (var i = 0; i < specs.length; i++) {
+      var s = specs[i];
+      
+      var tooltipHtml = '';
+      if (s.tooltip) {
+        // Render custom (i) tooltip
+        tooltipHtml = '<span class="zi-tooltip-wrapper">' + svgIcon + '<span class="zi-tooltip-content">' + esc(s.tooltip) + '</span></span>';
+      } else {
+        // Fallback to auto Warranty tooltip
+        tooltipHtml = getTooltipForValue(s.label, s.value);
+      }
+      
+      var displayValue = esc(s.value) + tooltipHtml;
+
+      if (s.full || s.center) {
+        /* close any pending half-row first */
+        if (pendingHalf) {
+          html += '<div class="spec-cell empty-cell"></div>';
+          pendingHalf = false;
+        }
+        /* full-row: "#" = normal gap, "##" = centered value */
+        var cls = s.center ? 'spec-cell spec-cell--full-center' : 'spec-cell spec-cell--full';
+        html +=
+          '<div class="' + cls + '">' +
+            '<span class="s-label">' + esc(s.label) + '</span>' +
+            '<span class="s-value">' + displayValue + '</span>' +
+          '</div>';
+      } else {
+        /* normal half-row */
+        html +=
+          '<div class="spec-cell">' +
+            '<span class="s-label">' + esc(s.label) + '</span>' +
+            '<span class="s-value">' + displayValue + '</span>' +
+          '</div>';
+        pendingHalf = !pendingHalf;
+      }
+    }
+
+    /* close any trailing half-row */
+    if (pendingHalf) {
+      html += '<div class="spec-cell empty-cell"></div>';
+    }
+
+    return html;
+  }
+
+  /* Mobile: simple single-column rows */
+  function buildMobileRows(specs) {
+    var html = '<div class="accordion-specs">';
+    var svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+    for (var i = 0; i < specs.length; i++) {
+      var s = specs[i];
+      
+      var tooltipHtml = '';
+      if (s.tooltip) {
+        tooltipHtml = '<span class="zi-tooltip-wrapper">' + svgIcon + '<span class="zi-tooltip-content">' + esc(s.tooltip) + '</span></span>';
+      } else {
+        tooltipHtml = getTooltipForValue(s.label, s.value);
+      }
+      
+      var displayValue = esc(s.value) + tooltipHtml;
+      
+      html +=
+        '<div class="spec-row">' +
+          '<strong>' + esc(s.label) + '</strong>' +
+          '<span>' + displayValue + '</span>' +
+        '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     4. Inject into DOM
+     ════════════════════════════════════════════════════════ */
+  function init() {
+    var raw = window.PRODUCT_DESCRIPTION_ORIGINAL || '';
+    if (!raw) return;
+
+    var specs = parseZusatzinformationen(raw);
+    if (!specs) return;   /* no ZI section → keep existing static layout */
+
+    /* ── Desktop: replace spec-cells inside .watch-specs-grid ── */
+    var tabSpecs = document.getElementById('tab-specs');
+    if (tabSpecs) {
+      var grid = tabSpecs.querySelector('.watch-specs-grid');
+      if (grid) {
+        grid.innerHTML = buildSpecCells(specs);
+      }
+    }
+
+    /* ── Mobile: fill the "Zusatzinformationen" accordion item ── */
+    var filled = false;
+    var items = document.querySelectorAll('.w-accordion-item');
+    for (var i = 0; i < items.length; i++) {
+      var hdr = items[i].querySelector('.w-accordion-header span');
+      if (!hdr) continue;
+      var txt = (hdr.textContent || '').trim().toLowerCase();
+
+      var isZI = false;
+      for (var k = 0; k < ZI_HEADINGS.length; k++) {
+        if (txt === ZI_HEADINGS[k].toLowerCase()) { isZI = true; break; }
+      }
+
+      if (isZI) {
+        var panel = items[i].querySelector('.w-accordion-content');
+        if (panel) {
+          panel.innerHTML = buildMobileRows(specs);
+          filled = true;
+          break;
+        }
+      }
+    }
+
+    /* ── Mobile fallback: inject new accordion item at top ── */
+    if (!filled) {
+      var container = document.querySelector('.w-accordion-container.only-mobile');
+      if (container) {
+        var newItem = document.createElement('div');
+        newItem.className = 'w-accordion-item';
+        newItem.innerHTML =
+          '<button class="w-accordion-header" onclick="toggleMobileAccordion(this)">' +
+            '<span>Technische Details</span>' +
+            '<svg class="chevron-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<polyline points="6 9 12 15 18 9"></polyline>' +
+            '</svg>' +
+          '</button>' +
+          '<div class="w-accordion-content">' +
+            buildMobileRows(specs) +
+          '</div>';
+
+        var first = container.firstElementChild;
+        if (first) container.insertBefore(newItem, first);
+        else container.appendChild(newItem);
+      }
+    }
+  }
+
+  /* run after DOM is ready */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 30);
+  }
+
+})();
+</script>

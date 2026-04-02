@@ -1,0 +1,536 @@
+/* ==============================================
+   ABOUT US PAGE STYLES
+   Enterprise, premium, trust-driven brand design
+   ============================================== */
+
+/* CSS Custom Properties */
+:root {
+  --about-text: #1a1a1a;
+  --about-text-muted: #555555;
+  --about-text-light: #777777;
+  --about-bg: #ffffff;
+  --about-bg-soft: #f8f9fa;
+  --about-bg-card: #ffffff;
+  --about-border: #e8e8e8;
+  --about-accent: #1a1a1a;
+  --about-accent-soft: #f0f0f0;
+  --about-radius: 12px;
+  --about-radius-sm: 8px;
+  --about-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --about-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --about-transition: 250ms ease;
+  --about-max-width: 760px;
+}
+
+/* ==============================================
+   BASE CONTAINER
+   ============================================== */
+.about-page {
+  background: var(--about-bg);
+  min-height: 100vh;
+}
+
+.about-container {
+  max-width: var(--about-max-width);
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+
+/* ==============================================
+   1) HERO SECTION
+   ============================================== */
+.about-hero {
+  background: var(--about-bg);
+  padding: 72px 24px 56px;
+  text-align: center;
+}
+
+.about-hero-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.about-hero-title {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 700;
+  color: var(--about-text);
+  margin: 0 0 20px;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.about-hero-subtitle {
+  font-size: clamp(17px, 2.5vw, 20px);
+  color: var(--about-text-muted);
+  margin: 0 0 36px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.about-hero-divider {
+  width: 48px;
+  height: 3px;
+  background: var(--about-accent);
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+/* ==============================================
+   2) BRAND MISSION
+   ============================================== */
+.about-section {
+  margin-bottom: 72px;
+}
+
+.about-section-title {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: var(--about-text);
+  margin: 0 0 28px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.about-mission-content {
+  max-width: 100%;
+}
+
+.about-mission-content .about-lead {
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--about-text);
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+
+.about-mission-content p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--about-text-muted);
+  margin: 0 0 20px;
+}
+
+.about-mission-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==============================================
+   3) CORE VALUES – VALUE CARDS
+   ============================================== */
+.about-values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.about-value-card {
+  background: var(--about-bg-card);
+  border: 1px solid var(--about-border);
+  border-radius: var(--about-radius);
+  padding: 32px 28px;
+  transition: var(--about-transition);
+  transition-property: box-shadow, transform;
+}
+
+.about-value-card:hover {
+  box-shadow: var(--about-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.about-value-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--about-bg-soft);
+  border-radius: var(--about-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.about-value-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--about-text);
+}
+
+.about-value-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--about-text);
+  margin: 0 0 12px;
+  line-height: 1.3;
+}
+
+.about-value-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--about-text-muted);
+  margin: 0;
+}
+
+/* ==============================================
+   4) PROCESS STEPS
+   ============================================== */
+.about-process-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.about-step {
+  display: flex;
+  gap: 24px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--about-border);
+}
+
+.about-step:first-child {
+  padding-top: 0;
+}
+
+.about-step:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.about-step-number {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--about-text);
+  color: var(--about-bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.about-step-content {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.about-step-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--about-text);
+  margin: 0 0 8px;
+}
+
+.about-step-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--about-text-muted);
+  margin: 0;
+}
+
+/* ==============================================
+   5) TRUST SECTION
+   ============================================== */
+.about-trust-content {
+  background: var(--about-bg-soft);
+  border-radius: var(--about-radius);
+  padding: 40px 36px;
+}
+
+.about-trust-intro {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--about-text-muted);
+  margin: 0 0 28px;
+  text-align: center;
+}
+
+.about-trust-points {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+  margin-bottom: 32px;
+}
+
+.about-trust-point {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  color: var(--about-text);
+  font-weight: 500;
+}
+
+.about-trust-point svg {
+  width: 20px;
+  height: 20px;
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+/* Microsoft Partner Badge */
+.about-partner-badge {
+  display: flex;
+  justify-content: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--about-border);
+}
+
+.about-partner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--about-bg);
+  border-radius: var(--about-radius-sm);
+  border: 1px solid var(--about-border);
+}
+
+.about-partner-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.about-partner-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--about-text-muted);
+}
+
+/* ==============================================
+   6) HUMAN TOUCH – CLOSING
+   ============================================== */
+.about-closing {
+  margin-bottom: 56px;
+}
+
+.about-closing-content {
+  text-align: center;
+  padding: 48px 32px;
+  background: var(--about-bg);
+  border: 1px solid var(--about-border);
+  border-radius: var(--about-radius);
+}
+
+.about-quote {
+  font-size: clamp(18px, 3vw, 22px);
+  line-height: 1.7;
+  color: var(--about-text);
+  margin: 0 0 32px;
+  font-style: normal;
+  font-weight: 400;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-signature-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--about-text);
+  letter-spacing: 0.5px;
+}
+
+/* ==============================================
+   CTA SECTION
+   ============================================== */
+.about-cta {
+  text-align: center;
+  padding: 56px 32px;
+  background: var(--about-bg-soft);
+  border-radius: var(--about-radius);
+}
+
+.about-cta-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--about-text);
+  margin: 0 0 12px;
+}
+
+.about-cta-text {
+  font-size: 16px;
+  color: var(--about-text-muted);
+  margin: 0 0 28px;
+}
+
+.about-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: var(--about-text);
+  color: var(--about-bg);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--about-radius-sm);
+  transition: var(--about-transition);
+  transition-property: background, transform;
+}
+
+.about-cta-button:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+/* ==============================================
+   RESPONSIVE – TABLET (< 768px)
+   ============================================== */
+@media (max-width: 767px) {
+  .about-hero {
+    padding: 56px 20px 44px;
+  }
+  
+  .about-container {
+    padding: 0 20px 80px;
+  }
+  
+  .about-section {
+    margin-bottom: 56px;
+  }
+  
+  .about-values-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .about-value-card {
+    padding: 28px 24px;
+  }
+  
+  .about-trust-points {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  
+  .about-trust-content {
+    padding: 32px 24px;
+  }
+}
+
+/* ==============================================
+   RESPONSIVE – MOBILE (< 480px)
+   ============================================== */
+@media (max-width: 479px) {
+  .about-hero {
+    padding: 48px 16px 36px;
+  }
+  
+  .about-hero-title {
+    font-size: 32px;
+    letter-spacing: -0.5px;
+  }
+  
+  .about-hero-subtitle {
+    font-size: 16px;
+  }
+  
+  .about-container {
+    padding: 0 16px 64px;
+  }
+  
+  .about-section {
+    margin-bottom: 48px;
+  }
+  
+  .about-section-title {
+    font-size: 22px;
+  }
+  
+  .about-mission-content .about-lead {
+    font-size: 17px;
+  }
+  
+  .about-mission-content p {
+    font-size: 16px;
+  }
+  
+  .about-value-card {
+    padding: 24px 20px;
+  }
+  
+  .about-value-icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .about-value-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .about-step {
+    gap: 16px;
+    padding: 24px 0;
+  }
+  
+  .about-step-number {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 16px;
+  }
+  
+  .about-trust-content {
+    padding: 28px 20px;
+  }
+  
+  .about-trust-intro {
+    font-size: 16px;
+    text-align: left;
+  }
+  
+  .about-partner-content {
+    padding: 10px 16px;
+  }
+  
+  .about-partner-text {
+    font-size: 13px;
+  }
+  
+  .about-closing-content {
+    padding: 36px 20px;
+  }
+  
+  .about-quote {
+    font-size: 17px;
+  }
+  
+  .about-cta {
+    padding: 40px 24px;
+  }
+  
+  .about-cta-title {
+    font-size: 22px;
+  }
+  
+  .about-cta-button {
+    width: 100%;
+    padding: 16px 24px;
+  }
+}
+
+/* ==============================================
+   DARK MODE SUPPORT (optional)
+   ============================================== */
+@media (prefers-color-scheme: dark) {
+  /* Uncomment if dark mode is needed
+  :root {
+    --about-text: #f5f5f5;
+    --about-text-muted: #a0a0a0;
+    --about-text-light: #888888;
+    --about-bg: #121212;
+    --about-bg-soft: #1a1a1a;
+    --about-bg-card: #1e1e1e;
+    --about-border: #2a2a2a;
+    --about-accent: #ffffff;
+  }
+  */
+}

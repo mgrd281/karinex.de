@@ -1,0 +1,80 @@
+{% comment %}
+  ═══════════════════════════════════════════════════════
+  SCHEMA: HOWTO
+  Version: 1.0 | Created: 20.01.2026
+  Purpose: Installation/setup guides with step-by-step rich snippets
+  Usage: Include in product pages for digital products
+  ═══════════════════════════════════════════════════════
+{% endcomment %}
+
+{% comment %} Example usage - add to product pages {% endcomment %}
+{% if product.type contains 'Windows' or product.type contains 'Office' or product.type contains 'Software' %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Wie installiere ich {{ product.title }}",
+  "description": "Schritt-für-Schritt-Anleitung zur Installation von {{ product.title }}",
+  "image": {
+    "@type": "ImageObject",
+    "url": "https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}"
+  },
+  "totalTime": "PT10M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "{{ cart.currency.iso_code }}",
+    "value": "0"
+  },
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Computer mit Internetverbindung"
+    }
+  ],
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Produktschlüssel"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Download",
+      "text": "Laden Sie die Installationsdatei von der offiziellen Microsoft-Website herunter.",
+      "url": "{{ product.url }}#step1"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "Installation starten",
+      "text": "Führen Sie die heruntergeladene Datei aus und folgen Sie dem Setup-Assistenten.",
+      "url": "{{ product.url }}#step2"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Produktschlüssel eingeben",
+      "text": "Geben Sie den von Karinex erhaltenen Produktschlüssel ein, wenn Sie dazu aufgefordert werden.",
+      "url": "{{ product.url }}#step3"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 4,
+      "name": "Installation abschließen",
+      "text": "Befolgen Sie die verbleibenden Anweisungen und starten Sie Ihren Computer neu, wenn erforderlich.",
+      "url": "{{ product.url }}#step4"
+    }
+  ],
+  "video": {
+    "@type": "VideoObject",
+    "name": "{{ product.title }} Installation Video",
+    "description": "Video-Anleitung zur Installation",
+    "thumbnailUrl": "https:{{ product.featured_image | image_url: width: 480 }}",
+    "contentUrl": "{{ shop.url }}/videos/{{ product.handle }}-installation.mp4",
+    "uploadDate": "{{ product.published_at | date: '%Y-%m-%d' }}"
+  }
+}
+</script>
+{% endif %}

@@ -1,0 +1,100 @@
+/* ============================================================
+   KARINEX — Shipping Countdown
+   Kaufland-style urgency timer for physical products
+   ============================================================ */
+
+.kx-ship-cd {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
+    background: #f6faf6;
+    border: 1px solid #d4edda;
+    border-radius: 10px;
+    margin: 12px 0;
+    min-height: 54px;
+    /* No layout shift */
+    box-sizing: border-box;
+}
+
+.kx-ship-cd--neutral {
+    background: #f8f9fa;
+    border-color: #e8e8e8;
+}
+
+/* Truck icon */
+.kx-ship-cd__icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+}
+
+.kx-ship-cd__icon svg {
+    width: 20px;
+    height: 20px;
+    color: #1A7A34;
+}
+
+.kx-ship-cd--neutral .kx-ship-cd__icon svg {
+    color: #888;
+}
+
+/* Text container */
+.kx-ship-cd__body {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Main line */
+.kx-ship-cd__main {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1A1A1A;
+    line-height: 1.4;
+}
+
+/* Timer digits */
+.kx-ship-cd__timer {
+    display: inline;
+    font-weight: 700;
+    color: #1A7A34;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    letter-spacing: 0.02em;
+}
+
+/* Sub line */
+.kx-ship-cd__sub {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+    line-height: 1.3;
+}
+
+/* Delivery window highlight */
+.kx-ship-cd__window {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Mobile */
+@media screen and (max-width: 749px) {
+    .kx-ship-cd {
+        padding: 10px 12px;
+        min-height: 50px;
+    }
+
+    .kx-ship-cd__main {
+        font-size: 13px;
+    }
+
+    .kx-ship-cd__sub {
+        font-size: 11.5px;
+    }
+}

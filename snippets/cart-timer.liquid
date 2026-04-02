@@ -1,0 +1,264 @@
+{%- unless hide_html -%}
+<cart-timer data-product-ids='{{ cart.items | map: "product_id" | uniq | json | escape }}'>
+  <div class="cart-session-timer" id="cartSessionTimer" style="display: none;">
+    <div class="timer-content">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="timer-icon">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="timer-text">
+        Warenkorb reserviert für <span class="time-display">15:00</span>
+      </span>
+    </div>
+  </div>
+</cart-timer>
+{%- endunless -%}
+
+<style>
+  /* ==== STANDALONE TIMER (e.g. cart page) ==== */
+  .cart-session-timer {
+    background-color: #f5f7f6;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font-body-family);
+    animation: fadeIn 0.4s ease;
+    box-sizing: border-box;
+  }
+  
+  .timer-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .timer-icon {
+    color: #0f3b2e;
+    flex-shrink: 0;
+  }
+  
+  .time-display {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #0f3b2e;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @media (max-width: 600px) {
+    .cart-session-timer {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+  }
+
+  /* ==== DRAWER CONTEXT — pill bar override ==== */
+  .cart-drawer .cart-session-timer {
+    background: #f2f5f3 !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 9px 14px !important;
+    margin: 14px 20px !important;
+    color: #3a5248 !important;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    box-sizing: border-box;
+  }
+  
+  .cart-drawer .timer-content {
+    justify-content: center !important;
+    gap: 8px;
+  }
+  
+  .cart-drawer .timer-icon {
+    width: 14px;
+    height: 14px;
+    color: #2c6b53 !important;
+    opacity: 0.8;
+  }
+  
+  .cart-drawer .time-display {
+    font-weight: 600 !important;
+    font-variant-numeric: tabular-nums;
+    color: #2c5a44 !important;
+    letter-spacing: 0.03em;
+  }
+</style>
+
+<script>
+  if (!customElements.get('cart-timer')) {
+    class CartTimer extends HTMLElement {
+      constructor() {
+        super();
+        this.durationMinutes = 15;
+        this.storageKey = 'cart_session_start_v1';
+        this.seenKey = 'cart_session_seen_products_v1';
+        this.animationFrameId = null;
+      }
+
+      connectedCallback() {
+        this.initTimer();
+      }
+      
+      disconnectedCallback() {
+        if (this.animationFrameId) {
+          cancelAnimationFrame(this.animationFrameId);
+        }
+      }
+
+      initTimer() {
+        const display = this.querySelector('.time-display');
+        const container = this.querySelector('#cartSessionTimer');
+        
+        if (!display || !container) return;
+
+        // Get IDs passed via data attribute
+        let currentCartIds = [];
+        try {
+          currentCartIds = JSON.parse(this.dataset.productIds || '[]');
+        } catch (e) {
+          console.error('Error parsing cart product IDs', e);
+        }
+
+        let startTime = localStorage.getItem(this.storageKey);
+        let seenProducts = JSON.parse(localStorage.getItem(this.seenKey) || '[]');
+        
+        const now = Date.now();
+        
+        // Smart Reset Check
+        const hasNewProducts = currentCartIds.some(id => !seenProducts.includes(id));
+        let shouldReset = false;
+
+        if (hasNewProducts) {
+            shouldReset = true;
+            seenProducts = [...new Set([...seenProducts, ...currentCartIds])];
+            localStorage.setItem(this.seenKey, JSON.stringify(seenProducts));
+        } else if (!startTime) {
+            shouldReset = true;
+        } else {
+            // Check expiry
+            const elapsed = now - parseInt(startTime);
+            const maxDuration = this.durationMinutes * 60 * 1000 + 600000; // Buffer
+            if (elapsed > maxDuration) {
+                shouldReset = true;
+            }
+        }
+
+        if (shouldReset) {
+            startTime = now;
+            localStorage.setItem(this.storageKey, startTime);
+        }
+
+        this.startTime = parseInt(startTime);
+        this.display = display;
+        this.container = container;
+        
+        // Show immediately
+        container.style.display = 'block';
+        
+        // Start Loop
+        this.update();
+      }
+
+      update() {
+        if (!this.startTime) return;
+        
+        const updateFrame = () => {
+            if (!this.isConnected) return; // Stop if removed from DOM
+
+            const currentTime = Date.now();
+            const elapsed = currentTime - this.startTime;
+            const remaining = (this.durationMinutes * 60 * 1000) - elapsed;
+
+            if (remaining <= 0) {
+                // Reset loop
+                this.startTime = Date.now();
+                localStorage.setItem(this.storageKey, this.startTime);
+                this.animationFrameId = requestAnimationFrame(updateFrame);
+                return;
+            }
+
+            const m = Math.floor(remaining / 60000);
+            const s = Math.floor((remaining % 60000) / 1000);
+            const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
+            
+            this.display.textContent = timeStr;
+            this.container.style.display = 'block';
+            
+            this.animationFrameId = requestAnimationFrame(updateFrame);
+        };
+        this.animationFrameId = requestAnimationFrame(updateFrame);
+      }
+    }
+    customElements.define('cart-timer', CartTimer);
+  }
+  
+  // Global function to reinitialize cart timer when drawer opens
+  window.initCartTimer = function() {
+    const timer = document.querySelector('cart-timer');
+    if (timer) {
+      // Reset and reinitialize
+      const container = timer.querySelector('#cartSessionTimer');
+      if (container) {
+        container.style.display = 'block';
+      }
+      // Force reinitialization by calling initTimer if exposed, or recreate
+      if (timer.initTimer) {
+        timer.initTimer();
+      }
+    }
+  };
+  
+  // Auto-detect when cart drawer opens and reinitialize
+  (function() {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === 1) {
+            // Check if cart-timer was added
+            if (node.matches && node.matches('cart-timer')) {
+              // Timer added, will auto-init via connectedCallback
+            }
+            // Check if drawer opened (dialog open attribute)
+            if (node.querySelector && node.querySelector('cart-timer')) {
+              const timer = node.querySelector('cart-timer');
+              const container = timer.querySelector('#cartSessionTimer');
+              if (container) container.style.display = 'block';
+            }
+          }
+        }
+        // Also check attribute changes for dialog[open]
+        if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
+          if (mutation.target.matches && mutation.target.matches('.cart-drawer__dialog[open]')) {
+            const timer = mutation.target.querySelector('cart-timer');
+            if (timer) {
+              const container = timer.querySelector('#cartSessionTimer');
+              if (container) container.style.display = 'block';
+            }
+          }
+        }
+      }
+    });
+    
+    observer.observe(document.body, { 
+      childList: true, 
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['open']
+    });
+    
+    // Also listen for cart:refresh events
+    document.addEventListener('cart:refresh', () => {
+      setTimeout(window.initCartTimer, 100);
+    });
+  })();
+</script>

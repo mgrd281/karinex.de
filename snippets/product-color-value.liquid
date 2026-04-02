@@ -1,0 +1,12 @@
+{%- doc -%}
+  Outputs the color (Farbe) value for a product based on the "Farbe" option.
+  Returns the first variant's Farbe option value.
+
+  @param {object} product - The product object
+{%- enddoc -%}
+{%- for option in product.options_with_values -%}
+  {%- if option.name == 'Farbe' or option.name == 'farbe' or option.name == 'Color' or option.name == 'color' -%}
+    {{- option.values[0] -}}
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}

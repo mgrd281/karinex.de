@@ -1,0 +1,109 @@
+{%- doc -%}
+  Age restriction (Altersbeschränkung) filter for collection pages.
+  Works entirely client-side via JavaScript — no Search & Discovery app needed.
+  Reads data-age attributes from product grid items and hides/shows them.
+  Only shown on LEGO and Spiele/Games collections.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- comment -%} Collect all product ages using delimiter-wrapped values for safe matching {%- endcomment -%}
+{%- capture age_list -%}
+  {%- for product in collection.products limit: 1000 -%}
+    {%- capture raw_age -%}{%- render 'product-age-value', product: product -%}{%- endcapture -%}
+    {%- assign p_age = raw_age | strip -%}
+    {%- if p_age != '' -%}|{{ p_age }}|,{%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign age_entries = age_list | split: ',' -%}
+
+{%- comment -%} Build sorted unique age list with counts using predefined order {%- endcomment -%}
+{%- assign age_order = '0,2,3,4,5,6,7,8,9,10,12,14,16,18' | split: ',' -%}
+{%- assign display_ages = '' -%}
+{%- assign age_count = 0 -%}
+
+{%- for av in age_order -%}
+  {%- assign check_str = '|' | append: av | append: '|' -%}
+  {%- assign av_count = 0 -%}
+  {%- for entry in age_entries -%}
+    {%- assign entry_stripped = entry | strip -%}
+    {%- if entry_stripped == check_str -%}
+      {%- assign av_count = av_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if av_count > 0 -%}
+    {%- assign age_count = age_count | plus: 1 -%}
+    {%- assign age_with_count = av | append: ':' | append: av_count -%}
+    {%- if display_ages == '' -%}
+      {%- assign display_ages = age_with_count -%}
+    {%- else -%}
+      {%- assign display_ages = display_ages | append: ',' | append: age_with_count -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign unique_ages = display_ages | split: ',' -%}
+
+{%- if age_count > 1 -%}
+<accordion-custom
+  class="facets__item age-filter-accordion"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  {% if filter_style == 'vertical' %}
+  {% endif %}
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-age-{{ filter_style }}"
+    class="facets__panel"
+    {% if filter_style == 'horizontal' %}
+      data-auto-close-details="desktop"
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Alter</span>
+      <div class="facets__status-wrapper">
+        <span class="age-filter-count" style="display: none;"></span>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+    >
+      <div class="facets__inputs-wrapper">
+        <ul class="facets__inputs-list list-unstyled">
+          {%- for age in unique_ages -%}
+            {%- assign age_parts = age | split: ':' -%}
+            {%- assign age_stripped = age_parts[0] | strip -%}
+            {%- assign age_product_count = age_parts[1] | strip -%}
+            {%- if age_stripped != '' -%}
+              {%- assign age_id = 'age-filter-' | append: forloop.index | append: '-' | append: filter_style -%}
+              <li class="facets__inputs-list-item" data-skip-node-update="true">
+                <div class="checkbox age-filter-item">
+                  <input
+                    type="checkbox"
+                    id="{{ age_id }}"
+                    class="checkbox__input js-age-checkbox"
+                    data-age-value="{{ age_stripped }}"
+                    value="{{ age_stripped }}"
+                  >
+                  <label class="checkbox__label" for="{{ age_id }}" role="checkbox">
+                    {{ 'icon-checkmark.svg' | inline_asset_content }}
+                    <span class="checkbox__label-text">ab {{ age_stripped }} Jahre <span style="color: #767676;">({{ age_product_count }})</span></span>
+                  </label>
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+{%- endif -%}

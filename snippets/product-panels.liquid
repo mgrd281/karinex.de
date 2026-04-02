@@ -1,0 +1,120 @@
+<!-- ======= FUNKTIONEN / PRODUKTDETAILS TAB ======= -->
+<div id="features-panel" class="tab-content">
+  {%- if is_digital -%}
+    <h2>Funktionen</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">Sofortiger Download nach Kauf</li>
+      <li style="margin-bottom:var(--space-sm);">100 % legaler & originaler Lizenzschlüssel</li>
+      <li style="margin-bottom:var(--space-sm);">Dauerlizenz – kein Abo, keine monatlichen Kosten</li>
+      <li style="margin-bottom:var(--space-sm);">Einfache Online-Aktivierung mit Anleitung</li>
+      <li style="margin-bottom:var(--space-sm);">Hersteller: {{ product.vendor }}</li>
+      <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
+    </ul>
+  {%- elsif is_watch -%}
+    <h2>Produktdetails</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">100 % originale Markenware mit Echtheits-Garantie</li>
+      <li style="margin-bottom:var(--space-sm);">Offizielle Herstellergarantie inklusive</li>
+      <li style="margin-bottom:var(--space-sm);">Hochwertige Verpackung – ideal als Geschenk</li>
+      <li style="margin-bottom:var(--space-sm);">Hersteller: {{ product.vendor }}</li>
+      <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
+    </ul>
+  {%- elsif is_lego -%}
+    <h2>Produktdetails</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">Original LEGO Neuware – versiegelt im Karton</li>
+      <li style="margin-bottom:var(--space-sm);">Sicher verpackt – ideal als Geschenk</li>
+      <li style="margin-bottom:var(--space-sm);">Inklusive Bauanleitung</li>
+      <li style="margin-bottom:var(--space-sm);">Hersteller: {{ product.vendor }}</li>
+      <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
+    </ul>
+  {%- elsif is_game -%}
+    <h2>Produktdetails</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">Original Neuware – versiegelt</li>
+      <li style="margin-bottom:var(--space-sm);">Sofort spielbar nach Aktivierung</li>
+      <li style="margin-bottom:var(--space-sm);">Sicher verpackt – ideal als Geschenk</li>
+      <li style="margin-bottom:var(--space-sm);">Hersteller: {{ product.vendor }}</li>
+      <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
+    </ul>
+  {%- else -%}
+    <h2>Produktdetails</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">Original Neuware</li>
+      <li style="margin-bottom:var(--space-sm);">Sicher verpackt – ideal als Geschenk</li>
+      <li style="margin-bottom:var(--space-sm);">Hersteller: {{ product.vendor }}</li>
+      <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
+    </ul>
+  {%- endif -%}
+</div>
+
+<!-- ======= SYSTEMANFORDERUNGEN / LIEFERUNG TAB ======= -->
+<div id="requirements-panel" class="tab-content">
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'system_requirements' -%}
+      <div class="system-req-block" {{ block.shopify_attributes }}>
+        {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+        <div class="rte">
+          <table class="responsive-table">
+            <tbody>
+              <tr><td><strong>Betriebssystem:</strong></td><td>{{ block.settings.os }}</td></tr>
+              <tr><td><strong>Prozessor:</strong></td><td>{{ block.settings.cpu }}</td></tr>
+              <tr><td><strong>Arbeitsspeicher:</strong></td><td>{{ block.settings.ram }}</td></tr>
+              <tr><td><strong>Festplattenspeicher:</strong></td><td>{{ block.settings.storage }}</td></tr>
+              <tr><td><strong>Grafikkarte:</strong></td><td>{{ block.settings.gpu }}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <style>
+          .system-req-block table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+          .system-req-block td { padding: 8px; border-bottom: 1px solid #eee; }
+          .system-req-block td:first-child { width: 180px; font-weight: 600; color: #555; }
+        </style>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if is_digital -%}
+    {% assign title_l = product.title | downcase %}
+    {% assign tags_l = product.tags | join: ',' | downcase %}
+    {% assign type_l = product.type | downcase %}
+    {% assign sys_all = product.metafields.custom.system_requirements | default: '' %}
+    {% assign sys_win = product.metafields.custom.system_requirements_windows | default: '' %}
+    {% assign sys_mac = product.metafields.custom.system_requirements_macos | default: '' %}
+    {% assign is_win = false %}
+    {% assign is_mac = false %}
+    {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
+    {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
+    <h2>Systemvoraussetzungen</h2>
+    {% if sys_all != '' %}
+      <div class="rte">{{ sys_all }}</div>
+    {% elsif is_win and sys_win != '' %}
+      <div class="rte">{{ sys_win }}</div>
+    {% elsif is_mac and sys_mac != '' %}
+      <div class="rte">{{ sys_mac }}</div>
+    {% else %}
+      <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+        {% if is_win and is_mac == false %}
+          <li style="margin-bottom:var(--space-sm);">Kompatibles Betriebssystem: Windows</li>
+        {% elsif is_mac and is_win == false %}
+          <li style="margin-bottom:var(--space-sm);">Kompatibles Betriebssystem: macOS</li>
+        {% elsif is_win and is_mac %}
+          <li style="margin-bottom:var(--space-sm);">Kompatibles Betriebssystem: Windows oder macOS</li>
+        {% else %}
+          <li style="margin-bottom:var(--space-sm);">Kompatibles Betriebssystem erforderlich</li>
+        {% endif %}
+        <li style="margin-bottom:var(--space-sm);">Internetverbindung für Download & Aktivierung</li>
+        <li style="margin-bottom:var(--space-sm);">Ausreichender freier Speicherplatz</li>
+        <li style="margin-bottom:var(--space-sm);">Details siehe Produktbeschreibung</li>
+      </ul>
+    {% endif %}
+  {%- else -%}
+    <h2>Lieferung &amp; Rückgabe</h2>
+    <ul style="margin-left:var(--space-lg);color:var(--text-light);">
+      <li style="margin-bottom:var(--space-sm);">Lieferzeit: 1–3 Werktage innerhalb Deutschlands</li>
+      <li style="margin-bottom:var(--space-sm);">Versanddienstleister: DHL</li>
+      <li style="margin-bottom:var(--space-sm);">Kostenloser Versand &amp; Rückversand</li>
+      <li style="margin-bottom:var(--space-sm);">14 Tage Widerrufsrecht &amp; kostenfreie Retoure</li>
+    </ul>
+  {%- endif -%}
+</div>

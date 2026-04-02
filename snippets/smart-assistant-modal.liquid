@@ -1,0 +1,843 @@
+<!-- 
+  =============================================
+  PREMIUM SMART PRODUCT ASSISTANT
+  ============================================= 
+-->
+
+<div id="smart-assistant-modal" class="sa-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="saTitle">
+  <div class="sa-modal" id="saModalPanel" tabindex="-1">
+    
+    <!-- Mobile Drag Indicator -->
+    <div class="sa-drag-indicator"></div>
+
+    <div class="sa-modal-content">
+      
+      <!-- Header -->
+      <div class="sa-header">
+        <div class="sa-header__text">
+          <h2 class="sa-title" id="saTitle">Frage zum Artikel</h2>
+          <p class="sa-subtitle" id="saSub">Art.-Nr: {{ product.metafields.custom.artikelnummer | default: product.id | slice: -6, 6 }} &middot; {{ product.title | truncate: 30 }}</p>
+        </div>
+        <button class="sa-close-btn" type="button" aria-label="Schließen" onclick="closeSmartAssistant(); return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- PROGRESS TRACKER -->
+      <div class="sa-progress-bar">
+        <div class="sa-progress-fill" id="saProgressFill"></div>
+      </div>
+
+      <!-- VIEW PANELS -->
+      <div class="sa-views-container" id="saViewsContainer">
+        
+        <!-- ==========================
+             STEP 1: SMART CATEGORIES 
+             ========================== -->
+        <div class="sa-view sa-view--active" id="saView1">
+          <h3 class="sa-step-title">Wie können wir Ihnen helfen?</h3>
+          <p class="sa-step-desc">Wählen Sie das Thema Ihrer Anfrage für eine schnellere Bearbeitung.</p>
+
+          <div class="sa-category-grid">
+            {%- assign ptype_lc = product.type | downcase -%}
+            {%- assign vendor_lc = product.vendor | downcase -%}
+            
+            {%- if ptype_lc contains 'uhr' or vendor_lc contains 'michael kors' or vendor_lc contains 'boss' -%}
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Echtheit & Zustand', 'Ist die Uhr original und neuwertig?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span>Echtheit & Zustand</span>
+              </button>
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Lieferumfang', 'Was ist genau im Lieferumfang enthalten?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+                <span>Lieferumfang</span>
+              </button>
+            {%- elsif template contains 'product' and product.tags contains 'Software' or ptype_lc contains 'software' -%}
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Aktivierung', 'Wie funktioniert die Aktivierung des Produktschlüssels?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                </div>
+                <span>Aktivierung</span>
+              </button>
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Kompatibilität', 'Ist die Software mit meinem System kompatibel?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <span>Kompatibilität</span>
+              </button>
+            {%- else -%}
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Kompatibilität', 'Ist das Produkt kompatibel mit meinem Gerät?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <span>Eigenschaften</span>
+              </button>
+              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Lieferzeit', 'Wie lange dauert die Lieferzeit?')">
+                <div class="sa-cat-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <span>Lieferzeit & Versand</span>
+              </button>
+            {%- endif -%}
+
+            <button type="button" class="sa-category-btn" onclick="saSelectCategory('Rechnung', 'Kann ich eine Rechnung erhalten?')">
+              <div class="sa-cat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <span>Rechnung</span>
+            </button>
+            <button type="button" class="sa-category-btn" onclick="saSelectCategory('Sonstiges', '')">
+              <div class="sa-cat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </div>
+              <span>Sonstiges</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==========================
+             STEP 2: FORM INPUT 
+             ========================== -->
+        <div class="sa-view" id="saView2">
+            
+          <button type="button" class="sa-back-btn" onclick="saGoBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            Zurück zur Themenwahl
+          </button>
+            
+          <form method="post" action="/contact#contact_form" id="sa_contact_form" class="sa-form" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="form_type" value="contact">
+            <input type="hidden" name="utf8" value="✓">
+            <input type="hidden" id="saTopicInput" name="contact[Thema]" value="">
+            <input type="hidden" name="contact[produkt_title]" value="{{ product.title }}">
+            <input type="hidden" name="contact[produkt_url]" value="{{ shop.url }}{{ product.url }}">
+            
+            <div class="sa-row">
+              <div class="sa-field sa-field--select">
+                <select id="saAnrede" class="sa-input" name="contact[anrede]" required>
+                  <option value="" disabled selected></option>
+                  <option value="Frau">Frau</option>
+                  <option value="Herr">Herr</option>
+                  <option value="Divers">Divers</option>
+                </select>
+                <label for="saAnrede" class="sa-label">Anrede</label>
+              </div>
+              <div class="sa-field">
+                <input id="saVorname" class="sa-input" name="contact[vorname]" type="text" required placeholder=" ">
+                <label for="saVorname" class="sa-label">Vorname</label>
+              </div>
+            </div>
+
+            <div class="sa-field">
+              <input id="saNachname" class="sa-input" name="contact[nachname]" type="text" required placeholder=" ">
+              <label for="saNachname" class="sa-label">Nachname</label>
+            </div>
+
+            <div class="sa-field">
+              <input id="saEmail" class="sa-input" name="contact[email]" type="email" required placeholder=" ">
+              <label for="saEmail" class="sa-label">E-Mail Adresse</label>
+            </div>
+
+            <div class="sa-field sa-field--textarea">
+              <textarea id="saBody" class="sa-input" name="contact[body]" required placeholder=" " maxlength="800"></textarea>
+              <label for="saBody" class="sa-label">Ihre Nachricht</label>
+            </div>
+
+            <label class="sa-upload-area" for="saFileInput" id="saDropZone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+              </svg>
+              <div class="sa-upload-text">
+                <span id="saFileLabel">Bild oder Dokument anhängen</span>
+                <span class="sa-upload-subtext">JPG, PNG, PDF (Max. 3 Dateien)</span>
+              </div>
+              <input type="file" id="saFileInput" name="contact[attachment]" accept="image/*,.pdf" multiple>
+            </label>
+            
+            <div class="sa-file-grid" id="saFileGrid"></div>
+
+            <p class="sa-legal-text">
+              Mit dem Absenden akzeptieren Sie unsere <a href="/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a>.
+            </p>
+
+            <div class="sa-submit-wrapper">
+              <button type="submit" class="sa-btn-primary" id="saSubmitBtn">
+                <span class="sa-btn-text">Sicher absenden</span>
+                <div class="sa-btn-loader"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ==========================
+             STEP 3: SUCCESS STATE
+             ========================== -->
+        <div class="sa-view" id="saView3">
+          <div class="sa-success-wrapper">
+            <div class="sa-success-icon-anim">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+            </div>
+            <h3 class="sa-success-title">Vielen Dank!</h3>
+            <p class="sa-success-text">
+              Ihre Anfrage wurde erfolgreich an unser Expertenteam übermittelt. Wir antworten Ihnen schnellstmöglich (meist innerhalb weniger Stunden).
+            </p>
+            <button type="button" class="sa-btn-secondary" onclick="closeSmartAssistant()">Schließen</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Variables & Typography ── */
+:root {
+  --sa-primary: #1D4739;
+  --sa-primary-hover: #16362b;
+  --sa-bg: #ffffff;
+  --sa-surface: #F5F5F7;
+  --sa-surface-hover: #EBEBEF;
+  --sa-border: #E5E5EA;
+  --sa-text: #1D1D1F;
+  --sa-text-muted: #86868B;
+  --sa-radius-modal: 20px;
+  --sa-radius-input: 12px;
+  --sa-transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --sa-focus-ring: rgba(29, 71, 57, 0.15);
+}
+
+/* ── Trigger Button ── */
+.frage-btn {
+  background: none; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--sa-text); font: 500 15px/1.2 Inter, -apple-system, sans-serif;
+  padding: 0; outline: none; transition: color 0.2s ease;
+}
+.frage-btn:hover { color: var(--sa-primary); }
+.frage-icon { color: var(--sa-primary); font-size: 16px; }
+
+/* ── Overlay ── */
+.sa-overlay {
+  display: none;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  z-index: 999999 !important;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s;
+  padding: 20px;
+}
+.sa-overlay.is-open {
+  display: flex !important;
+  opacity: 1;
+  visibility: visible;
+}
+body.sa-modal-open { overflow: hidden; }
+
+/* ── Modal Container ── */
+.sa-modal {
+  background: var(--sa-bg);
+  border-radius: var(--sa-radius-modal);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+  transform: translateY(30px) scale(0.98);
+  opacity: 0;
+  transition: transform var(--sa-transition), opacity var(--sa-transition);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+.sa-overlay.is-open .sa-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* ── Content Area Wrapper ── */
+.sa-modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+}
+
+/* ── Header ── */
+.sa-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24px 32px 16px;
+  background: var(--sa-bg);
+  z-index: 10;
+  flex-shrink: 0;
+}
+.sa-header__text { display: flex; flex-direction: column; gap: 4px; padding-right: 16px;}
+.sa-title { font: 600 22px/1.2 Inter, -apple-system, sans-serif; color: var(--sa-text); margin: 0; letter-spacing: -0.02em; }
+.sa-subtitle { font: 400 13px/1.4 Inter, -apple-system, sans-serif; color: var(--sa-text-muted); margin: 0; }
+
+.sa-close-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--sa-surface);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.sa-close-btn svg { width: 14px; height: 14px; stroke: var(--sa-text); stroke-width: 2.5; }
+.sa-close-btn:hover { background: var(--sa-surface-hover); transform: scale(1.05); }
+.sa-close-btn:active { transform: scale(0.95); }
+
+/* ── Progress Bar ── */
+.sa-progress-bar {
+  height: 2px;
+  background: var(--sa-surface);
+  width: 100%;
+  flex-shrink: 0;
+}
+.sa-progress-fill {
+  height: 100%;
+  background: var(--sa-primary);
+  width: 50%; /* Default Step 1 */
+  transition: width 0.4s ease;
+}
+
+/* ── View Controller ── */
+.sa-views-container {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 32px 32px;
+  scrollbar-width: none;
+}
+.sa-views-container::-webkit-scrollbar { display: none; }
+
+.sa-view {
+  display: none;
+  animation: saFadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.sa-view.sa-view--active {
+  display: block;
+}
+
+@keyframes saFadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Step 1: Categories ── */
+.sa-step-title { font: 600 17px/1.3 Inter, -apple-system, sans-serif; color: var(--sa-text); margin: 0 0 4px; }
+.sa-step-desc { font: 400 14px/1.4 Inter, -apple-system, sans-serif; color: var(--sa-text-muted); margin: 0 0 24px; }
+
+.sa-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.sa-category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--sa-border);
+  background: var(--sa-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: Inter, sans-serif;
+  color: var(--sa-text);
+  -webkit-tap-highlight-color: transparent;
+}
+.sa-category-btn span { font-size: 14px; font-weight: 500; }
+.sa-cat-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--sa-surface);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--sa-primary);
+  transition: all 0.2s;
+}
+.sa-cat-icon svg { width: 18px; height: 18px; }
+
+.sa-category-btn:hover { border-color: var(--sa-primary); background: #fdfdfd; box-shadow: 0 4px 12px rgba(29, 71, 57, 0.05); transform: translateY(-2px); }
+.sa-category-btn:hover .sa-cat-icon { background: rgba(29, 71, 57, 0.08); }
+.sa-category-btn:active { transform: translateY(0) scale(0.98); }
+
+/* ── Step 2: Form ── */
+.sa-back-btn {
+  background: none; border: none; padding: 0; margin: 0 0 24px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 500 14px Inter, sans-serif; color: var(--sa-text-muted);
+  cursor: pointer; transition: color 0.2s;
+}
+.sa-back-btn svg { width: 14px; height: 14px; }
+.sa-back-btn:hover { color: var(--sa-text); }
+
+.sa-form { display: flex; flex-direction: column; gap: 16px; }
+.sa-row { display: flex; gap: 16px; }
+.sa-row > * { flex: 1 1 0; }
+
+/* Floating Labels */
+.sa-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.sa-input {
+  width: 100%;
+  padding: 22px 16px 8px;
+  border-radius: var(--sa-radius-input);
+  background: var(--sa-surface);
+  border: 1px solid transparent;
+  font: 400 15px/1.4 Inter, sans-serif;
+  color: var(--sa-text);
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+}
+.sa-field--textarea .sa-input {
+  min-height: 120px;
+  resize: none;
+}
+.sa-field--select .sa-input {
+  padding: 16px;
+  color: transparent; /* visually hide until selected if empty, but CSS floating handles it */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2386868B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+}
+.sa-field--select .sa-input:not(:invalid) {
+  padding: 22px 16px 8px;
+  color: var(--sa-text);
+}
+
+.sa-label {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  color: var(--sa-text-muted);
+  font: 400 15px Inter, sans-serif;
+  pointer-events: none;
+  transform-origin: left top;
+  transition: all 0.2s ease;
+}
+
+/* Floating animation */
+.sa-input:focus,
+.sa-input:not(:placeholder-shown) {
+  background: var(--sa-bg);
+  border-color: var(--sa-primary);
+  box-shadow: 0 0 0 3px var(--sa-focus-ring);
+}
+.sa-input:focus + .sa-label,
+.sa-input:not(:placeholder-shown) + .sa-label {
+  transform: translateY(-8px) scale(0.75);
+  color: var(--sa-primary);
+  font-weight: 500;
+}
+.sa-input:not(:focus):not(:placeholder-shown) + .sa-label {
+  color: var(--sa-text-muted);
+}
+.sa-field--select .sa-input:valid + .sa-label {
+  transform: translateY(-8px) scale(0.75);
+  color: var(--sa-text-muted);
+}
+.sa-field--select .sa-input:focus + .sa-label {
+  color: var(--sa-primary);
+}
+
+/* File Upload */
+.sa-upload-area {
+  border: 1.5px dashed var(--sa-border);
+  border-radius: var(--sa-radius-input);
+  background: var(--sa-bg);
+  padding: 20px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sa-upload-area:hover, .sa-upload-area.is-dragover {
+  border-color: var(--sa-primary);
+  background: rgba(29, 71, 57, 0.02);
+}
+.sa-upload-area input[type="file"] { display: none; }
+.sa-upload-area svg { width: 24px; height: 24px; stroke: var(--sa-text-muted); flex-shrink: 0; transition: stroke 0.2s; }
+.sa-upload-area:hover svg { stroke: var(--sa-primary); }
+.sa-upload-text { display: flex; flex-direction: column; gap: 2px; }
+.sa-upload-text span:first-child { font: 500 14px Inter, sans-serif; color: var(--sa-text); }
+.sa-upload-subtext { font: 400 12px Inter, sans-serif; color: var(--sa-text-muted); }
+
+/* File Previews */
+.sa-file-grid {
+  display: none; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.sa-file-item {
+  position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--sa-border); background: var(--sa-surface);
+  display: flex; align-items: center; justify-content: center;
+}
+.sa-file-item img { width: 100%; height: 100%; object-fit: cover; }
+.sa-file-item-txt { font: 600 12px Inter, sans-serif; color: var(--sa-primary); }
+.sa-file-remove {
+  position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
+  border-radius: 50%; background: rgba(255,255,255,0.9); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.sa-file-remove svg { width: 12px; height: 12px; stroke: #111; stroke-width: 2.5; }
+
+/* Legal text */
+.sa-legal-text { font: 400 12px/1.5 Inter, sans-serif; color: var(--sa-text-muted); text-align: center; margin: 8px 0; }
+.sa-legal-text a { color: var(--sa-text); text-decoration: underline; }
+
+/* Buttons */
+.sa-submit-wrapper {
+  margin-top: 8px;
+}
+
+.sa-btn-primary {
+  position: relative;
+  width: 100%;
+  height: 52px;
+  background: var(--sa-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font: 600 16px Inter, sans-serif;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+}
+.sa-btn-primary:hover { background: var(--sa-primary-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(29, 71, 57, 0.2); }
+.sa-btn-primary:active { transform: translateY(0) scale(0.98); }
+
+.sa-btn-primary.is-loading .sa-btn-text { opacity: 0; }
+.sa-btn-primary.is-loading .sa-btn-loader { display: block; }
+.sa-btn-loader {
+  display: none; position: absolute;
+  width: 20px; height: 20px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: saSpin 0.8s linear infinite;
+}
+@keyframes saSpin { to { transform: rotate(360deg); } }
+
+/* ── Step 3: Success ── */
+.sa-success-wrapper {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 32px 0 24px;
+}
+.sa-success-icon-anim {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #E8F5EE; color: var(--sa-primary);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+  transform: scale(0);
+  animation: saPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
+}
+.sa-success-icon-anim svg { width: 32px; height: 32px; stroke-dasharray: 50; stroke-dashoffset: 50; animation: saDrawCheck 0.4s ease forwards 0.4s; }
+.sa-success-title { font: 700 24px Inter, sans-serif; color: var(--sa-text); margin: 0 0 12px; }
+.sa-success-text { font: 400 15px/1.5 Inter, sans-serif; color: var(--sa-text-muted); margin: 0 0 32px; max-width: 400px; }
+
+.sa-btn-secondary {
+  height: 48px; padding: 0 32px;
+  background: var(--sa-surface); color: var(--sa-text);
+  border: none; border-radius: 999px;
+  font: 600 15px Inter, sans-serif; cursor: pointer; transition: background 0.2s;
+}
+.sa-btn-secondary:hover { background: var(--sa-border); }
+
+@keyframes saPopIn {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+@keyframes saDrawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Mobile UI (Bottom Sheet) ── */
+.sa-drag-indicator { display: none; }
+
+@media (max-width: 680px) {
+  .sa-overlay { padding: 0; align-items: flex-end; }
+  .sa-modal {
+    width: 100% !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    border-radius: 28px 28px 0 0;
+    max-height: 94vh;
+    bottom: 0 !important;
+    top: auto !important;
+    transform: translateY(100%);
+    box-shadow: 0 -15px 50px rgba(0,0,0,0.25);
+  }
+  .sa-overlay.is-open .sa-modal {
+    transform: translateY(0);
+    /* Spring-like transition on mobile */
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  
+  .sa-drag-indicator {
+    display: block; width: 40px; height: 4px;
+    background: #E5E5EA; border-radius: 4px;
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    z-index: 20;
+  }
+  
+  .sa-header { padding: 28px 20px 16px; }
+  .sa-views-container { padding: 16px 20px 32px; }
+  .sa-title { font-size: 20px; }
+  .sa-category-grid { grid-template-columns: 1fr; gap: 10px; }
+  .sa-category-btn { flex-direction: row; align-items: center; padding: 16px; }
+  
+  .sa-row { flex-direction: column; gap: 16px; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  /* Selectors */
+  var overlay = document.getElementById('smart-assistant-modal');
+  var view1 = document.getElementById('saView1');
+  var view2 = document.getElementById('saView2');
+  var view3 = document.getElementById('saView3');
+  var progress = document.getElementById('saProgressFill');
+  var topicInput = document.getElementById('saTopicInput');
+  var bodyTextarea = document.getElementById('saBody');
+  var form = document.getElementById('sa_contact_form');
+  var submitBtn = document.getElementById('saSubmitBtn');
+  
+  if(!overlay) return;
+
+  /* Global open/close */
+  window.openSmartAssistant = function() {
+    overlay.style.display = 'flex';
+    // Force reflow before adding is-open so the CSS transition fires
+    overlay.getBoundingClientRect();
+    overlay.classList.add('is-open');
+    document.body.classList.add('sa-modal-open');
+    
+    // Reset to view 1
+    view1.classList.add('sa-view--active');
+    view2.classList.remove('sa-view--active');
+    view3.classList.remove('sa-view--active');
+    progress.style.width = '50%';
+    
+    // Hide old modal if it exists to prevent overlap
+    var oldModal = document.getElementById('frage-modal');
+    if(oldModal) oldModal.style.display = 'none';
+  };
+
+  window.closeSmartAssistant = function() {
+    overlay.classList.remove('is-open');
+    setTimeout(function(){
+      overlay.style.display = 'none';
+      document.body.classList.remove('sa-modal-open');
+    }, 300);
+  };
+
+  /* Step Navigation */
+  window.saSelectCategory = function(topic, defaultText) {
+    if(topicInput) topicInput.value = topic;
+    
+    // Pre-fill textarea if empty or replace if it matches another default
+    if(bodyTextarea && (!bodyTextarea.value || bodyTextarea.dataset.isDefault === 'true')) {
+      bodyTextarea.value = defaultText;
+      bodyTextarea.dataset.isDefault = 'true';
+    }
+
+    // Switch views
+    view1.classList.remove('sa-view--active');
+    view2.classList.add('sa-view--active');
+    progress.style.width = '100%';
+    
+    // Auto-focus first empty field
+    setTimeout(function() {
+      var vorname = document.getElementById('saVorname');
+      if(vorname && !vorname.value) vorname.focus();
+    }, 100);
+  };
+
+  window.saGoBack = function() {
+    view2.classList.remove('sa-view--active');
+    view1.classList.add('sa-view--active');
+    progress.style.width = '50%';
+  };
+
+  /* Clear default flag on manual input */
+  if(bodyTextarea) {
+    bodyTextarea.addEventListener('input', function(){
+      this.dataset.isDefault = 'false';
+    });
+  }
+
+  /* Overlay click to close */
+  overlay.addEventListener('click', function(e) {
+    if(e.target === overlay) closeSmartAssistant();
+  });
+  
+  // Escape key to close
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay.classList.contains('is-open')) closeSmartAssistant();
+  });
+
+  /* ── File Drag & Drop Logic ── */
+  var fileInput = document.getElementById('saFileInput');
+  var dropZone = document.getElementById('saDropZone');
+  var grid = document.getElementById('saFileGrid');
+  var fileLabel = document.getElementById('saFileLabel');
+  var uploadedFiles = [];
+
+  function renderSaFiles() {
+    if(!grid) return;
+    grid.innerHTML = '';
+    
+    if(uploadedFiles.length === 0) {
+      grid.style.display = 'none';
+      if(fileLabel) fileLabel.textContent = 'Bild oder Dokument anhängen';
+      return;
+    }
+    
+    grid.style.display = 'grid';
+    if(fileLabel) fileLabel.textContent = uploadedFiles.length + ' Datei' + (uploadedFiles.length > 1 ? 'en' : '') + ' ausgewählt';
+
+    uploadedFiles.forEach((file, idx) => {
+      var item = document.createElement('div');
+      item.className = 'sa-file-item';
+      
+      var rmBtn = document.createElement('button');
+      rmBtn.className = 'sa-file-remove';
+      rmBtn.type = 'button';
+      rmBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+      rmBtn.onclick = function(e){
+        e.preventDefault(); e.stopPropagation();
+        uploadedFiles.splice(idx, 1);
+        syncSaInput();
+        renderSaFiles();
+      };
+
+      if(file.type.startsWith('image/')) {
+        var img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.onload = function(){ URL.revokeObjectURL(img.src); };
+        item.appendChild(img);
+      } else {
+        var str = document.createElement('div');
+        str.className = 'sa-file-item-txt';
+        str.textContent = file.name.split('.').pop().toUpperCase().substring(0,4);
+        item.appendChild(str);
+      }
+      
+      item.appendChild(rmBtn);
+      grid.appendChild(item);
+    });
+  }
+
+  function syncSaInput() {
+    if(!fileInput) return;
+    var dt = new DataTransfer();
+    uploadedFiles.forEach(f => dt.items.add(f));
+    fileInput.files = dt.files;
+  }
+
+  if(fileInput && dropZone) {
+    fileInput.addEventListener('change', function(e){
+      var files = Array.from(e.target.files);
+      uploadedFiles = uploadedFiles.concat(files).slice(0, 3); // Max 3 files
+      syncSaInput();
+      renderSaFiles();
+    });
+
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault(); dropZone.classList.add('is-dragover');
+    });
+    dropZone.addEventListener('dragleave', function(e) {
+      e.preventDefault(); dropZone.classList.remove('is-dragover');
+    });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault(); dropZone.classList.remove('is-dragover');
+      if(e.dataTransfer.files && e.dataTransfer.files.length) {
+        uploadedFiles = uploadedFiles.concat(Array.from(e.dataTransfer.files)).slice(0, 3);
+        syncSaInput();
+        renderSaFiles();
+      }
+    });
+  }
+
+  /* ── Form Submission ── */
+  if(form) {
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      
+      // Basic check
+      if(!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
+      submitBtn.classList.add('is-loading');
+      submitBtn.disabled = true;
+
+      var fd = new FormData(form);
+      // Append topic to subject
+      var subj = 'Frage zum Artikel: ' + document.querySelector('[name="contact[produkt_title]"]').value;
+      if(topicInput && topicInput.value) subj += ' (' + topicInput.value + ')';
+      fd.append('contact[subject]', subj);
+      
+      var fullName = fd.get('contact[anrede]') + ' ' + fd.get('contact[vorname]') + ' ' + fd.get('contact[nachname]');
+      var finalBody = fd.get('contact[body]') + '\n\n---\nKunde: ' + fullName.trim();
+      fd.set('contact[body]', finalBody);
+
+      fetch('/contact', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: fd
+      })
+      .then(function(){
+        view2.classList.remove('sa-view--active');
+        view3.classList.add('sa-view--active');
+      })
+      .catch(function(){
+        alert('Es gab ein Problem beim Senden. Bitte versuchen Sie es später erneut.');
+      })
+      .finally(function(){
+        submitBtn.classList.remove('is-loading');
+        submitBtn.disabled = false;
+      });
+    });
+  }
+
+  // Handle URL redirects on success
+  if (window.location.href.indexOf('?contact_posted=true') > -1) {
+    window.openSmartAssistant();
+    view1.classList.remove('sa-view--active');
+    view3.classList.add('sa-view--active');
+  }
+
+});
+</script>

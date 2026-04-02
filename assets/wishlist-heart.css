@@ -1,0 +1,177 @@
+/* 
+  AboutYou/BOSS-Style Wishlist Heart Styling
+  Refined for premium mobile experience.
+*/
+
+wishlist-heart {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.wishlist-heart__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    color: #111111;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.wishlist-heart__button:hover {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-heart__button:active {
+    transform: scale(0.93);
+}
+
+.wishlist-heart__button svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    fill: transparent;
+    transition: fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+}
+
+/* Saved State */
+wishlist-heart[saved] .wishlist-heart__button {
+    color: #1d4739;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+wishlist-heart[saved] .wishlist-heart__button svg {
+    fill: #1d4739;
+    stroke: #1d4739;
+    animation: elegantHeartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes elegantHeartPop {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.8); stroke-width: 2px; }
+  60%  { transform: scale(1.35); stroke-width: 1px; }
+  100% { transform: scale(1); stroke-width: 1.6px; }
+}
+
+/* Accessibility Focus */
+.wishlist-heart__button:focus-visible {
+    box-shadow: 0 0 0 2px #000, 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* ────────────────────────────────────────────────────────────
+   Desktop product-card: clean always-visible heart
+──────────────────────────────────────────────────────────── */
+@media (min-width: 990px) {
+
+    wishlist-heart {
+        top: 10px;
+        right: 10px;
+        z-index: 20;
+        opacity: 1;
+    }
+
+    .wishlist-heart__button {
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.10);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .wishlist-heart__button:hover {
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+        transform: scale(1.1);
+    }
+
+    .wishlist-heart__button svg {
+        width: 15px;
+        height: 15px;
+        stroke-width: 1.5;
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   Mobile product-card: larger, more prominent icon
+──────────────────────────────────────────────────────────── */
+@media (max-width: 989px) {
+
+    wishlist-heart {
+        top: 10px;
+        right: 10px;
+        z-index: 20;
+    }
+
+    .wishlist-heart__button {
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: 0 3px 14px rgba(0, 0, 0, 0.13);
+    }
+
+    .wishlist-heart__button svg {
+        width: 21px;
+        height: 21px;
+        stroke-width: 1.7;
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   PDP Mobile: Floating Glassmorphism Heart (Product Detail Page)
+──────────────────────────────────────────────────────────── */
+.pdp-mobile-wishlist {
+    display: none !important;
+}
+
+@media (max-width: 989px) {
+    .pdp-mobile-wishlist {
+        display: block !important;
+        position: absolute !important;
+        top: 15px !important;
+        right: 15px !important;
+        z-index: 100 !important;
+    }
+
+    .pdp-mobile-wishlist .wishlist-heart__button {
+        width: 46px !important;
+        height: 46px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.35) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+        color: #111 !important;
+    }
+
+    .pdp-mobile-wishlist .wishlist-heart__button svg {
+        width: 23px !important;
+        height: 23px !important;
+        stroke-width: 1.8 !important;
+    }
+
+    .pdp-mobile-wishlist[saved] .wishlist-heart__button {
+        background: rgba(255, 255, 255, 0.93) !important;
+        color: #1d4739 !important;
+    }
+}

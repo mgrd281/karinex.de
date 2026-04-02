@@ -1,0 +1,80 @@
+/* Fix for Safari red border on cart close button */
+.cart-drawer__close-button,
+.cart-drawer__close-button:focus,
+.cart-drawer__close-button:focus-visible,
+.cart-drawer__close-button:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  /* Ensure no background highlight */
+}
+
+/* Remove Safari-specific pseudo-element workaround if present */
+.cart-drawer__close-button::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Specific fix for Safari mobile tap highlight */
+.cart-drawer__close-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   GLOBAL LAYOUT ARCHITECTURE – STACKING & SAFE AREA
+   ============================================================ */
+
+/* 1. iOS safe area: viewport meta must declare viewport-fit=cover.
+      header-component gains padding-top via critical-css (env-based).
+      body itself does NOT need padding-top — header is sticky, not fixed. */
+body {
+  /* Allow content to extend into safe area — header handles the notch */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 2. header-component (Shopify custom element) — inherit safe area from
+      the sticky wrapper so the notch is always covered on iPhone */
+header-component {
+  padding-top: env(safe-area-inset-top);
+  /* Ensure no transform creates an unwanted stacking context */
+  transform: none;
+}
+
+/* 3. Standardised z-index scale (overrides theme --layer-* where needed)
+      Theme uses: sticky=8, menu-drawer=18, temporary=20
+      We raise the header above all drawers to prevent overlap.
+      UC cookie host is already at 2147483647 (max-int) — untouched.
+      Search modal is at 2000 and should float above header — keep.    */
+:root {
+  --layer-sticky: 100;
+  /* header: above all page content */
+  --layer-window-overlay: 150;
+  /* dropdowns / megamenu */
+  --layer-overlay: 200;
+  /* search overlay */
+  --layer-menu-drawer: 300;
+  /* mobile nav drawer */
+  --layer-temporary: 400;
+  /* modals / quick-add */
+  /* UC cookie: 2147483647 — already set in usercentrics-custom.css  */
+}
+
+/* 4. header-group must not clip or transform-lock its children */
+#header-group {
+  position: relative;
+  /* establishes stacking context for children */
+  z-index: var(--layer-sticky);
+  overflow: visible;
+  /* never clip dropdowns/megamenu */
+}
+
+/* 5. hero / first section: no extra top offset — JS --header-height var covers it.
+      Do not add negative margins here to compensate for sticky header. */
+
+
+/* 6. Announcement bar / global sale bar: below header in stacking order */
+#shopify-section-global-sale-bar {
+  position: relative;
+  z-index: calc(var(--layer-sticky) - 10);
+}

@@ -1,0 +1,1172 @@
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section color-{{ section.settings.color_scheme }}">
+  {%- if article and blog -%}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": {{ article.title | json }},
+      "description": {{ article.excerpt | strip_html | truncate: 160 | json }},
+      "image": [
+        {%- if article.image -%}
+          {{ article.image | image_url: width: 800, format: 'webp' | json }},
+          {{ article.image | image_url: width: 800, format: 'webp' | json }},
+          {{ article.image | image_url: width: 400, format: 'webp' | json }}
+        {%- else -%}
+          {{ 'logo.png' | asset_url | json }}
+        {%- endif -%}
+      ],
+      "datePublished": {{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+      "dateModified": {{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+      "author": {
+        "@type": "Person",
+        "name": {{ article.author | json }},
+        "url": {{ shop.url | append: "/blogs/" | append: blog.handle | json }}
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": {{ shop.name | json }},
+        "logo": {
+          "@type": "ImageObject",
+          "url": {{ 'logo.png' | asset_url | json }}
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": {{ shop.url | append: article.url | json }}
+      },
+      "wordCount": {{ article.content | strip_html | split: ' ' | size }},
+      "inLanguage": "{{ shop.locale }}",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": {{ blog.title | json }},
+        "url": {{ shop.url | append: blog.url | json }}
+      }
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": {{ shop.url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ blog.title | json }},
+          "item": {{ shop.url | append: blog.url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ article.title | json }},
+          "item": {{ shop.url | append: article.url | json }}
+        }
+      ]
+    }
+    </script>
+  {%- endif -%}
+  
+  <!-- Performance Optimizations -->
+  {%- if article -%}
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ 'section-main-blog-post.css' | asset_url }}" as="style">
+    {%- if article.image -%}
+      <link rel="preload" as="image" href="{{ article.image | image_url: width: 800, format: 'webp' }}" imagesrcset="{{ article.image | image_url: width: 400, format: 'webp' }} 400w, {{ article.image | image_url: width: 600, format: 'webp' }} 600w, {{ article.image | image_url: width: 800, format: 'webp' }} 800w" imagesizes="(max-width: 768px) 100vw, 50vw">
+    {%- endif -%}
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="//www.facebook.com">
+    <link rel="dns-prefetch" href="//twitter.com">
+    <link rel="dns-prefetch" href="//www.linkedin.com">
+    <link rel="dns-prefetch" href="//wa.me">
+  {%- endif -%}
+  
+  <!-- Article-specific Open Graph (not covered by global meta-tags.liquid) -->
+  {%- if article -%}
+    <meta property="article:published_time" content="{{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" }}">
+    <meta property="article:modified_time" content="{{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" }}">
+    <meta property="article:author" content="{{ article.author }}">
+    <meta property="article:section" content="{{ blog.title }}">
+    {%- for tag in article.tags limit: 5 -%}
+      <meta property="article:tag" content="{{ tag | escape }}">
+    {%- endfor -%}
+  {%- endif -%}
+  
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress-bar" id="readingProgress"></div>
+  
+  <div
+    class="
+      spacing-style
+      layout-panel-flex
+      layout-panel-flex--column
+      section-content-wrapper
+      mobile-column
+    "
+    style="
+      {% render 'layout-panel-style', settings: section.settings %}
+      {% render 'spacing-style', settings: section.settings %}
+      max-width: 1600px !important;
+    "
+  >
+    {%- comment -%} Hide duplicate title in header {%- endcomment -%}
+    <header class="blog-post-header" style="max-width: 1600px; margin: 0 auto; text-align: center; display: none;">
+      {%- content_for 'block', id: 'blog-post-title', type: 'text' %}
+      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' %}
+    </header>
+
+
+    
+    <div class="blog-post-content-wrapper" style="max-width: 1600px; margin: 0 auto; line-height: 1.9; font-size: 17px; color: #333; position: relative;">
+      
+      {%- comment -%} SEO ENHANCEMENT: Table of Contents & Social Share {%- endcomment -%}
+      <div class="blog-seo-container">
+        <!-- Sticky TOC -->
+        <aside class="blog-toc-sidebar">
+          <div class="blog-toc-sticky">
+            <h3 class="toc-title">Inhalt</h3>
+            <nav id="TableOfContents">
+              <!-- JS will populate this -->
+            </nav>
+            
+            <div class="blog-share-buttons">
+              <span class="share-title">Teilen:</span>
+              <button id="tts-toggle" class="share-btn tts-button" aria-label="Artikel vorlesen">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </button>
+              <a href="https://api.whatsapp.com/send?text={{ article.title | url_encode }}%20{{ shop.url | append: article.url | url_encode }}" target="_blank" class="share-btn whatsapp" aria-label="Share on WhatsApp">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.304-5.291c0-5.45 4.435-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ shop.url | append: article.url | url_encode }}&title={{ article.title | url_encode }}" target="_blank" class="share-btn linkedin" aria-label="Share on LinkedIn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+              <a href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url | append: article.url | url_encode }}" target="_blank" class="share-btn facebook" aria-label="Share on Facebook">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+              <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ shop.url | append: article.url | url_encode }}" target="_blank" class="share-btn twitter" aria-label="Share on Twitter">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+              </a>
+            </div>
+          </div>
+        </aside>
+
+        <div class="blog-main-content">
+          {%- content_for 'block', id: 'blog-post-content', type: '_blog-post-content' %}
+          
+          {%- comment -%} Author Bio {%- endcomment -%}
+          <div class="author-bio-box" data-nosnippet>
+            <div class="author-image">
+              {% if article.user.image %}
+                <img src="{{ article.user.image | image_url: width: 100, height: 100 }}" alt="{{ article.author }}" loading="lazy" width="80" height="80">
+              {% else %}
+                <div class="initials-avatar">{{ article.author | slice: 0, 1 }}</div>
+              {% endif %}
+            </div>
+            <div class="author-info">
+              <h4>{{ article.user.first_name | default: article.author }}</h4>
+              <p>{{ article.user.bio | default: 'Experte für Software und Technologie' }}</p>
+              <div class="article-stats">
+                <span class="funktionale-count" data-article-id="{{ article.id }}">1</span>
+                <span class="deutsches-datum">{{ article.published_at | date: "%d.%m.%Y" }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Dynamic area for @app blocks only, at the bottom {% endcomment %}
+    {% content_for 'blocks' %}
+
+    {%- comment -%} Related Products (Metafield per Article + Tag Fallback) {%- endcomment -%}
+    {%- assign meta_products = article.metafields.custom.related_products.value -%}
+    {%- assign has_meta_products = false -%}
+    {%- if meta_products != blank and meta_products.size > 0 -%}
+      {%- for p in meta_products -%}
+        {%- if p.available -%}
+          {%- assign has_meta_products = true -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- if has_meta_products -%}
+      <div class="blog-related-products">
+        <div class="blog-rp-header">
+          <span class="blog-rp-subtitle">{{ section.settings.related_products_subtitle }}</span>
+          <h3 class="blog-rp-title">{{ section.settings.related_products_title }}</h3>
+        </div>
+        <div class="blog-rp-grid">
+          {%- for product in meta_products -%}
+            {%- if product.available -%}
+              <a href="{{ product.url }}" class="blog-rp-card">
+                <div class="article-card__info">
+                  {%- if section.settings.show_date -%}
+                    <span>{{ article.published_at | time_tag: format: 'date' }}</span>
+                  {%- endif -%}
+                  {%- if section.settings.show_author -%}
+                    <span>&bull; {{ article.author }}</span>
+                  {%- endif -%}
+                  <span>&bull; 
+                    {%- assign word_count = article.content | strip_html | split: ' ' | size -%}
+                    {%- assign reading_time = word_count | divided_by: 200 | ceil -%}
+                    {{ reading_time }} Min. Lesezeit
+                  </span>
+                  <span class="article-meta-views">
+                    <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span class="article-view-count" data-article-id="{{ article.id }}">...</span>
+                  </span>
+                </div>
+                <div class="blog-rp-card__image">
+                  {%- if product.compare_at_price > product.price -%}
+                    {%- assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+                    <span class="blog-rp-card__badge">-{{ discount }}%</span>
+                  {%- endif -%}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 400 }}"
+                    alt="{{ product.title | escape }}"
+                    width="400"
+                    height="400"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                </div>
+                <div class="blog-rp-card__info">
+                  {%- if product.vendor != blank -%}
+                    <span class="blog-rp-card__vendor">{{ product.vendor }}</span>
+                  {%- endif -%}
+                  <span class="blog-rp-card__title">{{ product.title }}</span>
+                  <div class="blog-rp-card__prices">
+                    <span class="blog-rp-card__price{% if product.compare_at_price > product.price %} blog-rp-card__price--sale{% endif %}">{{ product.price | money }}</span>
+                    {%- if product.compare_at_price > product.price -%}
+                      <span class="blog-rp-card__compare-price">{{ product.compare_at_price | money }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- else -%}
+      {%- comment -%} Fallback: Search products via Shopify Search API (JS) {%- endcomment -%}
+      <div class="blog-related-products" id="blog-auto-products">
+        <div class="blog-rp-header">
+          <span class="blog-rp-subtitle">{{ section.settings.related_products_subtitle }}</span>
+          <h3 class="blog-rp-title">{{ section.settings.related_products_title }}</h3>
+        </div>
+        <div class="blog-rp-grid" id="blog-rp-grid-auto"></div>
+      </div>
+
+      <script>
+        (function() {
+          const articleTitle = {{ article.title | json }};
+          const moneyFormat = {{ shop.money_format | json }};
+
+          // Extract meaningful keywords from title
+          const stopWords = new Set([
+            'der','die','das','ein','eine','und','oder','aber','ist','sind','wird','hat','haben',
+            'für','von','mit','auf','aus','bei','nach','über','unter','vor','zwischen','durch',
+            'ihre','sein','seine','sich','nicht','auch','noch','mehr','sehr','wenn','dann','dass',
+            'dies','diese','dieser','alle','beim','einem','einen','einer','neue','neues','große',
+            'grosse','update','updates','sicherheitsupdate','patch','patchday','day',
+            'januar','februar','märz','april','mai','juni','juli','august','september',
+            'oktober','november','dezember','2024','2025','2026','2027',
+            'the','and','for','with','from','that','this','what','your','will','have','how',
+            'can','are','was','were','been','being','you','they','them','their','our'
+          ]);
+
+          const words = articleTitle
+            .replace(/[:\-–?!,.()\/\[\]"']/g, ' ')
+            .split(/\s+/)
+            .map(w => w.trim().toLowerCase())
+            .filter(w => w.length > 2 && !stopWords.has(w) && !/^\d+$/.test(w));
+
+          // Take first 3 meaningful keywords for search
+          const keywords = [...new Set(words)].slice(0, 3);
+          if (!keywords.length) {
+            document.getElementById('blog-auto-products').style.display = 'none';
+            return;
+          }
+
+          const query = keywords.join(' ');
+          const url = `/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=12&resources[options][unavailable_products]=hide`;
+
+          fetch(url)
+            .then(r => r.json())
+            .then(data => {
+              const products = data.resources?.results?.products || [];
+              if (!products.length) {
+                document.getElementById('blog-auto-products').style.display = 'none';
+                return;
+              }
+
+              const grid = document.getElementById('blog-rp-grid-auto');
+              const fmt = (v) => parseFloat(v).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' \u20ac';
+
+              grid.innerHTML = products.map(product => {
+                const price = parseFloat(product.price);
+                const comparePrice = parseFloat(product.compare_at_price_max || product.compare_at_price || 0);
+                const hasDiscount = comparePrice > price;
+                const discountPct = hasDiscount ? Math.round((comparePrice - price) / comparePrice * 100) : 0;
+                const img = product.image || product.featured_image?.url || '';
+                const vendor = product.vendor || '';
+                const title = product.title || '';
+
+                return `
+                  <a href="${product.url}" class="blog-rp-card">
+                    <div class="blog-rp-card__image">
+                      ${hasDiscount ? `<span class="blog-rp-card__badge">-${discountPct}%</span>` : ''}
+                      <img src="${img}" alt="${title}" width="400" height="400" loading="lazy" decoding="async">
+                    </div>
+                    <div class="blog-rp-card__info">
+                      ${vendor ? `<span class="blog-rp-card__vendor">${vendor}</span>` : ''}
+                      <span class="blog-rp-card__title">${title}</span>
+                      <div class="blog-rp-card__prices">
+                        <span class="blog-rp-card__price${hasDiscount ? ' blog-rp-card__price--sale' : ''}">${fmt(price)}</span>
+                        ${hasDiscount ? `<span class="blog-rp-card__compare-price">${fmt(comparePrice)}</span>` : ''}
+                      </div>
+                    </div>
+                  </a>
+                `;
+              }).join('');
+            })
+            .catch(() => {
+              document.getElementById('blog-auto-products').style.display = 'none';
+            });
+        })();
+      </script>
+    {%- endif -%}
+
+    {% if blog.comments_enabled? %}
+      <div class="blog-post-comments-container">
+        <h2 class="h3">{{- 'blogs.article.comments_heading' | t: count: article.comments_count -}}</h2>
+
+        <div class="blog-post-comments">
+          {% paginate article.comments by 10 %}
+            {% for comment in article.comments %}
+              <div class="blog-post-comment">
+                {{ comment.content }}
+                <div class="blog-post-comment__author">
+                  <span class="blog-post-comment__author-name">{{- comment.author -}}</span>
+                  <span>{{- 'blogs.article.comment_author_separator' | t -}}</span>
+                  <span class="blog-post-comment__date">
+                    {{- comment.created_at | time_tag: format: 'date' -}}
+                  </span>
+                </div>
+              </div>
+            {% endfor %}
+
+            <div class="blog-post-comments-pagination">
+              {{- paginate | default_pagination -}}
+            </div>
+          {% endpaginate %}
+        </div>
+
+        {% render 'blog-comment-form', article: article, section_id: section.id %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+
+{% stylesheet %}
+  .blog-post-comments-container {
+    width: 100%;
+    max-width: var(--normal-content-width);
+    margin: 0 auto;
+  }
+
+  .blog-post-comments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-3xl);
+  }
+
+  .blog-post-comment__author {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-2xs);
+    margin-top: var(--margin-md);
+    font-size: var(--font-size--body-sm);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-subdued-text));
+  }
+
+  .blog-post-comments-pagination {
+    display: flex;
+    justify-content: center;
+    gap: var(--gap-2xs);
+  }
+
+  .blog-post-comments-pagination,
+  .blog-post-comments-pagination a {
+    color: var(--color-foreground);
+  }
+
+  .blog-post-comments-pagination .current {
+    color: var(--color-foreground);
+  }
+
+  .blog-post-comments-pagination .current,
+  .blog-post-comments-pagination a {
+    display: block;
+    padding: var(--padding-2xs) var(--padding-xs);
+  }
+
+  .blog-post-comments-pagination .current,
+  .blog-post-comments-pagination a:hover {
+    border-bottom: 1px solid var(--color-foreground);
+  }
+
+  /* Enhanced Blog Typography & Layout */
+  .blog-post-content-wrapper p {
+    margin-bottom: 1.5em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  }
+  .blog-post-content-wrapper h2 {
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    font-weight: 800;
+    scroll-margin-top: 100px;
+  }
+  .blog-post-content-wrapper h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    scroll-margin-top: 100px;
+  }
+  .blog-post-content-wrapper a {
+    color: #e30613; /* Accent color */
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .blog-post-content-wrapper blockquote {
+    border-left: 4px solid #e30613;
+    padding-left: 20px;
+    font-style: italic;
+    color: #555;
+    margin: 30px 0;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* SEO Layout: Sidebar + Content */
+  .blog-seo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    position: relative;
+  }
+  
+  .blog-toc-sidebar {
+    flex: 0 0 250px;
+    display: none; /* Mobile first hidden, shown on desktop */
+  }
+
+  @media (min-width: 1024px) {
+    .blog-toc-sidebar {
+      display: block;
+    }
+    .blog-main-content {
+      flex: 1;
+      max-width: calc(100% - 290px);
+    }
+  }
+
+  .blog-main-content {
+    width: 100%;
+  }
+
+  /* Sticky Element */
+  .blog-toc-sticky {
+    position: sticky;
+    top: 120px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+  }
+
+  .toc-title {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e30613;
+    display: inline-block;
+  }
+
+  #TableOfContents {
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+
+  #TableOfContents ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #TableOfContents li {
+    margin-bottom: 10px;
+  }
+
+  #TableOfContents a {
+    text-decoration: none;
+    color: #666;
+    transition: all 0.2s;
+    display: block;
+  }
+
+  #TableOfContents a:hover,
+  #TableOfContents a.active {
+    color: #e30613;
+    padding-left: 5px;
+  }
+
+  /* Share Buttons */
+  .share-title {
+    display: block;
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  .blog-share-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .share-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    transition: transform 0.2s;
+    text-decoration: none !important;
+  }
+
+  .share-btn.whatsapp { background: #25D366; }
+  .share-btn.linkedin { background: #0077b5; }
+  .share-btn.facebook { background: #1877f2; }
+  .share-btn.twitter { background: #1da1f2; }
+  
+  .tts-button {
+    background: #6b7280;
+    border: none;
+    cursor: pointer;
+  }
+  .tts-button.playing {
+    background: #10b981;
+    animation: ttsPulse 1.5s infinite;
+  }
+  @keyframes ttsPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Reading Progress Bar */
+  .reading-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #e30613 0%, #ff4458 100%);
+    z-index: 1000;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(227, 6, 19, 0.3);
+  }
+
+  /* Ensure progress bar is visible on mobile */
+  @media screen and (max-width: 749px) {
+    .reading-progress-bar {
+      height: 4px;
+    }
+  }
+
+  /* Author Bio */
+  .author-bio-box {
+    display: flex;
+    gap: 20px;
+    background: #f5f5f7;
+    padding: 30px;
+    border-radius: 12px;
+    margin-top: 60px;
+    align-items: flex-start;
+  }
+
+  .author-image img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .initials-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #e30613;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .author-info h4 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .author-info p {
+    margin: 0;
+    font-size: 15px;
+    color: #666;
+  }
+
+  .article-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .article-date {
+    opacity: 0.8;
+  }
+
+  /* Related Products - Product Grid Style */
+  .blog-related-products {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    border-top: 1px solid #eee;
+    padding-top: 40px;
+    width: 100%;
+  }
+
+  .blog-rp-header {
+    margin-bottom: 24px;
+  }
+
+  .blog-rp-subtitle {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .blog-rp-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    color: #111;
+  }
+
+  .blog-rp-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 1200px) {
+    .blog-rp-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .blog-rp-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .blog-rp-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .blog-rp-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none !important;
+    color: inherit;
+    transition: transform 0.2s;
+  }
+
+  .blog-rp-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .blog-rp-card__image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #f7f7f7;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .blog-rp-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+  }
+
+  .blog-rp-card:hover .blog-rp-card__image img {
+    transform: scale(1.05);
+  }
+
+  .blog-rp-card__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+  }
+
+  .blog-rp-card__vendor {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #999;
+  }
+
+  .blog-rp-card__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .blog-rp-card__prices {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+
+  .blog-rp-card__price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+  }
+
+  .blog-rp-card__price--sale {
+    color: #e30613;
+  }
+
+  .blog-rp-card__compare-price {
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .blog-rp-card__badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: #e30613;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 2;
+  }
+
+{% endstylesheet %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const content = document.querySelector('.blog-main-content');
+  const tocContainer = document.getElementById('TableOfContents');
+  
+  if (content && tocContainer) {
+    const headings = content.querySelectorAll('h2, h3');
+    
+    const getCleanText = (el) => {
+      const clone = el.cloneNode(true);
+      // Remove style, script, and other non-text elements
+      const unwanted = clone.querySelectorAll('style, script, noscript, svg, img, br');
+      unwanted.forEach(node => node.remove());
+      
+      let text = clone.textContent.trim().replace(/\s+/g, ' ');
+      
+      // Aggressive Filter:
+      // 1. Hard limit on length (headings shouldn't be paragraphs of code)
+      // 2. Reject if contains CSS syntax characters like '{' or '}'
+      // 3. Reject if starts with @import
+      if (text.length > 150 || text.includes('{') || text.includes('}') || text.toLowerCase().includes('@import')) {
+        return null;
+      }
+      
+      return text;
+    };
+
+    if (headings.length > 0) {
+      const ul = document.createElement('ul');
+      
+      headings.forEach((heading, index) => {
+        // Create ID if not exists
+        if (!heading.id) {
+          heading.id = 'toc-' + index;
+        }
+        
+        const text = getCleanText(heading);
+        if (!text) return; // Skip empty headings
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = text;
+        a.className = heading.tagName.toLowerCase(); // h2 or h3 class
+        
+        // Indent h3
+        if (heading.tagName === 'H3') {
+          li.style.paddingLeft = '15px';
+        }
+        
+        // Smooth scroll
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.getElementById(heading.id).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+        
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      
+      tocContainer.appendChild(ul);
+    } else {
+      // Hide TOC if no headings
+      document.querySelector('.blog-toc-sidebar').style.display = 'none';
+      document.querySelector('.blog-main-content').style.maxWidth = '100%';
+    }
+    
+    // Highlight active link on scroll
+    window.addEventListener('scroll', () => {
+      let current = '';
+      headings.forEach(heading => {
+        const sectionTop = heading.offsetTop;
+        if (pageYOffset >= sectionTop - 150) {
+          current = heading.getAttribute('id');
+        }
+      });
+      
+      document.querySelectorAll('#TableOfContents a').forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href').includes(current)) {
+          a.classList.add('active');
+        }
+      });
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "t:names.blog_post",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "content_direction",
+      "label": "t:settings.direction",
+      "options": [
+        {
+          "value": "column",
+          "label": "t:options.vertical"
+        }
+      ],
+      "default": "column",
+      "visible_if": "{{ section.settings.gap < 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Passende Produkte"
+    },
+    {
+      "type": "text",
+      "id": "related_products_subtitle",
+      "label": "Untertitel",
+      "default": "Passend zum Artikel"
+    },
+    {
+      "type": "text",
+      "id": "related_products_title",
+      "label": "Titel",
+      "default": "Empfohlene Produkte"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": []
+}
+{% endschema %}
+
+<!-- Reading Progress Script -->
+<script>
+(function() {
+  var progressBar = document.getElementById('readingProgress');
+  var content = document.querySelector('.blog-main-content');
+  
+  if (!progressBar || !content) {
+    console.warn('Reading progress: elements not found');
+    return;
+  }
+
+  function updateProgress() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var windowHeight = window.innerHeight;
+    var documentHeight = document.documentElement.scrollHeight;
+    var contentTop = content.offsetTop;
+    var contentHeight = content.offsetHeight;
+    
+    // Calculate progress within content area only
+    var progressStart = contentTop - windowHeight;
+    var progressEnd = contentTop + contentHeight;
+    var progressRange = progressEnd - progressStart;
+    
+    if (scrollTop <= progressStart) {
+      progressBar.style.width = '0%';
+    } else if (scrollTop >= progressEnd) {
+      progressBar.style.width = '100%';
+    } else {
+      var progress = ((scrollTop - progressStart) / progressRange) * 100;
+      progressBar.style.width = Math.max(0, Math.min(100, progress)) + '%';
+    }
+  }
+
+  // Throttle scroll events for performance
+  var ticking = false;
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateProgress);
+      ticking = true;
+      setTimeout(function() { ticking = false; }, 100);
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+  
+  console.log('Reading progress bar initialized');
+})();
+
+// Load TEST Counter (garantiert funktionierend)
+{{ 'test-counter.js' | asset_url | script_tag }}
+
+<!-- Text-to-Speech Script for Blog Posts -->
+<script>
+(function() {
+  if (!('speechSynthesis' in window)) {
+    console.warn('Speech synthesis not supported');
+    return;
+  }
+
+  // Preload voices to ensure they're available
+  speechSynthesis.getVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = function() {
+      speechSynthesis.getVoices();
+    };
+  }
+
+  var toggleBtn = document.getElementById('tts-toggle');
+  var articleContent = document.querySelector('.blog-main-content');
+  if (!toggleBtn || !articleContent) {
+    console.warn('TTS: button or content not found');
+    return;
+  }
+
+  var utterance = null;
+  var isPlaying = false;
+
+  function getText() {
+    var temp = document.createElement('div');
+    temp.innerHTML = articleContent.innerHTML;
+    
+    // Remove unwanted elements
+    var scripts = temp.querySelectorAll('script,style,noscript,iframe,video,audio');
+    scripts.forEach(el => el.remove());
+    
+    // Replace block elements with proper spacing
+    var blocks = temp.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,br');
+    blocks.forEach(el => {
+      if (el.tagName === 'BR') {
+        el.replaceWith(' ');
+      } else {
+        el.insertAdjacentHTML('afterend', ' ');
+      }
+    });
+    
+    // Get clean text with proper spacing
+    var text = temp.innerText || temp.textContent || '';
+    
+    // Clean up extra whitespace
+    text = text.replace(/\s+/g, ' ').trim();
+    
+    return text;
+  }
+
+  function startTTS() {
+    if (isPlaying) {
+      speechSynthesis.cancel();
+      stopTTS();
+      return;
+    }
+
+    var text = getText();
+    if (!text) return;
+
+    // Add pauses after paragraphs for better rhythm
+    text = text.replace(/([.!?])\s+/g, '$1... ');
+    
+    utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    utterance.rate = 0.85;  // Slower, more professional
+    utterance.pitch = 0.95; // Slightly deeper, clearer
+    utterance.volume = 0.95; // Slightly reduced for comfort
+
+    // Try to get the best German voice
+    var voices = speechSynthesis.getVoices();
+    var germanVoice = voices.find(voice => 
+      voice.lang.startsWith('de-') && 
+      (voice.name.includes('Google') || voice.name.includes('Microsoft') || voice.name.includes('Amazon'))
+    );
+    if (germanVoice) {
+      utterance.voice = germanVoice;
+      console.log('TTS using voice:', germanVoice.name, germanVoice.lang);
+    } else {
+      // Fallback to any German voice
+      var anyGerman = voices.find(voice => voice.lang.startsWith('de-'));
+      if (anyGerman) {
+        utterance.voice = anyGerman;
+        console.log('TTS using fallback voice:', anyGerman.name, anyGerman.lang);
+      }
+    }
+
+    utterance.onstart = function() {
+      isPlaying = true;
+      toggleBtn.classList.add('playing');
+      toggleBtn.setAttribute('aria-label', 'Vorlesen stoppen');
+    };
+
+    utterance.onend = function() {
+      stopTTS();
+    };
+
+    utterance.onerror = function(e) {
+      console.error('TTS error:', e);
+      stopTTS();
+    };
+
+    speechSynthesis.speak(utterance);
+  }
+
+  function stopTTS() {
+    isPlaying = false;
+    toggleBtn.classList.remove('playing');
+    toggleBtn.setAttribute('aria-label', 'Artikel vorlesen');
+  }
+
+  toggleBtn.addEventListener('click', startTTS);
+
+  window.addEventListener('beforeunload', function() {
+    speechSynthesis.cancel();
+  });
+
+  console.log('TTS button initialized in main-blog-post:', toggleBtn);
+})();
+</script>

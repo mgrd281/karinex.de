@@ -1,0 +1,399 @@
+    <script>
+            // ==================== //
+            // FAQ ACCORDION LOGIK  //
+            // ==================== //
+            // ==================== //
+            // FAQ ACCORDION LOGIK (INLINE / GLOBAL)
+            // ==================== //
+            // Define global function for inline onclick handlers
+            // This persists across AJAX reloads and works with both click and touch events
+            // FAQ ACCORDION LOGIC MOVED TO THEME.LIQUID (GLOBAL) -> Removed redundant code here
+            
+            // READ MORE: handled by product-information.liquid (desc-mask logic)
+            // ==================== //
+            // PRODUKTGALERIE LOGIK (ROUST)
+            // ==================== //
+            (function() {
+                // Konfiguration
+                const config = {
+                    thumbs: '.thumb-item',
+                    mainImage: '.main-image',
+                    mainVideo: '.main-video',
+                    mainIframe: '.main-iframe',
+                    videoIndicator: '.video-indicator',
+                    modelsRoot: '#model-containers',
+                    dots: '#carousel-dots',
+                    underline: '.main-image-container'
+                };
+
+                // Helper: Get fresh elements
+                function get(sel) { return document.querySelector(sel); }
+                function getAll(sel) { return document.querySelectorAll(sel); }
+
+                // State
+                let galleryItems = [];
+                let currentIndex = 0;
+
+                function initGallery() {
+                    const thumbs = getAll(config.thumbs);
+                    if (!thumbs.length) {
+                        console.log('[Gallery] No thumbnails found');
+                        return;
+                    }
+
+                    // Build Data
+                    galleryItems = Array.from(thumbs).map(thumb => {
+                        const img = thumb.querySelector('img');
+                        return {
+                            type: thumb.getAttribute('data-type') || 'image',
+                            src: thumb.getAttribute('data-src') || img?.src || '',
+                            zoom: thumb.getAttribute('data-zoom') || img?.src || '',
+                            video: thumb.getAttribute('data-video') || '',
+                            mediaId: thumb.getAttribute('data-media-id') || '',
+                            aspect: thumb.getAttribute('data-aspect') || '',
+                            alt: img?.alt || ''
+                        };
+                    });
+                    
+                    console.log('[Gallery] Initialized with', galleryItems.length, 'items');
+
+                    // Add class if only one image exists (desktop thumbnail hiding)
+                    const rail = get('.thumbs-rail');
+                    if (rail) {
+                        if (galleryItems.length === 1) {
+                            rail.classList.add('single-image');
+                        } else {
+                            rail.classList.remove('single-image');
+                        }
+                    }
+                }
+
+                function navTo(index) {
+                    console.log('[Gallery] navTo called with index:', index, 'galleryItems.length:', galleryItems.length);
+                    // Try to init if not already done (thumbnails may have rendered after initial load)
+                    if (galleryItems.length === 0) {
+                        console.log('[Gallery] Re-initializing gallery...');
+                        initGallery();
+                    }
+                    if (index < 0 || index >= galleryItems.length) {
+                        console.log('[Gallery] Invalid index, returning');
+                        return;
+                    }
+                    // Video types open modal instead of inline
+                    var itemType = galleryItems[index] && galleryItems[index].type;
+                    if ((itemType === 'video' || itemType === 'external_video') && window.openVideoModal) {
+                        window.openVideoModal(index);
+                        return;
+                    }
+                    _applyNavTo(index);
+                }
+                function _applyNavTo(index) {
+                    currentIndex = index;
+
+                    // Update UI (Main Media)
+                    const item = galleryItems[index];
+                    const mainImg = get(config.mainImage);
+                    const mainVid = get(config.mainVideo);
+                    const mainFrame = get(config.mainIframe);
+                    const vidInd = get(config.videoIndicator);
+                    const soundBtn = document.getElementById('videoSoundBtn');
+                    const fullscreenBtn = document.getElementById('videoFullscreenBtn');
+                    const models = get(config.modelsRoot);
+
+                    // Reset all
+                    if(mainImg) mainImg.style.display = 'none';
+                    if(mainVid) { mainVid.style.display = 'none'; mainVid.pause(); }
+                    if(mainFrame) mainFrame.style.display = 'none';
+                    if(vidInd) vidInd.style.display = 'none';
+                    if(soundBtn) soundBtn.style.display = 'none';
+                    if(fullscreenBtn) fullscreenBtn.style.display = 'none';
+                    if(models) {
+                        models.style.display = 'none';
+                        models.querySelectorAll('.model-viewer-container').forEach(e => e.style.display = 'none');
+                    }
+
+                    // Show selected
+                    if (item.type === 'video' && mainVid) {
+                        mainVid.style.display = 'block';
+                        if (mainVid.src !== item.video) { mainVid.src = item.video; mainVid.load(); }
+                        if (item.aspect) mainVid.style.aspectRatio = item.aspect;
+                        // No autoplay – native controls let user play
+                        if(fullscreenBtn) fullscreenBtn.style.display = 'flex';
+                    } else if (item.type === 'external_video' && mainFrame) {
+                        mainFrame.style.display = 'block';
+                        if (mainFrame.src !== item.video) mainFrame.src = item.video;
+                        if (item.aspect) mainFrame.style.aspectRatio = item.aspect;
+                        if(soundBtn) soundBtn.style.display = 'flex';
+                        if(fullscreenBtn) fullscreenBtn.style.display = 'flex';
+                    } else if (item.type === 'model' && models) {
+                        models.style.display = 'block';
+                        const target = models.querySelector(`.model-viewer-container[data-media-id="${item.mediaId}"]`);
+                        if (target) target.style.display = 'block';
+                    } else if (mainImg) {
+                        mainImg.style.display = 'block';
+                        mainImg.src = item.src;
+                        mainImg.alt = item.alt;
+                    }
+
+                    // Mobile Slider Scroll Sync
+                    const mobileSlider = get('.mobile-gallery-slider');
+                    if (mobileSlider && window.innerWidth <= 768) {
+                        const slide = mobileSlider.querySelector(`.mobile-gallery-slide[data-index="${index}"]`);
+                        if (slide) {
+                            mobileSlider.scrollTo({
+                                left: slide.offsetLeft,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+
+                    // Update Active Thumb state
+                    getAll(config.thumbs).forEach((t, i) => {
+                        t.classList.toggle('active', i === index);
+                    });
+
+                    // Update Counter/Dots/Arrows
+                    const counter = get('.image-counter');
+                    if (counter) counter.textContent = `Bild ${index + 1} von ${galleryItems.length}`;
+                    
+                    const prev = get('.prev-btn');
+                    const next = get('.next-btn');
+                    if(prev) prev.disabled = index === 0;
+                    if(next) next.disabled = index === galleryItems.length - 1;
+
+                    renderDots();
+                    updateIconVisibility(item.type);
+                    // trigger zoom logic update if needed (handled by zoom script looking at .active)
+                }
+
+                function renderDots() {
+                    const wrap = get(config.dots);
+                    if(!wrap) return;
+                    // simple mobile check
+                    if(window.innerWidth > 768) { wrap.innerHTML = ''; return; }
+                    
+                    wrap.innerHTML = '';
+                    galleryItems.forEach((item, i) => {
+                        const b = document.createElement('button');
+                        const isVideo = item.type === 'video' || item.type === 'external_video';
+                        b.className = 'dot' + (i===currentIndex?' active':'') + (isVideo ? ' dot-video' : '');
+                        b.ariaLabel = `Gehe zu ${isVideo ? 'Video' : 'Bild'} ${i+1}`;
+                        
+                        if (isVideo) {
+                            b.innerHTML = `<svg class="dot-video-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+                        }
+                        
+                        b.onclick = (e) => { e.preventDefault(); navTo(i); };
+                        wrap.appendChild(b);
+                    });
+                }
+
+                // JS-controlled icon visibility: icons only appear for images
+                function updateIconVisibility(type) {
+                    const wrapper = document.querySelector('.gallery-stage-wrapper');
+                    const floatingCart = document.querySelector('.floating-cart-icon');
+                    
+                    if (!wrapper) return;
+                    if (type === 'image') {
+                        wrapper.classList.remove('gallery-icons-hidden');
+                        if (floatingCart) floatingCart.style.setProperty('display', 'flex', 'important');
+                    } else {
+                        wrapper.classList.add('gallery-icons-hidden');
+                        if (floatingCart) floatingCart.style.setProperty('display', 'none', 'important');
+                    }
+                }
+
+                // Global Event Delegation (Safety Net)
+                document.addEventListener('click', (e) => {
+                    // Try to find thumb click
+                    const thumb = e.target.closest(config.thumbs);
+                    if (thumb) {
+                        const thumbType = thumb.getAttribute('data-type') || 'image';
+                        // Skip video thumbs — handled by video modal
+                        if (thumbType === 'video' || thumbType === 'external_video') return;
+                        e.preventDefault();
+                        const idx = parseInt(thumb.getAttribute('data-index') || '-1');
+                        if (idx !== -1) navTo(idx);
+                        return;
+                    }
+
+                    // Navigation Arrows
+                    if (e.target.closest('.prev-btn')) {
+                        e.preventDefault();
+                        navTo(currentIndex - 1);
+                    }
+                    if (e.target.closest('.next-btn')) {
+                        e.preventDefault();
+                        navTo(currentIndex + 1);
+                    }
+                });
+
+                // Expose for inline onclick - MUST be done before any clicks can happen
+                window.updateMainImage = navTo;
+                console.log('[Gallery] window.updateMainImage exposed');
+                
+                // Video Sound Toggle Function
+                window.toggleVideoSound = function() {
+                    const mainFrame = get(config.mainIframe);
+                    const mainVid = get(config.mainVideo);
+                    const soundIcon = document.getElementById('videoSoundIcon');
+                    const soundBtn = document.getElementById('videoSoundBtn');
+                    if (!mainFrame && !mainVid) return;
+                    
+                    const isMuted = soundBtn?.getAttribute('data-muted') !== 'false';
+                    
+                    if (mainFrame && mainFrame.src) {
+                        // For YouTube/Vimeo iframes - reload with updated mute param
+                        let newSrc = mainFrame.src;
+                        if (isMuted) {
+                            // Unmute: remove mute=1 or muted=1, add mute=0
+                            newSrc = newSrc.replace(/[?&]mute=1/g, '').replace(/[?&]muted=1/g, '');
+                            newSrc += (newSrc.includes('?') ? '&' : '?') + 'mute=0';
+                        } else {
+                            // Mute: ensure mute=1
+                            newSrc = newSrc.replace(/[?&]mute=0/g, '');
+                            newSrc += (newSrc.includes('?') ? '&' : '?') + 'mute=1';
+                        }
+                        if (newSrc !== mainFrame.src) {
+                            // Save current time if possible
+                            mainFrame.src = newSrc;
+                        }
+                    }
+                    
+                    if (mainVid) {
+                        mainVid.muted = !isMuted;
+                    }
+                    
+                    // Toggle icon
+                    if (soundIcon) {
+                        soundIcon.className = isMuted ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+                    }
+                    if (soundBtn) {
+                        soundBtn.setAttribute('data-muted', isMuted ? 'false' : 'true');
+                    }
+                };
+                
+                // Video Fullscreen Toggle Function
+                window.toggleVideoFullscreen = function() {
+                    const mainFrame = get(config.mainIframe);
+                    const mainVid = get(config.mainVideo);
+                    const fullscreenIcon = document.getElementById('videoFullscreenIcon');
+                    const container = document.querySelector('.main-image-container');
+                    
+                    if (!container) return;
+                    
+                    // Check if already in fullscreen
+                    const isFullscreen = document.fullscreenElement || 
+                                         document.webkitFullscreenElement || 
+                                         document.mozFullScreenElement || 
+                                         document.msFullscreenElement;
+                    
+                    if (!isFullscreen) {
+                        // Enter fullscreen
+                        if (container.requestFullscreen) {
+                            container.requestFullscreen();
+                        } else if (container.webkitRequestFullscreen) {
+                            container.webkitRequestFullscreen();
+                        } else if (container.mozRequestFullScreen) {
+                            container.mozRequestFullScreen();
+                        } else if (container.msRequestFullscreen) {
+                            container.msRequestFullscreen();
+                        }
+                        
+                        // Update icon
+                        if (fullscreenIcon) {
+                            fullscreenIcon.className = 'fa-solid fa-compress';
+                        }
+                        
+                        // Add fullscreen class for styling
+                        container.classList.add('video-theater-mode');
+                    } else {
+                        // Exit fullscreen
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                        
+                        // Update icon
+                        if (fullscreenIcon) {
+                            fullscreenIcon.className = 'fa-solid fa-expand';
+                        }
+                        
+                        // Remove fullscreen class
+                        container.classList.remove('video-theater-mode');
+                    }
+                };
+                
+                // Listen for fullscreen change events
+                document.addEventListener('fullscreenchange', function() {
+                    const fullscreenIcon = document.getElementById('videoFullscreenIcon');
+                    const container = document.querySelector('.main-image-container');
+                    const isFullscreen = document.fullscreenElement;
+                    
+                    if (fullscreenIcon) {
+                        fullscreenIcon.className = isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
+                    }
+                    
+                    if (container) {
+                        container.classList.toggle('video-theater-mode', isFullscreen);
+                    }
+                });
+                
+                // Expose for Lightbox
+                window.openProductLightbox = function() {
+                     /* Don't open lightbox when a video is currently active */
+                     const currentItem = galleryItems[currentIndex];
+                     if (currentItem && (currentItem.type === 'video' || currentItem.type === 'external_video')) return;
+                     navTo(currentIndex); // ensure state
+                     const evt = new CustomEvent('product-zoom-trigger', { detail: { index: currentIndex } });
+                     document.dispatchEvent(evt);
+                };
+
+                // Init
+                function boot() {
+                    initGallery();
+                    // Try to find initial active
+                    const active = document.querySelector('.thumb-item.active');
+                    if(active) {
+                        currentIndex = parseInt(active.getAttribute('data-index') || '0');
+                    }
+                    // ensure initial state
+                    navTo(currentIndex);
+                }
+
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+                else boot();
+                window.addEventListener('resize', () => { renderDots(); });
+
+                // Mobile Slider Scroll Synchronisation (Swipe detection)
+                const mobileSlider = get('.mobile-gallery-slider');
+                if (mobileSlider) {
+                    mobileSlider.addEventListener('scroll', () => {
+                        clearTimeout(mobileSlider._scrollTimer);
+                        mobileSlider._scrollTimer = setTimeout(() => {
+                            const newIndex = Math.round(mobileSlider.scrollLeft / mobileSlider.clientWidth);
+                            if (newIndex !== currentIndex && newIndex >= 0 && newIndex < galleryItems.length) {
+                                currentIndex = newIndex;
+                                
+                                // Update Active Thumb state
+                                getAll(config.thumbs).forEach((t, i) => {
+                                    t.classList.toggle('active', i === currentIndex);
+                                });
+
+                                // Update Counter/Dots
+                                const counter = get('.image-counter');
+                                if (counter) counter.textContent = `Bild ${currentIndex + 1} von ${galleryItems.length}`;
+                                
+                                renderDots();
+                                updateIconVisibility(galleryItems[currentIndex].type);
+                            }
+                        }, 50);
+                    }, { passive: true });
+                }
+            })();
+    </script>

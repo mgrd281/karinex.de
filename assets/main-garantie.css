@@ -1,0 +1,439 @@
+/* ==============================================
+   GARANTIE PAGE
+   Enterprise Warranty Design - Clear & Trustworthy
+   ============================================== */
+
+.garantie-page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.garantie-hero {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  text-align: center;
+  background: #fff;
+  position: static !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.garantie-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.garantie-subtitle {
+  font-size: 16px;
+  color: #555;
+  margin: 0 0 24px;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.garantie-meta {
+  font-size: 14px;
+  color: #666;
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.garantie-meta svg {
+  opacity: 0.7;
+}
+
+.garantie-divider {
+  width: 48px;
+  height: 3px;
+  background: #111;
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+/* Main Container */
+.garantie-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Section Styling */
+.garantie-section {
+  margin-bottom: 48px;
+}
+
+.garantie-section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  letter-spacing: -0.3px;
+}
+
+.garantie-section-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #444;
+  margin: 0 0 16px;
+}
+
+.garantie-section-text:last-child {
+  margin-bottom: 0;
+}
+
+/* Info Box */
+.garantie-info-box {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.garantie-info-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.garantie-info-title svg {
+  width: 18px;
+  height: 18px;
+  color: #2e7d32;
+}
+
+.garantie-info-text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Key Points List */
+.garantie-key-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.garantie-key-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.garantie-key-points li:last-child {
+  border-bottom: none;
+}
+
+.garantie-key-points li::before {
+  content: '✓';
+  color: #2e7d32;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* B2B Notice */
+.garantie-b2b-notice {
+  background: #f8f9fa;
+  border-left: 3px solid #666;
+  padding: 20px 24px;
+  border-radius: 0 8px 8px 0;
+}
+
+.garantie-b2b-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+.garantie-b2b-text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.garantie-b2b-text:last-child {
+  margin-bottom: 0;
+}
+
+.garantie-b2b-link {
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.garantie-b2b-link:hover {
+  color: #444;
+}
+
+/* Coverage Lists */
+.garantie-coverage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.garantie-coverage-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.garantie-coverage-card--covered {
+  border-color: #c8e6c9;
+}
+
+.garantie-coverage-card--not-covered {
+  border-color: #ffcdd2;
+}
+
+.garantie-coverage-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.garantie-coverage-title svg {
+  width: 20px;
+  height: 20px;
+}
+
+.garantie-coverage-card--covered .garantie-coverage-title svg {
+  color: #2e7d32;
+}
+
+.garantie-coverage-card--not-covered .garantie-coverage-title svg {
+  color: #c62828;
+}
+
+.garantie-coverage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.garantie-coverage-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #444;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.garantie-coverage-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.garantie-coverage-list li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.garantie-coverage-card--covered .garantie-coverage-list li::before {
+  background: #2e7d32;
+}
+
+.garantie-coverage-card--not-covered .garantie-coverage-list li::before {
+  background: #c62828;
+}
+
+/* Process Steps */
+.garantie-steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.garantie-steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.garantie-steps li:last-child {
+  border-bottom: none;
+}
+
+.garantie-steps li::before {
+  content: counter(step);
+  width: 32px;
+  height: 32px;
+  background: #111;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.garantie-step-content {
+  flex: 1;
+}
+
+.garantie-step-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.garantie-step-desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Contact Box */
+.garantie-contact {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 28px;
+}
+
+.garantie-contact-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 12px;
+}
+
+.garantie-contact-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.garantie-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.garantie-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.garantie-contact-link--primary {
+  background: #111;
+  color: #fff;
+}
+
+.garantie-contact-link--primary:hover {
+  background: #333;
+}
+
+.garantie-contact-link--secondary {
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+.garantie-contact-link--secondary:hover {
+  border-color: #111;
+}
+
+.garantie-contact-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Legal Footer */
+.garantie-legal-note {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
+.garantie-legal-text {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+  .garantie-hero {
+    padding: 40px 20px 32px;
+  }
+  
+  .garantie-container {
+    padding: 0 20px 60px;
+  }
+  
+  .garantie-coverage {
+    grid-template-columns: 1fr;
+  }
+  
+  .garantie-contact {
+    padding: 20px;
+  }
+  
+  .garantie-contact-actions {
+    flex-direction: column;
+  }
+  
+  .garantie-contact-link {
+    justify-content: center;
+  }
+  
+  .garantie-info-box {
+    padding: 20px;
+  }
+  
+  .garantie-b2b-notice {
+    padding: 16px 20px;
+  }
+}

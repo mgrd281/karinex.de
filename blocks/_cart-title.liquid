@@ -1,0 +1,230 @@
+
+
+{% assign block_settings = block.settings %}
+
+<div
+  class="cart-title spacing-style text-{{ block_settings.alignment }}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
+    {%- if cart.empty? -%}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-title-icon"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      {{ 'content.your_cart_is_empty' | t }}
+    {%- else -%}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-title-icon"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+      Warenkorb
+      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
+    {%- endif -%}
+  </h1>
+</div>
+
+{% stylesheet %}
+  /* ============================
+     PREMIUM CART HEADER — COMPACT
+     ============================ */
+  .cart-title {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    box-sizing: border-box;
+  }
+
+  .cart-title h1 {
+    margin-block-end: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    color: #111 !important;
+  }
+
+  .cart-title-icon {
+    color: #0f3b2e;
+    flex-shrink: 0;
+  }
+
+  /* Premium circular green badge */
+  .cart-title .cart-bubble {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    aspect-ratio: 1 !important;
+    padding: 0 !important;
+  }
+
+  .cart-title .cart-bubble[data-maintain-ratio] {
+    aspect-ratio: 1;
+    min-width: 22px;
+  }
+
+  .cart-title .cart-bubble__background {
+    background-color: #0f3b2e !important;
+    border-radius: 50% !important;
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .cart-title .cart-bubble__text {
+    color: #ffffff !important;
+    font-family: var(--font-paragraph--family);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+
+  /* Close (X) button — always perfectly vertically centered */
+  .cart-drawer .drawer__close,
+  .cart-drawer button.drawer__close {
+    position: absolute !important;
+    top: calc(50% - 4px) !important;
+    transform: translateY(-50%) !important;
+    right: 16px !important;
+    z-index: 200 !important;
+    opacity: 0.55 !important;
+    padding: 8px !important;
+    background: none !important;
+    border: none !important;
+    line-height: 1 !important;
+    transition: opacity 0.2s ease !important;
+  }
+  .cart-drawer .drawer__close:hover,
+  .cart-drawer button.drawer__close:hover {
+    opacity: 1 !important;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:settings.cart_title",
+      "default": "t:text_defaults.cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:settings.cart_count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "",
+      "info": "t:info.edit_presets_in_theme_settings"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.title"
+    }
+  ]
+}
+{% endschema %}

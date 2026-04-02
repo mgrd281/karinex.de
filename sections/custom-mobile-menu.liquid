@@ -1,0 +1,547 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{% schema %}
+{
+  "name": "Custom Mobile Menu",
+  "settings": [
+    { "type": "header", "content": "🎨 Tabs Einstellungen" },
+    { "type": "text", "id": "tab_1_title", "label": "Tab 1 Titel", "default": "Software" },
+    { "type": "text", "id": "tab_2_title", "label": "Tab 2 Titel", "default": "Games" },
+    { "type": "text", "id": "tab_3_title", "label": "Tab 3 Titel", "default": "Hardware" },
+    { "type": "header", "content": "🔍 Suche Einstellungen" },
+    { "type": "text", "id": "search_placeholder", "label": "Suche Placeholder", "default": "Wonach suchst du?" },
+    { "type": "header", "content": "🎫 Coupon/Promo Banner" },
+    { "type": "checkbox", "id": "show_coupon", "label": "Banner anzeigen", "default": true },
+    { "type": "text", "id": "coupon_text", "label": "Banner Text", "default": "1 Coupon wartet auf Dich" },
+    { "type": "url", "id": "coupon_link", "label": "Banner Link" },
+    { "type": "color", "id": "coupon_bg_color", "label": "Banner Hintergrundfarbe", "default": "#00513a" },
+    { "type": "color", "id": "coupon_text_color", "label": "Banner Textfarbe", "default": "#ffffff" },
+    { "type": "header", "content": "🎨 Design Einstellungen" },
+    { "type": "color", "id": "header_bg_color", "label": "Header Hintergrund", "default": "#00513a" },
+    { "type": "color", "id": "accent_color", "label": "Akzentfarbe (Tabs)", "default": "#000000" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "📁 Kategorie",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Titel", "default": "Kategorie" },
+        { "type": "image_picker", "id": "image", "label": "Produktbild (empfohlen: 150x150px)" },
+        { "type": "url", "id": "url", "label": "Link zur Kategorie" },
+        {
+          "type": "select",
+          "id": "tab_assignment",
+          "label": "Zuweisen zu Tab",
+          "options": [
+            { "value": "1", "label": "Tab 1" },
+            { "value": "2", "label": "Tab 2" },
+            { "value": "3", "label": "Tab 3" }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "select",
+          "id": "card_size",
+          "label": "Kartengröße",
+          "options": [
+            { "value": "small", "label": "Klein (1 Spalte)" },
+            { "value": "large", "label": "Groß (2 Spalten)" }
+          ],
+          "default": "small"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Mobile Menu",
+      "blocks": [
+        { "type": "category", "settings": { "title": "Microsoft Office", "tab_assignment": "1" } },
+        { "type": "category", "settings": { "title": "Windows", "tab_assignment": "1" } },
+        { "type": "category", "settings": { "title": "Antivirus", "tab_assignment": "1" } },
+        { "type": "category", "settings": { "title": "Adobe", "tab_assignment": "1" } },
+        { "type": "category", "settings": { "title": "PC Games", "tab_assignment": "2" } },
+        { "type": "category", "settings": { "title": "PlayStation", "tab_assignment": "2" } },
+        { "type": "category", "settings": { "title": "Xbox", "tab_assignment": "2" } },
+        { "type": "category", "settings": { "title": "Nintendo", "tab_assignment": "2" } },
+        { "type": "category", "settings": { "title": "Laptops", "tab_assignment": "3" } },
+        { "type": "category", "settings": { "title": "Monitore", "tab_assignment": "3" } },
+        { "type": "category", "settings": { "title": "Zubehör", "tab_assignment": "3" } },
+        { "type": "category", "settings": { "title": "Drucker", "tab_assignment": "3" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% comment %} Default Categories if no blocks exist {% endcomment %}
+{% assign has_blocks = false %}
+{% if section.blocks.size > 0 %}
+  {% assign has_blocks = true %}
+{% endif %}
+
+{% comment %} Define default categories {% endcomment %}
+{% unless has_blocks %}
+  {% assign default_categories_tab1 = "Software,Antivirus,Adobe,Autodesk" | split: "," %}
+  {% assign default_colors_tab1 = "#e3f2fd,#e8f5e9,#fce4ec,#e0f7fa" | split: "," %}
+  {% assign default_links_tab1 = "/collections/software,/collections/antivirus,/collections/adobe,/collections/software" | split: "," %}
+  
+  {% assign default_categories_tab2 = "Games,PlayStation,Xbox,LEGO" | split: "," %}
+  {% assign default_colors_tab2 = "#ede7f6,#e3f2fd,#e8f5e9,#fff8e1" | split: "," %}
+  {% assign default_links_tab2 = "/collections/games,/collections/playstation,/collections/xbox,/collections/spielzeug" | split: "," %}
+  
+  {% assign default_categories_tab3 = "Boss Uhren,Damenuhren,Herrenuhren,Angebote" | split: "," %}
+  {% assign default_colors_tab3 = "#f3e5f5,#e0f7fa,#fbe9e7,#f1f8e9" | split: "," %}
+  {% assign default_links_tab3 = "/collections/boss-uhren,/collections/damenuhren,/collections/herrenuhren,/collections/sale" | split: "," %}
+{% endunless %}
+
+<div class="cmm-backdrop" id="cmm-backdrop"></div>
+<div id="custom-mobile-menu" class="custom-mobile-menu">
+  <div class="cmm-header" style="background: {{ section.settings.header_bg_color }};">
+    <div class="cmm-icons">
+      {% comment %} Account Icon {% endcomment %}
+      <a href="{{ routes.account_url }}" class="cmm-icon-btn" aria-label="Account">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </a>
+      {% comment %} Coupon Icon {% endcomment %}
+      <a href="{{ _root }}pages/geschenkkarten" class="cmm-icon-btn" aria-label="Geschenkkarten">
+        <span class="visually-hidden">Geschenkkarten</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+      </a>
+      {% comment %} Wishlist Icon {% endcomment %}
+      <a href="{{ _root }}pages/wishlist" class="cmm-icon-btn" aria-label="Wishlist" id="cmm-wishlist-icon">
+        <span class="visually-hidden">Wunschliste</span>
+        <div class="cmm-badge cmm-wishlist-count" style="display: none;">0</div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      </a>
+      {% comment %} Cart Icon {% endcomment %}
+      <a href="{{ routes.cart_url }}" class="cmm-icon-btn" aria-label="Cart" id="cmm-cart-icon">
+        {% if cart.item_count > 0 %}<div class="cmm-badge cmm-cart-count">{{ cart.item_count }}</div>{% else %}<div class="cmm-badge cmm-cart-count" style="display: none;">0</div>{% endif %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+      </a>
+    </div>
+    <button type="button" class="cmm-close-btn" id="cmm-close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+
+  <div class="cmm-tabs">
+    <div class="cmm-tab-item active" data-tab="1" style="--accent-color: {{ section.settings.accent_color }};">{{ section.settings.tab_1_title }}</div>
+    <div class="cmm-tab-item" data-tab="2" style="--accent-color: {{ section.settings.accent_color }};">{{ section.settings.tab_2_title }}</div>
+    <div class="cmm-tab-item" data-tab="3" style="--accent-color: {{ section.settings.accent_color }};">{{ section.settings.tab_3_title }}</div>
+  </div>
+
+  <div class="cmm-content-scroller">
+    <div class="cmm-search-wrapper">
+      <form action="{{ routes.search_url }}" method="get" class="cmm-search-form">
+        <svg class="cmm-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" name="q" placeholder="{{ section.settings.search_placeholder }}" class="cmm-search-input">
+      </form>
+    </div>
+
+    {% if section.settings.show_coupon %}
+    <a href="{{ section.settings.coupon_link | default: '#' }}" class="cmm-coupon-banner" style="background: {{ section.settings.coupon_bg_color }}; color: {{ section.settings.coupon_text_color }};">
+      <span class="cmm-coupon-text">{{ section.settings.coupon_text }}</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    {% endif %}
+
+    <!-- Tab 1 Categories -->
+    <div class="cmm-grid-container" id="cmm-tab-content-1">
+      {% if has_blocks %}
+        {% for block in section.blocks %}
+          {% if block.settings.tab_assignment == '1' %}
+            <a href="{{ block.settings.url }}" class="cmm-card {% if block.settings.card_size == 'large' %}cmm-card--large{% endif %}">
+              <span class="cmm-card-title">{{ block.settings.title }}</span>
+              {% if block.settings.image %}
+                <div class="cmm-card-image">
+                  <img src="{{ block.settings.image | img_url: '150x150', crop: 'center' }}" alt="{{ block.settings.title }}" loading="lazy">
+                </div>
+              {% endif %}
+            </a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <!-- Default Software Categories with Professional Icons -->
+        <a href="{{ _root }}collections/software" class="cmm-card">
+          <span class="cmm-card-title">Software</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="office-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#EA3E23"/><stop offset="100%" style="stop-color:#D83B01"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#office-grad)"/>
+              <rect x="16" y="16" width="20" height="20" rx="3" fill="#fff" opacity="0.95"/>
+              <rect x="44" y="16" width="20" height="20" rx="3" fill="#fff" opacity="0.95"/>
+              <rect x="16" y="44" width="20" height="20" rx="3" fill="#fff" opacity="0.95"/>
+              <rect x="44" y="44" width="20" height="20" rx="3" fill="#fff" opacity="0.95"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/software" class="cmm-card">
+          <span class="cmm-card-title">Windows & Office</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="win-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00BCF2"/><stop offset="100%" style="stop-color:#0078D4"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#win-grad)"/>
+              <path d="M16 20l16-2.5v15.5H16V20zm0 36l16 2.5V43H16v13zm20-38.5L60 14v19H36V17.5zm0 41L60 62V43H36v15.5z" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/antivirus" class="cmm-card">
+          <span class="cmm-card-title">Antivirus</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="av-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#66BB6A"/><stop offset="100%" style="stop-color:#43A047"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#av-grad)"/>
+              <path d="M40 12L18 22v14c0 12.5 9.4 24.2 22 27 12.6-2.8 22-14.5 22-27V22L40 12z" fill="#fff" opacity="0.2"/>
+              <path d="M40 16L22 24v12c0 10.5 7.7 20.2 18 23 10.3-2.8 18-12.5 18-23V24L40 16z" fill="#fff"/>
+              <path d="M36 42l-6-6 3-3 3 3 9-9 3 3-12 12z" fill="#43A047"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/adobe" class="cmm-card">
+          <span class="cmm-card-title">Adobe</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="adobe-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FF4D4D"/><stop offset="100%" style="stop-color:#EB1C23"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#adobe-grad)"/>
+              <path d="M18 62V18l20 44H18z" fill="#fff"/>
+              <path d="M62 62V18L42 62h20z" fill="#fff"/>
+              <path d="M32 50h16l-4-9h-8l-4 9z" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/software" class="cmm-card">
+          <span class="cmm-card-title">Autodesk</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="auto-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#40C4FF"/><stop offset="100%" style="stop-color:#0696D7"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#auto-grad)"/>
+              <path d="M40 18L18 58h12l5-10h10l5 10h12L40 18zm0 18l6 12H34l6-12z" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/software" class="cmm-card">
+          <span class="cmm-card-title">Backup</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="bk-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#78909C"/><stop offset="100%" style="stop-color:#546E7A"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#bk-grad)"/>
+              <ellipse cx="40" cy="32" rx="22" ry="12" fill="#fff" opacity="0.3"/>
+              <path d="M18 32c0 6.6 9.8 12 22 12s22-5.4 22-12v20c0 6.6-9.8 12-22 12s-22-5.4-22-12V32z" fill="#fff" opacity="0.9"/>
+              <ellipse cx="40" cy="32" rx="18" ry="8" fill="#fff"/>
+              <path d="M40 38l-8 8h5v10h6V46h5l-8-8z" fill="#546E7A"/>
+            </svg>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Tab 2 Categories -->
+    <div class="cmm-grid-container" id="cmm-tab-content-2" style="display: none;">
+      {% if has_blocks %}
+        {% for block in section.blocks %}
+          {% if block.settings.tab_assignment == '2' %}
+            <a href="{{ block.settings.url }}" class="cmm-card {% if block.settings.card_size == 'large' %}cmm-card--large{% endif %}">
+              <span class="cmm-card-title">{{ block.settings.title }}</span>
+              {% if block.settings.image %}
+                <div class="cmm-card-image">
+                  <img src="{{ block.settings.image | img_url: '150x150', crop: 'center' }}" alt="{{ block.settings.title }}" loading="lazy">
+                </div>
+              {% endif %}
+            </a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <!-- Default Games Categories with Professional Icons -->
+        <a href="{{ _root }}collections/games" class="cmm-card">
+          <span class="cmm-card-title">Games</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="pc-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#BA68C8"/><stop offset="100%" style="stop-color:#7B1FA2"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#pc-grad)"/>
+              <rect x="14" y="30" width="52" height="28" rx="6" fill="#fff"/>
+              <circle cx="28" cy="44" r="7" fill="#E1BEE7"/>
+              <circle cx="28" cy="44" r="4" fill="#7B1FA2"/>
+              <circle cx="52" cy="40" r="3" fill="#7B1FA2"/>
+              <circle cx="52" cy="48" r="3" fill="#7B1FA2"/>
+              <circle cx="56" cy="44" r="3" fill="#7B1FA2"/>
+              <circle cx="48" cy="44" r="3" fill="#7B1FA2"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/playstation" class="cmm-card">
+          <span class="cmm-card-title">PlayStation</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="ps-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1565C0"/><stop offset="100%" style="stop-color:#003087"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#ps-grad)"/>
+              <path d="M32 24v28c0 2-2 4-6 5l-8 3v-5l8-3V32c0-2 2-4 6-4v-4z" fill="#fff"/>
+              <path d="M48 24v28c0 2 2 4 6 5l8 3v-5l-8-3V32c0-2-2-4-6-4v-4z" fill="#fff"/>
+              <path d="M36 36h8v20h-8z" fill="#fff" opacity="0.5"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/xbox" class="cmm-card">
+          <span class="cmm-card-title">Xbox</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="xbox-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4CAF50"/><stop offset="100%" style="stop-color:#107C10"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#xbox-grad)"/>
+              <circle cx="40" cy="40" r="22" fill="#fff" opacity="0.15"/>
+              <circle cx="40" cy="40" r="18" stroke="#fff" stroke-width="4" fill="none"/>
+              <path d="M30 30l20 20M50 30L30 50" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/spielzeug" class="cmm-card">
+          <span class="cmm-card-title">LEGO</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="nin-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FF5252"/><stop offset="100%" style="stop-color:#E60012"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#nin-grad)"/>
+              <rect x="12" y="22" width="22" height="36" rx="6" fill="#fff"/>
+              <rect x="46" y="22" width="22" height="36" rx="6" fill="#fff"/>
+              <circle cx="23" cy="34" r="6" fill="#333"/>
+              <circle cx="57" cy="34" r="3" fill="#333"/>
+              <circle cx="57" cy="46" r="3" fill="#333"/>
+              <circle cx="51" cy="40" r="3" fill="#333"/>
+              <circle cx="63" cy="40" r="3" fill="#333"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}pages/geschenkkarten" class="cmm-card">
+          <span class="cmm-card-title">Gutscheine</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="steam-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2A475E"/><stop offset="100%" style="stop-color:#1B2838"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#steam-grad)"/>
+              <circle cx="40" cy="32" r="12" stroke="#fff" stroke-width="3" fill="none"/>
+              <circle cx="40" cy="32" r="5" fill="#fff"/>
+              <path d="M28 44l12 16 12-16H28z" fill="#fff" opacity="0.9"/>
+              <path d="M16 62l14-10 10 8 10-8 14 10" stroke="#fff" stroke-width="2" fill="none" opacity="0.5"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/sale" class="cmm-card">
+          <span class="cmm-card-title">Angebote</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="gift-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#FFB74D"/><stop offset="100%" style="stop-color:#FF9800"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#gift-grad)"/>
+              <rect x="14" y="32" width="52" height="34" rx="4" fill="#fff"/>
+              <rect x="14" y="32" width="52" height="12" rx="4" fill="#FFE0B2"/>
+              <rect x="36" y="26" width="8" height="40" fill="#FF9800"/>
+              <circle cx="32" cy="26" r="6" stroke="#FF9800" stroke-width="3" fill="none"/>
+              <circle cx="48" cy="26" r="6" stroke="#FF9800" stroke-width="3" fill="none"/>
+            </svg>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Tab 3 Categories -->
+    <div class="cmm-grid-container" id="cmm-tab-content-3" style="display: none;">
+      {% if has_blocks %}
+        {% for block in section.blocks %}
+          {% if block.settings.tab_assignment == '3' %}
+            <a href="{{ block.settings.url }}" class="cmm-card {% if block.settings.card_size == 'large' %}cmm-card--large{% endif %}">
+              <span class="cmm-card-title">{{ block.settings.title }}</span>
+              {% if block.settings.image %}
+                <div class="cmm-card-image">
+                  <img src="{{ block.settings.image | img_url: '150x150', crop: 'center' }}" alt="{{ block.settings.title }}" loading="lazy">
+                </div>
+              {% endif %}
+            </a>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <!-- Default Watches Categories with Professional Icons -->
+        <a href="{{ _root }}collections/boss-uhren" class="cmm-card">
+          <span class="cmm-card-title">Boss Uhren</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="lap-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#5C6BC0"/><stop offset="100%" style="stop-color:#3949AB"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#lap-grad)"/>
+              <rect x="14" y="20" width="52" height="32" rx="3" fill="#fff"/>
+              <rect x="18" y="24" width="44" height="24" rx="1" fill="#C5CAE9"/>
+              <path d="M10 56h60l-4 8H14l-4-8z" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/damenuhren" class="cmm-card">
+          <span class="cmm-card-title">Damenuhren</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="mon-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#4DD0E1"/><stop offset="100%" style="stop-color:#00ACC1"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#mon-grad)"/>
+              <rect x="12" y="16" width="56" height="36" rx="3" fill="#fff"/>
+              <rect x="16" y="20" width="48" height="28" rx="1" fill="#B2EBF2"/>
+              <rect x="35" y="52" width="10" height="8" fill="#fff"/>
+              <rect x="28" y="60" width="24" height="4" rx="2" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/herrenuhren" class="cmm-card">
+          <span class="cmm-card-title">Herrenuhren</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="acc-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#8D6E63"/><stop offset="100%" style="stop-color:#5D4037"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#acc-grad)"/>
+              <rect x="20" y="32" width="40" height="32" rx="4" fill="#fff"/>
+              <rect x="24" y="36" width="32" height="20" rx="2" fill="#D7CCC8"/>
+              <path d="M32 32v-6c0-4.4 3.6-8 8-8s8 3.6 8 8v6" stroke="#fff" stroke-width="4" fill="none"/>
+              <circle cx="40" cy="46" r="4" fill="#5D4037"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/sale" class="cmm-card">
+          <span class="cmm-card-title">Sale</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="pr-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#BDBDBD"/><stop offset="100%" style="stop-color:#757575"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#pr-grad)"/>
+              <rect x="22" y="16" width="36" height="14" rx="2" fill="#fff"/>
+              <rect x="14" y="30" width="52" height="22" rx="4" fill="#fff"/>
+              <rect x="22" y="48" width="36" height="18" rx="2" fill="#fff"/>
+              <rect x="26" y="52" width="28" height="2" fill="#E0E0E0"/>
+              <rect x="26" y="56" width="20" height="2" fill="#E0E0E0"/>
+              <circle cx="56" cy="40" r="3" fill="#4CAF50"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/all" class="cmm-card">
+          <span class="cmm-card-title">Alle Produkte</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="kb-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#9575CD"/><stop offset="100%" style="stop-color:#5E35B1"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#kb-grad)"/>
+              <rect x="10" y="28" width="60" height="28" rx="4" fill="#fff"/>
+              <rect x="16" y="34" width="7" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="26" y="34" width="7" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="36" y="34" width="7" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="46" y="34" width="7" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="56" y="34" width="7" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="20" y="42" width="40" height="5" rx="1" fill="#EDE7F6"/>
+              <rect x="16" y="50" width="7" height="3" rx="1" fill="#D1C4E9"/>
+              <rect x="56" y="50" width="7" height="3" rx="1" fill="#D1C4E9"/>
+            </svg>
+          </div>
+        </a>
+        <a href="{{ _root }}collections/controller" class="cmm-card">
+          <span class="cmm-card-title">Zubehör</span>
+          <div class="cmm-card-image cmm-card-icon">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="mouse-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#F06292"/><stop offset="100%" style="stop-color:#D81B60"/></linearGradient></defs>
+              <rect width="80" height="80" rx="18" fill="url(#mouse-grad)"/>
+              <rect x="26" y="16" width="28" height="48" rx="14" fill="#fff"/>
+              <rect x="38" y="22" width="4" height="10" rx="2" fill="#FCE4EC"/>
+              <line x1="26" y1="38" x2="54" y2="38" stroke="#FCE4EC" stroke-width="2"/>
+              <ellipse cx="40" cy="28" rx="10" ry="8" fill="#FCE4EC" opacity="0.5"/>
+            </svg>
+          </div>
+        </a>
+      {% endif %}
+    </div>
+    
+     <div style="height: 50px;"></div> <!-- Bottom Spacer -->
+  </div>
+</div>
+
+{{ 'custom-mobile-menu.css' | asset_url | stylesheet_tag }}
+
+<script>
+// Validated Universal Mobile Menu Hijack (Works on Homepage & Product Pages)
+(function() {
+  function initCustomMenu() {
+    const menu = document.getElementById('custom-mobile-menu');
+    const backdrop = document.getElementById('cmm-backdrop');
+    const closeBtn = document.getElementById('cmm-close');
+    const tabs = document.querySelectorAll('.cmm-tab-item');
+    const grids = document.querySelectorAll('.cmm-grid-container');
+
+    if (!menu) return;
+
+    function openMenu() {
+      menu.classList.add('is-open');
+      if(backdrop) backdrop.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      
+      // Force close default drawer if it exists
+      const defaultDrawer = document.getElementById('Details-menu-drawer-container');
+      if (defaultDrawer) {
+        defaultDrawer.removeAttribute('open');
+        defaultDrawer.classList.remove('menu-open');
+      }
+      document.body.classList.remove('overflow-hidden'); // Remove Shopify's overflow lock
+    }
+
+    function closeMenu() {
+      menu.classList.remove('is-open');
+      if(backdrop) backdrop.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    // Close Actions
+    if (closeBtn) closeBtn.onclick = function(e) { e.preventDefault(); closeMenu(); };
+    if (backdrop) backdrop.onclick = closeMenu;
+
+    // Universal Event Delegation for Menu Toggle
+    // Captures clicks on ANY element matching the selectors, even if dynamically added.
+    document.body.addEventListener('click', function(e) {
+      if (window.innerWidth > 990) return; // Only mobile
+
+      // Find closest trigger element
+      const trigger = e.target.closest('.header__icon--menu, [data-header-drawer], .header__drawer summary, .header__icon--menu span');
+      
+      if (trigger) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        openMenu();
+        return false;
+      }
+    }, true); // Use capture phase to intercept before other handlers
+
+    // Tabs Logic
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        grids.forEach(g => g.style.display = 'none');
+        const targetId = 'cmm-tab-content-' + this.dataset.tab;
+        const targetGrid = document.getElementById(targetId);
+        if(targetGrid) targetGrid.style.display = 'grid';
+      });
+    });
+
+    // Update counts via AJAX (Simplified for performance)
+    const updateCounts = () => {
+      // Cart count
+      fetch('/cart.js').then(r=>r.json()).then(c => {
+         const el = document.querySelector('.cmm-cart-count');
+         if(el) { el.textContent = c.item_count; el.style.display = c.item_count > 0 ? 'flex' : 'none'; }
+      }).catch(e=>{});
+      
+      // Wishlist count (from LayoutHub/App localStorage)
+      try {
+         const w = JSON.parse(localStorage.getItem('wishlist') || '[]');
+         const el = document.querySelector('.cmm-wishlist-count');
+         const count = Array.isArray(w) ? w.length : Object.keys(w).length;
+         if(el) { el.textContent = count; el.style.display = count > 0 ? 'flex' : 'none'; }
+      } catch(e){}
+    };
+    // Defer count update slightly to ensure page load
+    setTimeout(updateCounts, 2000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCustomMenu);
+  } else {
+    initCustomMenu();
+  }
+})();
+</script>

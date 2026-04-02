@@ -1,0 +1,323 @@
+{% schema %}
+{
+  "name": "Multi-Collection Rows",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Section Heading", "default": "Beliebte Kategorien" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 6, "step": 1, "default": 4, "label": "Produkte pro Reihe (Desktop)" },
+    { "type": "checkbox", "id": "show_badge", "default": true, "label": "Sale Badge anzeigen" },
+    { "type": "checkbox", "id": "show_rating", "label": "Bewertungen anzeigen", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "collection_row",
+      "name": "Kategorie-Reihe",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Kategorie auswählen" },
+        { "type": "text", "id": "title", "label": "Eigener Titel (Optional)" },
+        { "type": "range", "id": "limit", "min": 2, "max": 12, "step": 1, "default": 4, "label": "Anzahl Produkte" },
+        { "type": "text", "id": "button_label", "label": "Button-Text (z.B. Alle anzeigen)", "default": "Alle anzeigen" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi-Collection Rows",
+      "blocks": [
+        { "type": "collection_row" },
+        { "type": "collection_row" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{%- liquid
+  assign _columns = section.settings.columns_desktop | default: 4
+-%}
+
+<section id="mcr-{{ section.id }}" class="mcr-wrap">
+  <div class="mcr-container">
+    {% if section.settings.heading != blank %}
+      <div class="mcr-head">
+        <h2 class="mcr-h2">{{ section.settings.heading }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="mcr-rows">
+      {% for block in section.blocks %}
+        {% assign coll = block.settings.collection %}
+        {% assign limit = block.settings.limit %}
+        {% assign row_title = block.settings.title | default: coll.title %}
+
+        {% if coll != blank %}
+          <div class="mcr-row-block" {{ block.shopify_attributes }}>
+            <div class="mcr-row-header">
+              <h3 class="mcr-row-title">
+                <a href="{{ coll.url }}">{{ row_title }}</a>
+              </h3>
+              {% if block.settings.button_label != blank %}
+                <a href="{{ coll.url }}" class="mcr-row-link">{{ block.settings.button_label }} &rarr;</a>
+              {% endif %}
+            </div>
+
+            <div class="mcr-grid" style="--columns-desktop: {{ _columns }};">
+              {% for product in coll.products limit: limit %}
+                {% assign price = product.price %}
+                {% assign compare_at = product.compare_at_price %}
+                
+                {%- assign discount = nil -%}
+                {% if compare_at and compare_at > price %}
+                  {% assign diff = compare_at | minus: price %}
+                  {% assign discount_raw = diff | times: 100 %}
+                  {% assign discount = discount_raw | divided_by: compare_at | round %}
+                {% endif %}
+
+                {% assign rating_val = 0 %}
+                {% if section.settings.show_rating and product.metafields.reviews.rating.value %}
+                  {% assign rating_val = product.metafields.reviews.rating.value | default: 0 %}
+                {% endif %}
+
+                <article class="mcr-card">
+                  {% if section.settings.show_badge and discount %}
+                    {% assign badge_class = "mcr-badge" %}
+                    {% assign badge_text = "Sale" %}
+                    {% if discount >= 10 %}
+                        {% assign badge_text = "MEGA DEAL" %}
+                        {% assign badge_class = "mcr-badge mcr-badge--mega" %}
+                    {% endif %}
+                    <div class="{{ badge_class }}">{{ badge_text }}</div>
+                  {% endif %}
+
+                  <a class="mcr-card__link" href="{{ product.url }}">
+                    <div class="mcr-card__img-wrap">
+                      {% if product.featured_image %}
+                        <img
+                          class="mcr-card__img"
+                          src="{{ product.featured_image | img_url: '600x' }}"
+                          alt="{{ product.title | escape | default: shop.name }}"
+                          loading="lazy"
+                          decoding="async"
+                        >
+                      {% else %}
+                        {{ 'product-1' | placeholder_svg_tag: 'mcr-card__img' }}
+                      {% endif %}
+                    </div>
+
+                    <div class="mcr-card__body">
+                      <h4 class="mcr-card__title">{{ product.title }}</h4>
+
+
+
+                      <div class="mcr-price-row">
+                        {% if compare_at and compare_at > price %}
+                          <s class="mcr-price-compare">{{ compare_at | money }}</s>
+                        {% endif %}
+                        <span class="mcr-price-main">{{ price | money }}</span>
+                      </div>
+                    </div>
+                  </a>
+                </article>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <div class="mcr-row-block" {{ block.shopify_attributes }}>
+            <p class="mcr-empty">Bitte Kategorie auswählen für Block {{ forloop.index }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+/* Section Container */
+#mcr-{{ section.id }} .mcr-wrap {
+  padding: 3rem 0;
+  background-color: #ffffff;
+}
+#mcr-{{ section.id }} .mcr-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Main Heading */
+#mcr-{{ section.id }} .mcr-head {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+#mcr-{{ section.id }} .mcr-h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #111;
+}
+
+/* Rows Wrapper */
+#mcr-{{ section.id }} .mcr-row-block {
+  margin-bottom: 3rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 2rem;
+}
+#mcr-{{ section.id }} .mcr-row-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* Row Header (Title + Link) */
+#mcr-{{ section.id }} .mcr-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+#mcr-{{ section.id }} .mcr-row-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+#mcr-{{ section.id }} .mcr-row-title a {
+  text-decoration: none;
+  color: #111;
+}
+#mcr-{{ section.id }} .mcr-row-link {
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: #1D4739;
+  font-weight: 600;
+}
+#mcr-{{ section.id }} .mcr-row-link:hover {
+  text-decoration: underline;
+}
+
+/* Grid */
+#mcr-{{ section.id }} .mcr-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns-desktop), 1fr);
+  gap: 20px;
+}
+
+/* Card */
+#mcr-{{ section.id }} .mcr-card {
+  position: relative;
+  background: #fff;
+  transition: transform 0.2s;
+}
+#mcr-{{ section.id }} .mcr-card:hover {
+  transform: translateY(-5px);
+}
+#mcr-{{ section.id }} .mcr-card__link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Image */
+#mcr-{{ section.id }} .mcr-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+#mcr-{{ section.id }} .mcr-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.5s;
+}
+#mcr-{{ section.id }} .mcr-card:hover .mcr-card__img {
+  transform: scale(1.05);
+}
+
+/* Badge */
+#mcr-{{ section.id }} .mcr-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #000;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    z-index: 2;
+}
+#mcr-{{ section.id }} .mcr-badge--mega {
+    background: #1D4739; /* Brand Green */
+}
+
+/* Body */
+#mcr-{{ section.id }} .mcr-card__body {
+  padding: 0 4px;
+}
+#mcr-{{ section.id }} .mcr-card__title {
+  font-size: 0.95rem;
+  margin: 0 0 0.25rem;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#mcr-{{ section.id }} .mcr-rating {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+#mcr-{{ section.id }} .mcr-star {
+  color: #FFD700;
+}
+#mcr-{{ section.id }} .mcr-price-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #111;
+}
+#mcr-{{ section.id }} .mcr-price-compare {
+  color: #999;
+  font-weight: 400;
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}
+#mcr-{{ section.id }} .mcr-price-main {
+  font-size: 1.1rem;
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+  #mcr-{{ section.id }} .mcr-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  #mcr-{{ section.id }} .mcr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  #mcr-{{ section.id }} .mcr-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+@media (max-width: 480px) {
+  #mcr-{{ section.id }} .mcr-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/* Force hide any injected wishlist/heart icons in this section */
+#mcr-{{ section.id }} .mcr-card__img-wrap button,
+#mcr-{{ section.id }} .mcr-card__img-wrap .wishlist-icon,
+#mcr-{{ section.id }} .mcr-card__img-wrap [aria-label*="wishlist"],
+#mcr-{{ section.id }} .mcr-card__img-wrap [class*="heart"],
+#mcr-{{ section.id }} .mcr-card__img-wrap .wishlist-engine-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+</style>

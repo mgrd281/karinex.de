@@ -1,0 +1,389 @@
+{% schema %}
+{
+  "name": "Modern Live Chat",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wir sind für Sie da!"
+    },
+    {
+      "type": "text",
+      "id": "heading_offline",
+      "label": "Heading (Offline)",
+      "default": "Gerade nicht erreichbar"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Haben Sie Fragen? Starten Sie den Chat und sprechen Sie direkt mit unserem Team."
+    },
+    {
+      "type": "textarea",
+      "id": "description_offline",
+      "label": "Description (Offline)",
+      "default": "Unser Live-Chat ist momentan nicht verfügbar. Kontaktieren Sie uns gerne per E-Mail oder WhatsApp."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Chat starten"
+    },
+    {
+      "type": "header",
+      "content": "Hours (Server Time Check recommended via JS)"
+    },
+    {
+      "type": "text",
+      "id": "hours_text",
+      "label": "Hours Text",
+      "default": "Mo.–So. 09:00–23:00 Uhr"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#f9fafb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Modern Live Chat"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="modern-chat-wrapper" style="background-color: {{ section.settings.bg_color }};">
+  <div class="modern-chat-card" id="chat-card-container">
+    
+    <!-- Status Badge -->
+    <div class="chat-status-badge" id="chat-status-badge">
+      <span class="status-dot"></span>
+      <span class="status-label">Online</span>
+    </div>
+
+    <!-- Icon -->
+    <div class="chat-icon-container">
+       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="main-icon">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+       </svg>
+    </div>
+
+    <!-- Content -->
+    <div class="chat-content">
+      <h1 class="chat-title" id="chat-title">{{ section.settings.heading }} – Karinex Live-Support</h1>
+      <p class="chat-desc" id="chat-desc">{{ section.settings.description }}</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="chat-actions">
+      <button type="button" class="chat-cta-btn" id="start-chat-btn">
+        <span>{{ section.settings.button_label }}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+
+      <!-- Alternatives (Hidden by default, shown when offline) -->
+      <div class="offline-alternatives" id="offline-alternatives" style="display:none;">
+         <a href="mailto:shop@karinex.de" class="alt-link">
+           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+           E-Mail senden
+         </a>
+         <a href="https://api.whatsapp.com/send?phone=4915227322222" class="alt-link">
+           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+           WhatsApp
+         </a>
+      </div>
+    </div>
+
+    <!-- Trust Meta -->
+    <div class="chat-trust-info">
+      <div class="trust-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>Antwortet in wenigen Minuten</span>
+      </div>
+      <div class="trust-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>{{ section.settings.hours_text }}</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* Reset & Layout */
+.modern-chat-wrapper {
+  padding: 80px 20px;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.modern-chat-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Badge */
+.chat-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+  transition: all 0.3s;
+}
+
+.chat-status-badge.online {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+.chat-status-badge.offline {
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.chat-status-badge.online .status-dot { background: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+.chat-status-badge.offline .status-dot { background: #9ca3af; }
+
+/* Icon */
+.chat-icon-container {
+  color: #111;
+  margin-bottom: 16px;
+}
+.main-icon {
+  stroke-width: 1.2px;
+}
+
+/* Content */
+.chat-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 12px 0;
+  line-height: 1.2;
+}
+
+.chat-desc {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 auto 32px;
+  max-width: 320px;
+}
+
+/* Button */
+.chat-actions {
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.chat-cta-btn {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.2s, background 0.2s, opacity 0.2s;
+  width: 100%;
+}
+.chat-cta-btn:hover:not(:disabled) {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.15);
+}
+.chat-cta-btn:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Alternatives */
+.offline-alternatives {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+  animation: fadeIn 0.4s ease;
+}
+.alt-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.alt-link:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* Trust Info */
+.chat-trust-info {
+  border-top: 1px solid #f3f4f6;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+.trust-item svg { color: #10b981; }
+
+@keyframes fadeIn { from {opacity:0; transform:translateY(5px);} to {opacity:1; transform:translateY(0);} }
+
+@media (max-width: 640px) {
+  .modern-chat-wrapper { padding: 40px 16px; }
+  .modern-chat-card { padding: 32px 24px; }
+  .chat-title { font-size: 24px; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const now = new Date();
+  
+  // Robust time check for Germany (Europe/Berlin)
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Berlin',
+    hour: 'numeric',
+    hour12: false
+  });
+  
+  const hour = parseInt(formatter.format(new Date()));
+  // Hours: 09:00 - 23:00 (09 to 22:59)
+  // If hour is 23, it means 23:00+, which is offline (closes at 23:00)
+  const isOnline = hour >= 9 && hour < 23;
+  
+  // Elements
+  const badge = document.getElementById('chat-status-badge');
+  const badgeDot = badge.querySelector('.status-dot');
+  const badgeLabel = badge.querySelector('.status-label');
+  const btn = document.getElementById('start-chat-btn');
+  const title = document.getElementById('chat-title');
+  const desc = document.getElementById('chat-desc');
+  const alternatives = document.getElementById('offline-alternatives');
+  
+  // Set State
+  if (isOnline) {
+    // Online State
+    badge.className = 'chat-status-badge online';
+    badgeLabel.textContent = 'Online';
+    // Use default texts from liquid
+  } else {
+    // Offline State
+    badge.className = 'chat-status-badge offline';
+    badgeLabel.textContent = 'Offline';
+    title.textContent = '{{ section.settings.heading_offline }}';
+    desc.textContent = '{{ section.settings.description_offline }}';
+    
+    // Disable main button or change its look
+    btn.disabled = true;
+    btn.style.display = 'none'; // Hide main button to show only alternatives OR keep generic 'Leave Message'
+    
+    // Show alternatives
+    alternatives.style.display = 'flex';
+  }
+  
+  // Button Click Handler (Only when online)
+  if (btn && !btn.disabled) {
+    btn.addEventListener('click', function() {
+       const originalText = btn.innerHTML;
+       btn.innerHTML = '<span>Verbinde...</span>';
+       
+       setTimeout(() => {
+          let opened = false;
+          // Attempt various chat widgets
+          if (window.ShopifyChat) { window.ShopifyChat.show(); opened = true; }
+          // 2. Tidio
+          else if (window.tidioChatApi) {
+              // We must use 'important' to override the global CSS that hides it
+              const hiddenElements = document.querySelectorAll('#tidio-chat, #tidio-chat-iframe, .tidio-chat-widget');
+              hiddenElements.forEach(el => {
+                  el.style.setProperty('display', 'block', 'important');
+                  el.style.setProperty('opacity', '1', 'important');
+                  el.style.setProperty('z-index', '999999999', 'important');
+              });
+              
+              window.tidioChatApi.open();
+              opened = true;
+          }else if (window.Tawk_API) { window.Tawk_API.maximize(); opened = true; }
+          else if (window.GorgiasChat) { window.GorgiasChat.open(); opened = true; }
+          else if (window.zE) { window.zE.activate(); opened = true; }
+          
+          if(!opened) {
+             // Fallback UX: Switch to "Alternatives" view instead of Alert
+             // 1. Change visual state
+             badge.className = 'chat-status-badge offline';
+             badgeLabel.textContent = 'Offline';
+             title.textContent = '{{ section.settings.heading_offline }}';
+             desc.textContent = '{{ section.settings.description_offline }}';
+             
+             // 2. Hide chat button, show alternatives
+             btn.style.display = 'none';
+             alternatives.style.display = 'flex';
+             
+             // 3. Optional: Add a small note why (inline) - logic: just show alternatives is cleaner
+          } else {
+             btn.innerHTML = originalText;
+          }
+       }, 500);
+    });
+  }
+});
+</script>

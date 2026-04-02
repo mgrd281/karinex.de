@@ -1,0 +1,108 @@
+{%- doc -%}
+  Custom vendor/brand filter for collection pages.
+  Works entirely client-side via JavaScript - no Search & Discovery app needed.
+  Reads data-vendor attributes from product grid items and hides/shows them.
+
+  @param {string} filter_style - 'horizontal' or 'vertical'
+  @param {string} sectionId - The section ID
+{%- enddoc -%}
+
+{%- capture vendor_list -%}
+  {%- for product in collection.products limit: 1000 -%}
+    {%- if product.vendor != blank -%}|{{ product.vendor | strip }}|,{%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign vendor_entries = vendor_list | split: ',' -%}
+{%- assign unique_vendors_raw = vendor_entries | uniq | sort -%}
+
+{%- comment -%} Build vendor list with counts {%- endcomment -%}
+{%- assign vendor_data = '' -%}
+{%- assign vendor_total = 0 -%}
+{%- for uv in unique_vendors_raw -%}
+  {%- assign uv_stripped = uv | strip -%}
+  {%- if uv_stripped != '' -%}
+    {%- assign uv_name = uv_stripped | remove_first: '|' -%}
+    {%- assign uv_name = uv_name | remove: '|' -%}
+    {%- if uv_name != '' -%}
+      {%- assign uv_count = 0 -%}
+      {%- for ve in vendor_entries -%}
+        {%- assign ve_stripped = ve | strip -%}
+        {%- if ve_stripped == uv_stripped -%}
+          {%- assign uv_count = uv_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign vendor_total = vendor_total | plus: 1 -%}
+      {%- assign vendor_item = uv_name | append: ':::' | append: uv_count -%}
+      {%- if vendor_data == '' -%}
+        {%- assign vendor_data = vendor_item -%}
+      {%- else -%}
+        {%- assign vendor_data = vendor_data | append: '|||' | append: vendor_item -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign unique_vendors = vendor_data | split: '|||' -%}
+
+{%- if vendor_total > 1 -%}
+<accordion-custom
+  class="facets__item vendor-filter-accordion"
+  {% if filter_style == 'horizontal' %}
+    data-disable-animation-on-desktop="true"
+    data-close-with-escape="true"
+  {% endif %}
+  {% if filter_style == 'vertical' %}
+  {% endif %}
+>
+  <details
+    id="Facet-Details-{{ sectionId }}-vendor-{{ filter_style }}"
+    class="facets__panel"
+    {% if filter_style == 'horizontal' %}
+      data-auto-close-details="desktop"
+    {% endif %}
+  >
+    <summary class="facets__summary">
+      <span class="facets__label" style="font-weight: 700; font-size: 14px;">Marke</span>
+      <div class="facets__status-wrapper">
+        <span class="vendor-filter-count" style="display: none;"></span>
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    </summary>
+    <floating-panel-component
+      {% unless filter_style == 'vertical' %}data-close-on-resize{% endunless %}
+      class="facets__inputs facets__panel-content details-content{% if filter_style == 'horizontal' %} color-{{ settings.popover_color_scheme }}{% endif %}"
+    >
+      <div class="facets__inputs-wrapper">
+        <ul class="facets__inputs-list list-unstyled">
+          {%- for vendor in unique_vendors -%}
+            {%- assign vendor_parts = vendor | split: ':::' -%}
+            {%- assign vendor_stripped = vendor_parts[0] | strip -%}
+            {%- assign vendor_product_count = vendor_parts[1] | strip -%}
+            {%- if vendor_stripped != blank -%}
+              {%- assign vendor_id = 'vendor-filter-' | append: forloop.index | append: '-' | append: filter_style -%}
+              <li class="facets__inputs-list-item" data-skip-node-update="true">
+                <div class="checkbox vendor-filter-item">
+                  <input
+                    type="checkbox"
+                    id="{{ vendor_id }}"
+                    class="checkbox__input js-vendor-checkbox"
+                    data-vendor-name="{{ vendor_stripped | escape }}"
+                    value="{{ vendor_stripped | escape }}"
+                  >
+                  <label class="checkbox__label" for="{{ vendor_id }}" role="checkbox">
+                    {{ 'icon-checkmark.svg' | inline_asset_content }}
+                    <span class="checkbox__label-text">{{ vendor_stripped }} <span style="color: #767676;">({{ vendor_product_count }})</span></span>
+                  </label>
+                </div>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    </floating-panel-component>
+  </details>
+</accordion-custom>
+{%- endif -%}

@@ -1,0 +1,533 @@
+/* ============================================================
+   LEGO Product Layout — Mobile Accordion + Desktop Blocks
+   Optimiert für LEGO-Produkte, kinderfreundlich & spielzeuggeeignet
+   ============================================================ */
+
+/* ─────────────────────────────────────────────
+   SHARED: Typografie & Spec-Styles
+   ───────────────────────────────────────────── */
+.lego-spec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lego-acc-text,
+.lego-dk-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE ACCORDION  (≤ 989px)
+   ───────────────────────────────────────────── */
+.lego-accordion {
+  display: none !important;
+}
+.lego-desktop {
+  display: none !important;
+}
+
+@media (max-width: 989px) {
+  .lego-accordion {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 16px 0 24px;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1.5px solid #e8e8e8;
+  }
+
+  /* ── Einzelnes Accordion-Item ── */
+  .lego-acc-item {
+    border-bottom: 1px solid #f0f0f0;
+    background: #fff;
+  }
+
+  .lego-acc-item:last-child {
+    border-bottom: none;
+  }
+
+  /* ── Header / Klickbare Zeile ── */
+  .lego-acc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 18px 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    gap: 12px;
+    min-height: 56px;
+    transition: background-color 0.15s ease;
+  }
+
+  .lego-acc-header:active {
+    background-color: #fafafa;
+  }
+
+  /* Icon-Kreis links */
+  .lego-acc-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    line-height: 1;
+    background: #E8F5E9;
+    color: #1D4739;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .lego-acc-item.open .lego-acc-icon {
+    background: #d4edda;
+    transform: scale(1.06);
+  }
+
+  /* Titel */
+  .lego-acc-title {
+    flex: 1;
+    font-size: 15.5px;
+    font-weight: 650;
+    color: #1a1a1a;
+    text-align: left;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  /* Chevron rechts */
+  .lego-acc-chevron {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: #999;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+    stroke-width: 2.2;
+  }
+
+  .lego-acc-item.open .lego-acc-chevron {
+    transform: rotate(180deg);
+    color: #1D4739;
+  }
+
+  /* ── Content-Panel ── */
+  .lego-acc-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: max-height;
+  }
+
+  .lego-acc-item.open .lego-acc-content {
+    /* max-height wird per JS gesetzt */
+  }
+
+  .lego-acc-body {
+    padding: 0 18px 20px;
+  }
+
+  /* ── Spec-Zeilen (Key: Value) ── */
+  .lego-spec-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lego-spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+    gap: 12px;
+  }
+
+  .lego-spec-row:last-child {
+    border-bottom: none;
+  }
+
+  .lego-spec-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #777;
+    text-transform: none;
+    letter-spacing: 0.01em;
+    flex-shrink: 0;
+    max-width: 45%;
+  }
+
+  .lego-spec-value {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  /* ── Freitext-Inhalte (Beschreibung etc.) ── */
+  .lego-acc-text {
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .lego-acc-text p {
+    margin: 0 0 12px;
+  }
+
+  .lego-acc-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .lego-acc-text ul,
+  .lego-acc-text ol {
+    margin: 0 0 12px;
+    padding-left: 18px;
+  }
+
+  .lego-acc-text li {
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+
+  /* ── Leer-Hinweis (wenn keine Daten) ── */
+  .lego-acc-empty {
+    font-size: 13.5px;
+    color: #aaa;
+    font-style: italic;
+    padding: 4px 0;
+  }
+
+  /* ── Item-Farben: Subtile Akzente je nach Reihenfolge ── */
+  .lego-acc-item:nth-child(1) .lego-acc-icon { background: #E8F5E9; color: #1D4739; }
+  .lego-acc-item:nth-child(2) .lego-acc-icon { background: #E3F2FD; color: #1E88E5; }
+  .lego-acc-item:nth-child(3) .lego-acc-icon { background: #FFF3E0; color: #FB8C00; }
+  .lego-acc-item:nth-child(4) .lego-acc-icon { background: #E8F5E9; color: #43A047; }
+  .lego-acc-item:nth-child(5) .lego-acc-icon { background: #FCE4EC; color: #E53935; }
+  .lego-acc-item:nth-child(6) .lego-acc-icon { background: #F3E5F5; color: #8E24AA; }
+  .lego-acc-item:nth-child(7) .lego-acc-icon { background: #E0F7FA; color: #00ACC1; }
+  .lego-acc-item:nth-child(8) .lego-acc-icon { background: #FFF9C4; color: #F57F17; }
+  .lego-acc-item:nth-child(9) .lego-acc-icon { background: #E8EAF6; color: #5C6BC0; }
+  .lego-acc-item:nth-child(10) .lego-acc-icon { background: #EFEBE9; color: #6D4C41; }
+
+  /* ── Erster Accordion standardmäßig offen ── */
+  .lego-acc-item.open .lego-acc-header {
+    background: #FFFDE7;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   DESKTOP LAYOUT  (≥ 990px)
+   Uhren-Stil: Description + Tabs + Specs Grid
+   ───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════
+   AGE WARNING — Ultra Minimal Footnote
+   ═══════════════════════════════════════════ */
+.lego-age-badge {
+  padding: 0;
+  margin: 12px 0 16px;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.lego-age-badge__dot { display: none; }
+
+.lego-age-badge__content {
+  display: inline;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #aaa;
+}
+
+.lego-age-badge__age {
+  font-weight: 600;
+  color: #888;
+}
+
+.lego-age-badge__text {
+  font-weight: 400;
+}
+
+/* Mobile */
+@media (max-width: 989px) {
+  .lego-age-badge--mobile {
+    margin: 10px 0 0;
+    padding: 0;
+  }
+}
+
+/* Desktop: hide mobile badge */
+@media (min-width: 990px) {
+  .lego-age-badge--mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 990px) {
+  .lego-accordion {
+    display: none !important;
+  }
+
+  .lego-desktop {
+    display: block !important;
+    max-width: 1200px;
+    margin: 30px auto 40px;
+    padding: 0 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1a1a1a;
+    box-sizing: border-box;
+  }
+
+  /* ═══════════════════════════════════════════
+     BESCHREIBUNGS-BOX (expandierbar)
+     ═══════════════════════════════════════════ */
+  .lego-dk-desc-box {
+    background: transparent;
+    padding: 0 0 24px 0;
+    margin-bottom: 24px;
+    border: none;
+  }
+
+  .lego-dk-desc-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #1D4739;
+  }
+
+  .lego-dk-desc-wrap {
+    position: relative;
+    max-height: 160px;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .lego-dk-desc-wrap.expanded {
+    max-height: 4000px;
+  }
+
+  .lego-dk-desc-text {
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: #333;
+  }
+
+  .lego-dk-desc-text p {
+    margin: 0 0 14px;
+  }
+
+  .lego-dk-desc-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .lego-dk-desc-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .lego-dk-desc-wrap.expanded + .lego-dk-desc-gradient,
+  .lego-dk-desc-gradient.hidden {
+    opacity: 0;
+  }
+
+  .lego-dk-mehr-btn {
+    background: none;
+    border: none;
+    color: #1D4739;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0 0;
+    transition: color 0.2s;
+  }
+
+  .lego-dk-mehr-btn:hover {
+    color: #00513a;
+  }
+
+  .lego-dk-mehr-btn.hidden {
+    display: none;
+  }
+
+  /* ═══════════════════════════════════════════
+     TAB-NAVIGATION
+     ═══════════════════════════════════════════ */
+  .lego-dk-tab-nav {
+    background-color: #f4f4f4;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    padding: 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .lego-tab-btn {
+    padding: 15px 20px;
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  .lego-tab-btn:hover {
+    color: #000;
+    background: rgba(0,0,0,0.03);
+  }
+
+  .lego-tab-btn.active {
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 -2px 0 #1D4739 inset;
+    margin-bottom: -1px;
+    border-right: 1px solid #eee;
+    border-left: 1px solid #eee;
+  }
+
+  /* ═══════════════════════════════════════════
+     TAB PANELS
+     ═══════════════════════════════════════════ */
+  .lego-dk-panels {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+  }
+
+  .lego-tab-content {
+    display: none;
+  }
+
+  /* ═══════════════════════════════════════════
+     SPECS GRID (Zusatzinformation)
+     ═══════════════════════════════════════════ */
+  .lego-dk-specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .lego-dk-specs-grid .lego-spec-cell {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    min-height: 50px;
+  }
+
+  .lego-dk-specs-grid .lego-spec-cell:nth-child(4n+3),
+  .lego-dk-specs-grid .lego-spec-cell:nth-child(4n+4) {
+    background-color: #f9f9f9;
+  }
+
+  .lego-dk-specs-grid .lego-s-label {
+    flex: 0 0 40%;
+    font-weight: 700;
+    color: #333;
+    font-size: 0.95rem;
+    padding-right: 10px;
+  }
+
+  .lego-dk-specs-grid .lego-s-value {
+    flex: 1;
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  .lego-dk-specs-grid .lego-spec-cell.lego-empty-cell {
+    border-bottom: none;
+    min-height: 0;
+    padding: 0;
+  }
+
+  /* ═══════════════════════════════════════════
+     LIEFERUNG TAB
+     ═══════════════════════════════════════════ */
+  .lego-dk-delivery-inner {
+    padding: 24px 28px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  .lego-dk-delivery-inner p {
+    margin: 0 0 12px;
+  }
+
+  .lego-delivery-highlight {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px !important;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* ═══════════════════════════════════════════
+     ÜBER DIE MARKE TAB
+     ═══════════════════════════════════════════ */
+  .lego-dk-brand-inner {
+    padding: 32px 28px;
+  }
+
+  .lego-brand-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .lego-brand-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .lego-brand-divider {
+    width: 40px;
+    height: 3px;
+    background: #1D4739;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .lego-brand-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #444;
+  }
+
+  .lego-brand-text p {
+    margin: 0 0 14px;
+  }
+
+  .lego-brand-text p:last-child {
+    margin-bottom: 0;
+  }
+}

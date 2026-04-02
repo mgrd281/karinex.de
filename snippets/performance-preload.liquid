@@ -1,0 +1,30 @@
+{%- comment -%}
+  Performance Helper: Preload Critical Resources
+  Automatically preloads logo and hero images for better LCP
+  Enhanced with DNS prefetch for third-party resources
+{%- endcomment -%}
+
+<!-- Preload Logo for faster header rendering -->
+{%- if settings.logo -%}
+  <link rel="preload" href="{{ settings.logo | image_url: width: 200 }}" as="image" fetchpriority="high">
+{%- endif -%}
+
+<!-- Preload Hero Image on Homepage -->
+{%- if template.name == 'index' -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'hero' and block.settings.image -%}
+      <link rel="preload" href="{{ block.settings.image | image_url: width: 1000 }}" as="image" fetchpriority="high">
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+<!-- Preload Featured Product Image -->
+{%- if template.name == 'product' and product.featured_image -%}
+  <link rel="preload" href="{{ product.featured_image | image_url: width: 800 }}" as="image" fetchpriority="high">
+{%- endif -%}
+
+<!-- DNS Prefetch for Third-Party Resources -->
+<link rel="dns-prefetch" href="https://widgets.trustedshops.com">
+
+<!-- Preconnect for Critical Third-Party -->
+

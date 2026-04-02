@@ -1,0 +1,19 @@
+{%- doc -%}
+  Calculates the discount percentage tier for a product.
+  Returns the discount tier (10, 20, 30, 40, 50) based on the difference
+  between compare_at_price and price. Returns empty if no discount.
+
+  @param {object} product - The product object
+{%- enddoc -%}
+
+{%- if product.compare_at_price > product.price -%}
+  {%- assign discount_amount = product.compare_at_price | minus: product.price -%}
+  {%- assign discount_pct = discount_amount | times: 100 | divided_by: product.compare_at_price -%}
+  {%- assign discount_tier = discount_pct | divided_by: 10 | times: 10 -%}
+  {%- if discount_tier >= 50 -%}
+    {%- assign discount_tier = 50 -%}
+  {%- endif -%}
+  {%- if discount_tier >= 10 -%}
+    {{- discount_tier -}}
+  {%- endif -%}
+{%- endif -%}

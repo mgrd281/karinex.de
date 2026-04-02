@@ -1,0 +1,299 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-shipping.css' | asset_url | stylesheet_tag }}
+
+<div class="shipping-page">
+  
+  <!-- ================================================
+       1) HERO SECTION – SHIPPING CLARITY
+       ================================================ -->
+  <section class="shipping-hero">
+    <div class="shipping-hero-content">
+      <h1 class="shipping-hero-title">Versand & Lieferung</h1>
+      <p class="shipping-hero-subtitle">Alle wichtigen Informationen zu Versand, Lieferzeiten und digitalen Produkten auf einen Blick.</p>
+      <div class="shipping-hero-divider"></div>
+      <p class="shipping-hero-meta">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16" style="vertical-align: middle; margin-right: 6px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Zuletzt aktualisiert: 9. Februar 2026
+      </p>
+    </div>
+  </section>
+
+  <div class="shipping-container">
+
+    <!-- ================================================
+         2) SHIPPING OVERVIEW – KEY FACTS
+         ================================================ -->
+    <section class="shipping-overview">
+      <div class="shipping-overview-grid">
+        
+        <div class="shipping-highlight-card">
+          <div class="shipping-highlight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="shipping-highlight-content">
+            <h3 class="shipping-highlight-title">Kostenloser Versand</h3>
+            <p class="shipping-highlight-text">Innerhalb Deutschlands</p>
+          </div>
+        </div>
+
+        <div class="shipping-highlight-card">
+          <div class="shipping-highlight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <div class="shipping-highlight-content">
+            <h3 class="shipping-highlight-title">Lieferung mit DHL</h3>
+            <p class="shipping-highlight-text">Zuverlässig & versichert</p>
+          </div>
+        </div>
+
+        <div class="shipping-highlight-card">
+          <div class="shipping-highlight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="shipping-highlight-content">
+            <h3 class="shipping-highlight-title">2–5 Werktage</h3>
+            <p class="shipping-highlight-text">Physische Produkte</p>
+          </div>
+        </div>
+
+        <div class="shipping-highlight-card">
+          <div class="shipping-highlight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div class="shipping-highlight-content">
+            <h3 class="shipping-highlight-title">Sofortiger Download</h3>
+            <p class="shipping-highlight-text">Digitale Produkte</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================
+         3) CONTENT SECTIONS
+         ================================================ -->
+    <div class="shipping-content">
+
+      <!-- Versanddienstleister -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Versanddienstleister</h2>
+          <p>Der Versand physischer Produkte erfolgt ausschließlich über <strong>DHL</strong>. Alle Sendungen sind versichert und können online verfolgt werden.</p>
+        </div>
+      </section>
+
+      <!-- Liefergebiet -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="10" r="3"/>
+            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Liefergebiet</h2>
+          <p>Wir liefern ausschließlich <strong>innerhalb Deutschlands</strong>. Für Lieferungen in andere Länder kontaktieren Sie bitte unseren Kundenservice.</p>
+        </div>
+      </section>
+
+      <!-- Versandkosten -->
+      <section class="shipping-section shipping-section--highlight">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Versandkosten</h2>
+          <div class="shipping-free-badge">
+            <span class="shipping-free-badge-text">Kostenloser Versand</span>
+            <span class="shipping-free-badge-price">0 €</span>
+          </div>
+          <p>Der Versand innerhalb Deutschlands ist für Sie <strong>komplett kostenlos</strong> – unabhängig vom Bestellwert.</p>
+        </div>
+      </section>
+
+      <!-- Lieferzeiten – Physische Produkte -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Lieferzeiten – Physische Produkte</h2>
+          <ul class="shipping-list">
+            <li><strong>2–5 Werktage</strong> nach Zahlungseingang</li>
+            <li>Verzögerungen werden transparent kommuniziert</li>
+            <li>Tracking-Updates per E-Mail</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Digitale Produkte -->
+      <section class="shipping-section shipping-section--digital">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Digitale Produkte</h2>
+          <div class="shipping-instant-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>Sofortiger Download</span>
+          </div>
+          <ul class="shipping-list">
+            <li>Download-Link <strong>sofort nach Zahlungseingang</strong> per E-Mail</li>
+            <li>Kein physischer Versand erforderlich</li>
+            <li>Keine Wartezeit – sofort einsatzbereit</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Sendungsverfolgung -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Sendungsverfolgung</h2>
+          <ul class="shipping-list">
+            <li>DHL-Trackingnummer per E-Mail nach Versand</li>
+            <li>Jederzeit online auf <a href="https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html" target="_blank" rel="noopener">dhl.de</a> verfolgbar</li>
+            <li>Status-Updates direkt von DHL</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Abholung vor Ort -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Abholung vor Ort</h2>
+          <p>Eine Selbstabholung ist leider <strong>nicht möglich</strong>. Alle Bestellungen werden per DHL versendet oder digital bereitgestellt.</p>
+        </div>
+      </section>
+
+      <!-- Transportschäden -->
+      <section class="shipping-section">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Transportschäden</h2>
+          <p>Sollte Ihre Sendung beschädigt ankommen:</p>
+          <ul class="shipping-list">
+            <li>Prüfen Sie die Ware sofort bei Erhalt</li>
+            <li>Dokumentieren Sie den Schaden mit Fotos</li>
+            <li>Melden Sie den Schaden beim Zusteller</li>
+            <li>Kontaktieren Sie unseren Support</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Wichtige Hinweise -->
+      <section class="shipping-section shipping-section--notice">
+        <div class="shipping-section-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </div>
+        <div class="shipping-section-content">
+          <h2 class="shipping-section-title">Wichtige Hinweise</h2>
+          <ul class="shipping-list">
+            <li>Bei falscher Adressangabe können zusätzliche Kosten entstehen</li>
+            <li>Bei Annahmeverweigerung werden die Versandkosten berechnet</li>
+            <li>Bitte stellen Sie sicher, dass die Lieferadresse korrekt ist</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ================================================
+         5) SUPPORT BLOCK
+         ================================================ -->
+    <section class="shipping-support">
+      <h2 class="shipping-support-title">Fragen zum Versand?</h2>
+      <p class="shipping-support-text">Unser Support-Team hilft Ihnen gerne bei allen Fragen rund um Versand und Lieferung weiter.</p>
+      <div class="shipping-support-actions">
+        <a href="{{ _root }}pages/kontakt" class="shipping-support-link shipping-support-link--primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Kontaktseite
+        </a>
+        <a href="mailto:shop@karinex.de" class="shipping-support-link shipping-support-link--secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          E-Mail schreiben
+        </a>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Versand & Lieferung",
+  "tag": "section",
+  "class": "section-shipping",
+  "settings": []
+}
+{% endschema %}

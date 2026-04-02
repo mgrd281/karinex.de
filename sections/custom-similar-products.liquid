@@ -1,0 +1,602 @@
+{% schema %}
+{
+  "name": "Similar Products (Custom)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wird oft zusammen angesehen"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "DAS PASST DAZU"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Similar Products (Custom)"
+    }
+  ]
+}
+{% endschema %}
+
+{% if request.page_type == 'product' %}
+<div class="custom-similar-products-wrapper" data-product-id="{{ product.id }}" data-limit="{{ section.settings.products_to_show }}">
+  <div class="csp-content">
+    <div class="csp-header">
+      <span class="csp-subheading">{{ section.settings.subheading }}</span>
+      <h2 class="csp-heading">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="csp-grid" id="csp-grid-{{ section.id }}">
+      <!-- Products will be injected here via JS -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-similar-products-wrapper {
+    padding-top: 0px !important; 
+    margin-top: 40px !important;
+    padding-bottom: 85px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: none;
+    overflow: visible;
+  }
+  
+  .custom-similar-products-wrapper.cart-context {
+    max-width: 1360px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  /* Place content in the center column of the grid defined by .section */
+  .csp-content {
+    grid-column: 2; 
+    width: 100%;
+  }
+  
+  .csp-header {
+    margin-bottom: 30px;
+  }
+  
+  .csp-subheading {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #666;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  
+  .csp-heading {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    color: #000;
+  }
+  
+  .csp-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 160px;
+    margin-bottom: -160px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .csp-grid::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+  }
+  
+  /* PRODUCT CARD STYLES */
+  .csp-card {
+    background: #f8f8f8;
+    border-radius: 4px;
+    position: relative;
+    padding-bottom: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+    /* Make cards ~20% smaller than previous 4-col layout. 
+       Previously ~25% width. Now ~18-20% width or fixed pixel. 
+       Fixed pixel is safer for "scrolling" feel. */
+    min-width: 180px; 
+    width: 180px;
+  }
+  
+  @media (max-width: 600px) {
+    .csp-card {
+      min-width: 140px; /* Even smaller on mobile */
+      width: 140px;
+    }
+  }
+
+  .csp-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 125%; 
+    background: #f4f6f8;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  
+  .csp-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply; 
+  }
+  
+  .csp-image-wrapper wishlist-heart {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+  }
+  .csp-card .wishlist-heart__button {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    color: #333;
+    width: 32px;
+    height: 32px;
+  }
+  .csp-card .wishlist-heart__button:hover {
+    background: transparent;
+    box-shadow: none;
+    transform: scale(1.1);
+  }
+  .csp-card .wishlist-heart__button svg {
+    width: 22px;
+    height: 22px;
+    stroke: #333;
+    stroke-width: 1.6;
+    fill: transparent;
+  }
+  .csp-card wishlist-heart[saved] .wishlist-heart__button {
+    color: #1d4739;
+    background: transparent;
+  }
+  .csp-card wishlist-heart[saved] .wishlist-heart__button svg {
+    stroke: #1d4739;
+    fill: #1d4739;
+  }
+  .csp-card .wishlist-social-proof {
+    display: none !important;
+  }
+  
+  .csp-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 0px;
+    background: #e30613;
+    color: #fff;
+    font-weight: 700;
+    font-size: 10px; /* Smaller font */
+    padding: 2px 5px;
+    z-index: 2;
+  }
+  
+  .csp-info {
+    text-align: center;
+    padding: 0 8px;
+  }
+  
+  .csp-brand {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b6b6b; /* WCAG AAA: 7.2:1 */
+    margin-bottom: 2px;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .csp-title {
+    font-size: 11px;
+    font-weight: 400;
+    color: #000;
+    margin-bottom: 4px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Shortened product name */
+  }
+  
+  .csp-price-container {
+    font-size: 12px; /* Smaller price font */
+    font-weight: 700;
+    color: #e30613; 
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .csp-price-old {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  .csp-price-regular {
+    color: #000;
+  }
+
+  /* Review Widget alignment fix */
+  .csp-info .spr-badge,
+  .csp-info .jdgm-prev-badge,
+  .csp-info .loox-rating,
+  .csp-info .product-rating, 
+  .csp-info .rating-stars,
+  .csp-info .rechnung-profi-stars,
+  .csp-info .judge-me-widget,
+  .csp-info .review-widget {
+    justify-content: center;
+    display: flex;
+    margin: 4px auto;
+    width: 100%;
+    text-align: center;
+  }
+
+  .csp-card { cursor: pointer; }
+
+  /* ── Hover panel (desktop only, AboutYou style) ── */
+  .csp-card__hover-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .csp-card__hover-panel .csp-image-wrapper { pointer-events: none; }
+  .csp-card__hover-panel .csp-image-wrapper wishlist-heart { pointer-events: auto; z-index: 10; }
+  .csp-card__hover-body { pointer-events: none; position: relative; z-index: 2; }
+  .csp-card__hover-atc { pointer-events: auto; }
+  .csp-card__hover-panel { display: none; }
+
+  @media (min-width: 768px) {
+    .csp-card { transition: z-index 0s; overflow: visible; }
+    .csp-card:hover { z-index: 100; }
+    .csp-card.is-atc-active { z-index: 100; }
+
+    .csp-card__hover-panel {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -8px;
+      right: -8px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: none;
+      padding: 0 0 14px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .csp-card:hover .csp-card__hover-panel,
+    .csp-card.is-atc-active .csp-card__hover-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .csp-card__hover-panel .csp-image-wrapper {
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+    }
+    .csp-card__hover-body {
+      padding: 8px 12px 0;
+      text-align: center;
+    }
+    .csp-card__hover-body .csp-brand {
+      font-size: 9px; font-weight: 700; text-transform: uppercase; color: #6b6b6b; margin-bottom: 2px;
+    }
+    .csp-card__hover-body .csp-title {
+      font-size: 11px; font-weight: 400; color: #000; margin-bottom: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .csp-card__hover-body .csp-price-container {
+      margin-bottom: 8px;
+    }
+    .csp-card__hover-sizes {
+      display: flex; align-items: center; justify-content: center;
+      gap: 5px; flex-wrap: wrap; margin-bottom: 6px;
+      font-size: 11px; color: #555;
+    }
+    .csp-card__hover-sizes-label {
+      font-size: 10px; color: #888; margin-bottom: 4px;
+    }
+    .csp-card__size-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid #ddd; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 600; color: #333; background: #fff;
+    }
+    .csp-card__size-more {
+      font-size: 11px; color: #999; font-weight: 600;
+    }
+    .csp-card__hover-atc {
+      display: flex; align-items: center; justify-content: center;
+      width: calc(100% - 24px); margin: 8px auto 0; height: 40px;
+      border: none; border-radius: 4px; background: #1c1c1c; color: #fff;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: background 0.2s, transform 0.15s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+    }
+    .csp-card__hover-atc:hover { background: #333; }
+    .csp-card__hover-atc:active { transform: scale(0.96); }
+
+    .csp-atc__text, .csp-atc__check, .csp-atc__adding {
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .csp-atc__check, .csp-atc__adding {
+      position: absolute; opacity: 0; transform: scale(0.5);
+    }
+    .csp-card__hover-atc.is-adding .csp-atc__text { opacity: 0; transform: translateY(-8px); }
+    .csp-card__hover-atc.is-adding .csp-atc__adding { opacity: 1; transform: scale(1); }
+    .csp-card__hover-atc.is-added { background: #1d4739; }
+    .csp-card__hover-atc.is-added .csp-atc__text { opacity: 0; transform: translateY(-8px); }
+    .csp-card__hover-atc.is-added .csp-atc__check { opacity: 1; transform: scale(1); }
+
+    @keyframes csp-spin { to { transform: rotate(360deg); } }
+    .csp-atc__spinner { animation: csp-spin 0.7s linear infinite; }
+  }
+
+  .custom-similar-products-wrapper.is-atc-active {
+    padding-bottom: 180px;
+  }
+
+</style>
+
+<script>
+  (function(){
+    const initSimilarProducts = () => {
+      const wrapper = document.querySelector('.custom-similar-products-wrapper');
+      if (!wrapper) return;
+      
+      // Prevent double init
+      if(wrapper.dataset.initialized === 'true') return;
+      wrapper.dataset.initialized = 'true';
+      
+      const sectionId = "{{ section.id }}";
+      const container = document.getElementById('csp-grid-' + sectionId);
+      if (!container) return;
+  
+      const productId = wrapper.dataset.productId;
+      const url = `/recommendations/products.json?product_id=${productId}&limit=10`;
+  
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.products && data.products.length > 0) {
+            container.innerHTML = data.products.map(product => {
+               let badgeHtml = '';
+               let priceHtml = '';
+               
+               if (product.compare_at_price > product.price) {
+                 const diff = product.compare_at_price - product.price;
+                 const percent = Math.round((diff / product.compare_at_price) * 100);
+                 badgeHtml = `<div class="csp-badge">-${percent}%</div>`;
+                 
+                 priceHtml = `
+                   <span class="csp-price-container">
+                     <span class="csp-price-current">${(product.price / 100).toFixed(2).replace('.', ',')} €</span>
+                     <span class="csp-price-old">${(product.compare_at_price / 100).toFixed(2).replace('.', ',')} €</span>
+                   </span>
+                 `;
+               } else {
+                 priceHtml = `
+                    <span class="csp-price-container">
+                      <span class="csp-price-regular">${(product.price / 100).toFixed(2).replace('.', ',')} €</span>
+                    </span>
+                 `;
+               }
+               
+               const brand = product.vendor || "";
+               const title = product.title;
+               
+               // Robust handle extraction
+               let handle = product.handle;
+               if (!handle && product.url) {
+                 const parts = product.url.split('/');
+                 handle = parts[parts.length - 1].split('?')[0]; 
+               }
+               handle = handle ? handle.trim() : null;
+               
+               const resizeImage = (url, size) => {
+                 try { return url.replace(/(\.[^.]*)$/, `_${size}$1`); } catch(e) { return url; }
+               };
+
+               // Extract sizes for hover panel
+               const sizeOptionIdx = (product.options || []).findIndex(o => /gr[öo]ße|size/i.test(o));
+               let sizesHtml = '';
+               let firstVariantId = product.variants && product.variants.length ? product.variants[0].id : '';
+               if (product.variants) {
+                 const avail = product.variants.find(v => v.available);
+                 if (avail) firstVariantId = avail.id;
+                 if (sizeOptionIdx >= 0) {
+                   const sizeKey = 'option' + (sizeOptionIdx + 1);
+                   const sizes = [...new Set(product.variants.map(v => v[sizeKey]).filter(Boolean))];
+                   const shown = sizes.slice(0, 4);
+                   const rest = sizes.length - shown.length;
+                   sizesHtml = '<div class="csp-card__hover-sizes">' +
+                     shown.map(s => '<span class="csp-card__size-dot">' + s + '</span>').join('') +
+                     (rest > 0 ? '<span class="csp-card__size-more">+' + rest + '</span>' : '') +
+                     '</div>';
+                 }
+               }
+
+               return `
+                 <div class="csp-card" style="position: relative; display: flex; flex-direction: column;">
+                   <a href="${product.url}" style="position: absolute; inset: 0; z-index: 1;" aria-label="${title}"></a>
+                   <div class="csp-image-wrapper">
+                      <wishlist-heart data-product-handle="${handle}"></wishlist-heart>
+                      <img src="${resizeImage(product.featured_image, '400x')}" alt="${title}" class="csp-image" loading="lazy">
+                      ${badgeHtml}
+                   </div>
+                   <div class="csp-info" style="pointer-events: none;">
+                     <span class="csp-brand">${brand}</span>
+                     <span class="csp-title">${title}</span>
+                     ${priceHtml}
+                   </div>
+                   <div class="csp-card__hover-panel">
+                     <a href="${product.url}" class="csp-card__hover-link" aria-label="${title}"></a>
+                     <div class="csp-image-wrapper">
+                       <wishlist-heart data-product-handle="${handle}"></wishlist-heart>
+                       <img src="${resizeImage(product.featured_image, '400x')}" alt="${title}" class="csp-image" loading="lazy">
+                       ${badgeHtml}
+                     </div>
+                     <div class="csp-card__hover-body">
+                       <span class="csp-brand">${brand}</span>
+                       <span class="csp-title">${title}</span>
+                       ${priceHtml}
+                       ${sizesHtml}
+                       <button type="button" class="csp-card__hover-atc" data-variant-id="${firstVariantId}">
+                         <span class="csp-atc__text">In den Warenkorb</span>
+                         <span class="csp-atc__check"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                         <span class="csp-atc__adding"><svg class="csp-atc__spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg></span>
+                       </button>
+                     </div>
+                   </div>
+                 </div>
+               `;
+            }).join('');
+            
+            // Show wrapper now that products are ready
+            wrapper.style.display = 'block';
+
+          } else {
+            wrapper.style.display = 'none'; 
+          }
+   
+            // Listen for cart updates to hide section if empty
+            document.addEventListener('cart:update', (event) => {
+               const count = event.detail && event.detail.data && event.detail.data.itemCount;
+               const wrapper = document.querySelector('.custom-similar-products-wrapper');
+               if (wrapper && (count === 0)) {
+                  wrapper.style.display = 'none';
+               }
+            });
+   
+        })
+        .catch(e => console.error("Error loading similar products:", e));
+    };
+ 
+    // Standard init
+    if (document.readyState === 'loading') {
+       document.addEventListener('DOMContentLoaded', initSimilarProducts);
+    } else {
+       initSimilarProducts();
+    }
+    // BFCache support
+    window.addEventListener('pageshow', (event) => {
+       if (event.persisted) initSimilarProducts();
+    });
+
+    /* ── AJAX Add to Cart handler for hover panels ── */
+    document.addEventListener('click', async function(e) {
+      var btn = e.target.closest('.csp-card__hover-atc');
+      if (!btn || btn.disabled || btn.classList.contains('is-adding')) return;
+
+      var variantId = btn.getAttribute('data-variant-id');
+      var activeCard = btn.closest('.csp-card');
+      if (!variantId) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      var cspWrapper = document.querySelector('.custom-similar-products-wrapper');
+      if (activeCard) activeCard.classList.add('is-atc-active');
+      if (cspWrapper) cspWrapper.classList.add('is-atc-active');
+      btn.classList.add('is-adding');
+      btn.classList.remove('is-added');
+
+      try {
+        var formData = new FormData();
+        formData.append('id', variantId);
+        formData.append('quantity', 1);
+
+        var addRes = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/javascript' },
+          body: formData
+        });
+        var addedItem = await addRes.json();
+        if (!addRes.ok) throw new Error('Add failed');
+
+        btn.classList.remove('is-adding');
+        btn.classList.add('is-added');
+
+        var cartDrawer = document.querySelector('cart-drawer-component');
+        var drawerSectionId = cartDrawer ? cartDrawer.dataset.sectionId : null;
+        var sections = {};
+        if (drawerSectionId) {
+          var sectionsRes = await fetch(window.location.pathname + '?sections=' + drawerSectionId);
+          sections = await sectionsRes.json();
+        }
+        var cartRes = await fetch('/cart.js');
+        var cart = await cartRes.json();
+
+        document.dispatchEvent(new CustomEvent('cart:update', {
+          bubbles: true,
+          detail: {
+            resource: cart,
+            sourceId: 'csp-atc',
+            data: { sections: sections, itemCount: cart.item_count }
+          }
+        }));
+
+        setTimeout(function() {
+          btn.classList.remove('is-added');
+          if (activeCard) activeCard.classList.remove('is-atc-active');
+          if (cspWrapper) cspWrapper.classList.remove('is-atc-active');
+        }, 2000);
+
+      } catch(err) {
+        btn.classList.remove('is-adding');
+        btn.textContent = 'Fehler';
+        setTimeout(function() {
+          btn.innerHTML = '<span class="csp-atc__text">In den Warenkorb</span><span class="csp-atc__check"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="csp-atc__adding"><svg class="csp-atc__spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg></span>';
+          if (activeCard) activeCard.classList.remove('is-atc-active');
+          if (cspWrapper) cspWrapper.classList.remove('is-atc-active');
+        }, 1500);
+      }
+    });
+  })();
+</script>
+{% endif %}

@@ -1,0 +1,419 @@
+{%- comment -%}
+  KARINEX Premium Gift Cards Page
+  Enterprise-Level Design with Live Preview
+{%- endcomment -%}
+
+<link rel="stylesheet" href="{{ 'gift-cards-page.css' | asset_url }}">
+
+<div class="gift-cards-page" data-gift-cards-page>
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="gc-hero">
+    <div class="gc-container">
+      <div class="gc-hero__badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 110-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 100-5C13 2 12 7 12 7z"/>
+        </svg>
+        Digitale Geschenkkarten
+      </div>
+      
+      <h1 class="gc-hero__title">
+        {{ section.settings.hero_title | default: 'Digitale Geschenkkarten' }} – <span>sofort verfügbar</span>
+      </h1>
+      
+      <p class="gc-hero__subtitle">
+        {{ section.settings.hero_subtitle | default: 'Das perfekte Geschenk. Sofort per E-Mail geliefert.' }}
+      </p>
+      
+      <a href="#gc-selection" class="gc-hero__cta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7"/>
+        </svg>
+        Geschenkkarte kaufen
+      </a>
+      
+      <div class="gc-hero__trust">
+        <div class="gc-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Sofort Versand per E-Mail
+        </div>
+        <div class="gc-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          Original Gutscheine
+        </div>
+        <div class="gc-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+          Käuferschutz
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       GIFT CARD SELECTION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="gc-selection" id="gc-selection">
+    <div class="gc-container">
+      <h2 class="gc-section-title">Wähle deinen <span>Wunschbetrag</span></h2>
+      
+      <div class="gc-amount-grid" data-amount-grid>
+        {%- assign amounts = '25,50,100,200' | split: ',' -%}
+        {%- for amount in amounts -%}
+          <div class="gc-amount-card{% if forloop.index == 2 %} gc-amount-card--popular{% endif %}{% if forloop.first %} selected{% endif %}" 
+               data-amount="{{ amount }}"
+               tabindex="0"
+               role="button"
+               aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+            <div class="gc-amount-card__check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="gc-amount-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <p class="gc-amount-card__value">{{ amount }}€</p>
+            <p class="gc-amount-card__label">Geschenkkarte</p>
+          </div>
+        {%- endfor -%}
+      </div>
+      
+      <!-- Custom Amount -->
+      <div class="gc-custom-amount">
+        <span class="gc-custom-amount__label">Oder eigenen Betrag:</span>
+        <div class="gc-custom-amount__input-wrapper">
+          <span class="gc-custom-amount__currency">€</span>
+          <input 
+            type="number" 
+            class="gc-custom-amount__input" 
+            placeholder="10 - 500"
+            min="10"
+            max="500"
+            data-custom-amount
+          >
+        </div>
+        <p class="gc-custom-amount__hint">Min. 10€ – Max. 500€</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       PERSONALIZATION & PREVIEW
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="gc-personalization">
+    <div class="gc-container">
+      <div class="gc-personalization__wrapper">
+        <!-- Form Side -->
+        <div class="gc-form">
+          <h3 class="gc-form__title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Personalisiere dein Geschenk
+          </h3>
+          
+          <div class="gc-form-group">
+            <label class="gc-form-label" for="gc-recipient">
+              Empfänger Name
+            </label>
+            <input 
+              type="text" 
+              id="gc-recipient" 
+              class="gc-form-input" 
+              placeholder="z.B. Max Mustermann"
+              data-recipient-name
+            >
+          </div>
+          
+          <div class="gc-form-group">
+            <label class="gc-form-label" for="gc-sender">
+              Dein Name <span>(optional)</span>
+            </label>
+            <input 
+              type="text" 
+              id="gc-sender" 
+              class="gc-form-input" 
+              placeholder="z.B. Anna"
+              data-sender-name
+            >
+          </div>
+          
+          <div class="gc-form-group">
+            <label class="gc-form-label" for="gc-message">
+              Persönliche Nachricht <span>(optional)</span>
+            </label>
+            <textarea 
+              id="gc-message" 
+              class="gc-form-input gc-form-textarea" 
+              placeholder="Schreibe eine persönliche Nachricht..."
+              data-message
+            ></textarea>
+          </div>
+          
+          <div class="gc-form-group">
+            <label class="gc-form-label">Versandzeitpunkt</label>
+            <div class="gc-delivery-options">
+              <label class="gc-delivery-option selected">
+                <input type="radio" name="delivery" value="now" checked data-delivery-option>
+                <div class="gc-delivery-option__icon">⚡</div>
+                <div class="gc-delivery-option__text">Sofort senden</div>
+              </label>
+              <label class="gc-delivery-option">
+                <input type="radio" name="delivery" value="later" data-delivery-option>
+                <div class="gc-delivery-option__icon">📅</div>
+                <div class="gc-delivery-option__text">Später senden</div>
+              </label>
+            </div>
+            
+            <div class="gc-date-picker" data-date-picker>
+              <input 
+                type="date" 
+                class="gc-form-input" 
+                data-delivery-date
+                min=""
+              >
+            </div>
+          </div>
+          
+          <div class="gc-form-group">
+            <label class="gc-form-label" for="gc-email">
+              E-Mail des Empfängers
+            </label>
+            <input 
+              type="email" 
+              id="gc-email" 
+              class="gc-form-input" 
+              placeholder="empfaenger@email.de"
+              data-recipient-email
+              required
+            >
+          </div>
+        </div>
+        
+        <!-- Preview Side -->
+        <div class="gc-preview">
+          <p class="gc-preview__title">Live-Vorschau</p>
+          
+          <div class="gc-preview-card" data-preview-card>
+            <svg class="gc-preview-card__pattern" viewBox="0 0 200 200" fill="none">
+              <circle cx="100" cy="100" r="80" stroke="white" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="60" stroke="white" stroke-width="0.5"/>
+              <circle cx="100" cy="100" r="40" stroke="white" stroke-width="0.5"/>
+            </svg>
+            
+            <div class="gc-preview-card__logo">
+              KARIN<span>EX</span>
+            </div>
+            
+            <div class="gc-preview-card__amount" data-preview-amount>
+              25€
+            </div>
+            
+            <div class="gc-preview-card__recipient">
+              <div class="gc-preview-card__recipient-label">Für</div>
+              <div class="gc-preview-card__recipient-name" data-preview-recipient>
+                Empfänger Name
+              </div>
+            </div>
+            
+            <div class="gc-preview-card__message" data-preview-message style="display: none;">
+              <!-- Dynamic message -->
+            </div>
+            
+            <div class="gc-preview-card__footer">
+              <span class="gc-preview-card__type">Digitale Geschenkkarte</span>
+              <div class="gc-preview-card__chip"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       CTA SECTION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="gc-cta-section">
+    <div class="gc-container">
+      <div class="gc-cta-wrapper">
+        <h2 class="gc-cta-wrapper__title">Bereit zum Verschenken?</h2>
+        <p class="gc-cta-wrapper__subtitle">Deine Geschenkkarte wird sofort per E-Mail versendet</p>
+        
+        <button type="button" class="gc-buy-button" data-buy-button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+          </svg>
+          Jetzt Geschenkkarte kaufen
+        </button>
+        
+        <div class="gc-delivery-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Lieferung per E-Mail in Sekunden
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       TRUST SECTION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="gc-trust-section">
+    <div class="gc-container">
+      <div class="gc-trust-grid">
+        <div class="gc-trust-card">
+          <div class="gc-trust-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="gc-trust-card__title">Sofort Download</h4>
+            <p class="gc-trust-card__text">Deine Geschenkkarte wird sofort per E-Mail geliefert</p>
+          </div>
+        </div>
+        
+        <div class="gc-trust-card">
+          <div class="gc-trust-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="gc-trust-card__title">Sicher bezahlen</h4>
+            <p class="gc-trust-card__text">PayPal, Klarna, Apple Pay & mehr</p>
+          </div>
+        </div>
+        
+        <div class="gc-trust-card">
+          <div class="gc-trust-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="gc-trust-card__title">Deutscher Support</h4>
+            <p class="gc-trust-card__text">Unser Team hilft dir gerne weiter</p>
+          </div>
+        </div>
+        
+        <div class="gc-trust-card">
+          <div class="gc-trust-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="gc-trust-card__title">Käuferschutz</h4>
+            <p class="gc-trust-card__text">100% sicher einkaufen mit Garantie</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       STICKY MOBILE CTA
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="gc-sticky-cta" data-sticky-cta>
+    <div class="gc-container">
+      <div class="gc-sticky-cta__content">
+        <div class="gc-sticky-cta__price">
+          <div class="gc-sticky-cta__price-value" data-sticky-price>25€</div>
+          <div class="gc-sticky-cta__price-label">Geschenkkarte</div>
+        </div>
+        <button type="button" class="gc-sticky-cta__button" data-sticky-buy-button>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+          </svg>
+          Jetzt kaufen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'gift-cards-page.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Gift Cards Page",
+  "tag": "section",
+  "class": "section-gift-cards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Titel",
+      "default": "Digitale Geschenkkarten"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Untertitel",
+      "default": "Das perfekte Geschenk. Sofort per E-Mail geliefert."
+    },
+    {
+      "type": "header",
+      "content": "Beträge"
+    },
+    {
+      "type": "text",
+      "id": "amounts",
+      "label": "Beträge (kommagetrennt)",
+      "default": "25,50,100,200"
+    },
+    {
+      "type": "range",
+      "id": "min_custom_amount",
+      "label": "Min. eigener Betrag",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "default": 10,
+      "unit": "€"
+    },
+    {
+      "type": "range",
+      "id": "max_custom_amount",
+      "label": "Max. eigener Betrag",
+      "min": 100,
+      "max": 1000,
+      "step": 50,
+      "default": 500,
+      "unit": "€"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift Cards Page"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,206 @@
+<section class="beratung-page">
+  <style>
+    .beratung-page { padding: 48px 16px 24px; background: #f8fafc; }
+    .beratung-hero { text-align: center; margin-bottom: 24px; }
+    .beratung-hero h1 { font-size: 2.2rem; font-weight: 800; color: #176b34; margin-bottom: 8px; }
+    .beratung-hero p { font-size: 1.08rem; color: #444; max-width: 520px; margin: 0 auto; }
+    .beratung-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 980px; margin: 0 auto 32px; }
+    .beratung-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 8px 24px #00000014; }
+    .beratung-form { display: flex; flex-direction: column; gap: 16px; }
+    .beratung-field { display: flex; flex-direction: column; gap: 6px; }
+    .beratung-field label { font-size: 0.96rem; color: #1f2937; font-weight: 600; }
+    .beratung-field input,
+    .beratung-field select,
+    .beratung-field textarea {
+      font-size: 1rem;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      background: #fff;
+    }
+    .beratung-field input:focus,
+    .beratung-field select:focus,
+    .beratung-field textarea:focus {
+      outline: none;
+      border-color: #e0e0e0;
+      box-shadow: none;
+    }
+    .beratung-field input:invalid,
+    .beratung-field select:invalid,
+    .beratung-field textarea:invalid {
+      border-color: #e0e0e0;
+      box-shadow: none;
+    }
+    .beratung-field textarea { resize: vertical; min-height: 84px; }
+    .beratung-checkbox { display: flex; align-items: flex-start; gap: 10px; font-size: 0.95rem; color: #333; }
+    .beratung-checkbox input { width: 18px; height: 18px; margin-top: 2px; }
+    .beratung-button { background: linear-gradient(90deg, #2e7d32, #4caf50); color: #fff; font-size: 1.05rem; font-weight: 700; padding: 14px 0; border: none; border-radius: 10px; cursor: pointer; min-height: 48px; }
+    .beratung-note { font-size: 0.9rem; color: #6b7280; }
+    .beratung-trust { color: #176b34; }
+    .beratung-trust h2 { font-size: 1.05rem; margin-bottom: 10px; }
+    .beratung-trust ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    .beratung-trust li { font-size: 0.98rem; }
+    .beratung-meta { margin-top: 16px; padding: 14px; border-radius: 10px; background: #f1f8f3; color: #14532d; font-size: 0.95rem; }
+    .beratung-help,
+    .beratung-faq { max-width: 980px; margin: 0 auto 28px; }
+    .beratung-help h2,
+    .beratung-faq h2 { font-size: 1.2rem; color: #176b34; font-weight: 700; margin-bottom: 12px; }
+    .beratung-help ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .beratung-help li { background: #fff; padding: 14px; border-radius: 10px; box-shadow: 0 4px 12px #0000000d; }
+    .beratung-faq details { background: #fff; padding: 14px; border-radius: 10px; box-shadow: 0 4px 12px #0000000d; margin-bottom: 10px; }
+    .beratung-faq summary { cursor: pointer; font-weight: 600; color: #1f2937; }
+    .beratung-faq p { margin: 10px 0 0; color: #4b5563; }
+    .beratung-hidden { display: none; }
+    .form-success { display: none; color: #176b34; font-weight: 700; text-align: center; }
+    .form-error { color: #b91c1c; font-weight: 600; min-height: 20px; text-align: center; }
+  </style>
+
+  <header class="beratung-hero">
+    <h1>Kostenlose Kundenberatung</h1>
+    <p>Trage deine Nummer ein – wir rufen dich kostenlos zurück und helfen dir schnell weiter.</p>
+  </header>
+
+  <div class="beratung-grid">
+    <div class="beratung-card">
+      <form id="callbackForm" class="beratung-form" method="post" autocomplete="on">
+        <div class="beratung-field">
+          <label for="cb-name">Vorname (optional)</label>
+          <input id="cb-name" type="text" name="name" placeholder="z. B. Maria" autocomplete="given-name">
+        </div>
+        <div class="beratung-field">
+          <label for="cb-phone">Telefonnummer *</label>
+          <input id="cb-phone" type="tel" name="phone" placeholder="+49 170 1234567" required inputmode="tel" autocomplete="tel" pattern="[+0-9 ][0-9 ]{6,}" title="Bitte gib eine gültige Telefonnummer ein.">
+        </div>
+        <div class="beratung-field">
+          <label for="cb-orderNumber">Bestellnummer (optional)</label>
+          <input id="cb-orderNumber" type="text" name="orderNumber" placeholder="Falls vorhanden" autocomplete="off">
+        </div>
+        <div class="beratung-field">
+          <label for="cb-topic">Thema / Produkt (optional)</label>
+          <select id="cb-topic" name="topic">
+            <option value="">Bitte auswählen</option>
+            <option>Windows</option>
+            <option>Office</option>
+            <option>LEGO</option>
+            <option>Sonstiges</option>
+          </select>
+        </div>
+        <div class="beratung-field">
+          <label for="cb-preferredTime">Wunschzeit (optional)</label>
+          <select id="cb-preferredTime" name="preferredTime">
+            <option value="">Bitte auswählen</option>
+            <option>Sofort</option>
+            <option>Heute</option>
+            <option>Morgen</option>
+            <option>Zeitfenster wählen</option>
+          </select>
+        </div>
+        <div class="beratung-field beratung-hidden" id="customTimeWrap">
+          <label for="cb-customTime">Eigenes Wunschzeitfenster</label>
+          <input id="cb-customTime" type="text" name="customTime" placeholder="z. B. Mo–Fr 10–14 Uhr">
+        </div>
+        <div class="beratung-field">
+          <label for="cb-message">Kurzbeschreibung (optional)</label>
+          <textarea id="cb-message" name="message" placeholder="Worum geht es bei deiner Anfrage?"></textarea>
+        </div>
+        <input type="text" name="_honeypot" class="beratung-hidden" aria-hidden="true" tabindex="-1">
+        <label class="beratung-checkbox">
+          <input type="checkbox" name="whatsapp">
+          Kontakt auch per WhatsApp möglich
+        </label>
+        <label class="beratung-checkbox">
+          <input type="checkbox" name="consent" required>
+          Ich stimme zu, dass KARINEX mich telefonisch kontaktiert. Weitere Infos in der <a href="/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a>.
+        </label>
+        <button type="submit" class="beratung-button">Kostenlosen Rückruf anfordern</button>
+        <p class="form-error" id="formError" role="alert" aria-live="polite"></p>
+        <p class="form-success" id="formSuccess" role="status" aria-live="polite">Danke! Wir melden uns in Kürze telefonisch.</p>
+        <p class="beratung-note">Antwortzeit: i.d.R. innerhalb von 30 Minuten (werktags).</p>
+      </form>
+    </div>
+    <aside class="beratung-card beratung-trust">
+      <h2>Darum lohnt sich der Rückruf</h2>
+      <ul>
+        <li>✅ 100% kostenlos & unverbindlich</li>
+        <li>🔒 Datenschutz garantiert</li>
+        <li>⏱ Persönliche Beratung ohne Wartezeit</li>
+        <li>💡 Hilfe bei Windows, Office, LEGO & mehr</li>
+      </ul>
+      <div class="beratung-meta">Servicezeiten: Werktags 9–18 Uhr. Außerhalb dieser Zeiten melden wir uns am nächsten Arbeitstag.</div>
+    </aside>
+  </div>
+
+  <section class="beratung-help">
+    <h2>Hilfe & Infos</h2>
+    <ul>
+      <li><b>Wie funktioniert die Beratung?</b><br>Du trägst deine Nummer ein, wir rufen dich kostenlos zurück und beraten dich persönlich zu deinem Anliegen.</li>
+      <li><b>Wann kann ich einen Rückruf erwarten?</b><br>In der Regel werktags innerhalb von 30 Minuten oder zum gewünschten Zeitraum.</li>
+      <li><b>Welche Themen kann ich anfragen?</b><br>Wir beraten zu Windows, Office, LEGO und vielen weiteren Produkten.</li>
+      <li><b>Wie werden meine Daten geschützt?</b><br>Deine Daten werden ausschließlich für die Beratung verwendet und nicht weitergegeben.</li>
+    </ul>
+  </section>
+
+  <section class="beratung-faq">
+    <h2>Häufige Fragen</h2>
+    <details>
+      <summary>Wie schnell erfolgt der Rückruf?</summary>
+      <p>In der Regel rufen wir werktags innerhalb von 30 Minuten zurück.</p>
+    </details>
+    <details>
+      <summary>Kostet mich der Service etwas?</summary>
+      <p>Nein, der Rückruf ist 100% kostenlos und unverbindlich.</p>
+    </details>
+    <details>
+      <summary>Wer sieht meine Daten?</summary>
+      <p>Deine Angaben werden nur für den Rückruf verwendet und nicht weitergegeben.</p>
+    </details>
+    <details>
+      <summary>Kann ich einen Wunschtermin angeben?</summary>
+      <p>Ja, du kannst im Formular einen Zeitraum wählen.</p>
+    </details>
+    <details>
+      <summary>Kann ich auch per WhatsApp kontaktiert werden?</summary>
+      <p>Auf Wunsch gerne – aktiviere die Option im Formular.</p>
+    </details>
+  </section>
+</section>
+
+<script>
+  const form = document.getElementById('callbackForm');
+  const preferredTime = document.getElementById('cb-preferredTime');
+  const customTimeWrap = document.getElementById('customTimeWrap');
+  const customTimeInput = document.getElementById('cb-customTime');
+  const formError = document.getElementById('formError');
+  const formSuccess = document.getElementById('formSuccess');
+
+  preferredTime.addEventListener('change', () => {
+    if (preferredTime.value === 'Zeitfenster wählen') {
+      customTimeWrap.classList.remove('beratung-hidden');
+      customTimeInput.required = true;
+    } else {
+      customTimeWrap.classList.add('beratung-hidden');
+      customTimeInput.required = false;
+      customTimeInput.value = '';
+    }
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    formError.textContent = '';
+    formSuccess.style.display = 'none';
+
+    const phoneRaw = form.phone.value.trim();
+    const phone = phoneRaw.replace(/\s+/g, '');
+    if (!phone.match(/^\+?\d{7,}$/)) {
+      formError.textContent = 'Bitte gib eine gültige Telefonnummer an.';
+      return;
+    }
+    if (form._honeypot.value) return;
+
+    // TODO: AJAX-Request an Backend/Shopify/Google Sheet
+    form.reset();
+    customTimeWrap.classList.add('beratung-hidden');
+    customTimeInput.required = false;
+    formSuccess.style.display = 'block';
+  });
+</script>

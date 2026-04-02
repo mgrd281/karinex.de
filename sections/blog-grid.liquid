@@ -1,0 +1,166 @@
+<section class="blog-grid-section">
+  <div class="blog-grid__controls">
+    <input type="search" class="blog-grid__search" placeholder="Suche nach Artikel…" aria-label="Suche nach Artikel…">
+    <div class="blog-grid__filters">
+      <button class="blog-grid__filter">Guides</button>
+      <button class="blog-grid__filter">Angebote</button>
+      <button class="blog-grid__filter">Updates</button>
+      <button class="blog-grid__filter">Windows</button>
+      <button class="blog-grid__filter">Office</button>
+    </div>
+    <select class="blog-grid__sort">
+      <option>Neueste</option>
+      <option>Beliebteste</option>
+    </select>
+  </div>
+  <div class="blog-grid__list">
+    {% paginate blog.articles by 12 %}
+      <div class="blog-grid">
+        {% for article in blog.articles %}
+          <article class="blog-card">
+            <a href="{{ article.url }}" class="blog-card__image-link">
+              <img
+                src="{{ article.image | image_url: width: 720, format: 'webp' }}"
+                srcset="{{ article.image | image_url: width: 360, format: 'webp' }} 360w,
+                  {{ article.image | image_url: width: 720, format: 'webp' }} 720w"
+                sizes="(max-width: 600px) 100vw, 360px"
+                alt="{{ article.title }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
+            </a>
+            <div class="blog-card__category">{{ article.tags[0] }}</div>
+            <h2 class="blog-card__title">{{ article.title | truncate: 60 }}</h2>
+            <p class="blog-card__excerpt" data-nosnippet>{{ article.excerpt | strip_html | truncate: 80 }}</p>
+            <div class="blog-card__meta">{{ article.published_at | date: "%d.%m.%Y" }}</div>
+            <a href="{{ article.url }}" class="blog-card__cta">Weiterlesen →</a>
+          </article>
+        {% endfor %}
+      </div>
+      <div class="blog-grid__pagination">{{ paginate | default_pagination }}</div>
+    {% endpaginate %}
+  </div>
+</section>
+
+<style>
+.blog-grid-section {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 48px auto;
+  padding: 0 clamp(16px, 4vw, 64px);
+  box-sizing: border-box;
+}
+.blog-grid__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 32px;
+  justify-content: space-between;
+}
+.blog-grid__search {
+  flex: 1 1 220px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #e3e6ee;
+  font-size: 1rem;
+}
+.blog-grid__filters {
+  display: flex;
+  gap: 8px;
+}
+.blog-grid__filter {
+  background: #f7f8fa;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #23272f;
+  transition: background 0.2s;
+}
+.blog-grid__filter:hover, .blog-grid__filter.active {
+  background: #e3e6ee;
+}
+.blog-grid__sort {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e3e6ee;
+  font-size: 1rem;
+}
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px;
+}
+@media (max-width: 900px) {
+  .blog-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .blog-grid { grid-template-columns: 1fr; }
+  .blog-grid-section { padding: 0 4px; }
+}
+.blog-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(30,40,90,0.07);
+  padding: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-width: 0;
+}
+.blog-card:hover {
+  box-shadow: 0 8px 32px rgba(30,40,90,0.13);
+  transform: translateY(-4px) scale(1.02);
+}
+.blog-card__image-link { display: block; }
+.blog-card__image {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+  margin-bottom: 12px;
+  background: #f7f8fa;
+}
+.blog-card__category {
+  display: inline-block;
+  background: #e3e6ee;
+  color: #2a61ff;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  padding: 2px 10px;
+  margin-bottom: 6px;
+  margin-left: 8px;
+}
+.blog-card__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #23272f;
+  line-height: 1.2;
+  min-height: 2.5em;
+}
+.blog-card__excerpt {
+  color: #5a6270;
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  min-height: 2.5em;
+}
+.blog-card__meta {
+  color: #8a8f9c;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  margin-left: 8px;
+}
+.blog-card__cta {
+  color: #2a61ff;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 8px;
+  font-size: 1rem;
+  transition: text-decoration 0.2s;
+}
+.blog-card__cta:hover { text-decoration: underline; }
+.blog-grid__pagination {
+  margin-top: 32px;
+  text-align: center;
+}
+</style>

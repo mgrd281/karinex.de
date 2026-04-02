@@ -1,0 +1,286 @@
+{%- liquid
+  assign viewed_products = search.results
+-%}
+
+{%- if viewed_products.size > 0 -%}
+<style>
+  /* ── Wrapper — matches .cart-reco-wrapper ── */
+  .rv-wrapper {
+    padding: 8px 0 6px;
+  }
+  .rv-header {
+    margin: 0 var(--padding-sm, 16px) 8px;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground-rgb, 0,0,0) / 0.52);
+  }
+  .rv-scroll {
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--padding-sm, 16px) 6px;
+  }
+
+  /* ── Entrance animation ── */
+  @keyframes rvFadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Card row — matches .cart-reco-card ── */
+  .rv-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb, 0,0,0) / 0.06);
+    max-height: 200px;
+    overflow: visible;
+    opacity: 0;
+    animation: rvFadeInUp 0.65s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+    position: relative;
+  }
+  .rv-card:last-child { border-bottom: none; }
+
+  /* ── Image — matches .cart-reco-img-link ── */
+  .rv-card__img-wrap {
+    flex: 0 0 62px;
+    width: 62px;
+    height: 62px;
+    border-radius: 9px;
+    overflow: hidden;
+    background: rgb(var(--color-foreground-rgb, 0,0,0) / 0.04);
+    display: block;
+    text-decoration: none;
+    position: relative;
+  }
+  .rv-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .rv-card:hover .rv-card__img { transform: scale(1.04); }
+
+  /* Discount badge */
+  .rv-card__badge {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    background: #c0392b;
+    color: #fff;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 2px 5px;
+    border-radius: 8px;
+    line-height: 1.2;
+    z-index: 1;
+  }
+
+  /* ── Body — matches .cart-reco-body ── */
+  .rv-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+  }
+  .rv-card__title {
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: rgb(var(--color-foreground-rgb, 0,0,0));
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .rv-card__title:hover { opacity: 0.62; }
+
+  .rv-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .rv-card__price {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgb(var(--color-foreground-rgb, 0,0,0));
+  }
+  .rv-card__price--sale { color: #b5291c; }
+  .rv-card__compare {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgb(var(--color-foreground-rgb, 0,0,0) / 0.58);
+    text-decoration: line-through;
+  }
+
+  /* ── Circular + button — matches .cart-reco-btn ── */
+  .rv-card__btn {
+    flex: 0 0 auto;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgb(var(--color-foreground-rgb, 0,0,0) / 0.2);
+    background: transparent;
+    color: rgb(var(--color-foreground-rgb, 0,0,0) / 0.65);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+    padding: 0;
+    margin: 0;
+  }
+  .rv-card__btn-plus,
+  .rv-card__btn-check {
+    position: absolute;
+    transition: opacity 0.18s ease, transform 0.22s ease;
+  }
+  .rv-card__btn-check { opacity: 0; transform: scale(0.5); }
+  .rv-card__btn:hover:not(:disabled) {
+    background: rgb(var(--color-foreground-rgb, 0,0,0));
+    border-color: rgb(var(--color-foreground-rgb, 0,0,0));
+    color: rgb(var(--color-background-rgb, 255,255,255));
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px rgb(var(--color-foreground-rgb, 0,0,0) / 0.08);
+  }
+  .rv-card__btn:active:not(:disabled) { transform: scale(0.88); }
+  .rv-card__btn:disabled { opacity: 0.28; cursor: default; }
+
+  /* Loading spinner */
+  .rv-card__btn--loading {
+    pointer-events: none;
+    border-color: rgb(var(--color-foreground-rgb, 0,0,0) / 0.12) !important;
+    color: transparent !important;
+  }
+  .rv-card__btn--loading .rv-card__btn-plus,
+  .rv-card__btn--loading .rv-card__btn-check { opacity: 0; }
+  .rv-card__btn--loading::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid rgb(var(--color-foreground-rgb, 0,0,0) / 0.14);
+    border-top-color: rgb(var(--color-foreground-rgb, 0,0,0) / 0.6);
+    border-radius: 50%;
+    animation: _rv-spin 0.6s linear infinite;
+  }
+  @keyframes _rv-spin { to { transform: rotate(360deg); } }
+
+  /* Added / success state */
+  .rv-card__btn--added {
+    background: #1D4739 !important;
+    border-color: #1D4739 !important;
+    color: #fff !important;
+    pointer-events: none;
+  }
+  .rv-card__btn--added .rv-card__btn-plus { opacity: 0; transform: scale(0.5) rotate(45deg); }
+  .rv-card__btn--added .rv-card__btn-check { opacity: 1; transform: scale(1); }
+</style>
+
+<div class="rv-wrapper">
+  <p class="rv-header">Zuletzt angesehen</p>
+  <div class="rv-scroll">
+    {%- for product in viewed_products limit: 30 -%}
+      {%- assign rv_variant = product.selected_or_first_available_variant -%}
+      <div class="rv-card" data-product-id="{{ product.id }}" style="animation-delay: {{ forloop.index | times: 150 }}ms;">
+        <a href="{{ product.url }}" class="rv-card__img-wrap" tabindex="-1" aria-hidden="true">
+          {%- if product.compare_at_price > product.price -%}
+            {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+            <span class="rv-card__badge">-{{ discount_pct }}%</span>
+          {%- endif -%}
+          {%- if product.featured_image -%}
+            <img
+              src="{{ product.featured_image | image_url: width: 120 }}"
+              alt="{{ product.featured_image.alt | default: product.title | escape }}"
+              width="120"
+              height="{{ 120 | divided_by: product.featured_image.aspect_ratio | round }}"
+              loading="lazy"
+              class="rv-card__img"
+            >
+          {%- endif -%}
+        </a>
+        <div class="rv-card__body">
+          <a href="{{ product.url }}" class="rv-card__title">{{ product.title | truncate: 44 }}</a>
+          <div class="rv-card__price-row">
+            {%- if product.compare_at_price > product.price -%}
+              <span class="rv-card__price rv-card__price--sale">{{ product.price | money }}</span>
+              <s class="rv-card__compare">{{ product.compare_at_price | money }}</s>
+            {%- else -%}
+              <span class="rv-card__price">{{ product.price | money }}</span>
+            {%- endif -%}
+          </div>
+        </div>
+        <button
+          type="button"
+          class="rv-card__btn"
+          data-variant-id="{{ rv_variant.id }}"
+          data-product-id="{{ product.id }}"
+          aria-label="In den Warenkorb"
+          {%- unless rv_variant.available -%} disabled aria-disabled="true"{%- endunless -%}
+        >
+          <svg class="rv-card__btn-plus" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+          <svg class="rv-card__btn-check" width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="2 7 5.5 10.5 11 4"/></svg>
+        </button>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+(function() {
+  var scroll = document.querySelector('.rv-scroll');
+  if (!scroll) return;
+
+  scroll.addEventListener('click', function(e) {
+    var btn = e.target.closest('.rv-card__btn');
+    if (!btn || btn.disabled) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    var variantId = btn.dataset.variantId;
+    if (!variantId) return;
+
+    /* Loading state */
+    btn.classList.add('rv-card__btn--loading');
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: parseInt(variantId, 10), quantity: 1 })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function() {
+      btn.classList.remove('rv-card__btn--loading');
+      btn.classList.add('rv-card__btn--added');
+      /* Refresh cart drawer */
+      document.dispatchEvent(new CustomEvent('cart:update'));
+    })
+    .catch(function() {
+      btn.classList.remove('rv-card__btn--loading');
+    });
+  });
+
+  /* Remove on long-press or swipe could be added later */
+  /* For now, items persist until localStorage is cleared */
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Cart Recently Viewed",
+  "settings": []
+}
+{% endschema %}

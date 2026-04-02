@@ -1,0 +1,553 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-about.css' | asset_url | stylesheet_tag }}
+{{ 'main-service-center.css' | asset_url | stylesheet_tag }}
+
+<div class="about-page">
+
+  {%- comment -%} ═══════════════════════════════════════
+    1) HERO – White, matching Über KARINEX
+  ═══════════════════════════════════════ {%- endcomment -%}
+  <section class="about-hero">
+    <div class="about-hero-content">
+      <h1 class="about-hero-title">Reparaturen & Beschwerden</h1>
+      <p class="about-hero-subtitle">Schnelle Hilfe bei Defekten, Reklamationen oder digitalen Problemen.</p>
+      <div class="about-hero-divider"></div>
+    </div>
+  </section>
+
+  <div class="about-container sc-wide">
+
+    {%- comment -%} ═══════════════════════════════════════
+      2) QUICK CHOICE – Category Cards
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section about-values">
+      <h2 class="about-section-title">Worum geht es?</h2>
+      <div class="about-values-grid">
+
+        <a href="#sc-form" class="about-value-card sc-card-link" data-category="watch" onclick="window.__scSelectCategory && window.__scSelectCategory('watch')">
+          <div class="about-value-icon">
+            <img src="https://cache.kittl.com/pr:sharp/rs:fit:626:626:0/plain/uploads/cmljdf3i401p8080g84hohkdm.svg" alt="Uhr" width="32" height="32" loading="lazy">
+          </div>
+          <h3 class="about-value-title">Uhr / Hardware</h3>
+          <p class="about-value-text">Reparatur, Defekt, Garantie</p>
+        </a>
+
+        <a href="#sc-form" class="about-value-card sc-card-link" data-category="physical" onclick="window.__scSelectCategory && window.__scSelectCategory('physical')">
+          <div class="about-value-icon">
+            <img src="https://www.svgrepo.com/show/479875/lego-2.svg" alt="LEGO / Physische Ware" width="32" height="32" loading="lazy">
+          </div>
+          <h3 class="about-value-title">LEGO / Physische Ware</h3>
+          <p class="about-value-text">Beschädigt, fehlt, Rücksendung</p>
+        </a>
+
+        <a href="#sc-form" class="about-value-card sc-card-link" data-category="digital" onclick="window.__scSelectCategory && window.__scSelectCategory('digital')">
+          <div class="about-value-icon">
+            <img src="https://www.svgrepo.com/show/326984/cloud-download-sharp.svg" alt="Digitale Produkte" width="32" height="32" loading="lazy">
+          </div>
+          <h3 class="about-value-title">Digitale Produkte</h3>
+          <p class="about-value-text">Key, Download, Aktivierung</p>
+        </a>
+
+        <a href="#sc-form" class="about-value-card sc-card-link" data-category="games" onclick="window.__scSelectCategory && window.__scSelectCategory('games')">
+          <div class="about-value-icon">
+            <img src="https://www.svgrepo.com/show/1593/delete-console-of-games-interface-symbol.svg" alt="Games" width="32" height="32" loading="lazy">
+          </div>
+          <h3 class="about-value-title">Games</h3>
+          <p class="about-value-text">Code, Account, Download-Probleme</p>
+        </a>
+
+      </div>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      3) ORDER LOOKUP
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section" id="sc-lookup">
+      <h2 class="about-section-title">Bestellung finden</h2>
+      <div class="sc-lookup__card">
+        <p class="sc-lookup__desc">Geben Sie Ihre Bestellnummer und E-Mail-Adresse ein, um Ihre Bestellung schnell zu finden.</p>
+        <div class="sc-lookup__fields">
+          <div class="sc-field">
+            <label class="sc-label" for="sc-lookup-order">Bestellnummer</label>
+            <input type="text" id="sc-lookup-order" class="sc-input" placeholder="z. B. #1001">
+          </div>
+          <div class="sc-field">
+            <label class="sc-label" for="sc-lookup-email">E-Mail-Adresse</label>
+            <input type="email" id="sc-lookup-email" class="sc-input" placeholder="ihre@email.de">
+          </div>
+        </div>
+        <button type="button" class="sc-btn sc-btn--primary sc-btn--full" id="sc-lookup-btn">
+          Bestellung anzeigen
+        </button>
+        <div id="sc-lookup-result" class="sc-lookup__result" style="display:none;"></div>
+      </div>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      4) SMART FORM
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section sc-form-section" id="sc-form">
+      <h2 class="about-section-title">Anfrage einreichen</h2>
+
+      <form class="sc-form" id="sc-smart-form" action="/contact#contact_form" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="form_type" value="contact">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[subject]" value="Service Center Anfrage">
+
+        {%- comment -%} Category Selection {%- endcomment -%}
+        <div class="sc-form__group">
+          <label class="sc-label" for="sc-category">Kategorie <span class="sc-required">*</span></label>
+          <select id="sc-category" name="contact[Kategorie]" class="sc-select" required>
+            <option value="">Bitte wählen…</option>
+            <option value="Uhr / Hardware">Uhr / Hardware</option>
+            <option value="LEGO / Physische Ware">LEGO / Physische Ware</option>
+            <option value="Digitale Produkte">Digitale Produkte</option>
+            <option value="Games">Games</option>
+          </select>
+        </div>
+
+        {%- comment -%} Common Fields {%- endcomment -%}
+        <div class="sc-form__row">
+          <div class="sc-form__group">
+            <label class="sc-label" for="sc-order">Bestellnummer <span class="sc-required">*</span></label>
+            <input type="text" id="sc-order" name="contact[Bestellnummer]" class="sc-input" placeholder="z. B. #1001" required>
+          </div>
+          <div class="sc-form__group">
+            <label class="sc-label" for="sc-email">E-Mail-Adresse <span class="sc-required">*</span></label>
+            <input type="email" id="sc-email" name="contact[email]" class="sc-input" placeholder="ihre@email.de" required>
+          </div>
+        </div>
+
+        <div class="sc-form__group">
+          <label class="sc-label" for="sc-product">Produkt / Artikel</label>
+          <input type="text" id="sc-product" name="contact[Produkt]" class="sc-input" placeholder="z. B. BOSS Chronograph 1513868">
+        </div>
+
+        {%- comment -%} Problem Type – adapts by category {%- endcomment -%}
+        <div class="sc-form__group">
+          <label class="sc-label" for="sc-problem">Problemtyp <span class="sc-required">*</span></label>
+          <select id="sc-problem" name="contact[Problemtyp]" class="sc-select" required>
+            <option value="">Bitte wählen…</option>
+            <option value="Defekt" class="sc-opt-physical">Defekt</option>
+            <option value="Transportschaden" class="sc-opt-physical">Transportschaden</option>
+            <option value="Fehlendes Teil" class="sc-opt-physical">Fehlendes Teil</option>
+            <option value="Qualitätsmangel" class="sc-opt-physical">Qualitätsmangel</option>
+            <option value="Rücksendung" class="sc-opt-physical">Rücksendung</option>
+            <option value="Key ungültig" class="sc-opt-digital" style="display:none;">Key ungültig</option>
+            <option value="Key bereits verwendet" class="sc-opt-digital" style="display:none;">Key bereits verwendet</option>
+            <option value="Aktivierung fehlgeschlagen" class="sc-opt-digital" style="display:none;">Aktivierung fehlgeschlagen</option>
+            <option value="Download-Problem" class="sc-opt-digital" style="display:none;">Download-Problem</option>
+            <option value="Sonstiges">Sonstiges</option>
+          </select>
+        </div>
+
+        {%- comment -%} PATH A – Physical-only fields {%- endcomment -%}
+        <div class="sc-conditional sc-conditional--physical">
+          <div class="sc-form__group">
+            <label class="sc-label" for="sc-serial">Seriennummer / Modell <span class="sc-optional">(optional)</span></label>
+            <input type="text" id="sc-serial" name="contact[Seriennummer]" class="sc-input" placeholder="z. B. MK6356 oder Seriennummer">
+          </div>
+        </div>
+
+        {%- comment -%} PATH B – Digital-only fields {%- endcomment -%}
+        <div class="sc-conditional sc-conditional--digital" style="display:none;">
+          <div class="sc-form__group">
+            <label class="sc-label" for="sc-platform">Plattform <span class="sc-required">*</span></label>
+            <select id="sc-platform" name="contact[Plattform]" class="sc-select">
+              <option value="">Bitte wählen…</option>
+              <option value="Steam">Steam</option>
+              <option value="Microsoft / Xbox">Microsoft / Xbox</option>
+              <option value="PlayStation">PlayStation</option>
+              <option value="Nintendo">Nintendo</option>
+              <option value="Epic Games">Epic Games</option>
+              <option value="EA / Origin">EA / Origin</option>
+              <option value="Ubisoft">Ubisoft</option>
+              <option value="Andere">Andere</option>
+            </select>
+          </div>
+          <div class="sc-form__group">
+            <label class="sc-label" for="sc-error-msg">Fehlermeldung</label>
+            <input type="text" id="sc-error-msg" name="contact[Fehlermeldung]" class="sc-input" placeholder="Fehlermeldung, falls vorhanden">
+          </div>
+          <div class="sc-notice sc-notice--info">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
+            <span>Digitale Anfragen werden in der Regel schneller bearbeitet – kein Versand nötig.</span>
+          </div>
+        </div>
+
+        {%- comment -%} Description {%- endcomment -%}
+        <div class="sc-form__group">
+          <label class="sc-label" for="sc-description">Beschreibung <span class="sc-required">*</span></label>
+          <textarea id="sc-description" name="contact[body]" class="sc-textarea" rows="4" placeholder="Beschreiben Sie das Problem so genau wie möglich…" required></textarea>
+        </div>
+
+        {%- comment -%} File Upload {%- endcomment -%}
+        <div class="sc-form__group">
+          <label class="sc-label">
+            <span class="sc-upload-label-text">Dateien hochladen</span>
+            <span class="sc-optional">(Fotos, Videos, Screenshots)</span>
+          </label>
+          <div class="sc-upload" id="sc-upload-zone">
+            <input type="file" id="sc-file" name="contact[Datei]" class="sc-upload__input" multiple accept="image/*,video/*,.pdf">
+            <div class="sc-upload__placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.3" stroke="currentColor" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
+              <span>Datei auswählen oder hierher ziehen</span>
+              <span class="sc-upload__hint">Max. 10 MB · JPG, PNG, MP4, PDF</span>
+            </div>
+          </div>
+          <div id="sc-file-list" class="sc-upload__list"></div>
+        </div>
+
+        {%- comment -%} Confirmation {%- endcomment -%}
+        <div class="sc-form__group sc-form__confirm">
+          <label class="sc-checkbox-label">
+            <input type="checkbox" id="sc-confirm" name="contact[Bestätigung]" value="Ja" required>
+            <span class="sc-checkbox-box">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            </span>
+            <span>Ich bestätige, dass die Angaben korrekt sind.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="sc-btn sc-btn--primary sc-btn--full sc-btn--submit">
+          Anfrage absenden
+        </button>
+      </form>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      5) PROCESS STEPS – same as Über KARINEX
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section about-process">
+      <h2 class="about-section-title">Was passiert als Nächstes?</h2>
+      <div class="about-process-steps">
+
+        <div class="about-step">
+          <div class="about-step-number">1</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Anfrage eingereicht</h3>
+            <p class="about-step-text">Ihre Anfrage wird in unserem System erfasst. Sie erhalten eine Bestätigung per E-Mail.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">2</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Prüfung durch Support</h3>
+            <p class="about-step-text">Unser Team prüft Ihr Anliegen und meldet sich bei Rückfragen.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">3</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Lösung</h3>
+            <p class="about-step-text">Je nach Fall: Ersatz, Reparatur, Erstattung oder Anleitung zur Problemlösung.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">4</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Abschluss</h3>
+            <p class="about-step-text">Sie erhalten eine Abschlussbestätigung. Feedback ist jederzeit willkommen.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      6) SLA + SUPPORT PROMISE – Trust section
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section about-trust">
+      <h2 class="about-section-title">Unser Service-Versprechen</h2>
+      <div class="about-trust-content">
+        <p class="about-trust-intro">Wir sind für Sie da – schnell, transparent und auf Deutsch.</p>
+        <div class="about-trust-points">
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Antwort innerhalb von 24–48 Stunden</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Deutschsprachiger Support – klar und verständlich</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Offene Kommunikation in jeder Phase</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>14-Tage Rückgaberecht</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      7) FAQ
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-section sc-faq">
+      <h2 class="about-section-title">Häufige Fragen</h2>
+      <div class="sc-faq__list">
+
+        <details class="sc-faq__item">
+          <summary class="sc-faq__question">
+            <span>Wie lange dauert eine Reparatur?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </summary>
+          <div class="sc-faq__answer">
+            <p>Die Bearbeitungszeit hängt vom Hersteller und der Art des Defekts ab. In der Regel erhalten Sie innerhalb von 5–10 Werktagen eine Rückmeldung. Bei komplexen Fällen informieren wir Sie proaktiv über den Fortschritt.</p>
+          </div>
+        </details>
+
+        <details class="sc-faq__item">
+          <summary class="sc-faq__question">
+            <span>Was gilt bei digitalen Produkten?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </summary>
+          <div class="sc-faq__answer">
+            <p>Bei digitalen Produkten (Keys, Downloads) prüfen wir den Aktivierungsstatus. Ein Screenshot der Fehlermeldung beschleunigt die Bearbeitung erheblich. In den meisten Fällen können wir innerhalb von 24 Stunden eine Lösung anbieten.</p>
+          </div>
+        </details>
+
+        <details class="sc-faq__item">
+          <summary class="sc-faq__question">
+            <span>Welche Nachweise werden benötigt?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </summary>
+          <div class="sc-faq__answer">
+            <p>Bitte halten Sie Ihre Bestellnummer bereit. Bei physischen Produkten sind Fotos des Schadens hilfreich. Bei digitalen Produkten benötigen wir einen Screenshot der Fehlermeldung und ggf. den verwendeten Key.</p>
+          </div>
+        </details>
+
+        <details class="sc-faq__item">
+          <summary class="sc-faq__question">
+            <span>Was tun bei Transportschäden?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </summary>
+          <div class="sc-faq__answer">
+            <p>Dokumentieren Sie den Schaden bitte sofort mit Fotos (Verpackung und Produkt). Reichen Sie dann über unser Formular eine Reklamation ein. Wir kümmern uns um den Rest – inklusive Kontakt mit dem Versanddienstleister.</p>
+          </div>
+        </details>
+
+        <details class="sc-faq__item">
+          <summary class="sc-faq__question">
+            <span>Kann ich den Status meiner Anfrage einsehen?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </summary>
+          <div class="sc-faq__answer">
+            <p>Sie erhalten nach Einreichung eine Bestätigungs-E-Mail. Bei Statusänderungen informieren wir Sie per E-Mail. Sie können jederzeit auf die Bestätigungs-E-Mail antworten, um eine Aktualisierung zu erhalten.</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    {%- comment -%} ═══════════════════════════════════════
+      8) CTA – Same as Über KARINEX
+    ═══════════════════════════════════════ {%- endcomment -%}
+    <section class="about-cta">
+      <h2 class="about-cta-title">Noch Fragen?</h2>
+      <p class="about-cta-text">Unser Support-Team hilft Ihnen gerne bei allen Fragen zu Reparaturen oder Reklamationen.</p>
+      <a href="{{ _root }}pages/kontakt" class="about-cta-button">Kontakt aufnehmen</a>
+    </section>
+
+  </div>
+</div>
+
+{%- comment -%} ═══════════════════════════════════════
+  JAVASCRIPT – Smart Form Logic
+═══════════════════════════════════════ {%- endcomment -%}
+<script>
+  (function() {
+    'use strict';
+
+    /* ── Category → Form Path Logic ── */
+    var categoryMap = {
+      'watch':    { value: 'Uhr / Hardware', path: 'physical' },
+      'physical': { value: 'LEGO / Physische Ware', path: 'physical' },
+      'digital':  { value: 'Digitale Produkte', path: 'digital' },
+      'games':    { value: 'Games', path: 'digital' }
+    };
+
+    window.__scSelectCategory = function(cat) {
+      var sel = document.getElementById('sc-category');
+      if (sel && categoryMap[cat]) {
+        sel.value = categoryMap[cat].value;
+        togglePath(categoryMap[cat].path);
+      }
+    };
+
+    function togglePath(path) {
+      var physicalOpts = document.querySelectorAll('.sc-opt-physical');
+      var digitalOpts = document.querySelectorAll('.sc-opt-digital');
+      var physicalFields = document.querySelector('.sc-conditional--physical');
+      var digitalFields = document.querySelector('.sc-conditional--digital');
+      var problemSelect = document.getElementById('sc-problem');
+
+      if (path === 'digital') {
+        physicalOpts.forEach(function(o) { o.style.display = 'none'; });
+        digitalOpts.forEach(function(o) { o.style.display = ''; });
+        if (physicalFields) physicalFields.style.display = 'none';
+        if (digitalFields) digitalFields.style.display = '';
+      } else {
+        physicalOpts.forEach(function(o) { o.style.display = ''; });
+        digitalOpts.forEach(function(o) { o.style.display = 'none'; });
+        if (physicalFields) physicalFields.style.display = '';
+        if (digitalFields) digitalFields.style.display = 'none';
+      }
+
+      if (problemSelect) problemSelect.value = '';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var catSelect = document.getElementById('sc-category');
+      if (catSelect) {
+        catSelect.addEventListener('change', function() {
+          var val = this.value;
+          if (val === 'Uhr / Hardware' || val === 'LEGO / Physische Ware') {
+            togglePath('physical');
+          } else if (val === 'Digitale Produkte' || val === 'Games') {
+            togglePath('digital');
+          }
+        });
+      }
+
+      /* ── Order Lookup → pre-fill form ── */
+      var lookupBtn = document.getElementById('sc-lookup-btn');
+      if (lookupBtn) {
+        lookupBtn.addEventListener('click', function() {
+          var orderInput = document.getElementById('sc-lookup-order');
+          var emailInput = document.getElementById('sc-lookup-email');
+          var orderVal = orderInput ? orderInput.value.trim() : '';
+          var emailVal = emailInput ? emailInput.value.trim() : '';
+          var result = document.getElementById('sc-lookup-result');
+
+          if (orderVal && emailVal) {
+            /* Pre-fill smart form */
+            var formOrder = document.getElementById('sc-order');
+            var formEmail = document.getElementById('sc-email');
+            if (formOrder) formOrder.value = orderVal;
+            if (formEmail) formEmail.value = emailVal;
+
+            if (result) {
+              result.innerHTML = '<div class="sc-notice sc-notice--success"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>Daten übernommen. Bitte fahren Sie unten mit dem Formular fort.</span></div>';
+              result.style.display = '';
+            }
+
+            /* Scroll to form */
+            setTimeout(function() {
+              var formEl = document.getElementById('sc-form');
+              if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 600);
+          } else {
+            if (result) {
+              result.innerHTML = '<div class="sc-notice sc-notice--warn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg><span>Bitte geben Sie sowohl Bestellnummer als auch E-Mail ein.</span></div>';
+              result.style.display = '';
+            }
+          }
+        });
+      }
+
+      /* ── File Upload Preview ── */
+      var fileInput = document.getElementById('sc-file');
+      var fileList = document.getElementById('sc-file-list');
+      if (fileInput && fileList) {
+        fileInput.addEventListener('change', function() {
+          fileList.innerHTML = '';
+          Array.from(this.files).forEach(function(f) {
+            var div = document.createElement('div');
+            div.className = 'sc-upload__file';
+            div.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" /></svg>' +
+              '<span>' + f.name + '</span>' +
+              '<span class="sc-upload__size">' + (f.size / 1024 / 1024).toFixed(1) + ' MB</span>';
+            fileList.appendChild(div);
+          });
+        });
+      }
+
+      /* ── FAQ toggle icon ── */
+      document.querySelectorAll('.sc-faq__item').forEach(function(item) {
+        item.addEventListener('toggle', function() {
+          var svg = this.querySelector('summary svg');
+          if (svg) {
+            svg.style.transform = this.open ? 'rotate(45deg)' : '';
+          }
+        });
+      });
+
+      /* ── Sticky hero bar on scroll ── */
+      var hero = document.querySelector('.about-hero');
+      if (hero) {
+        /* Build sticky bar with inline styles so it works regardless of DOM position */
+        var bar = document.createElement('div');
+        bar.id = 'sc-fixed-hero';
+        bar.innerHTML = '<div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">' +
+          '<span style="font-size:1rem;font-weight:700;white-space:nowrap">Reparaturen & Beschwerden</span>' +
+          '<div style="display:flex;gap:8px;align-items:center">' +
+            '<a href="#sc-form" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#111;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none">Reklamation starten</a>' +
+            '<a href="#sc-lookup" style="display:inline-flex;align-items:center;gap:6px;background:transparent;color:#fff;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;border:1px solid rgba(255,255,255,.3)">Bestellung finden</a>' +
+          '</div>' +
+        '</div>';
+        Object.assign(bar.style, {
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          right: '0',
+          zIndex: '9999',
+          background: 'linear-gradient(135deg, #1d1d1f 0%, #2c2c2e 100%)',
+          color: '#fff',
+          padding: '12px 20px',
+          boxShadow: '0 2px 12px rgba(0,0,0,.3)',
+          transform: 'translateY(-100%)',
+          transition: 'transform .3s ease',
+          fontFamily: 'inherit'
+        });
+        document.body.appendChild(bar);
+
+        /* Offset bar below sticky header */
+        function updateBarTop() {
+          var hg = document.getElementById('header-group');
+          bar.style.top = hg ? hg.getBoundingClientRect().height + 'px' : '0';
+        }
+        updateBarTop();
+
+        var barVisible = false;
+        function onScroll() {
+          var rect = hero.getBoundingClientRect();
+          var shouldShow = rect.bottom < 0;
+          if (shouldShow && !barVisible) {
+            bar.style.transform = 'translateY(0)';
+            barVisible = true;
+          } else if (!shouldShow && barVisible) {
+            bar.style.transform = 'translateY(-100%)';
+            barVisible = false;
+          }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', updateBarTop);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Service Center",
+  "tag": "section",
+  "class": "section-service-center",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Service Center"
+    }
+  ]
+}
+{% endschema %}

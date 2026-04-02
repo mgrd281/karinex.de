@@ -1,0 +1,215 @@
+{%- comment -%}
+  ============================================================
+  LEGO Layout — Mobile Accordion + Desktop Blocks
+  ============================================================
+  Rendert das Gerüst für LEGO-Produkte auf Mobile (Accordion)
+  und Desktop (offene Inhaltsblöcke).
+  Der JS-Parser (lego-accordion.js) füllt die Inhalte
+  automatisch aus product.description.
+
+  Reihenfolge:
+    1. Artikelbeschreibung
+    2. Produktdetails
+    3. Spielmerkmale
+    4. Altersempfehlung
+    5. Maße & Größe
+    6. Material
+    7. Lieferumfang
+    8. Sicherheitshinweise
+    9. Pflegehinweise (nur Mobile)
+   10. Herstellerinformationen
+  ============================================================
+{%- endcomment -%}
+
+{{ 'lego-accordion.css' | asset_url | stylesheet_tag }}
+
+<div class="lego-accordion" data-nosnippet>
+
+  <!-- 1. Artikelbeschreibung -->
+  <div class="lego-acc-item" data-section="artikelbeschreibung">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">📦</span>
+      <span class="lego-acc-title">Artikelbeschreibung</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 2. Produktdetails -->
+  <div class="lego-acc-item" data-section="produktdetails">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">🧩</span>
+      <span class="lego-acc-title">Produktdetails</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 3. Spielmerkmale -->
+  <div class="lego-acc-item" data-section="spielmerkmale">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">🎮</span>
+      <span class="lego-acc-title">Spielmerkmale</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 4. Altersempfehlung -->
+  <div class="lego-acc-item" data-section="altersempfehlung">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">👶</span>
+      <span class="lego-acc-title">Altersempfehlung</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 5. Maße & Größe -->
+  <div class="lego-acc-item" data-section="masse">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">📐</span>
+      <span class="lego-acc-title">Maße & Größe</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 6. Material -->
+  <div class="lego-acc-item" data-section="material">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">🔧</span>
+      <span class="lego-acc-title">Material</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 7. Lieferumfang -->
+  <div class="lego-acc-item" data-section="lieferumfang">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">📋</span>
+      <span class="lego-acc-title">Lieferumfang</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 8. Sicherheitshinweise -->
+  <div class="lego-acc-item" data-section="sicherheitshinweise">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">⚠️</span>
+      <span class="lego-acc-title">Sicherheitshinweise</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 9. Pflegehinweise -->
+  <div class="lego-acc-item" data-section="pflegehinweise">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">🧽</span>
+      <span class="lego-acc-title">Pflegehinweise</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- 10. Herstellerinformationen -->
+  <div class="lego-acc-item" data-section="herstellerinformationen">
+    <button class="lego-acc-header" onclick="toggleLegoAccordion(this)" type="button" aria-expanded="false">
+      <span class="lego-acc-icon">🏭</span>
+      <span class="lego-acc-title">Herstellerinformationen</span>
+      <svg class="lego-acc-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <div class="lego-acc-content">
+      <div class="lego-acc-body"></div>
+    </div>
+  </div>
+
+  <!-- Alterswarnung Mobile (immer sichtbar) -->
+  <div class="lego-age-badge lego-age-badge--mobile" id="legoAgeBadgeMobile" style="display:none;"></div>
+
+</div><!-- End .lego-accordion -->
+
+<!-- ════════════════════════════════════════════════
+     DESKTOP: Uhren-Stil Layout für LEGO-Produkte
+     Beschreibung + Tabs (Zusatzinfo / Lieferung / Marke)
+     ════════════════════════════════════════════════ -->
+<div class="lego-desktop" data-nosnippet>
+
+  <!-- ── Artikelbeschreibung (expandierbar) ── -->
+  <div class="lego-dk-desc-box">
+    <h3 class="lego-dk-desc-title">Artikelbeschreibung</h3>
+    <div class="lego-dk-desc-wrap">
+      <div class="lego-dk-desc-text" id="legoDescText"></div>
+      <div class="lego-dk-desc-gradient" id="legoDescGradient"></div>
+    </div>
+    <button class="lego-dk-mehr-btn" id="legoMehrBtn" type="button">weiterlesen &raquo;</button>
+  </div>
+
+  <!-- ── Alterswarnung / Safety Badge ── -->
+  <div class="lego-age-badge" id="legoAgeBadge" style="display:none;"></div>
+
+  <!-- ── Tab-Navigation ── -->
+  <div class="lego-dk-tab-nav">
+    <button class="lego-tab-btn active" data-tab="lego-tab-specs" type="button">Zusatzinformation</button>
+    <button class="lego-tab-btn" data-tab="lego-tab-delivery" type="button">Lieferung</button>
+    <button class="lego-tab-btn" data-tab="lego-tab-brand" type="button">Über die Marke</button>
+  </div>
+
+  <!-- ── Tab-Panels ── -->
+  <div class="lego-dk-panels">
+
+    <!-- Zusatzinformation: Specs-Grid (JS füllt) -->
+    <div id="lego-tab-specs" class="lego-tab-content" style="display:block;">
+      <div class="lego-dk-specs-grid"></div>
+    </div>
+
+    <!-- Lieferung -->
+    <div id="lego-tab-delivery" class="lego-tab-content">
+      <div class="lego-dk-delivery-inner">
+        <p class="lego-delivery-highlight">📦 Kostenloser Versand &amp; Rückversand</p>
+        <p>Ihre Bestellung wird sicher verpackt und versichert mit DHL versendet. Die Lieferzeit beträgt in der Regel <strong>1–3 Werktage</strong> innerhalb Deutschlands.</p>
+        <p>Rücksendungen sind 30 Tage lang kostenlos möglich.</p>
+      </div>
+    </div>
+
+    <!-- Über die Marke -->
+    <div id="lego-tab-brand" class="lego-tab-content">
+      <div class="lego-dk-brand-inner">
+        <span class="lego-brand-label">Über die Marke</span>
+        <h2 class="lego-brand-title">LEGO</h2>
+        <div class="lego-brand-divider"></div>
+        <div class="lego-brand-text">
+          {%- if product.metafields.custom.brand_description != blank -%}
+            {{ product.metafields.custom.brand_description }}
+          {%- else -%}
+            <p>Seit 1932 inspiriert <strong>LEGO</strong> Kinder und Erwachsene weltweit zum kreativen Bauen. Vom kleinen Stein zur ganzen Welt – LEGO steht für Qualität, Fantasie und grenzenlosen Spielspaß. Jedes Set wird in Dänemark entwickelt und erfüllt höchste Sicherheitsstandards.</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+  </div><!-- End .lego-dk-panels -->
+</div><!-- End .lego-desktop -->
+
+<script src="{{ 'lego-accordion.js' | asset_url }}" defer></script>

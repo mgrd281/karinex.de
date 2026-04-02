@@ -1,0 +1,212 @@
+<!-- ====================================================
+     DYNAMIC ENTERPRISE FAQ (Standalone Section)
+     ==================================================== -->
+{{ 'faq-enterprise.css' | asset_url | stylesheet_tag }}
+
+{%- assign faq_type   = product.type | downcase -%}
+{%- assign faq_vendor = product.vendor | downcase -%}
+{%- assign faq_tags   = product.tags | join: ',' | downcase -%}
+
+{%- comment -%}
+  ── LAYER 1: Collection-based detection (highest priority) ──
+{%- endcomment -%}
+{%- assign _faq_cat = '' -%}
+
+{%- for _col in product.collections -%}
+  {%- assign _ch = _col.handle | downcase -%}
+  {%- assign _ct = _col.title  | downcase -%}
+
+  {%- if _ch contains 'lego' or _ct contains 'lego' -%}
+    {%- assign _faq_cat = 'lego' -%}{%- break -%}
+
+  {%- elsif _ch contains 'uhr' or _ct contains 'uhr'
+          or _ch contains 'watch' or _ct contains 'watch'
+          or _ch contains 'damenuhr' or _ct contains 'damenuhr'
+          or _ch contains 'herrenuhr' or _ct contains 'herrenuhr'
+          or _ch contains 'luxus-uhr' or _ct contains 'luxus-uhr' -%}
+    {%- assign _faq_cat = 'uhren' -%}{%- break -%}
+
+  {%- elsif _ch contains 'game' or _ct contains 'game'
+          or _ch contains 'games' or _ct contains 'games'
+          or _ch contains 'spielzeug' or _ct contains 'spielzeug'
+          or _ch contains 'controller' or _ct contains 'controller'
+          or _ch contains 'xbox' or _ct contains 'xbox'
+          or _ch contains 'playstation' or _ct contains 'playstation'
+          or _ch contains 'nintendo' or _ct contains 'nintendo' -%}
+    {%- assign _faq_cat = 'games' -%}{%- break -%}
+
+  {%- elsif _ch contains 'digital' or _ct contains 'digital'
+          or _ch contains 'software' or _ct contains 'software'
+          or _ch contains 'microsoft' or _ct contains 'microsoft'
+          or _ch contains 'adobe' or _ct contains 'adobe'
+          or _ch contains 'antivirus' or _ct contains 'antivirus'
+          or _ch contains 'office' or _ct contains 'office'
+          or _ch contains 'lizenz' or _ct contains 'lizenz' -%}
+    {%- assign _faq_cat = 'digital' -%}{%- break -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%}── LAYER 2: product.type / vendor / tags fallback ──{%- endcomment -%}
+{%- if _faq_cat == '' -%}
+  {%- if faq_vendor == 'lego' or faq_tags contains 'lego' -%}
+    {%- assign _faq_cat = 'lego' -%}
+  {%- elsif faq_type contains 'uhr' or faq_type contains 'watch'
+          or faq_tags contains 'uhr' or faq_tags contains 'watch'
+          or faq_vendor contains 'michael kors' or faq_vendor contains 'boss'
+          or faq_vendor contains 'emporio armani' or faq_vendor contains 'diesel'
+          or faq_vendor contains 'casio' or faq_vendor contains 'tag heuer'
+          or faq_vendor contains 'daniel wellington' or faq_vendor contains 'fossil' -%}
+    {%- assign _faq_cat = 'uhren' -%}
+  {%- elsif faq_type contains 'game' or faq_type contains 'spiel' or faq_type contains 'spielzeug'
+          or faq_tags contains 'game' or faq_tags contains 'games' -%}
+    {%- assign _faq_cat = 'games' -%}
+  {%- elsif faq_type contains 'digital' or faq_type contains 'software' or faq_type contains 'lizenz'
+          or faq_tags contains 'digital' or faq_tags contains 'software' -%}
+    {%- assign _faq_cat = 'digital' -%}
+  {%- else -%}
+    {%- assign _faq_cat = 'default' -%}
+  {%- endif -%}
+{%- endif -%}
+
+<div class="kx-faq-wrapper product-info__faq-wrapper">
+  {%- if _faq_cat == 'uhren' -%}
+    {%- render 'faq-uhren' -%}
+  {%- elsif _faq_cat == 'digital' -%}
+    {%- render 'faq-digital' -%}
+  {%- elsif _faq_cat == 'games' -%}
+    {%- render 'faq-games' -%}
+  {%- elsif _faq_cat == 'lego' -%}
+    {%- render 'faq-lego' -%}
+  {%- else -%}
+    {%- render 'faq-default' -%}
+  {%- endif -%}
+</div>
+
+<script>
+  /* ─── Ultra-Luxury FAQ Accordion ──────────────────────────
+     Pixel-perfect height animation via JS-measured scrollHeight.
+     Choreographed: icon → panel height → content reveal.
+     ───────────────────────────────────────────────────────── */
+  (function () {
+    'use strict';
+
+    var DUR = 500;
+    var busy = new WeakMap();
+
+    /* ── Measure real content height ──────────────────────── */
+    function measurePanel(panel) {
+      /* Temporarily remove height constraint to measure */
+      var prev = panel.style.height;
+      panel.style.height = 'auto';
+      var h = panel.scrollHeight;
+      panel.style.height = prev;
+      return h;
+    }
+
+    /* ── OPEN ─────────────────────────────────────────────── */
+    function animateOpen(details) {
+      if (busy.get(details) === 'opening') return;
+      busy.set(details, 'opening');
+
+      var panel = details.querySelector('.kx-faq__panel');
+      details.setAttribute('open', '');
+      details.classList.remove('is-closing');
+
+      if (panel) {
+        var target = measurePanel(panel);
+        panel.style.height = '0px';
+        details.offsetHeight;                     /* force reflow */
+        details.classList.add('is-open');
+        panel.style.height = target + 'px';
+
+        panel.addEventListener('transitionend', function done(e) {
+          if (e.target !== panel || e.propertyName !== 'height') return;
+          panel.removeEventListener('transitionend', done);
+          /* Let it be auto so content can reflow if needed */
+          panel.style.height = 'auto';
+          busy.delete(details);
+        });
+
+        setTimeout(function () {
+          if (busy.get(details) === 'opening') {
+            panel.style.height = 'auto';
+            busy.delete(details);
+          }
+        }, DUR + 100);
+      } else {
+        details.classList.add('is-open');
+        busy.delete(details);
+      }
+    }
+
+    /* ── CLOSE ────────────────────────────────────────────── */
+    function animateClose(details) {
+      if (busy.get(details) === 'closing') return;
+      busy.set(details, 'closing');
+
+      var panel = details.querySelector('.kx-faq__panel');
+      details.classList.add('is-closing');
+      details.classList.remove('is-open');
+
+      if (panel) {
+        /* Snapshot current height, then animate to 0 */
+        var current = panel.scrollHeight;
+        panel.style.height = current + 'px';
+        details.offsetHeight;                     /* force reflow */
+        panel.style.height = '0px';
+
+        panel.addEventListener('transitionend', function done(e) {
+          if (e.target !== panel || e.propertyName !== 'height') return;
+          panel.removeEventListener('transitionend', done);
+          cleanup();
+        });
+
+        setTimeout(function () {
+          if (busy.get(details) === 'closing') cleanup();
+        }, DUR + 100);
+      } else {
+        cleanup();
+      }
+
+      function cleanup() {
+        details.removeAttribute('open');
+        details.classList.remove('is-closing');
+        if (panel) panel.style.height = '0px';
+        busy.delete(details);
+      }
+    }
+
+    /* ── Click handler ────────────────────────────────────── */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.kx-faq__btn');
+      if (!btn) return;
+      e.preventDefault();
+
+      var details = btn.closest('details');
+      if (!details) return;
+
+      var list   = btn.closest('.kx-faq__list') || btn.closest('.kx-faq');
+      var isOpen = details.classList.contains('is-open');
+
+      /* Close siblings gracefully */
+      if (list) {
+        list.querySelectorAll('details.is-open, details[open]').forEach(function (other) {
+          if (other !== details) animateClose(other);
+        });
+      }
+
+      if (isOpen || busy.get(details) === 'opening') {
+        animateClose(details);
+      } else {
+        animateOpen(details);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Häufig gestellte Fragen",
+  "settings": []
+}
+{% endschema %}

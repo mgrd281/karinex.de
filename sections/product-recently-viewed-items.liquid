@@ -1,0 +1,183 @@
+{%- for product in search.results limit: 10 -%}
+  {%- comment -%} ── Discount calculation ── {%- endcomment -%}
+  {%- assign discount_pct = 0 -%}
+  {%- assign is_on_sale = false -%}
+  {%- if product.compare_at_price > product.price -%}
+    {%- assign is_on_sale = true -%}
+    {%- assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+  {%- endif -%}
+
+  {%- comment -%} ── Promo badge (Coupon bar) ── {%- endcomment -%}
+  {%- assign show_promo_badge = false -%}
+  {%- assign promo_badge_text = blank -%}
+  {%- assign promo_badge_text_raw = product.metafields.custom.promo_badge_text.value | default: product.metafields.custom.promo_badge_text -%}
+  {%- if promo_badge_text_raw != blank -%}
+    {%- assign promo_badge_text = promo_badge_text_raw | strip -%}
+  {%- endif -%}
+  {%- assign promo_badge_until_raw = product.metafields.custom.promo_badge_until.value | default: product.metafields.custom.promo_badge_until | default: product.metafields.custom.promo_badge_bis.value | default: product.metafields.custom.promo_badge_bis -%}
+  {%- assign promo_badge_until_date = blank -%}
+  {%- if promo_badge_until_raw != blank -%}
+    {%- assign promo_badge_until_date = promo_badge_until_raw | date: '%Y-%m-%d' -%}
+  {%- endif -%}
+  {%- assign now_date = 'now' | date: '%Y-%m-%d' -%}
+  {%- assign promo_badge_metaobject = product.metafields.custom.promo_badge.value -%}
+  {%- if promo_badge_metaobject != blank -%}
+    {%- assign promo_badge_meta_text = promo_badge_metaobject.text.value | default: promo_badge_metaobject.text -%}
+    {%- if promo_badge_meta_text != blank -%}
+      {%- assign promo_badge_text = promo_badge_meta_text | strip -%}
+    {%- endif -%}
+    {%- assign promo_badge_meta_until = promo_badge_metaobject.until.value | default: promo_badge_metaobject.until -%}
+    {%- if promo_badge_meta_until != blank -%}
+      {%- assign promo_badge_until_date = promo_badge_meta_until | date: '%Y-%m-%d' -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if promo_badge_text != blank -%}
+    {%- if promo_badge_until_date == blank or promo_badge_until_date >= now_date -%}
+      {%- assign show_promo_badge = true -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- comment -%} ── Collect variant sizes ── {%- endcomment -%}
+  {%- assign first_variant = product.selected_or_first_available_variant -%}
+  {%- assign has_sizes = false -%}
+  {%- assign size_list = '' -%}
+  {%- assign size_count = 0 -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign opt_down = option.name | downcase -%}
+    {%- if opt_down == 'size' or opt_down == 'größe' or opt_down == 'groesse' -%}
+      {%- assign has_sizes = true -%}
+      {%- assign size_count = option.values.size -%}
+      {%- for val in option.values limit: 4 -%}
+        {%- if forloop.first -%}
+          {%- assign size_list = val -%}
+        {%- else -%}
+          {%- assign size_list = size_list | append: '|||' | append: val -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div class="pdp-rv-card" data-product-id="{{ product.id }}">
+    {%- comment -%} ── Normal card (always visible) ── {%- endcomment -%}
+    <a href="{{ product.url }}" class="pdp-rv-card__img-wrap">
+      <wishlist-heart data-product-handle="{{ product.handle }}"></wishlist-heart>
+      {%- if product.featured_image -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 440 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="440"
+          class="pdp-rv-card__img"
+        >
+      {%- endif -%}
+      {%- if is_on_sale and show_promo_badge == false -%}
+        <span class="pdp-rv-card__sale-tag">SALE</span>
+      {%- endif -%}
+    </a>
+    {%- if show_promo_badge -%}
+      <div class="pdp-rv-card__coupon-bar">
+        <span class="pdp-rv-card__coupon-label">
+          <svg viewBox="0 0 24 24"><path d="M2 9.5V4a1 1 0 011-1h18a1 1 0 011 1v5.5a2.5 2.5 0 000 5V20a1 1 0 01-1 1H3a1 1 0 01-1-1v-5.5a2.5 2.5 0 000-5z"/></svg>
+          Coupon
+        </span>
+        {%- if discount_pct > 0 -%}
+          <span class="pdp-rv-card__coupon-pct">-{{ discount_pct }}%</span>
+        {%- else -%}
+          <span class="pdp-rv-card__coupon-pct">{{ promo_badge_text }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="pdp-rv-card__body">
+      {%- if product.vendor != blank -%}
+        <span class="pdp-rv-card__brand">{{ product.vendor }}</span>
+      {%- endif -%}
+      <a href="{{ product.url }}" class="pdp-rv-card__title">{{ product.title }}</a>
+      {%- if is_on_sale -%}
+        <div class="pdp-rv-card__price-row">
+          {{ product.price | money }}
+          <span class="pdp-rv-card__price-old">{{ product.compare_at_price | money }}</span>
+        </div>
+      {%- else -%}
+        <div class="pdp-rv-card__price-row pdp-rv-card__price-row--regular">{{ product.price | money }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ── AboutYou hover panel (desktop) ── {%- endcomment -%}
+    <div class="pdp-rv-card__hover-panel">
+      <a href="{{ product.url }}" class="pdp-rv-card__img-wrap">
+        <wishlist-heart data-product-handle="{{ product.handle }}"></wishlist-heart>
+        {%- if product.featured_image -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 440 }}"
+            alt="{{ product.featured_image.alt | default: product.title | escape }}"
+            loading="lazy"
+            width="440"
+            class="pdp-rv-card__img"
+          >
+        {%- endif -%}
+      </a>
+      {%- if show_promo_badge -%}
+        <div class="pdp-rv-card__coupon-bar">
+          <span class="pdp-rv-card__coupon-label">
+            <svg viewBox="0 0 24 24"><path d="M2 9.5V4a1 1 0 011-1h18a1 1 0 011 1v5.5a2.5 2.5 0 000 5V20a1 1 0 01-1 1H3a1 1 0 01-1-1v-5.5a2.5 2.5 0 000-5z"/></svg>
+            Coupon
+          </span>
+          {%- if discount_pct > 0 -%}
+            <span class="pdp-rv-card__coupon-pct">-{{ discount_pct }}%</span>
+          {%- else -%}
+            <span class="pdp-rv-card__coupon-pct">{{ promo_badge_text }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      <div class="pdp-rv-card__hover-body">
+        {%- if product.vendor != blank -%}
+          <span class="pdp-rv-card__brand">{{ product.vendor }}</span>
+        {%- endif -%}
+        <span class="pdp-rv-card__title">{{ product.title }}</span>
+        {%- if is_on_sale -%}
+          <div class="pdp-rv-card__price-row">
+            {{ product.price | money }}
+            <span class="pdp-rv-card__price-old">{{ product.compare_at_price | money }}</span>
+          </div>
+        {%- else -%}
+          <div class="pdp-rv-card__price-row pdp-rv-card__price-row--regular">{{ product.price | money }}</div>
+        {%- endif -%}
+
+        {%- if has_sizes -%}
+          <div class="pdp-rv-card__hover-sizes">
+            {%- assign sizes_arr = size_list | split: '|||' -%}
+            {%- for s in sizes_arr -%}
+              <span class="pdp-rv-card__size-dot">{{ s }}</span>
+            {%- endfor -%}
+            {%- if size_count > 4 -%}
+              {%- assign remaining = size_count | minus: 4 -%}
+              <span class="pdp-rv-card__size-more">+{{ remaining }}</span>
+            {%- endif -%}
+          </div>
+          <div class="pdp-rv-card__hover-sizes-label">Verfügbare Größen: {{ product.options_with_values | where: 'name', 'Größe' | first | default: product.options_with_values | where: 'name', 'Size' | first | map: 'values' | join: ', ' }}</div>
+        {%- endif -%}
+
+        <button type="button" class="pdp-rv-card__hover-atc" data-variant-id="{{ first_variant.id }}" {%- unless product.available %} disabled{%- endunless -%}>
+          {%- if product.available -%}
+            <span class="pdp-rv-atc__text">In den Warenkorb</span>
+            <span class="pdp-rv-atc__check">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span class="pdp-rv-atc__adding">
+              <svg class="pdp-rv-atc__spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg>
+            </span>
+          {%- else -%}
+            <span class="pdp-rv-atc__text">Ausverkauft</span>
+          {%- endif -%}
+        </button>
+      </div>
+    </div>
+  </div>
+{%- endfor -%}
+
+{% schema %}
+{
+  "name": "PDP RV Items",
+  "settings": []
+}
+{% endschema %}

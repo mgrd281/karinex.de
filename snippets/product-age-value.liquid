@@ -1,0 +1,140 @@
+{%- doc -%}
+  Outputs the age restriction value (number) for a product.
+  Extracts from product tags first, then falls back to description parsing.
+  Used by collection-age-filter.liquid and main-collection grid items.
+
+  Tag patterns matched: "usk-18", "USK 12", "4+", "6+", "Ab 12 Jahren",
+  "ab 7", "kinder ab 7", "ab 6 jahren"
+  Description fallback: PEGI/USK text, manufacturer_minimum_age (months÷12)
+
+  @param {object} product - The product object
+{%- enddoc -%}
+
+{%- assign _pav_found = false -%}
+
+{%- comment -%} 0. Check Metafields (Fastest) {%- endcomment -%}
+{%- assign _meta_age = product.metafields.custom.age | strip -%}
+{%- if _meta_age != blank -%}
+  {{- _meta_age -}}
+  {%- assign _pav_found = true -%}
+{%- endif -%}
+
+{%- unless _pav_found -%}
+  {%- assign _meta_usk = product.metafields.custom.usk | strip -%}
+  {%- if _meta_usk != blank -%}
+    {{- _meta_usk -}}
+    {%- assign _pav_found = true -%}
+  {%- endif -%}
+{%- endunless -%}
+
+{%- for tag in product.tags -%}
+  {%- unless _pav_found -%}
+    {%- assign _pav_tag = tag | downcase | strip -%}
+
+    {%- comment -%} Pattern: "usk-18", "usk-12", "usk-0" {%- endcomment -%}
+    {%- if _pav_tag contains 'usk-' -%}
+      {%- assign _pav_parts = _pav_tag | split: 'usk-' -%}
+      {%- if _pav_parts.size > 1 -%}
+        {%- assign _pav_after = _pav_parts[1] | strip -%}
+        {%- assign _pav_num = _pav_after | plus: 0 -%}
+        {%- assign _pav_check = _pav_num | append: '' -%}
+        {%- if _pav_after == _pav_check -%}
+          {{- _pav_num -}}
+          {%- assign _pav_found = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%} Pattern: "USK 12", "USK 16" {%- endcomment -%}
+    {%- unless _pav_found -%}
+      {%- if _pav_tag contains 'usk ' -%}
+        {%- assign _pav_parts = _pav_tag | split: 'usk ' -%}
+        {%- if _pav_parts.size > 1 -%}
+          {%- assign _pav_after = _pav_parts | last | strip -%}
+          {%- assign _pav_num = _pav_after | plus: 0 -%}
+          {%- assign _pav_check = _pav_num | append: '' -%}
+          {%- if _pav_after == _pav_check -%}
+            {{- _pav_num -}}
+            {%- assign _pav_found = true -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- comment -%} Pattern: "4+", "6+", "18+" (standalone number with plus) {%- endcomment -%}
+    {%- unless _pav_found -%}
+      {%- if _pav_tag contains '+' -%}
+        {%- assign _pav_clean = _pav_tag | remove: '+' | strip -%}
+        {%- assign _pav_num = _pav_clean | plus: 0 -%}
+        {%- assign _pav_check = _pav_num | append: '' -%}
+        {%- if _pav_clean == _pav_check and _pav_num > 0 and _pav_num < 99 -%}
+          {{- _pav_num -}}
+          {%- assign _pav_found = true -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- comment -%} Pattern: "Ab 12 Jahren", "ab 7", "kinder ab 7", "ab 6 jahren" {%- endcomment -%}
+    {%- unless _pav_found -%}
+      {%- if _pav_tag contains 'ab ' -%}
+        {%- assign _pav_parts = _pav_tag | split: 'ab ' -%}
+        {%- if _pav_parts.size > 1 -%}
+          {%- assign _pav_after = _pav_parts | last | strip -%}
+          {%- assign _pav_first = _pav_after | split: ' ' | first | strip -%}
+          {%- assign _pav_num = _pav_first | plus: 0 -%}
+          {%- if _pav_num > 0 -%}
+            {{- _pav_num -}}
+            {%- assign _pav_found = true -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endunless -%}
+{%- endfor -%}
+
+{%- comment -%} Fallback: parse description for PEGI / USK text patterns {%- endcomment -%}
+{%- unless _pav_found -%}
+  {%- comment -%} Performance: Truncate description to 3000 chars to avoid memory issues {%- endcomment -%}
+  {%- assign _pav_desc = product.description | slice: 0, 3000 | downcase -%}
+  {%- if _pav_desc contains 'ab 18 jahren' or _pav_desc contains 'pegi: 18' or _pav_desc contains 'pegi 18' -%}
+    {{- 18 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 16 jahren' or _pav_desc contains 'pegi: 16' or _pav_desc contains 'pegi 16' -%}
+    {{- 16 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 12 jahren' or _pav_desc contains 'pegi: 12' or _pav_desc contains 'pegi 12' -%}
+    {{- 12 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 7 jahren' or _pav_desc contains 'pegi: 7' or _pav_desc contains 'pegi 7' -%}
+    {{- 7 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 6 jahren' or _pav_desc contains 'pegi: 6' or _pav_desc contains 'pegi 6' -%}
+    {{- 6 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 3 jahren' or _pav_desc contains 'pegi: 3' or _pav_desc contains 'pegi 3' -%}
+    {{- 3 -}}
+    {%- assign _pav_found = true -%}
+  {%- elsif _pav_desc contains 'ab 4 jahren' -%}
+    {{- 4 -}}
+    {%- assign _pav_found = true -%}
+  {%- endif -%}
+
+  {%- comment -%} Fallback: manufacturer_minimum_age in months (LEGO products) {%- endcomment -%}
+  {%- unless _pav_found -%}
+    {%- if _pav_desc contains 'manufacturer_minimum_age' -%}
+      {%- assign _pav_mma = _pav_desc | split: 'manufacturer_minimum_age' -%}
+      {%- if _pav_mma.size > 1 -%}
+        {%- assign _pav_mma_after = _pav_mma[1] -%}
+        {%- assign _pav_pbw = _pav_mma_after | split: 'po-break-word">' -%}
+        {%- if _pav_pbw.size > 1 -%}
+          {%- assign _pav_months_raw = _pav_pbw[1] | split: '<' | first | strip -%}
+          {%- assign _pav_months = _pav_months_raw | plus: 0 -%}
+          {%- if _pav_months > 0 -%}
+            {%- assign _pav_years = _pav_months | divided_by: 12 -%}
+            {{- _pav_years -}}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endunless -%}
+{%- endunless -%}

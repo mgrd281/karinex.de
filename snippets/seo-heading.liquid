@@ -1,0 +1,46 @@
+{%- comment -%}
+  SEO Helper: Optimized Heading Tag
+  Ensures proper H1 hierarchy and SEO optimization
+  Usage: {% render 'seo-heading', level: 1, text: product.title, class: 'product-title' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign tag_level = level | default: 2
+  assign tag_class = class | default: ''
+  assign tag_id = id | default: ''
+  
+  if tag_level == 1
+    echo '<h1'
+  elsif tag_level == 2
+    echo '<h2'
+  elsif tag_level == 3
+    echo '<h3'
+  elsif tag_level == 4
+    echo '<h4'
+  else
+    echo '<h2'
+  endif
+  
+  if tag_class != blank
+    echo ' class="' | append: tag_class | append: '"'
+  endif
+  
+  if tag_id != blank
+    echo ' id="' | append: tag_id | append: '"'
+  endif
+  
+  echo '>'
+  echo text | escape
+  
+  if tag_level == 1
+    echo '</h1>'
+  elsif tag_level == 2
+    echo '</h2>'
+  elsif tag_level == 3
+    echo '</h3>'
+  elsif tag_level == 4
+    echo '</h4>'
+  else
+    echo '</h2>'
+  endif
+-%}

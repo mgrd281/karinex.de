@@ -1,0 +1,21 @@
+/*
+ * ═══════════════════════════════════════════════════════════════════════
+ * USERCENTRICS WEB CMP v3 — KARINEX / THALIA-STYLE
+ * ═══════════════════════════════════════════════════════════════════════
+ * NOTE: UC CMP v3 renders inside a Shadow DOM (<aside id="usercentrics-cmp-ui">)
+ *       External CSS CANNOT reach inside the Shadow Root.
+ *       Only host-level and overlay rules go here.
+ *       All inner UI styles are injected via JS in theme.liquid.
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/* ── HOST ELEMENT ── keeps the aside from affecting page layout ── */
+aside#usercentrics-cmp-ui {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  /* let clicks fall through to the modal */
+}
+
+/* The Shadow DOM renders its own overlay — nothing else needed here */

@@ -1,0 +1,232 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+                                                                                                                                                                                                                                                                      
+
+<style>
+  /* Override page width for standard pages as requested */
+  #shopify-section-{{ section.id }} .page-width-content {
+    --page-content-width: 1100px;
+  }
+</style>
+{% if page %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Startseite",
+        "item": "{{ shop.url }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ page.title | escape }}",
+        "item": "{{ shop.url }}{{ page.url }}"
+      }
+    ]
+  }
+  </script>
+{% endif %}
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="section page-width-content color-{{ section.settings.color_scheme }}">
+{% if page.handle == 'wishlist' %}
+    <div id="wishlist-grid" class="grid product-grid grid--2-col-tablet-down grid--4-col-desktop">
+        <div id="wishlist-loading" style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+            <p>Laden...</p>
+        </div>
+        <div id="wishlist-empty" style="display:none; grid-column: 1 / -1; text-align: center; padding: 50px;">
+            <p>Deine Wunschliste ist noch leer.</p>
+            <a href="{{ _root }}collections/all" class="button button--primary">Jetzt einkaufen</a>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const wishlistGrid = document.getElementById('wishlist-grid');
+        const loadingMsg = document.getElementById('wishlist-loading');
+        const emptyMsg = document.getElementById('wishlist-empty');
+
+        const wishlistParams = localStorage.getItem('wishlist');
+        let wishlist = wishlistParams ? JSON.parse(wishlistParams) : [];
+        wishlist = wishlist.filter(handle => handle && typeof handle === 'string');
+
+        if (wishlist.length === 0) {
+            loadingMsg.style.display = 'none';
+            emptyMsg.style.display = 'block';
+            return;
+        }
+
+        const fetchCard = async (handle) => {
+            try {
+                const response = await fetch(`/products/${handle}?section_id=section-rendering-product-card`);
+                if (!response.ok) throw new Error('Product not found');
+                const text = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = text;
+                const card = tempDiv.querySelector('product-card');
+                const linkWrapper = tempDiv.querySelector('product-card-link');
+                if (linkWrapper) return linkWrapper.outerHTML;
+                if (card) return card.outerHTML;
+                return text;
+            } catch (e) {
+                console.error(`Failed to load ${handle}`, e);
+                return null;
+            }
+        };
+
+        const promises = wishlist.map(handle => fetchCard(handle));
+        const results = await Promise.all(promises);
+
+        loadingMsg.style.display = 'none';
+        let hasItems = false;
+        results.forEach(html => {
+            if (html) {
+                const li = document.createElement('div');
+                li.classList.add('grid__item');
+                li.innerHTML = html;
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.title = 'Entfernen';
+                removeBtn.style.cssText = 'position:absolute; top:5px; right:5px; z-index:10; background:white; border:1px solid #ddd; border-radius:50%; width:30px; height:30px; cursor:pointer; font-size:20px; line-height:28px; padding:0; color:#333;';
+                removeBtn.onclick = function(e) {
+                    e.preventDefault();
+                    const link = li.querySelector('a[href*="/products/"]');
+                    if(link) {
+                        const url = new URL(link.href);
+                        const handle = url.pathname.split('/').pop();
+                        let w = JSON.parse(localStorage.getItem('wishlist') || '[]');
+                        w = w.filter(h => h !== handle);
+                        localStorage.setItem('wishlist', JSON.stringify(w));
+                        window.dispatchEvent(new Event('wishlist-updated'));
+                        li.remove();
+                        if(document.querySelectorAll('#wishlist-grid .grid__item').length === 0) emptyMsg.style.display = 'block';
+                    }
+                };
+                li.style.position = 'relative';
+                li.appendChild(removeBtn);
+                wishlistGrid.appendChild(li);
+                hasItems = true;
+            }
+        });
+        if (!hasItems) emptyMsg.style.display = 'block';
+    });
+    </script>
+{% else %}
+  <div
+    class="
+      spacing-style
+      layout-panel-flex
+      layout-panel-flex--column
+      section-content-wrapper
+      mobile-column
+    "
+    style="
+      {% render 'layout-panel-style', settings: section.settings %}
+      {% render 'spacing-style', settings: section.settings %}
+    "
+  >
+    <h1 class="visually-hidden">{{ page.title | escape }} – Karinex Shop</h1>
+    {% content_for 'blocks' %}
+    
+    {% if page.handle == 'uber-uns' or page.handle == 'about-us' %}
+      <div style="margin-top: 50px; padding: 40px; background: #f8f9fa; border-radius: 12px; text-align: center; border: 1px solid #e9ecef;">
+        <h3 style="margin-bottom: 20px; font-size: 24px; color: #2e7d32; font-weight: 700;">Wir sind offizielle Partner</h3>
+        
+        <div style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
+             <!-- Microsoft Partner Badge -->
+                <img src="{{ 'microsoft-partner-logo.png' | asset_url }}" alt="Microsoft Partner" loading="lazy" style="height: 60px; width: auto; display: block;">
+            
+
+        </div>
+        
+        <p style="margin-top: 25px; color: #666; font-size: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Als Microsoft Partner garantieren wir Ihnen originale Softwarelizenzen, erstklassigen Support und höchste Sicherheitsstandards. Ihr Vertrauen ist unser Antrieb.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "t:names.page",
+  "class": "section-wrapper",
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "content_direction",
+      "label": "t:settings.direction",
+      "options": [
+        {
+          "value": "column",
+          "label": "t:options.vertical"
+        }
+      ],
+      "default": "column",
+      "visible_if": "{{ section.settings.gap < 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

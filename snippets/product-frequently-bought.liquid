@@ -1,0 +1,64 @@
+{% if product.metafields.custom.frequently_bought.size > 0 %}
+  <div class="frequently-bought-container">
+    <h2>Wird oft zusammen gekauft</h2>
+    <div class="frequently-bought-wrapper">
+      {% for related_product in product.metafields.custom.frequently_bought %}
+        <div class="fb-product">
+          <a href="{{ related_product.url }}">
+            <img src="{{ related_product.featured_image | img_url: '200x200' }}" alt="{{ related_product.title }}">
+            <p class="fb-title">{{ related_product.title }}</p>
+            <p class="fb-price">{{ related_product.price | money }}</p>
+          </a>
+<div data-shop-id="{{shop.id}}" product-id="{{related_product.id }}" data-page="{{request.page_type}}" class="ddreview-star"></div>
+        </div>
+        {% unless forloop.last %}
+          <div class="fb-plus">+</div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+<style>
+.frequently-bought-container {
+  background: #f7f7f7;
+  padding: 20px;
+  border-radius: 16px;
+  margin: 40px 0;
+  font-family: Arial, sans-serif;
+}
+.frequently-bought-container h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+.frequently-bought-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+.fb-product {
+  text-align: center;
+  width: 140px;
+}
+.fb-product img {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.fb-title {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #333;
+}
+.fb-price {
+  font-weight: bold;
+  color: #27ae60;
+}
+.fb-plus {
+  font-size: 24px;
+  font-weight: bold;
+  color: #999;
+  align-self: center;
+}
+</style>

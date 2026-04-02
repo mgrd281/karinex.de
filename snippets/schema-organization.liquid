@@ -1,0 +1,68 @@
+{% comment %}
+  Organization Schema for SEO - Company Information
+  Updated: 05.02.2026 - v2
+  Schema Type: Organization (valid for all properties)
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "{{ shop.url }}/#organization",
+  "name": "Karinex",
+  "legalName": "Karina Khrystych",
+  "url": "{{ shop.url }}",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ shop.brand.logo | image_url: width: 600 }}",
+    "width": 600,
+    "height": 200
+  },
+  "image": "{{ shop.brand.logo | image_url: width: 800, format: 'webp' }}",
+  "description": "Online-Shop für Software-Lizenzen, Games, LEGO, Uhren und Spielzeug. Schnelle Lieferung und Sofort-Downloads.",
+  "email": "shop@karinex.de",
+  "telephone": "+49-1556-3133956",
+  "vatID": "DE452578048",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Havighorster Redder 51",
+    "addressLocality": "Hamburg",
+    "postalCode": "22115",
+    "addressCountry": "DE"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.73",
+    "reviewCount": "118",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "sameAs": [
+    "https://www.tiktok.com/@karinexshop",
+    "https://www.youtube.com/@kariinex",
+    "https://www.trustedshops.de/bewertung/info_X78A4D7E62B3E73E82B6751A647AB17E5.html"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+49-1556-3133956",
+    "contactType": "customer service",
+    "email": "shop@karinex.de",
+    "areaServed": ["DE", "AT", "CH"],
+    "availableLanguage": ["German"]
+  },
+  "areaServed": [
+    {
+      "@type": "Country",
+      "name": "Deutschland"
+    },
+    {
+      "@type": "Country",
+      "name": "Österreich"
+    },
+    {
+      "@type": "Country",
+      "name": "Schweiz"
+    }
+  ]
+}
+</script>

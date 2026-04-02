@@ -1,0 +1,608 @@
+{% schema %}
+{
+  "name": "BF Slider",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Aktuelle Deals für dich" },
+    { "type": "collection", "id": "collection", "label": "Mega Sale Kategorie" },
+    { "type": "checkbox", "id": "show_subheading", "label": "Untertitel anzeigen", "default": true },
+    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Alle Mega Sale Deals auf einen Blick." },
+    { "type": "header", "content": "Text" },
+    { "type": "color", "id": "heading_color", "label": "Überschrift Farbe", "default": "#111111" },
+    { "type": "color", "id": "subheading_color", "label": "Untertitel Farbe (Text)", "default": "#6b7280" },
+    { "type": "header", "content": "Farben" },
+    { "type": "checkbox", "id": "use_custom_colors", "label": "Benutzerdefinierte Farben verwenden", "default": true },
+    { "type": "color", "id": "bg_color_1", "label": "Hintergrund 1", "default": "#e6f0ff" },
+    { "type": "color", "id": "bg_color_2", "label": "Hintergrund 2", "default": "#f4f7fb" },
+    { "type": "color", "id": "bg_color_3", "label": "Hintergrund 3", "default": "#ffffff" },
+    { "type": "color", "id": "subtitle_color", "label": "Hinweis-/Message Farbe", "default": "#6b7280" },
+    { "type": "color", "id": "price_color", "label": "Preis Farbe", "default": "#c2410c" },
+    { "type": "color", "id": "ribbon_left_bg", "label": "Ribbon Links Hintergrund", "default": "#111827" },
+    { "type": "color", "id": "ribbon_right_bg", "label": "Ribbon Rechts Hintergrund", "default": "#f97316" },
+    { "type": "color", "id": "ribbon_right_text", "label": "Ribbon Rechts Text", "default": "#000000" },
+    { "type": "checkbox", "id": "zoom_enable", "default": true, "label": "Zoom beim Hover aktivieren" },
+    {
+      "type": "select",
+      "id": "zoom_scale",
+      "label": "Zoom-Stärke",
+      "default": "1.15",
+      "options": [
+        { "value": "1.05", "label": "Leicht (1.05)" },
+        { "value": "1.15", "label": "Mittel (1.15)" },
+        { "value": "1.30", "label": "Stark (1.30)" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_badge", "default": true, "label": "MEGA SALE Badge anzeigen" },
+    { "type": "range", "id": "max_products", "min": 5, "max": 50, "step": 1, "default": 20, "label": "Max. Anzahl Produkte" },
+    { "type": "checkbox", "id": "show_arrows", "label": "Navigationspfeile anzeigen", "default": true },
+    { "type": "checkbox", "id": "show_bestseller", "label": "Bestseller-Label anzeigen", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Bewertungen anzeigen (metafields.reviews.*)", "default": true }
+  ],
+  "presets": [
+    { "name": "BF Slider" }
+  ]
+}
+{% endschema %}
+
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign _zoom_enabled = section.settings.zoom_enable
+  assign _zoom_scale   = section.settings.zoom_scale | default: '1.15'
+  assign _max_products = section.settings.max_products | default: 20
+
+  if section.settings.use_custom_colors
+    assign _bf_bg_1 = section.settings.bg_color_1
+    assign _bf_bg_2 = section.settings.bg_color_2
+    assign _bf_bg_3 = section.settings.bg_color_3
+    assign _bf_msg_color = section.settings.subtitle_color
+    assign _bf_price_color = section.settings.price_color
+    assign _bf_ribbon_left_bg = section.settings.ribbon_left_bg
+    assign _bf_ribbon_right_bg = section.settings.ribbon_right_bg
+    assign _bf_ribbon_right_text = section.settings.ribbon_right_text
+  else
+    assign _bf_bg_1 = '#e6f0ff'
+    assign _bf_bg_2 = '#f4f7fb'
+    assign _bf_bg_3 = '#ffffff'
+    assign _bf_msg_color = '#6b7280'
+    assign _bf_price_color = '#c2410c'
+    assign _bf_ribbon_left_bg = '#111827'
+    assign _bf_ribbon_right_bg = '#f97316'
+    assign _bf_ribbon_right_text = '#000000'
+  endif
+-%}
+
+<section
+  id="bf-{{ section.id }}"
+  class="bf-wrap{% unless _zoom_enabled %} bf-nozoom{% endunless %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="bf-collection-slider"
+>
+  <div class="bf-head">
+    <div>
+      <h2 class="bf-h2">
+        {{ section.settings.heading | default: 'Aktuelle Deals für dich' }}
+      </h2>
+      {% if section.settings.show_subheading and section.settings.subheading != blank %}
+        <p class="bf-subtitle">
+          {{ section.settings.subheading }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if section.settings.collection == blank %}
+    <p class="bf-message">Bitte im Theme Editor eine Mega Sale Kategorie auswählen.</p>
+  {% else %}
+    {% assign coll = section.settings.collection %}
+
+    <div class="bf-scroller" data-bf-scroll tabindex="0" role="region" aria-label="Mega Sale Produkte">
+      <div class="bf-row" data-bf-row>
+        {% for product in coll.products limit: _max_products %}
+          {% assign price = product.price %}
+          {% assign compare_at = product.compare_at_price %}
+          {% assign first_available_variant = product.selected_or_first_available_variant %}
+
+          {%- assign discount = nil -%}
+          {% if compare_at and compare_at > price %}
+            {% assign diff          = compare_at | minus: price %}
+            {% assign discount_raw  = diff | times: 100 %}
+            {% assign discount      = discount_raw | divided_by: compare_at | round %}
+          {% endif %}
+
+          {%- comment -%}
+            Bewertung aus Standard-Metafields:
+            product.metafields.reviews.rating.value (0–5)
+            product.metafields.reviews.rating_count
+          {%- endcomment -%}
+          {% assign rating_val = 0 %}
+          {% assign rating_count = 0 %}
+          {% if section.settings.show_rating and product.metafields.reviews.rating.value %}
+            {% assign rating_val   = product.metafields.reviews.rating.value | default: 0 %}
+            {% assign rating_count = product.metafields.reviews.rating_count | default: 0 %}
+          {% endif %}
+
+          <product-card
+             class="bf-card"
+             data-product-id="{{ product.id }}"
+          >
+            {% if section.settings.show_badge and discount %}
+              <div class="bf-bf-ribbon">
+                <div class="bf-bf-ribbon__black">
+                  <span>MEGA</span>
+                  <span>SALE</span>
+                </div>
+                <div class="bf-bf-ribbon__percent">
+                  -{{ discount }} %
+                </div>
+              </div>
+            {% endif %}
+
+            <a
+              class="bf-card__link"
+              href="{{ product.url }}"
+              aria-label="{{ product.title | escape }}"
+              {% if first_available_variant %}
+                data-variant-id="{{ first_available_variant.id }}"
+              {% endif %}
+              ref="productCardLink"
+            >
+              <div class="bf-card__img-wrap">
+                {% if product.featured_image %}
+                  <img
+                    class="bf-card__img"
+                    src="{{ product.featured_image | img_url: '400x' }}"
+                    alt="{{ product.title | escape | default: shop.name }}"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'bf-card__img' }}
+                {% endif %}
+                
+                {% comment %} Render Quick Add INSIDE image wrapper to match standard theme card-gallery behavior {% endcomment %}
+                {% render 'quick-add', product: product, section_id: section.id %}
+              </div>
+
+              <div class="bf-card__body">
+
+
+                <h3 class="bf-card__title">
+                  {{ product.title }}
+                </h3>
+
+
+
+                <div class="bf-price-row">
+                  <span class="bf-price-label">ab</span>
+                  <div class="bf-price-block">
+  
+                    <span class="bf-price-main">{{ price | money }}</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </product-card>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if section.settings.show_arrows %}
+      <button class="bf-floater bf-left" type="button" aria-label="Vorherige Produkte">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M15.5 4.5L8 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="bf-floater bf-right" type="button" aria-label="Nächste Produkte">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M8.5 4.5L16 12l-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    {% endif %}
+  {% endif %}
+</section>
+
+<style>
+#bf-{{ section.id }}.bf-wrap{
+  margin:2rem 0;
+  position:relative;
+  padding:0 10px;
+  background:linear-gradient(180deg,{{ _bf_bg_1 }} 0,{{ _bf_bg_2 }} 40%,{{ _bf_bg_3 }} 100%);
+  border-radius:18px;
+}
+
+/* Header */
+#bf-{{ section.id }} .bf-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:.75rem;
+  margin-bottom:.75rem;
+}
+#bf-{{ section.id }} .bf-h2{
+  font-weight:700;
+  font-size:18px;
+  line-height:1.3;
+  margin:0;
+  color:{{ section.settings.heading_color }};
+}
+#bf-{{ section.id }} .bf-subtitle{
+  margin:.1rem 0 0;
+  font-size:13px;
+  color:{{ section.settings.subheading_color }};
+}
+#bf-{{ section.id }} .bf-message{
+  font-size:14px;
+  color:{{ _bf_msg_color }};
+}
+
+/* Scroller */
+#bf-{{ section.id }} .bf-scroller{
+  position:relative;
+  overflow:auto;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  padding:0 28px 0 28px;
+  margin-left:-10px;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+#bf-{{ section.id }} .bf-scroller::-webkit-scrollbar{display:none}
+
+#bf-{{ section.id }} .bf-row{
+  display:flex;
+  gap:16px;
+  padding-bottom:.75rem;
+  scroll-snap-type:x proximity;
+  min-height:320px;
+}
+
+/* Karten */
+  /* Quick Add CSS Injection */
+  .quick-add {
+    --quick-add-offset: var(--padding-sm);
+    --quick-add-right: calc(var(--quick-add-offset) + var(--padding-inline-end));
+    --quick-add-bottom: calc(var(--quick-add-offset) + var(--padding-block-end));
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+  @media screen and (min-width: 750px) {
+    .quick-add { --quick-add-offset: var(--padding-md); }
+  }
+  .quick-add .variant-option__button-label input[data-option-available='false'] { cursor: not-allowed; }
+  .quick-add[class*='color-scheme-'] { background-color: #0000; }
+  
+  product-card:is(:hover, :focus-within) .quick-add__button { opacity: 1; }
+
+  .quick-add__button {
+    display: var(--quick-add-mobile-display, none);
+    align-items: center;
+    background: linear-gradient(var(--color-background) 0 100%) padding-box;
+    padding: 0;
+    border-radius: 50px;
+    border: 2px solid hsl(0 0% 0% / 0.15);
+    height: var(--button-size-md, 44px);
+    cursor: pointer;
+    opacity: var(--quick-add-mobile-opacity, 0);
+    overflow: hidden;
+    color: var(--color-foreground);
+    pointer-events: all;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    backdrop-filter: blur(20px) saturate(180%);
+    transition: all .2s ease;
+  }
+  .quick-add__button:active { scale: 0.99; translate: 0 1px; }
+  .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content { grid-template-columns: 1fr; }
+  
+  @media screen and (min-width: 750px) {
+    .quick-add__button { display: var(--quick-add-display, flex); opacity: 0; }
+  }
+
+  .quick-add__button .add-to-cart-text {
+    background: var(--color-background);
+    overflow: hidden;
+    border-radius: 50px;
+    height: 100%;
+    gap: 0;
+  }
+  .quick-add__button .svg-wrapper .checkmark-burst { width: 22px; height: 22px; }
+  .quick-add__button .add-to-cart-icon { height: 100%; width: calc(var(--button-size-md, 44px) - 4px); }
+  .quick-add__button .add-to-cart-text__content {
+    display: grid;
+    grid-template-columns: 0fr;
+    transition: grid-template-columns .2s ease;
+  }
+  .quick-add__button .add-to-cart-text__content > span { min-width: 0; }
+  .quick-add__button .add-to-cart-text__content span span {
+    padding-right: var(--padding-sm);
+    opacity: 0;
+    display: inline-block;
+    filter: blur(2px);
+    translate: 0.5ch 0;
+    transition: all .3s ease;
+  }
+  .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content span span {
+    opacity: 1; translate: 0 0; filter: blur(0);
+  }
+  
+  /* Black Friday Card Overrides */
+  #bf-{{ section.id }} .bf-card {
+    --quick-add-bottom: 12px;
+    --quick-add-right: 12px;
+    --quick-add-mobile-display: flex;
+    --quick-add-mobile-opacity: 1;
+    display: block;
+    scroll-snap-align:start;
+    flex:0 0 auto;
+    width:210px;
+    border-radius:18px;
+    overflow:hidden;
+    background:#ffffff;
+    position:relative;
+    transition:transform .2s ease, box-shadow .2s ease;
+    box-shadow:0 1px 4px rgba(15,23,42,0.06);
+  }
+
+  #bf-{{ section.id }} .bf-card:hover .quick-add__button {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+#bf-{{ section.id }} .bf-card:hover{
+  /* transform:translateY(-3px); */
+  /* box-shadow:0 10px 20px rgba(15,23,42,0.15); */
+}
+
+/* Link-Inhalt */
+#bf-{{ section.id }} .bf-card__link{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+}
+
+#bf-{{ section.id }} .bf-card__img-wrap{
+  position:relative;
+  background:#f7f7f7;
+}
+#bf-{{ section.id }} .bf-card__img{
+  aspect-ratio:1/1;
+  display:block;
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  transition:transform .3s ease;
+}
+
+/* Body */
+#bf-{{ section.id }} .bf-card__body{
+  display:flex;
+  flex-direction:column;
+  gap:.45rem;
+  padding:.75rem 1rem 1rem;
+  min-height:140px;
+}
+#bf-{{ section.id }} .bf-meta{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:11px;
+}
+#bf-{{ section.id }} .bf-pill{
+  background:#000000;
+  color:#fff;
+  padding:2px 7px;
+  border-radius:999px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+#bf-{{ section.id }} .bf-meta__cat{
+  color:#6b7280;
+}
+#bf-{{ section.id }} .bf-card__title{
+  font-weight:600;
+  line-height:1.35;
+  margin:0;
+  font-size:0.95rem;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* Rating */
+#bf-{{ section.id }} .bf-rating{
+  display:flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:11px;
+  color:#4b5563;
+}
+#bf-{{ section.id }} .bf-stars{
+  display:flex;
+  gap:1px;
+}
+#bf-{{ section.id }} .bf-star{
+  font-size:12px;
+}
+#bf-{{ section.id }} .bf-star--full{color:#fbbf24;}
+#bf-{{ section.id }} .bf-star--empty{color:#d1d5db;}
+#bf-{{ section.id }} .bf-rating__text{
+  white-space:nowrap;
+}
+
+/* Preise */
+#bf-{{ section.id }} .bf-price-row{
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  margin-top:.2rem;
+}
+#bf-{{ section.id }} .bf-price-label{
+  font-size:13px;
+  color:#4b5563;
+}
+#bf-{{ section.id }} .bf-price-block{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+#bf-{{ section.id }} .bf-price-compare{
+  color:#4b5563;
+  font-size:.85rem;
+}
+#bf-{{ section.id }} .bf-price-main{
+  font-weight:700;
+  font-size:1.05rem;
+  color:{{ _bf_price_color }};
+}
+
+/* BLACK FRIDAY Ribbon */
+#bf-{{ section.id }} .bf-bf-ribbon{
+  position:absolute;
+  top:12px;
+  left:10px;
+  display:flex;
+  align-items:stretch;
+  z-index:5;
+}
+#bf-{{ section.id }} .bf-bf-ribbon__black{
+  background:{{ _bf_ribbon_left_bg }};
+  color:#fff;
+  padding:4px 10px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  font-size:10px;
+  font-weight:700;
+  line-height:1.05;
+  text-transform:uppercase;
+}
+#bf-{{ section.id }} .bf-bf-ribbon__percent{
+  background:{{ _bf_ribbon_right_bg }};
+  color:{{ _bf_ribbon_right_text }};
+  padding:4px 10px;
+  font-weight:800;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-top-right-radius:12px;
+  border-bottom-right-radius:12px;
+}
+
+/* Cart-Button */
+
+
+/* Zoom */
+#bf-{{ section.id }}.bf-wrap:not(.bf-nozoom) .bf-card:hover .bf-card__img{
+  transform:scale({{ _zoom_scale }});
+}
+
+/* Navigation */
+#bf-{{ section.id }} .bf-floater{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  height:32px;
+  width:32px;
+  border-radius:999px;
+  border:1px solid #e6e7ea;
+  background:#f6f7f9;
+  box-shadow:0 8px 16px rgba(0,0,0,.08);
+  display:none !important; /* Forces arrows hidden on mobile and desktop */
+  align-items:center;
+  justify-content:center;
+  color:#222;
+  cursor:pointer;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .15s ease, visibility .15s ease, transform .15s ease, box-shadow .15s ease;
+  z-index:3;
+}
+#bf-{{ section.id }} .bf-floater.is-visible{
+  opacity:.95;
+  visibility:visible;
+  pointer-events:auto;
+}
+#bf-{{ section.id }} .bf-floater:hover{
+  transform:translateY(-50%) scale(1.07);
+  box-shadow:0 12px 20px rgba(0,0,0,.1);
+}
+#bf-{{ section.id }} .bf-left{left:0px;}
+#bf-{{ section.id }} .bf-right{right:4px;}
+
+/* Responsive */
+@media (max-width:768px){
+  #bf-{{ section.id }} .bf-floater{height:28px;width:28px}
+  #bf-{{ section.id }} .bf-card{width:185px;}
+  #bf-{{ section.id }} .bf-card__img{height:180px;}
+  #bf-{{ section.id }} .bf-card__body{padding:.75rem .875rem 1rem; min-height:120px;}
+  #bf-{{ section.id }} .bf-card__title{font-size:.9rem;}
+  #bf-{{ section.id }} .bf-scroller{padding:0 24px;}
+}
+@media (max-width:480px){
+  #bf-{{ section.id }} .bf-card{width:160px;}
+  #bf-{{ section.id }} .bf-card__img{height:160px;}
+  #bf-{{ section.id }} .bf-card__body{padding:.7rem .8rem .9rem; min-height:110px;}
+  #bf-{{ section.id }} .bf-card__title{font-size:.85rem;}
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce){
+  #bf-{{ section.id }} .bf-scroller{scroll-behavior:auto;}
+  #bf-{{ section.id }} .bf-card,
+  #bf-{{ section.id }} .bf-card__img,
+  #bf-{{ section.id }} .bf-floater,
+  #bf-{{ section.id }} .bf-card__cart{transition:none;}
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var wrap = document.getElementById('bf-{{ section.id }}');
+  if (!wrap) return;
+
+  var scroller = wrap.querySelector('[data-bf-scroll]');
+  var row = wrap.querySelector('[data-bf-row]');
+  var btnLeft = wrap.querySelector('.bf-left');
+  var btnRight = wrap.querySelector('.bf-right');
+  
+  if(scroller && btnLeft && btnRight) {
+     /* ---------- Slider Navigation (Keep existing logic) ---------- */
+     function updateButtons(){
+      if (!btnLeft || !btnRight || !scroller) return;
+      var maxScroll = scroller.scrollWidth - scroller.clientWidth - 1;
+      var canScroll = scroller.scrollWidth > scroller.clientWidth + 10;
+      btnLeft.classList.toggle('is-visible', canScroll && scroller.scrollLeft > 0);
+      btnRight.classList.toggle('is-visible', canScroll && scroller.scrollLeft < maxScroll);
+     }
+  
+     function scrollByCards(dir){
+      if(!row || !scroller) return;
+      var card = row.querySelector('.bf-card');
+      var cardWidth = card ? card.offsetWidth + 16 : 220;
+      scroller.scrollBy({ left: dir * cardWidth * 3, behavior: 'smooth' });
+     }
+  
+     btnLeft.addEventListener('click', function(){ scrollByCards(-1); });
+     btnRight.addEventListener('click', function(){ scrollByCards(1); });
+  
+     scroller.addEventListener('scroll', updateButtons, { passive: true });
+     scroller.addEventListener('keydown', function(e){
+       if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByCards(-1); }
+       else if (e.key === 'ArrowRight') { e.preventDefault(); scrollByCards(1); }
+     });
+     
+     window.addEventListener('resize', function(){ setTimeout(updateButtons, 100); });
+     updateButtons();
+  }
+
+});
+</script>

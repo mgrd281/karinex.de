@@ -1,0 +1,91 @@
+{% schema %}
+{
+  "name": "Collection Header Premium",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show Description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Header Premium"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="collection-header-premium color-{{ section.settings.color_scheme }}" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: 0;">
+  <div class="chp-container">
+    <div class="chp-content">
+      <h1 class="chp-title">{{ collection.title }}</h1>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-header-premium {
+    background: #fff;
+    border-bottom: none;
+  }
+  
+  .chp-container {
+    padding-inline: 0;
+    margin: 0;
+    width: 100%;
+    grid-column: 1 / -1;
+    margin-left: -25px;
+  }
+
+  .chp-content {
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  
+  .chp-title {
+    font-size: 36px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  @media (max-width: 768px) {
+    .chp-title {
+      font-size: 28px;
+    }
+  }
+</style>

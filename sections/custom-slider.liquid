@@ -1,0 +1,1962 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+
+{%- comment -%} Random Collections Logic {%- endcomment -%}
+{%- if section.settings.enable_random_collections and section.settings.random_collections.size > 0 -%}
+    {%- assign random_seed = 'now' | date: '%S' | modulo: section.settings.random_collections.size -%}
+    {%- assign random_collection = section.settings.random_collections[random_seed] -%}
+    {%- assign random_hero_title = random_collection.title -%}
+    {%- assign random_hero_subtitle = random_collection.description | strip_html | truncate: 60 -%}
+    {%- if random_collection.products.size > 0 -%}
+        {%- assign first_product = random_collection.products.first -%}
+        {%- assign random_hero_price = first_product.price | money -%}
+        {%- assign random_hero_image = first_product.featured_image | image_url: width: 400 -%}
+    {%- else -%}
+        {%- assign random_hero_price = 'Ab 9,90 €' -%}
+        {%- assign random_hero_image = '' -%}
+    {%- endif -%}
+    {%- assign random_hero_link = random_collection.url -%}
+    {%- assign use_random = true -%}
+{%- else -%}
+    {%- assign use_random = false -%}
+{%- endif -%}
+
+<!-- Schriftart Montserrat - deferred loading -->
+<script>
+  (function() {
+    if (window.montserratLoaded) return;
+    window.montserratLoaded = true;
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  })();
+</script>
+
+<style>
+    /* Variablen für Countdown Banner */
+    #shopify-section-{{ section.id }} {
+        --bg: {{ section.settings.countdown_bg_color }};       /* Countdown Hintergrund */
+        --text: {{ section.settings.countdown_text_color }};   /* Countdown Text */
+        --btn: {{ section.settings.cta_bg_color }};            /* CTA Button */
+        --btn-text: {{ section.settings.cta_text_color }};     /* CTA Button-Text */
+        --cta-bg: {{ section.settings.cta_bg_color }};
+        --cta-text: {{ section.settings.cta_text_color }};
+        --hero-text-color: {{ section.settings.hero_text_color }};
+        --arrows-icon-color: {{ section.settings.arrows_color }};
+        --hero-overlay-opacity: {{ section.settings.hero_overlay_opacity | times: 0.01 }};
+        --trust-badge-spacing: {% if section.settings.enable_trust_badge_spacing %}24px{% else %}0px{% endif %};
+        --slider-h: 525px;
+        --pad: 30px;
+        --primary-color: {{ section.settings.cta_bg_color }};
+        --secondary-color: #28a745;
+        --progress-duration: 7s;
+        content-visibility: auto;
+        contain-intrinsic-size: auto 700px;
+    }
+
+    /* Countdown Banner */
+    .banner{
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        gap: 32px;
+        padding: 28px 32px;
+        min-height: 120px;
+        margin-bottom: var(--trust-badge-spacing);
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                background-image: linear-gradient(
+                    135deg,
+                    var(--bg) 0%,
+                    color-mix(in srgb, var(--bg) 70%, #000) 100%
+                );
+    }
+
+    /* Überschrift links, Buchstaben weit auseinander wie im Bild */
+    .headline{
+        letter-spacing: .28em;
+        font-weight: 700;
+        font-size: 18px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: var(--text);
+    }
+
+    /* Timer in der Mitte */
+    .timer{
+        display:flex;
+        align-items:center;
+        gap: 0;
+    }
+    .unit{
+        display: flex;
+        align-items: center;
+        gap: 0;
+        transition: opacity 0.4s ease, max-width 0.4s ease;
+        overflow: hidden;
+    }
+    .unit[style*="display: none"] + .unit .sep:first-child { display: none; }
+    .block{
+        min-width: 74px; /* Gleiche Blockbreite wie im Bild */
+        text-align:center;
+        position: relative;
+        overflow: hidden;
+        padding: 0 14px;
+    }
+    .num{
+        font-size: 34px;  /* Gleiche Zahlengröße */
+        font-weight: 800;
+        letter-spacing: .06em;
+        line-height: 1;
+        color: var(--text);
+        text-shadow: 0 0 10px rgba(42, 97, 255, 0.5);
+        display: block;
+        transition: all 0.3s ease;
+    }
+    .num.flip {
+        animation: flip 0.6s ease-in-out;
+    }
+    .label{
+        margin-top: 6px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        opacity: .95;
+        color: var(--text);
+    }
+    .sep{
+        font-weight: 800;
+        opacity:.8;
+        transform: translateY(-3px);
+        letter-spacing: .3em; /* Abstand der Trennpunkte */
+        color: var(--btn);
+    }
+
+    /* Kauf-Button rechts */
+    .cta{ justify-self: end; }
+    .btn{
+        background: var(--btn);
+        color: var(--btn-text);
+        border: none;
+        padding: 20px 46px;    /* Button-Maße vom Bild */
+        font-weight: 800;
+        font-size: 14px;
+        letter-spacing: .35em; /* Buchstabenabstand */
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform .08s ease, filter .2s ease;
+        box-shadow: 0 4px 15px rgba(42, 97, 255, 0.3);
+    }
+    .btn:hover{ 
+        filter: brightness(1.15); 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(42, 97, 255, 0.4);
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn:focus-visible{ outline: 2px solid #ffffff; outline-offset: 3px; }
+
+    /* Urgency states — adaptive timer psychology */
+    .banner[data-urgency="urgent"] .num,
+    .banner[data-urgency="critical"] .num {
+        color: #ff4444;
+        text-shadow: 0 0 16px rgba(255, 68, 68, 0.6);
+    }
+    .banner[data-urgency="urgent"] .label,
+    .banner[data-urgency="critical"] .label {
+        color: #ff6b6b;
+    }
+    .banner[data-urgency="urgent"] .sep,
+    .banner[data-urgency="critical"] .sep {
+        color: #ff4444;
+    }
+    .banner[data-urgency="critical"] .num {
+        animation: urgency-pulse 1s ease-in-out infinite;
+    }
+    @keyframes urgency-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    /* Slider mit voller Breite */
+    .n2-ss-slider-3.n2-ow {
+        position: relative;
+        width: 100vw;
+        height: var(--slider-h);
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        overflow: hidden;
+        background: #1a1a2e; /* Dark background to prevent white flash */
+    }
+
+
+    /* Slides - Smooth Crossfade Transition (Ambiendo Style) */
+    .slide {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px;
+        align-items: center;
+        padding: var(--pad);
+        color: #fff;
+        background-position: 50% 45%;
+        background-size: cover;
+        opacity: 0;
+        visibility: hidden;
+        transform: translate3d(0, 0, 0);
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+        will-change: opacity;
+        z-index: 0; /* Changed from 1 to ensure 'prev' slides cover them */
+    }
+
+    .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, var(--hero-overlay-opacity));
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .slide.active {
+        opacity: 1;
+        visibility: visible;
+        z-index: 2;
+    }
+
+    .slide.prev {
+        opacity: 1; /* Keep previous slide fully visible during transition */
+        visibility: visible;
+        z-index: 1;
+    }
+
+    .slide-bg-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 45%;
+        z-index: -1;
+    }
+
+    .slide-bg-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 45%;
+        z-index: -1;
+    }
+
+    /* Texte - alle linksbündig für Deutsch */
+    .col-left {
+        position: relative;
+        text-align: left;
+        padding-left: 60px;
+        z-index: 1;
+    }
+
+    .col-left a {
+        display: block;
+        text-decoration: none;
+        color: var(--hero-text-color);
+        text-align: left;
+    }
+
+    .title {
+        font-size: 45px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin: 0 0 9px;
+        text-align: left;
+        animation: fadeInUp 0.8s ease-out 0.3s both;
+        color: var(--hero-text-color);
+    }
+
+    .subtitle {
+        font-size: 25.5px;
+        line-height: 1.25;
+        opacity: .95;
+        margin: 0 0 7.5px;
+        text-align: left;
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .price {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 6px 0 13.5px;
+        text-align: left;
+        animation: fadeInUp 0.8s ease-out 0.7s both;
+        color: var(--hero-text-color);
+    }
+
+    /* Aktions-Buttons - linksbündig */
+    .btn-group {
+        display: flex;
+        gap: 7.5px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        animation: fadeInUp 0.8s ease-out 0.9s both;
+    }
+
+    .btn-slider {
+        display: inline-block;
+        background: var(--cta-bg, var(--primary-color));
+        padding: 7.5px 15px;
+        border-radius: 7.5px;
+        font-weight: 600;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        transform: translateY(0);
+        text-align: center;
+        color: var(--cta-text, #ffffff);
+        text-decoration: none;
+        /* a11y: enhance contrast with shadow */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+
+    .btn-slider:hover {
+        filter: brightness(1.15);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(42, 97, 255, 0.4);
+    }
+
+    .btn-secondary {
+        display: inline-block;
+        background: var(--secondary-color);
+        padding: 7.5px 15px;
+        border-radius: 7.5px;
+        font-weight: 600;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        transform: translateY(0);
+        text-align: center;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+        filter: brightness(1.1);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    /* Bild */
+    .col-right {
+        justify-self: end;
+        animation: zoomIn 1s ease-out 0.5s both;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+
+
+    .prod {
+        width: 360px;
+        max-width: 100%;
+        height: auto;
+        transition: transform 0.5s ease;
+        transform: rotate(0deg) !important; /* Force straight */
+        transform-origin: center center;
+        object-fit: contain; /* Maintain aspect ratio */
+        display: block; /* Remove inline spacing */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+
+
+
+    .col-right:hover .prod {
+        transform: scale(1.05);
+    }
+
+
+    /* Pfeile */
+    .nextend-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 20;
+    }
+
+    .nextend-arrow:hover {
+        background: rgba(0, 0, 0, 0.4);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .n2-arrow-svg {
+        color: var(--arrows-icon-color);
+        display: block;
+    }
+
+    .arrow-left {
+        left: 15px;
+    }
+
+    .arrow-right {
+        right: 15px;
+    }
+
+    .n2-arrow-hover-img {
+        display: none
+    }
+
+    /* Only swap images on devices that support hover (Mouse) */
+    @media (hover: hover) {
+        .nextend-arrow:hover .n2-arrow-normal-img {
+            display: none
+        }
+
+        .nextend-arrow:hover .n2-arrow-hover-img {
+            display: inline
+        }
+    }
+
+    /* Points turning into rectangles - "About You" Style */
+    .dots {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0; /* No gap - we use negative margin */
+        z-index: 10;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+        backdrop-filter: none;
+    }
+
+    .dot {
+        appearance: none;
+        -webkit-appearance: none;
+        border: none;
+        display: block;
+        padding: 0;
+        /* 44x44 for accessibility touch target */
+        width: 44px;
+        height: 44px;
+        /* Negative margin creates visual spacing of ~12px between dots */
+        margin: 0 -10px;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    /* The visible dot - drawn with ::before */
+    .dot::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    /* Remove ::after */
+    .dot::after {
+        display: none;
+    }
+
+    /* Hover effect for inactive dots */
+    .dot:hover:not(.active)::before {
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Active Point: Pill Shape - Solid White */
+    .dot.active::before {
+        width: 32px;
+        background: #ffffff;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Focus styles for accessibility */
+    .dot:focus-visible {
+        outline: 2px solid white;
+        outline-offset: 4px;
+    }
+
+    /* Progress fill - hidden */
+    .dot .progress-fill {
+        display: none; 
+    }
+    
+    /* Optional: If we want a progress bar INSIDE the pill, we can re-add it, but About You just has a solid pill usually. */
+    /* Based on user request "When it changes, dot transforms", simple width change is key. */
+
+
+
+    /* Animationen */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Flip-Effekt für Zahlen */
+    @keyframes flip {
+        0% {
+            transform: rotateX(0);
+            opacity: 1;
+        }
+        50% {
+            transform: rotateX(90deg);
+            opacity: 0;
+        }
+        100% {
+            transform: rotateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* ========== Professionelle Mobile-Optimierungen ========== */
+    @media (max-width: 1200px) {
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 450px;
+        }
+        
+        .slide {
+            grid-template-columns: 1fr;
+            text-align: center;
+            padding: 25px 20px 80px;
+            gap: 20px;
+        }
+        
+        .col-left {
+            padding-left: 0;
+            text-align: center;
+            order: 2;
+        }
+        
+        .col-right {
+            justify-self: center;
+            order: 1;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .prod {
+            width: 280px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        
+        .btn-group {
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            padding: 12px 24px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        
+        .dots {
+            bottom: 25px;
+            gap: 10px;
+        }
+        
+        .dot {
+            /* Keep 44x44 touch target, visual dot stays 8px via ::before */
+            width: 44px;
+            height: 44px;
+            margin: 0 -10px;
+        }
+        
+        .dot.active {
+            width: 44px;
+            height: 44px;
+        }
+        
+        .dot::before {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .dot.active::before {
+            width: 24px;
+            height: 8px;
+        }
+    }
+
+    @media (max-width: 990px){
+        .banner{ 
+            grid-template-columns: 1fr; 
+            text-align:center; 
+            gap: 25px;
+            padding: 25px 20px;
+            min-height: auto;
+        }
+        .headline{ 
+            justify-self:center; 
+            font-size: 18px;
+            letter-spacing: 0.25em;
+            margin-bottom: 5px;
+        }
+        .timer{ 
+            justify-content:center; 
+            gap: 0;
+            margin: 10px 0;
+        }
+        .cta{ 
+            justify-self:center; 
+            margin-top: 10px;
+        }
+        .block {
+            min-width: 70px;
+            padding: 0 10px;
+        }
+        .num {
+            font-size: 32px;
+        }
+        .label {
+            font-size: 12px;
+        }
+        .sep {
+            letter-spacing: 0.25em;
+            font-size: 20px;
+        }
+        .btn {
+            padding: 18px 40px;
+            font-size: 14px;
+            letter-spacing: 0.3em;
+            width: 100%;
+            max-width: 280px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        #shopify-section-{{ section.id }} {
+            --slider-h: 500px;
+        }
+        
+        /* CRITICAL: Fixed background to prevent white flash on mobile */
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 500px;
+            min-height: 500px;
+            background: #1a1a2e; /* Dark background like slides - NEVER white */
+        }
+        
+        /* Mobile: Ensure slides maintain background during transitions */
+        .slide {
+            background-color: #1a1a2e; /* Fallback background */
+        }
+        
+        /* Mobile: Force all slides to be preloaded (no lazy) */
+        .slide-bg-image {
+            loading: eager; /* Override lazy on mobile */
+        }
+        
+        .slide {
+            padding: 20px 15px 70px;
+            gap: 15px;
+        }
+        
+        .title {
+            font-size: 28px;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            line-height: 1.3;
+        }
+        
+        .price {
+            font-size: 20px;
+        }
+        
+        .prod {
+            width: 240px;
+            max-height: 180px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            padding: 10px 20px;
+            font-size: 13px;
+        }
+        
+        .nextend-arrow {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .arrow-left {
+            left: 10px;
+        }
+        
+        .arrow-right {
+            right: 10px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        #shopify-section-{{ section.id }} {
+            --slider-h: 480px;
+        }
+        
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 480px;
+        }
+        
+        .slide {
+            padding: 15px 10px 60px;
+        }
+        
+        .col-left {
+            padding-left: 0;
+        }
+        
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .price {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .prod {
+            width: 200px;
+            max-height: 150px;
+        }
+        
+        .btn-group {
+            gap: 8px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        
+        .dots {
+            bottom: 20px;
+            gap: 8px;
+        }
+        
+        .dot {
+            /* Keep 48x48 touch target for accessibility */
+            width: 48px;
+            height: 48px;
+            margin: 0 -12px;
+        }
+        
+        .dot.active {
+            width: 48px;
+            height: 48px;
+        }
+        
+        .dot::before {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .dot.active::before {
+            width: 20px;
+            height: 6px;
+        }
+        
+        .banner {
+            padding: 20px 15px;
+            gap: 20px;
+        }
+        
+        .timer {
+            gap: 15px;
+        }
+        
+        .block {
+            min-width: 60px;
+        }
+        
+        .num {
+            font-size: 28px;
+        }
+        
+        .label {
+            font-size: 11px;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            font-size: 13px;
+            letter-spacing: .25em;
+        }
+        
+        .headline {
+            font-size: 16px;
+            letter-spacing: 0.2em;
+        }
+        
+        .nextend-arrow {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .arrow-left {
+            left: 8px;
+        }
+        
+        .arrow-right {
+            right: 8px;
+        }
+    }
+
+    /* Zusaetzliche Optimierungen fuer sehr kleine Bildschirme */
+    @media (max-width: 480px) {
+        #shopify-section-{{ section.id }} {
+            --slider-h: 440px;
+        }
+        
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 440px;
+        }
+        
+        .slide {
+            padding: 12px 8px 50px;
+        }
+        
+        .title {
+            font-size: 22px;
+        }
+        
+        .subtitle {
+            font-size: 15px;
+        }
+        
+        .price {
+            font-size: 17px;
+        }
+        
+        .prod {
+            width: 180px;
+            max-height: 130px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            padding: 7px 14px;
+            font-size: 11px;
+        }
+        
+        .banner {
+            padding: 18px 12px;
+            gap: 18px;
+        }
+        
+        .timer {
+            gap: 0;
+        }
+        
+        .block {
+            min-width: 55px;
+            padding: 0 6px;
+        }
+        
+        .num {
+            font-size: 24px;
+        }
+        
+        .label {
+            font-size: 10px;
+        }
+        
+        .sep {
+            letter-spacing: 0.2em;
+            font-size: 18px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            font-size: 12px;
+            letter-spacing: 0.2em;
+        }
+        
+        .headline {
+            font-size: 15px;
+            letter-spacing: 0.18em;
+        }
+    }
+
+    @media (max-width: 380px) {
+        #shopify-section-{{ section.id }} {
+            --slider-h: 420px;
+        }
+        
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 420px;
+        }
+        
+        .slide {
+            padding: 10px 5px 45px;
+        }
+        
+        .title {
+            font-size: 20px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+        }
+        
+        .price {
+            font-size: 16px;
+        }
+        
+        .prod {
+            width: 160px;
+            max-height: 120px;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            width: 180px;
+            padding: 8px 16px;
+        }
+        
+        .banner {
+            padding: 15px 10px;
+            gap: 15px;
+        }
+        
+        .timer {
+            gap: 0;
+        }
+        
+        .block {
+            min-width: 50px;
+            padding: 0 5px;
+        }
+        
+        .num {
+            font-size: 22px;
+        }
+        
+        .label {
+            font-size: 9px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            font-size: 11px;
+        }
+        
+        .headline {
+            font-size: 14px;
+        }
+    }
+
+    /* Optimierungen fuer Landscape-Modus */
+    @media (max-height: 500px) and (orientation: landscape) {
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 320px;
+        }
+        
+        .slide {
+            padding: 10px;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .col-left {
+            order: 1;
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .col-right {
+            order: 2;
+            justify-self: center;
+        }
+        
+        .title {
+            font-size: 20px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+        }
+        
+        .price {
+            font-size: 16px;
+        }
+        
+        .prod {
+            width: 140px;
+            max-height: 100px;
+        }
+        
+        .btn-slider, .btn-secondary {
+            padding: 6px 12px;
+            font-size: 10px;
+        }
+        
+        .dots {
+            bottom: 10px;
+        }
+        
+        .banner {
+            padding: 12px 15px;
+            min-height: auto;
+        }
+        
+        .headline {
+            font-size: 14px;
+        }
+        
+        .timer {
+            gap: 12px;
+        }
+        
+        .block {
+            min-width: 45px;
+        }
+        
+        .num {
+            font-size: 20px;
+        }
+        
+        .label {
+            font-size: 9px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-size: 11px;
+        }
+    }
+
+    /* Optimierungen fuer sehr kleine Bildschirme im Portrait-Modus */
+    @media (max-width: 350px) {
+        #shopify-section-{{ section.id }} {
+            --slider-h: 400px;
+        }
+        
+        #shopify-section-{{ section.id }} .n2-ss-slider-3.n2-ow {
+            height: 400px;
+        }
+        
+        .title {
+            font-size: 19px;
+        }
+        
+        .subtitle {
+            font-size: 13px;
+        }
+        
+        .price {
+            font-size: 15px;
+        }
+        
+        .prod {
+            width: 150px;
+        }
+        
+        .banner {
+            padding: 12px 8px;
+        }
+        
+        .timer {
+            gap: 8px;
+        }
+        
+        .block {
+            min-width: 45px;
+        }
+        
+        .num {
+            font-size: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            font-size: 10px;
+        }
+    }
+
+    /* Touch-Effekte fuer Mobilgeraete */
+    @media (hover: none) {
+        .btn-slider:hover,
+        .btn-secondary:hover,
+        .btn:hover,
+        .dot:hover,
+        .nextend-arrow:hover {
+            transform: none;
+            filter: none;
+        }
+        
+        .btn-slider:active,
+        .btn-secondary:active,
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .col-right:hover .prod {
+            transform: none;
+        }
+    }
+    .dot .progress-fill {
+        display: none;
+        position: absolute;
+         top: 0;
+        left: 0;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        width: 0%;
+        border-radius: 4px;
+        pointer-events: none;
+    }
+
+    .dot.active .progress-fill {
+        display: block;
+        animation: fillProgress var(--progress-duration) linear forwards;
+    }
+</style>
+
+<!-- Slider -->
+<div class="n2-ss-slider-3 n2-ow" id="slider-{{ section.id }}">
+
+    <!-- Slide 1 - Microsoft Office 2024 Professional Plus -->
+    <section class="slide active">
+        <img src="{{ 'mgrdegh.png' | file_img_url: '1200x' }}"
+             srcset="{{ 'mgrdegh.png' | file_img_url: '600x' }} 600w,
+                     {{ 'mgrdegh.png' | file_img_url: '1000x' }} 1000w,
+                     {{ 'mgrdegh.png' | file_img_url: '1400x' }} 1400w,
+                     {{ 'mgrdegh.png' | file_img_url: 'master' }} 2000w"
+             sizes="100vw"
+             class="slide-bg-image"
+             alt="Slider Background"
+             width="1920"
+             height="1080"
+             fetchpriority="high"
+             loading="eager">
+        <div class="col-left">
+                        <a class="title" href="{%- if use_random -%}{{ random_hero_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
+                                {%- if use_random -%}
+                                    {{ random_hero_title }}
+                                {%- elsif section.settings.hero_title != blank -%}
+                                    {{ section.settings.hero_title }}
+                                {%- else -%}
+                                    Microsoft Office 2024 für Windows
+                                {%- endif -%}
+                        </a>
+                        <a class="subtitle" href="{%- if use_random -%}{{ random_hero_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
+                                {%- if use_random -%}
+                                    {{ random_hero_subtitle }}
+                                {%- elsif section.settings.hero_subtitle != blank -%}
+                                    {{ section.settings.hero_subtitle }}
+                                {%- else -%}
+                                    Professional Plus <br>Standard
+                                {%- endif -%}
+                        </a>
+                        <a class="price" href="{%- if use_random -%}{{ random_hero_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
+                                {%- if use_random -%}
+                                    Ab {{ random_hero_price }}
+                                {%- elsif section.settings.hero_price_text != blank -%}
+                                    {{ section.settings.hero_price_text }}
+                                {%- else -%}
+                                    Ab 9,90 €
+                                {%- endif -%}
+                        </a>
+
+            <div class="btn-group">
+                <a class="btn-slider" href="{%- if use_random -%}{{ random_hero_link }}{%- elsif section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
+                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                </a>
+            </div>
+        </div>
+        <div class="col-right">
+            <a href="{%- if use_random -%}{{ random_hero_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
+                {%- if use_random and random_hero_image != blank -%}
+                    <img class="prod" width="360" height="360" alt="{{ random_hero_title }}" src="{{ random_hero_image }}" fetchpriority="high" loading="eager">
+                {%- else -%}
+                    <img class="prod" width="360" height="360" alt="Microsoft Office 2024" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/microsoft-office-2024-professional-plus-softwareindustrie24-bild__2_-png-Photoroom-2-1-1-2.webp?v=1762861959" fetchpriority="high" loading="eager">
+                {%- endif -%}
+            </a>
+        </div>
+    </section>
+
+    <!-- Slide 2 - Microsoft Office 2024 Standard für Mac -->
+    <section class="slide">
+        <img src="{{ 'mgrdegh.png' | file_img_url: '1200x' }}"
+             srcset="{{ 'mgrdegh.png' | file_img_url: '600x' }} 600w,
+                     {{ 'mgrdegh.png' | file_img_url: '1000x' }} 1000w,
+                     {{ 'mgrdegh.png' | file_img_url: '1400x' }} 1400w,
+                     {{ 'mgrdegh.png' | file_img_url: 'master' }} 2000w"
+             sizes="100vw"
+             class="slide-bg-image"
+             alt="Slider Background"
+             width="1920"
+             height="1080"
+             fetchpriority="high"
+             loading="eager">
+        <div class="col-left">
+            <a class="title" href="{{ _root }}products/microsoft-office-2024-standard-fur-mac">Microsoft Office für MAC</a>
+            <a class="subtitle" href="{{ _root }}products/microsoft-office-2024-standard-fur-mac">2024 Standard <br>2021 Standard</a>
+            <a class="price" href="{{ _root }}products/microsoft-office-2024-standard-fur-mac">Ab 9,90 €</a>
+
+            <div class="btn-group">
+                <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/microsoft-office-2024-standard-fur-mac{%- endif -%}">
+                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                </a>
+            </div>
+        </div>
+        <div class="col-right">
+            <a href="{{ _root }}products/microsoft-office-2024-standard-fur-mac">
+                <img class="prod" width="360" height="360" loading="eager" fetchpriority="high" alt="Microsoft Office für MAC" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/microsoft-office-2024-standard-mac-webp.webp?v=1762861959">
+            </a>
+        </div>
+    </section>
+
+    <!-- Slide 3 - Microsoft Windows 11 Professional -->
+    <section class="slide">
+        <img src="{{ 'mgrdegh.png' | file_img_url: '1200x' }}"
+             srcset="{{ 'mgrdegh.png' | file_img_url: '600x' }} 600w,
+                     {{ 'mgrdegh.png' | file_img_url: '1000x' }} 1000w,
+                     {{ 'mgrdegh.png' | file_img_url: '1400x' }} 1400w,
+                     {{ 'mgrdegh.png' | file_img_url: 'master' }} 2000w"
+             sizes="100vw"
+             class="slide-bg-image"
+             alt="Slider Background"
+             width="1920"
+             height="1080"
+             fetchpriority="high"
+             loading="eager">
+        <div class="col-left">
+            <a class="title" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Microsoft Windows 11</a>
+            <a class="subtitle" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Home <br>Pro <br>Enterprise</a>
+            <a class="price" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Ab 9,90 €</a>
+
+            <div class="btn-group">
+                <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0{%- endif -%}">
+                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                </a>
+            </div>
+        </div>
+        <div class="col-right">
+            <a href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">
+                <img class="prod" width="360" height="360" loading="eager" fetchpriority="high" alt="Microsoft Windows 11" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/Windows-11-Pro-softwareindustrie24-Photoroom-2.webp?v=1762861959">
+            </a>
+        </div>
+    </section>
+
+    <!-- Slide 4 - Microsoft Office 2021 Professional Plus -->
+    <section class="slide">
+        <img src="{{ 'mgrdegh.png' | file_img_url: '1200x' }}"
+             srcset="{{ 'mgrdegh.png' | file_img_url: '600x' }} 600w,
+                     {{ 'mgrdegh.png' | file_img_url: '1000x' }} 1000w,
+                     {{ 'mgrdegh.png' | file_img_url: '1400x' }} 1400w,
+                     {{ 'mgrdegh.png' | file_img_url: 'master' }} 2000w"
+             sizes="100vw"
+             class="slide-bg-image"
+             alt="Slider Background"
+             width="1920"
+             height="1080"
+             fetchpriority="high"
+             loading="eager">
+        <div class="col-left">
+            <a class="title" href="{{ _root }}products/office-2021-professional-plus-1pc">Microsoft Office 2021 für Windows</a>
+            <a class="subtitle" href="{{ _root }}products/office-2021-professional-plus-1pc">Professional Plus <br>Standard</a>
+            <a class="price" href="{{ _root }}products/office-2021-professional-plus-1pc">Ab 9,90 €</a>
+
+            <div class="btn-group">
+                <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/office-2021-professional-plus-1pc{%- endif -%}">
+                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                </a>
+            </div>
+        </div>
+        <div class="col-right">
+            <a href="{{ _root }}products/office-2021-professional-plus-1pc">
+                <img class="prod" width="360" height="360" loading="eager" fetchpriority="high" alt="Microsoft Office 2021" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/office_2021_professional_plus-jpg__2_-removebg-preview-1-1-2.png?v=1762863177">
+            </a>
+        </div>
+    </section>
+
+    {% comment %}
+    {% comment %}
+    {% if section.settings.show_arrows %}
+    <!-- Pfeile -->
+    <div class="nextend-arrow arrow-left" id="arrow-prev-{{ section.id }}" role="button" tabindex="0" aria-label="Vorheriges Slide">
+        <img class="n2-arrow-normal-img" width="24" height="24" alt="prev"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjNDU5NGUxIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1IDYuMzI2IDYuNmMuMjQyLjI1My4zNi41NDUuMzYuODggMCAuMzMzLS4xMTguNjI1LS4zNi44NzlsLTEuMjQ0IDEuM2MtLjI0LjI1LS41MjMuMzc1LS84NC4zNzUtLjMyIDAtLjYtLjEyNC0uODMtLjM3NmwtOC4zNjctOC43MmMtLjI0-.yNS0uMzY3-.yNC0uMzY7-.yOCAw-.yMzM0LjEyMi-.yNjMyLjM2Ny0uODhsOC4zNjctOC43NWMuMjMtLjI1Mi41MS-.yMzc3Ljgz-.yMzc3LjMyNSAwIC42MDcuMTI2Ljg1LjM3OGwxLjI0MiAxLjMyNmMuMjQy-.yNTIuMzY-.yNC4zNi44NjQgMCAuMzItLjExOC42MS0uMzYuODZ6Ii8+PC9zdmc+">
+        <img class="n2-arrow-hover-img" width="24" height="24" alt="prev"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjMzU3Y2JkIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDUuMzYuODggMCAuMzMzLS4xMTguNjI1-.yMzY4NzlsLTEuMjQ0IDEuM2MtLjI0.25-.yNTMuMzc1LS84NC4zNzUtLjMy IDAtLjY- .y12NC0uOD- .y37NmwtOC4zNjctOC43MmMtLjI0-.yNS0uMzY7-.yNC0uMzY7-.yOCAw-.yMzM0LjEyMi-.yNjMyLjM2Ny0uODhsOC4zNjctOC43NWMuMjMt-.yNTIuNTE-.yMzc3Ljgz-.yMzc3LjMyNSAwIC42MDcuMTI2Ljg1LjM3OGwxLjI0MiAxLjMyNmMuMjQy-.yNTIuMzY-.yNC4zNi84NjQgMCAuMzItLjExOC42MS0uMzYuODZ6Ii8+PC9zdmc+">
+    </div>
+
+    <div class="nextend-arrow arrow-right" id="arrow-next-{{ section.id }}" role="button" tabindex="0" aria-label="Nächstes Slide">
+        <img class="n2-arrow-normal-img" width="24" height="24" alt="next" style="transform:scaleX(-1)"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjNDU5NGUxIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDU.36.88 0 .333-.118.625-.36.877l-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z"/></svg>">
+        <img class="n2-arrow-hover-img" width="24" height="24" alt="next" style="transform:scaleX(-1)"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjMzU3Y2JkIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1 IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDU.36.88 0 .333-.118.625-.36.877l-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z"/></svg>">
+    </div>
+    {% endif %}
+    {% endcomment %}
+
+    {% if section.settings.show_arrows %}
+    <!-- Pfeile -->
+    <div class="nextend-arrow arrow-left" id="arrow-prev-{{ section.id }}" role="button" tabindex="0" aria-label="Vorheriges Slide">
+        <img class="n2-arrow-normal-img" width="24" height="24" alt="prev"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjNDU5NGUxIiBkPSJNMjAuNjU0IDkuNDNsLTYuMzI2IDYuNTI1IDYuMzI2IDYuNmMuMjQyLjI1My4zNi41NDUuMzYuODggMCAuMzMzLS4xMTguNjI1LS4zNi44NzlsLTEuMjQ0IDEuM2MtLjI0LjI1LS41MjMuMzc1LS84NC4zNzUtLjMyIDAtLjYtLjEyNC0uODMtLjM3NmwtOC4zNjctOC43MmMtLjI0LS4yNS0uMzY3LS41NC0uMzY3LS84OCAwLS4zMzQuMTIyLS42My4zNjctLjg4bDguMzY3LTguNzVjLjIzLS4yNTIuNTEtLjM3Ny44My0uMzc3LjMyNSAwIC42MDcuMTI2Ljg1LjM3OGwxLjI0MiAxLjMyNmMuMjQyLjI1Mi4zNi41NC4zNi84NjQgMCAuMzItLjExOC42MS0uMzYuODZ6Ii8+PC9zdmc+">
+        <img class="n2-arrow-hover-img" width="24" height="24" alt="prev"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjMzU3Y2JkIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1 IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDUuMzYuODggMCAuMzMzLS4xMTguNjI1LS4zNi44NzlsLTEuMjQ0IDEuM2MtLjI0LjI1LS41MjMuMzc1LS84NC4zNzUtLjMyIDAtLjYtLjEyNC0uODMtLjM3NmwtOC4zNjctOC43MmMtLjI0-.yNS0uMzY7-.yNC0uMzY7-.yOCAwLS4zMzQuMTIyLS42My4zNjctLjg4bDguMzY3LTguNzVjLjIz-.yNTIuNTE-.yMzc7Ljgz-.yMzc7LjMyNSAwIC42MDcuMTI2Ljg1LjM3OGwxLjI0MiAxLjMyNmcuMjQy-.yNTIuMzY-.yNC4zNi84NjQgMCAuMzItLjExOC42MS0uMzYuODZ6Ii8+PC9zdmc+">
+    </div>
+
+    <div class="nextend-arrow arrow-right" id="arrow-next-{{ section.id }}" role="button" tabindex="0" aria-label="Nächstes Slide">
+        <img class="n2-arrow-normal-img" width="24" height="24" alt="next" style="transform:scaleX(-1)"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjNDU5NGUxIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1 IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDUuMzYuODggMCAuMzMz-.y118 0.625-.y36 0.877ls-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z"/></svg>">
+        <img class="n2-arrow-hover-img" width="24" height="24" alt="next" style="transform:scaleX(-1)"
+            src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj48cGF0aCBmaWxsPSIjMzU3Y2JkIiBkPSJNMjAuNjU0IDkuNDLsLTYuMzI2IDYuNTI1 IDYuMzI2 IDYuNmcuMjQyLjI1My4zNi41NDU.36.88 0 .333-.118.625-.36.877l-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z"/></svg>">
+    </div>
+    {% endif %}
+    {% endcomment %}
+
+    {% if section.settings.show_arrows %}
+    <!-- Pfeile -->
+    <div class="nextend-arrow arrow-left" id="arrow-prev-{{ section.id }}" role="button" tabindex="0" aria-label="Vorheriges Slide">
+        <svg class="n2-arrow-svg" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M20.654 9.43l-6.326 6.525 6.326 6.6c.242.253.36.545.36.88 0 .333-.118.625-.36.877l-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z" />
+        </svg>
+    </div>
+
+    <div class="nextend-arrow arrow-right" id="arrow-next-{{ section.id }}" role="button" tabindex="0" aria-label="Nächstes Slide">
+        <svg class="n2-arrow-svg" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true" focusable="false" style="transform:scaleX(-1)">
+            <path fill="currentColor" d="M20.654 9.43l-6.326 6.525 6.326 6.6c.242.253.36.545.36.88 0 .333-.118.625-.36.877l-1.244 1.3c-.24.25-.523.375-.84.375-.32 0-.6-.124-.83-.376l-8.367-8.72c-.24-.25-.367-.54-.367-.88 0-.334.122-.63.367-.88l8.367-8.75c.23-.252.51-.377.83-.377.325 0 .607.126.85.378l1.242 1.326c.242.252.36.54.36.864 0 .32-.118.61-.36.86z" />
+        </svg>
+    </div>
+    {% endif %}
+
+    <!-- Punkte die sich in Rechtecke verwandeln -->
+    <div class="dots" id="dots-{{ section.id }}"></div>
+</div>
+
+<!-- Countdown Banner -->
+<section
+    class="banner"
+    aria-label="Countdown"
+    data-countdown
+    data-section-id="{{ section.id }}"
+    data-enabled="{{ section.settings.enable_countdown }}"
+    data-mode="{{ section.settings.countdown_mode }}"
+    data-end="{{ section.settings.countdown_end_datetime }}"
+    data-timezone="{{ section.settings.countdown_timezone }}"
+    data-expired="{{ section.settings.when_expired }}"
+    data-expired-text="{{ section.settings.countdown_expired_text | escape }}"
+    {% if section.settings.enable_countdown == false %}style="display:none"{% endif %}
+>
+        <div class="headline">
+            {{ section.settings.countdown_left_label | default: 'Final Winter Sale' }}
+        </div>
+
+    <div class="timer" aria-live="polite" aria-atomic="true">
+        <div class="unit" data-unit="days">
+            <div class="block">
+                <div class="num" id="days-{{ section.id }}">00</div>
+                <div class="label">Tage</div>
+            </div>
+            <div class="sep">:</div>
+        </div>
+        <div class="unit" data-unit="hours">
+            <div class="block">
+                <div class="num" id="hours-{{ section.id }}">00</div>
+                <div class="label">Stunden</div>
+            </div>
+            <div class="sep">:</div>
+        </div>
+        <div class="unit" data-unit="minutes">
+            <div class="block">
+                <div class="num" id="minutes-{{ section.id }}">00</div>
+                <div class="label">Minuten</div>
+            </div>
+            <div class="sep">:</div>
+        </div>
+        <div class="unit" data-unit="seconds">
+            <div class="block">
+                <div class="num" id="seconds-{{ section.id }}">00</div>
+                <div class="label">Sekunden</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta">
+        <button class="btn" id="shop-button-{{ section.id }}">
+          {{ section.settings.countdown_button_label | default: 'JETZT KAUFEN' }}
+        </button>
+    </div>
+</section>
+
+<script>
+/* Slider Code */
+(function(){
+    const sectionId = "{{ section.id }}";
+    const slider = document.getElementById('slider-' + sectionId);
+    const slides = [...slider.querySelectorAll('.slide')];
+    const dotsWrap = document.getElementById('dots-' + sectionId);
+    let i = 0, lock = false;
+    let progressTimeout;
+    
+    // Create Dots (Accessibility Optimized: Buttons)
+    slides.forEach((_, idx) => {
+        const d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'dot' + (idx === 0 ? ' active' : '');
+        d.setAttribute('aria-label', `Gehe zu Slide ${idx + 1}`);
+        if (idx === 0) d.setAttribute('aria-current', 'true');
+        d.onclick = () => go(idx);
+        dotsWrap.appendChild(d);
+    });
+    
+    const dots = [...dotsWrap.querySelectorAll('.dot')];
+    
+    function setActive(n) {
+        // Update slides classes
+        slides.forEach((s, k) => {
+            s.classList.remove('active', 'prev');
+            
+            // Fix Ghosting: Ensure z-index management handles visibility, 
+            // but strict hiding logic can be added if needed. 
+            // The previous Z-Index fix covering this is sufficient.
+            
+            if (k === n) {
+                s.classList.add('active');
+            } else if (k === (n - 1 + slides.length) % slides.length) {
+                s.classList.add('prev');
+            }
+        });
+        
+        // Update Dots
+        dots.forEach((d, k) => {
+            d.classList.remove('active');
+            d.removeAttribute('aria-current');
+            
+            if (k === n) {
+                d.classList.add('active');
+                d.setAttribute('aria-current', 'true');
+            }
+        });
+        
+        // Reset auto-play timeout
+        clearTimeout(progressTimeout);
+        progressTimeout = setTimeout(() => {
+            go(i + 1);
+        }, 7000);
+    }
+    
+    function go(n) {
+        if (lock || n === i) return;
+        lock = true;
+        i = (n + slides.length) % slides.length;
+        setActive(i);
+        setTimeout(() => lock = false, 600);
+    }
+    
+    // Klick-Events für Pfeile hinzufügen
+    document.getElementById('arrow-prev-' + sectionId).onclick = () => go(i - 1);
+    document.getElementById('arrow-next-' + sectionId).onclick = () => go(i + 1);
+    
+    // Auto-advance on hover (Desktop only - MacBook/Desktop)
+    let hoverInterval;
+    
+    slider.addEventListener('mouseenter', () => {
+        clearTimeout(progressTimeout);
+        
+        // Only enable auto-advance on desktop (width > 1024px)
+        if (window.innerWidth > 1024) {
+            hoverInterval = setInterval(() => {
+                go(i + 1);
+            }, 3000); // Wechsel alle 3 Sekunden
+        }
+    });
+    
+    slider.addEventListener('mouseleave', () => {
+        clearInterval(hoverInterval);
+        progressTimeout = setTimeout(() => {
+            go(i + 1);
+        }, 7000);
+    });
+    
+    // Swipe-Funktionalität für Mobilgeräte hinzufügen (Robust Implementation)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    
+    slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        clearTimeout(progressTimeout);
+    }, {passive: true});
+    
+    slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+        
+        progressTimeout = setTimeout(() => {
+            go(i + 1);
+        }, 7000);
+    }, {passive: true});
+    
+    function handleSwipe() {
+        const diffX = touchStartX - touchEndX;
+        const diffY = touchStartY - touchEndY;
+        const swipeThreshold = 50; // Minimum distance for swipe
+        
+        // Check if movement is primarily horizontal (X diff > Y diff)
+        // AND distance is greater than threshold
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+            if (diffX > 0) {
+                // Swiped Left -> Next Slide
+                go(i + 1);
+            } else {
+                // Swiped Right -> Previous Slide
+                go(i - 1);
+            }
+        }
+    }
+    
+    // Slider starten
+    setActive(i);
+})();
+
+/* Zusaetzliche Mobile-Optimierungen - Touch-Effekte */
+document.addEventListener('DOMContentLoaded', function() {
+    // Button-Touch-Feedback verbessern
+    const buttons = document.querySelectorAll('.btn, .btn-slider, .btn-secondary, .nextend-arrow');
+    
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', function() {
+            if (this.classList.contains('nextend-arrow')) {
+                this.style.transform = 'translateY(-50%) scale(0.95)';
+            } else {
+                this.style.transform = 'scale(0.95)';
+            }
+        });
+        
+        button.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // Dot-Klickbarkeit verbessern
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach(dot => {
+        dot.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(1.2)';
+        });
+        
+        dot.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    });
+});
+</script>
+
+<script>
+/* Adaptive Countdown Timer v2 — works with both old and new HTML */
+(() => {
+  const banners = document.querySelectorAll('[data-countdown]');
+  if (!banners.length) return;
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const getNowInTimeZone = (tz) => {
+    try { return new Date(new Date().toLocaleString('en-US', { timeZone: tz })); }
+    catch(e) { return new Date(); }
+  };
+
+  banners.forEach((banner) => {
+    if (banner.dataset.enabled !== 'true') { banner.style.display = 'none'; return; }
+
+    const sid = banner.dataset.sectionId;
+    const mode = banner.dataset.mode || 'fixed_end_datetime';
+    const endRaw = banner.dataset.end || '';
+    const tz = banner.dataset.timezone || 'Europe/Berlin';
+    const expBehavior = banner.dataset.expired || 'show';
+    const expText = banner.dataset.expiredText || 'Aktion beendet';
+
+    const timerEl = banner.querySelector('.timer');
+    const headline = banner.querySelector('.headline');
+
+    /* Find num elements by ID */
+    const numEls = {
+      d: document.getElementById('days-' + sid),
+      h: document.getElementById('hours-' + sid),
+      m: document.getElementById('minutes-' + sid),
+      s: document.getElementById('seconds-' + sid),
+    };
+
+    /* Find hide-targets: data-unit wrapper OR parent .block + adjacent .sep */
+    const getHideTarget = (numEl) => {
+      if (!numEl) return null;
+      const unit = numEl.closest('[data-unit]');
+      if (unit) return { el: unit, type: 'unit' };
+      const block = numEl.closest('.block');
+      if (block) return { el: block, type: 'block', sep: block.nextElementSibling };
+      return null;
+    };
+
+    const targets = {
+      d: getHideTarget(numEls.d),
+      h: getHideTarget(numEls.h),
+      m: getHideTarget(numEls.m),
+      s: getHideTarget(numEls.s),
+    };
+
+    let prevVis = '';
+
+    const getTargetDate = () => {
+      if (!endRaw) return null;
+      if (mode === 'daily_reset') {
+        const nowTz = getNowInTimeZone(tz);
+        let tp = endRaw.includes('T') ? endRaw.split('T')[1] : endRaw;
+        tp = tp.replace(/Z|[+-].*$/, '');
+        const p = tp.split(':');
+        const target = new Date(nowTz);
+        target.setHours(parseInt(p[0]||'23',10), parseInt(p[1]||'59',10), parseInt(p[2]||'59',10), 0);
+        if (target <= nowTz) target.setDate(target.getDate() + 1);
+        return target;
+      }
+      const parsed = new Date(endRaw);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    let targetDate = getTargetDate();
+
+    const showHide = (key, val, show) => {
+      if (numEls[key]) numEls[key].textContent = pad(val);
+      const t = targets[key];
+      if (!t) return;
+      if (t.type === 'unit') {
+        t.el.style.display = show ? '' : 'none';
+      } else {
+        t.el.style.display = show ? '' : 'none';
+        if (t.sep && t.sep.classList.contains('sep')) t.sep.style.display = show ? '' : 'none';
+      }
+    };
+
+    const handleExpired = () => {
+      if (expBehavior === 'hide') { banner.style.display = 'none'; return; }
+      if (headline) headline.textContent = expText;
+      if (timerEl) timerEl.style.display = 'none';
+    };
+
+    const tick = () => {
+      if (!targetDate) { handleExpired(); return; }
+      if (mode === 'daily_reset') targetDate = getTargetDate();
+      const now = getNowInTimeZone(tz);
+      let diff = targetDate - now;
+      if (diff <= 0) { handleExpired(); return; }
+
+      const ts = Math.floor(diff / 1000);
+      const d = Math.floor(ts / 86400);
+      const h = Math.floor((ts % 86400) / 3600);
+      const m = Math.floor((ts % 3600) / 60);
+      const s = ts % 60;
+
+      const sD = ts >= 86400, sH = ts >= 60, sM = ts >= 60, sS = ts < 86400;
+      if (ts >= 86400)      { showHide('d',d,true);  showHide('h',h,true);  showHide('m',m,true);  showHide('s',s,false); }
+      else if (ts >= 3600)  { showHide('d',d,false); showHide('h',h,true);  showHide('m',m,true);  showHide('s',s,true);  }
+      else if (ts >= 60)    { showHide('d',d,false); showHide('h',h,false); showHide('m',m,true);  showHide('s',s,true);  }
+      else                  { showHide('d',d,false); showHide('h',h,false); showHide('m',m,false); showHide('s',s,true);  }
+
+      /* Also hide the separator BEFORE the first visible block (for old HTML) */
+      if (timerEl) {
+        const seps = timerEl.querySelectorAll('.sep');
+        seps.forEach(sep => {
+          const prev = sep.previousElementSibling;
+          const next = sep.nextElementSibling;
+          const prevHidden = prev && prev.style.display === 'none';
+          const nextHidden = next && next.style.display === 'none';
+          if (prevHidden || nextHidden) sep.style.display = 'none';
+          else sep.style.display = '';
+        });
+      }
+
+      const vis = ts >= 86400 ? 'normal' : ts >= 3600 ? 'no-days' : ts >= 60 ? 'urgent' : 'critical';
+      if (vis !== prevVis) { banner.dataset.urgency = vis; prevVis = vis; }
+    };
+
+    let tmr = setInterval(tick, 1000);
+    tick();
+
+    document.addEventListener('visibilitychange', () => {
+      clearInterval(tmr);
+      if (!document.hidden) { tick(); tmr = setInterval(tick, 1000); }
+    });
+
+    const btn = document.getElementById('shop-button-' + sid);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const sl = document.getElementById('slider-' + sid);
+        const a = sl && sl.querySelector('.slide.active a');
+        if (a && a.href) window.location.href = a.href;
+      });
+    }
+  });
+})();
+</script>
+
+{% schema %}
+  {
+    "name": "Custom Slider",
+        "settings": [
+            {
+                "type": "header",
+                "content": "🎲 Random Collections (Overrides above)"
+            },
+            {
+                "type": "checkbox",
+                "id": "enable_random_collections",
+                "label": "Zufällige Collections aktivieren",
+                "default": false,
+                "info": "Überschreibt die Hero Texte oben mit zufälligen Collection-Daten"
+            },
+            {
+                "type": "collection_list",
+                "id": "random_collections",
+                "label": "Collections für Zufallsauswahl",
+                "limit": 10
+            },
+            {
+                "type": "header",
+                "content": "Hero Texte"
+            },
+            {
+                "type": "text",
+                "id": "hero_title",
+                "label": "Hero Titel",
+                "default": "Microsoft Office 2024 für Windows"
+            },
+            {
+                "type": "text",
+                "id": "hero_subtitle",
+                "label": "Hero Untertitel",
+                "default": "Professional Plus <br>Standard"
+            },
+            {
+                "type": "text",
+                "id": "hero_price_text",
+                "label": "Hero Preistext",
+                "default": "Ab 9,90 €"
+            },
+            {
+                "type": "text",
+                "id": "cta_label",
+                "label": "CTA Button Text",
+                "default": "Zum Angebot"
+            },
+            {
+                "type": "url",
+                "id": "cta_link",
+                "label": "CTA Button Link"
+            },
+            {
+                "type": "header",
+                "content": "Farben"
+            },
+            {
+                "type": "color",
+                "id": "hero_text_color",
+                "label": "Hero Textfarbe",
+                "default": "#ffffff"
+            },
+            {
+                "type": "range",
+                "id": "hero_overlay_opacity",
+                "label": "Hero Overlay Opazität (%)",
+                "min": 0,
+                "max": 70,
+                "step": 5,
+                "default": 0
+            },
+            {
+                "type": "color",
+                "id": "countdown_bg_color",
+                "label": "Countdown Hintergrund",
+                "default": "#1a1a2e"
+            },
+            {
+                "type": "color",
+                "id": "countdown_text_color",
+                "label": "Countdown Textfarbe",
+                "default": "#ffffff"
+            },
+            {
+                "type": "color",
+                "id": "cta_bg_color",
+                "label": "CTA Button Hintergrund",
+                "default": "#2a61ff"
+            },
+            {
+                "type": "color",
+                "id": "cta_text_color",
+                "label": "CTA Button Textfarbe",
+                "default": "#ffffff"
+            },
+            {
+                "type": "color",
+                "id": "arrows_color",
+                "label": "Pfeil-Farbe",
+                "default": "#4594e1"
+            },
+            {
+                "type": "header",
+                "content": "Countdown"
+            },
+            {
+                "type": "checkbox",
+                "id": "enable_countdown",
+                "label": "Countdown anzeigen",
+                "default": true
+            },
+            {
+                "type": "select",
+                "id": "countdown_mode",
+                "label": "Countdown Modus",
+                "options": [
+                    { "value": "fixed_end_datetime", "label": "Fixes Enddatum" },
+                    { "value": "daily_reset", "label": "Täglich zurücksetzen" }
+                ],
+                "default": "fixed_end_datetime"
+            },
+            {
+                "type": "text",
+                "id": "countdown_end_datetime",
+                "label": "Countdown Enddatum (ISO)",
+                "default": "2026-02-01T23:59:59+01:00"
+            },
+            {
+                "type": "select",
+                "id": "countdown_timezone",
+                "label": "Zeitzone",
+                "options": [
+                    { "value": "Europe/Berlin", "label": "Europe/Berlin" },
+                    { "value": "UTC", "label": "UTC" }
+                ],
+                "default": "Europe/Berlin"
+            },
+            {
+                "type": "select",
+                "id": "when_expired",
+                "label": "Bei Ablauf",
+                "options": [
+                    { "value": "show", "label": "Aktion beendet anzeigen" },
+                    { "value": "hide", "label": "Countdown ausblenden" },
+                    { "value": "switch_text", "label": "Neuen Text anzeigen" }
+                ],
+                "default": "show"
+            },
+            {
+                "type": "text",
+                "id": "countdown_expired_text",
+                "label": "Text bei Ablauf",
+                "default": "Aktion beendet"
+            },
+            {
+                "type": "text",
+                "id": "countdown_left_label",
+                "label": "Countdown Linker Text",
+                "default": "Final Winter Sale"
+            },
+            {
+                "type": "text",
+                "id": "countdown_button_label",
+                "label": "Countdown Button Text",
+                "default": "JETZT KAUFEN"
+            },
+            {
+                "type": "header",
+                "content": "Weitere Optionen"
+            },
+            {
+                "type": "checkbox",
+                "id": "enable_trust_badge_spacing",
+                "label": "Trust Badge Abstand aktivieren",
+                "default": false
+            },
+            {
+                "type": "checkbox",
+                "id": "show_arrows",
+                "label": "Pfeile anzeigen",
+                "default": true
+            }
+        ],
+    "presets": [
+      {
+        "name": "Custom Slider"
+      }
+    ]
+  }
+{% endschema %}

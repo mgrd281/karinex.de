@@ -1,0 +1,103 @@
+{% comment %}
+  Renders an optimized image with WebP support and proper srcset
+  
+  Accepts:
+  - image: {Object} Image object
+  - width: {Number} Maximum width
+  - height: {Number} Maximum height (optional)
+  - class: {String} CSS classes
+  - alt: {String} Alt text
+  - loading: {String} 'lazy' or 'eager'
+  - fetchpriority: {String} 'high', 'low', or 'auto'
+  - sizes: {String} Sizes attribute
+  
+  Usage:
+  {% render 'optimized-image',
+    image: product.featured_image,
+    width: 800,
+    class: 'product-image',
+    alt: product.title,
+    loading: 'lazy'
+  %}
+{% endcomment %}
+
+{% liquid
+  assign image_width = width | default: 1000
+  assign image_class = class | default: ''
+  assign image_alt = alt | default: image.alt | default: ''
+  assign image_loading = loading | default: 'lazy'
+  assign image_fetchpriority = fetchpriority | default: 'auto'
+  assign image_attrs = attrs | default: ''
+  
+  # Adaptive widths based on device type (Server-side detection)
+  if request.user_agent contains 'Mobile' or request.user_agent contains 'Android' or request.user_agent contains 'iPhone'
+    # Smaller, more granular widths for mobile to save data
+    assign widths = '200,300,400,500,600'
+    assign default_width = 400
+  else
+    # Standard desktop widths - capped at 1000 for SEO/performance
+    assign widths = '200,400,600,800,1000'
+    assign default_width = 800
+  endif
+  
+  assign image_width = width | default: default_width
+  assign width_list = widths | split: ','
+  
+  # Default sizes if not provided
+  unless sizes
+    assign sizes = '(max-width: 749px) 100vw, (max-width: 999px) 50vw, 33vw'
+  endunless
+%}
+
+{% if image %}
+  <picture>
+    {%- # AVIF sources - best compression for high quality images -%}
+    <source
+      type="image/avif"
+      srcset="
+        {%- for width in width_list -%}
+          {{ image | image_url: width: width, format: 'avif' }} {{ width }}w
+          {%- unless forloop.last -%}, {%- endunless -%}
+        {%- endfor -%}
+      "
+      sizes="{{ sizes }}"
+    >
+    
+    {%- # WebP sources - fallback for browsers without AVIF -%}
+    <source
+      type="image/webp"
+      srcset="
+        {%- for width in width_list -%}
+          {{ image | image_url: width: width, format: 'webp', quality: 65 }} {{ width }}w
+          {%- unless forloop.last -%}, {%- endunless -%}
+        {%- endfor -%}
+      "
+      sizes="{{ sizes }}"
+    >
+    
+    {%- # Fallback JPEG for older browsers -%}
+    <source
+      type="image/jpeg"
+      srcset="
+        {%- for width in width_list -%}
+          {{ image | image_url: width: width, format: 'pjpg', quality: 65 }} {{ width }}w
+          {%- unless forloop.last -%}, {%- endunless -%}
+        {%- endfor -%}
+      "
+      sizes="{{ sizes }}"
+    >
+    
+    {%- # Fallback img tag -%}
+    <img
+      src="{{ image | image_url: width: image_width }}"
+      alt="{{ image_alt }}"
+      class="{{ image_class }}"
+      loading="{{ image_loading }}"
+      {% if image_fetchpriority != 'auto' %}fetchpriority="{{ image_fetchpriority }}"{% endif %}
+      {% if height %}height="{{ height }}"{% endif %}
+      width="{{ image_width }}"
+      {{ image_attrs }}
+      decoding="async"
+    >
+  </picture>
+{% endif %}

@@ -1,0 +1,12 @@
+{%- doc -%}
+  Outputs the gender value for a product based on the "Zielgeschlecht" option.
+  Returns: "Männlich", "Weiblich", or blank if not found.
+
+  @param {object} product - The product object
+{%- enddoc -%}
+
+{%- for option in product.options_with_values -%}
+  {%- if option.name == 'Zielgeschlecht' -%}
+    {{- option.values | first | strip -}}
+  {%- endif -%}
+{%- endfor -%}

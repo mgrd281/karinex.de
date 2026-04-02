@@ -1,0 +1,218 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{{ 'main-about.css' | asset_url | stylesheet_tag }}
+
+<div class="about-page">
+  
+  <!-- ================================================
+       1) HERO – BRAND STORY INTRO
+       ================================================ -->
+  <section class="about-hero">
+    <div class="about-hero-content">
+      <h1 class="about-hero-title">Über KARINEX</h1>
+      <p class="about-hero-subtitle">Qualität, Vertrauen und ein modernes Einkaufserlebnis.</p>
+      <div class="about-hero-divider"></div>
+    </div>
+  </section>
+
+  <div class="about-container">
+
+    <!-- ================================================
+         2) BRAND MISSION
+         ================================================ -->
+    <section class="about-section about-mission">
+      <h2 class="about-section-title">Unsere Mission</h2>
+      <div class="about-mission-content">
+        <p class="about-lead">Wir glauben daran, dass Einkaufen online einfach, sicher und vertrauensvoll sein sollte – ohne Kompromisse bei Qualität oder Service.</p>
+        <p>Bei KARINEX verbinden wir geprüfte Produkte mit einem Einkaufserlebnis, das Sie verdienen: transparent, schnell und persönlich.</p>
+        <p>Unser Ziel ist es, langfristige Beziehungen zu unseren Kunden aufzubauen – durch Verlässlichkeit, faire Preise und echten Support, wenn Sie ihn brauchen.</p>
+      </div>
+    </section>
+
+    <!-- ================================================
+         3) CORE VALUES – WHAT MAKES US DIFFERENT
+         ================================================ -->
+    <section class="about-section about-values">
+      <h2 class="about-section-title">Was uns auszeichnet</h2>
+      <div class="about-values-grid">
+        
+        <div class="about-value-card">
+          <div class="about-value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <h3 class="about-value-title">Qualität & geprüfte Produkte</h3>
+          <p class="about-value-text">Jedes Produkt in unserem Sortiment wird sorgfältig ausgewählt und auf Qualität geprüft – für Ihre Sicherheit.</p>
+        </div>
+
+        <div class="about-value-card">
+          <div class="about-value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h3 class="about-value-title">Faire Preise & Transparenz</h3>
+          <p class="about-value-text">Keine versteckten Kosten. Klare Preisangaben und ehrliche Kommunikation – von der Bestellung bis zur Lieferung.</p>
+        </div>
+
+        <div class="about-value-card">
+          <div class="about-value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <h3 class="about-value-title">Schnelle & sichere Abwicklung</h3>
+          <p class="about-value-text">Effiziente Prozesse sorgen für schnelle Bestellabwicklung. Digitale Produkte erhalten Sie sofort per E-Mail.</p>
+        </div>
+
+        <div class="about-value-card">
+          <div class="about-value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <h3 class="about-value-title">Kundenservice auf Augenhöhe</h3>
+          <p class="about-value-text">Echte Menschen, echte Hilfe. Unser Support-Team ist für Sie da – persönlich, schnell und lösungsorientiert.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================
+         4) HOW WE WORK – PROCESS TRANSPARENCY
+         ================================================ -->
+    <section class="about-section about-process">
+      <h2 class="about-section-title">So arbeiten wir</h2>
+      <div class="about-process-steps">
+        
+        <div class="about-step">
+          <div class="about-step-number">1</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Produktauswahl</h3>
+            <p class="about-step-text">Wir wählen nur Produkte aus, die unseren Qualitätsstandards entsprechen – von vertrauenswürdigen Herstellern und Partnern.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">2</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Ihre Bestellung</h3>
+            <p class="about-step-text">Einfacher Bestellprozess mit sicheren Zahlungsmethoden. Ihre Daten werden verschlüsselt übertragen und geschützt.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">3</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Lieferung & Zugang</h3>
+            <p class="about-step-text">Digitale Produkte erhalten Sie sofort per E-Mail. Physische Waren werden schnell und sicher an Sie versendet.</p>
+          </div>
+        </div>
+
+        <div class="about-step">
+          <div class="about-step-number">4</div>
+          <div class="about-step-content">
+            <h3 class="about-step-title">Support & Service</h3>
+            <p class="about-step-text">Nach dem Kauf sind wir weiterhin für Sie da. Bei Fragen oder Anliegen steht Ihnen unser Team zur Seite.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================
+         5) TRUST & PARTNERSHIP
+         ================================================ -->
+    <section class="about-section about-trust">
+      <h2 class="about-section-title">Vertrauen ist unser Fundament</h2>
+      <div class="about-trust-content">
+        <p class="about-trust-intro">Wir arbeiten jeden Tag daran, Ihr Vertrauen zu rechtfertigen – durch Qualität, Transparenz und Zuverlässigkeit.</p>
+        
+        <div class="about-trust-points">
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>100% originale Produkte</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Sichere Zahlungsabwicklung</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Deutsche Qualitätsstandards</span>
+          </div>
+          <div class="about-trust-point">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Langfristige Kundenbeziehungen</span>
+          </div>
+        </div>
+
+        <!-- Microsoft Partner Badge -->
+        <div class="about-partner-badge">
+          <div class="about-partner-content">
+            <svg class="about-partner-icon" viewBox="0 0 21 21" fill="none">
+              <rect width="10" height="10" fill="#f25022"/>
+              <rect x="11" width="10" height="10" fill="#7fba00"/>
+              <rect y="11" width="10" height="10" fill="#00a4ef"/>
+              <rect x="11" y="11" width="10" height="10" fill="#ffb900"/>
+            </svg>
+            <span class="about-partner-text">Autorisierter Microsoft Partner</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         6) HUMAN TOUCH – CLOSING
+         ================================================ -->
+    <section class="about-section about-closing">
+      <div class="about-closing-content">
+        <blockquote class="about-quote">
+          „Wir sind kein anonymer Marktplatz.<br>
+          Hinter KARINEX steht ein Team, das täglich daran arbeitet, Ihr Einkaufserlebnis besser zu machen."
+        </blockquote>
+        <div class="about-signature">
+          <span class="about-signature-text">Ihr KARINEX-Team</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         CTA – CONTACT
+         ================================================ -->
+    <section class="about-cta">
+      <h2 class="about-cta-title">Haben Sie Fragen?</h2>
+      <p class="about-cta-text">Wir freuen uns, von Ihnen zu hören.</p>
+      <a href="{{ _root }}pages/kontakt" class="about-cta-button">Kontakt aufnehmen</a>
+    </section>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Über uns",
+  "tag": "section",
+  "class": "section-about",
+  "settings": []
+}
+{% endschema %}

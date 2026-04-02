@@ -1,0 +1,47 @@
+<section class="blog-hero">
+  <div class="blog-hero__background"></div>
+  <div class="blog-hero__container">
+    <h1 class="blog-hero__title">{{ blog.title | default: 'News & Ratgeber' }}</h1>
+    <p class="blog-hero__subtitle">Aktuelle Updates, Guides & Tipps</p>
+    <!-- Optional: Featured Article Card -->
+    {% if section.settings.featured_article != blank %}
+      <div class="blog-hero__featured">
+        <!-- Hier kann ein großes Artikel-Card-Template eingebunden werden -->
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+.blog-hero {
+  width: 100vw;
+  min-height: 220px;
+  background: linear-gradient(120deg, #f7f8fa 0%, #e3e6ee 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.blog-hero__container {
+  width: 100%;
+  max-width: 100%;
+  padding: 48px clamp(16px, 4vw, 64px) 32px;
+  text-align: center;
+}
+.blog-hero__title {
+  font-family: 'Inter', 'Arial', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #23272f;
+}
+.blog-hero__subtitle {
+  font-size: 1.25rem;
+  color: #5a6270;
+  margin-bottom: 0;
+}
+@media (max-width: 600px) {
+  .blog-hero__title { font-size: 2rem; }
+  .blog-hero__container { padding: 32px 8px 16px 8px; }
+}
+</style>

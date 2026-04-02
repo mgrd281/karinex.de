@@ -1,0 +1,656 @@
+<style>
+  /* ── Recently Viewed – Carousel Layout (matches Ähnliche Produkte) ── */
+  .pdp-rv {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem 24px;
+    border-top: none;
+    overflow: visible;
+  }
+
+  .pdp-rv__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+  .pdp-rv__eyebrow {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  .pdp-rv__heading {
+    font-size: 20px;
+    font-weight: 800;
+    color: #000;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  /* ── Carousel navigation arrows ── */
+  .pdp-rv__nav {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .pdp-rv__arrow {
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+    color: #333;
+  }
+  .pdp-rv__arrow:hover {
+    border-color: #1c1c1c;
+    background: #fafafa;
+  }
+  .pdp-rv__arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+  }
+  .pdp-rv__arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* ── Carousel track ── */
+  .pdp-rv__track-outer {
+    overflow: visible;
+    position: relative;
+  }
+  .pdp-rv__track {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 160px;
+    margin-bottom: -160px;
+  }
+  .pdp-rv__track::-webkit-scrollbar { display: none; }
+
+  .pdp-rv.is-atc-active {
+    padding-bottom: 60px;
+  }
+
+  /* ── Card animation ── */
+  @keyframes pdp-rv-in {
+    0%   { opacity: 0; transform: translateY(14px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Card (matches csp-card) ── */
+  .pdp-rv-card {
+    flex: 0 0 180px;
+    min-width: 180px;
+    scroll-snap-align: start;
+    background: #f8f8f8;
+    border-radius: 4px;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    animation: pdp-rv-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+  }
+
+  /* ── Image wrapper (portrait, like csp) ── */
+  .pdp-rv-card__img-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 140%;
+    background: #f4f6f8;
+    overflow: hidden;
+    margin-bottom: 10px;
+    display: block;
+    text-decoration: none;
+  }
+  .pdp-rv-card__img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  /* ── Wishlist heart (AboutYou style – no white bg) ── */
+  .pdp-rv-card__img-wrap wishlist-heart {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+  }
+  .pdp-rv-card .wishlist-heart__button {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border: none;
+    color: #333;
+    width: 32px;
+    height: 32px;
+  }
+  .pdp-rv-card .wishlist-heart__button:hover {
+    background: transparent;
+    box-shadow: none;
+    transform: scale(1.1);
+  }
+  .pdp-rv-card .wishlist-heart__button svg {
+    width: 22px;
+    height: 22px;
+    stroke: #333;
+    stroke-width: 1.6;
+    fill: transparent;
+  }
+  .pdp-rv-card wishlist-heart[saved] .wishlist-heart__button {
+    color: #1d4739;
+    background: transparent;
+  }
+  .pdp-rv-card wishlist-heart[saved] .wishlist-heart__button svg {
+    stroke: #1d4739;
+    fill: #1d4739;
+  }
+  .pdp-rv-card .wishlist-social-proof {
+    display: none !important;
+  }
+
+  /* ── SALE badge – bottom-left on image (AboutYou style) ── */
+  .pdp-rv-card__sale-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    background: #e30613;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    line-height: 1;
+    border-radius: 0 6px 6px 0;
+    z-index: 2;
+  }
+
+  /* ── Coupon badge bar ── */
+  .pdp-rv-card__coupon-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #1a6dca 0%, #0f3d7a 100%);
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .pdp-rv-card__coupon-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .pdp-rv-card__coupon-label svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
+  .pdp-rv-card__coupon-pct {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* ── Card info (matches csp-info) ── */
+  .pdp-rv-card__body {
+    text-align: center;
+    padding: 0 8px;
+  }
+  .pdp-rv-card__brand {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b6b6b;
+    margin-bottom: 2px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pdp-rv-card__title {
+    font-size: 11px;
+    font-weight: 400;
+    color: #000;
+    margin-bottom: 4px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+  }
+  .pdp-rv-card__price-row {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e30613;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+  }
+  .pdp-rv-card__price-row--regular {
+    color: #000;
+  }
+  .pdp-rv-card__price-old {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  /* ── AboutYou-style hover panel (desktop only) ── */
+  .pdp-rv-card__hover-panel {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .pdp-rv-card {
+      transition: z-index 0s;
+    }
+    .pdp-rv-card:hover {
+      z-index: 100;
+    }
+    .pdp-rv-card.is-atc-active {
+      z-index: 100;
+    }
+
+    .pdp-rv-card__hover-panel {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -8px;
+      right: -8px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: none;
+      padding: 0 0 14px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .pdp-rv-card:hover .pdp-rv-card__hover-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .pdp-rv-card.is-atc-active .pdp-rv-card__hover-panel {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .pdp-rv-card__hover-panel .pdp-rv-card__img-wrap {
+      border-radius: 8px 8px 0 0;
+    }
+    .pdp-rv-card__hover-panel .pdp-rv-card__hover-body {
+      padding: 8px 12px 0;
+      text-align: center;
+    }
+    .pdp-rv-card__hover-panel .pdp-rv-card__brand {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6b6b6b;
+      margin-bottom: 2px;
+    }
+    .pdp-rv-card__hover-panel .pdp-rv-card__title {
+      font-size: 11px;
+      font-weight: 400;
+      color: #000;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pdp-rv-card__hover-panel .pdp-rv-card__price-row {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e30613;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .pdp-rv-card__hover-sizes {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: #555;
+    }
+    .pdp-rv-card__hover-sizes-label {
+      font-size: 10px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    .pdp-rv-card__size-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      color: #333;
+      background: #fff;
+    }
+    .pdp-rv-card__size-more {
+      font-size: 11px;
+      color: #999;
+      font-weight: 600;
+    }
+    .pdp-rv-card__hover-atc {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100% - 24px);
+      margin: 8px auto 0;
+      height: 40px;
+      border: none;
+      border-radius: 4px;
+      background: #1c1c1c;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdp-rv-card__hover-atc:hover {
+      background: #333;
+    }
+    .pdp-rv-card__hover-atc:active {
+      transform: scale(0.96);
+    }
+
+    /* ATC states */
+    .pdp-rv-atc__text,
+    .pdp-rv-atc__check,
+    .pdp-rv-atc__adding {
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .pdp-rv-atc__check,
+    .pdp-rv-atc__adding {
+      position: absolute;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    /* Adding state */
+    .pdp-rv-card__hover-atc.is-adding .pdp-rv-atc__text { opacity: 0; transform: translateY(-8px); }
+    .pdp-rv-card__hover-atc.is-adding .pdp-rv-atc__adding { opacity: 1; transform: scale(1); }
+
+    /* Success state */
+    .pdp-rv-card__hover-atc.is-added {
+      background: #1d4739;
+    }
+    .pdp-rv-card__hover-atc.is-added .pdp-rv-atc__text { opacity: 0; transform: translateY(-8px); }
+    .pdp-rv-card__hover-atc.is-added .pdp-rv-atc__check { opacity: 1; transform: scale(1); }
+
+    @keyframes pdp-rv-spin {
+      to { transform: rotate(360deg); }
+    }
+    .pdp-rv-atc__spinner {
+      animation: pdp-rv-spin 0.7s linear infinite;
+    }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 767px) {
+    .pdp-rv {
+      padding: 32px 16px 40px;
+    }
+    .pdp-rv__heading {
+      font-size: 18px;
+    }
+    .pdp-rv-card {
+      flex: 0 0 140px;
+      min-width: 140px;
+    }
+    .pdp-rv__arrow {
+      width: 34px;
+      height: 34px;
+    }
+  }
+  @media (max-width: 479px) {
+    .pdp-rv__nav {
+      display: none;
+    }
+  }
+</style>
+
+<div class="pdp-rv" id="pdp-rv-{{ section.id }}" style="display:none">
+  <div class="pdp-rv__header">
+    <div class="pdp-rv__header-text">
+      <span class="pdp-rv__eyebrow">Mach weiter, wo du aufgehört hast</span>
+      <h2 class="pdp-rv__heading">Zuletzt angesehene Artikel</h2>
+    </div>
+    <div class="pdp-rv__nav">
+      <button class="pdp-rv__arrow pdp-rv__arrow--prev" aria-label="Zurück" type="button">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="pdp-rv__arrow pdp-rv__arrow--next" aria-label="Weiter" type="button">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="pdp-rv__track-outer">
+    <div class="pdp-rv__track" id="pdp-rv-track-{{ section.id }}"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var sectionId = '{{ section.id }}';
+  var currentId = '{{ product.id }}';
+  var wrapper   = document.getElementById('pdp-rv-' + sectionId);
+  var track     = document.getElementById('pdp-rv-track-' + sectionId);
+  if (!wrapper || !track) return;
+
+  try {
+    var ids = JSON.parse(localStorage.getItem('viewedProducts') || '[]')
+      .filter(function(id) { return id !== currentId; })
+      .slice(0, 10);
+    if (!ids.length) return;
+
+    var url = new URL(window.location.origin + '/search');
+    url.searchParams.set('section_id', 'product-recently-viewed-items');
+    url.searchParams.set('type', 'product');
+    url.searchParams.set('q', ids.map(function(id) { return 'id:' + id; }).join(' OR '));
+
+    fetch(url.toString())
+      .then(function(r) { return r.ok ? r.text() : null; })
+      .then(function(html) {
+        if (!html || !html.trim()) return;
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        var cards = Array.from(tmp.querySelectorAll('.pdp-rv-card'));
+        if (!cards.length) return;
+        cards.sort(function(a, b) {
+          var ia = ids.indexOf(a.dataset.productId);
+          var ib = ids.indexOf(b.dataset.productId);
+          return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+        });
+        cards.forEach(function(c, i) {
+          c.style.animationDelay = (i * 60) + 'ms';
+          track.appendChild(c);
+        });
+        wrapper.style.display = '';
+        initCarousel();
+      })
+      .catch(function() {});
+  } catch(e) {}
+
+  function initCarousel() {
+    var prev = wrapper.querySelector('.pdp-rv__arrow--prev');
+    var next = wrapper.querySelector('.pdp-rv__arrow--next');
+    if (!prev || !next) return;
+
+    var scrollAmount = 240;
+
+    function updateArrows() {
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    }
+
+    prev.addEventListener('click', function() {
+      track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    next.addEventListener('click', function() {
+      track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    var scrollTicking = false;
+    track.addEventListener('scroll', function() {
+      if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(function() {
+          updateArrows();
+          scrollTicking = false;
+        });
+      }
+    }, { passive: true });
+    updateArrows();
+
+    /* Re-initialize wishlist-heart elements if the custom element is defined */
+    if (window.customElements && window.customElements.get('wishlist-heart')) {
+      track.querySelectorAll('wishlist-heart').forEach(function(el) {
+        if (typeof el.connectedCallback === 'function') {
+          el.connectedCallback();
+        }
+      });
+    }
+  }
+
+  /* ── AJAX Add to Cart handler ── */
+  document.addEventListener('click', async function(e) {
+    var btn = e.target.closest('.pdp-rv-card__hover-atc');
+    if (!btn || btn.disabled || btn.classList.contains('is-adding')) return;
+
+    var variantId = btn.getAttribute('data-variant-id');
+    var activeCard = btn.closest('.pdp-rv-card');
+    if (!variantId) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (activeCard) activeCard.classList.add('is-atc-active');
+    wrapper.classList.add('is-atc-active');
+    btn.classList.add('is-adding');
+    btn.classList.remove('is-added');
+
+    try {
+      var formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', 1);
+
+      // 1. Add to cart
+      var addRes = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/javascript' },
+        body: formData
+      });
+      var addedItem = await addRes.json();
+
+      if (!addRes.ok) throw new Error('Add failed');
+
+      // 2. Success animation
+      btn.classList.remove('is-adding');
+      btn.classList.add('is-added');
+
+      // 3. Fetch updated cart + sections for drawer
+      var cartDrawer = document.querySelector('cart-drawer-component');
+      var drawerSectionId = cartDrawer ? cartDrawer.dataset.sectionId : null;
+      var sections = {};
+
+      if (drawerSectionId) {
+        var sectionsRes = await fetch(window.location.pathname + '?sections=' + drawerSectionId);
+        sections = await sectionsRes.json();
+      }
+
+      var cartRes = await fetch('/cart.js');
+      var cart = await cartRes.json();
+
+      // 4. Dispatch cart:update (cart drawer auto-opens via its own listener)
+      document.dispatchEvent(new CustomEvent('cart:update', {
+        bubbles: true,
+        detail: {
+          resource: cart,
+          sourceId: 'pdp-rv-atc',
+          data: {
+            sections: sections,
+            itemCount: cart.item_count
+          }
+        }
+      }));
+
+      // 5. Reset button after delay
+      setTimeout(function() {
+        btn.classList.remove('is-added');
+        if (activeCard) activeCard.classList.remove('is-atc-active');
+        wrapper.classList.remove('is-atc-active');
+      }, 2000);
+
+    } catch(err) {
+      btn.classList.remove('is-adding');
+      btn.textContent = 'Fehler';
+      setTimeout(function() {
+        btn.innerHTML = '<span class="pdp-rv-atc__text">In den Warenkorb</span><span class="pdp-rv-atc__check"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="pdp-rv-atc__adding"><svg class="pdp-rv-atc__spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg></span>';
+        if (activeCard) activeCard.classList.remove('is-atc-active');
+        wrapper.classList.remove('is-atc-active');
+      }, 1500);
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Zuletzt angesehen",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Zuletzt angesehen"
+    }
+  ]
+}
+{% endschema %}

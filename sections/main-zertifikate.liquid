@@ -1,0 +1,118 @@
+{{ 'main-zertifikate.css' | asset_url | stylesheet_tag }}
+
+<div class="zertifikate-page">
+  {%- comment -%} HERO SECTION {%- endcomment -%}
+  <header class="zertifikate-hero">
+    <h1 class="zertifikate-title">Zertifikate & Siegel</h1>
+    <p class="zertifikate-subtitle">
+      Geprüfte Sicherheit, originale Software und rechtssichere Prozesse.
+    </p>
+    <div class="zertifikate-divider"></div>
+    <p class="zertifikate-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="11" height="11" style="vertical-align: middle; margin-right: 4px;">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Zuletzt aktualisiert: 9. Februar 2026
+    </p>
+  </header>
+
+  <main class="zertifikate-container">
+    {%- comment -%} TRUST LOGOS GRID {%- endcomment -%}
+    <section class="zertifikate-logos-section">
+      <div class="zertifikate-logos-grid">
+        
+        {%- comment -%} Microsoft Partner {%- endcomment -%}
+        <div class="zertifikate-logo-card">
+          <div class="zertifikate-logo-wrapper">
+            <svg viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+              <rect x="1" y="1" width="10" height="10" fill="#f25022"/>
+              <rect x="12" y="1" width="10" height="10" fill="#7fba00"/>
+              <rect x="1" y="12" width="10" height="10" fill="#00a4ef"/>
+              <rect x="12" y="12" width="10" height="10" fill="#ffb900"/>
+            </svg>
+          </div>
+          <p class="zertifikate-logo-name">Microsoft Partner</p>
+          <p class="zertifikate-logo-desc">Offizieller Reseller – ausschließlich originale Lizenzen.</p>
+        </div>
+
+        {%- comment -%} Trusted Shops {%- endcomment -%}
+        <div class="zertifikate-logo-card">
+          <div class="zertifikate-logo-wrapper">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+              <circle cx="50" cy="50" r="45" fill="#ffdc0f" stroke="#1a1a1a" stroke-width="2"/>
+              <path d="M50 20 L58 38 L78 38 L62 52 L68 72 L50 60 L32 72 L38 52 L22 38 L42 38 Z" fill="#1a1a1a"/>
+            </svg>
+          </div>
+          <p class="zertifikate-logo-name">Trusted Shops</p>
+          <p class="zertifikate-logo-desc">Bewertungen & Käuferschutz.</p>
+        </div>
+
+        {%- comment -%} IT-Recht Kanzlei {%- endcomment -%}
+        <div class="zertifikate-logo-card">
+          <div class="zertifikate-logo-wrapper">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+              <rect x="10" y="20" width="80" height="60" rx="4" fill="#1e3a5f" stroke="#1e3a5f" stroke-width="2"/>
+              <path d="M50 30 L70 45 L70 65 C70 72 62 78 50 82 C38 78 30 72 30 65 L30 45 Z" fill="#fff"/>
+              <path d="M45 55 L48 58 L56 48" stroke="#1e3a5f" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <p class="zertifikate-logo-name">IT-Recht Kanzlei</p>
+          <p class="zertifikate-logo-desc">Anwaltlich geprüfte Rechtstexte.</p>
+        </div>
+
+        {%- comment -%} Trustami {%- endcomment -%}
+        <div class="zertifikate-logo-card">
+          <div class="zertifikate-logo-wrapper">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+              <circle cx="50" cy="50" r="45" fill="#00b67a"/>
+              <path d="M50 25 L56 40 L72 40 L59 50 L64 65 L50 55 L36 65 L41 50 L28 40 L44 40 Z" fill="#fff"/>
+            </svg>
+          </div>
+          <p class="zertifikate-logo-name">Trustami</p>
+          <p class="zertifikate-logo-desc">Aggregierte Kundenbewertungen.</p>
+        </div>
+
+        {%- comment -%} idealo Partner {%- endcomment -%}
+        <div class="zertifikate-logo-card">
+          <div class="zertifikate-logo-wrapper">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="50" height="50">
+              <circle cx="50" cy="50" r="45" fill="#0066cc"/>
+              <circle cx="50" cy="35" r="8" fill="#fff"/>
+              <rect x="44" y="48" width="12" height="28" rx="2" fill="#fff"/>
+            </svg>
+          </div>
+          <p class="zertifikate-logo-name">idealo Partner</p>
+          <p class="zertifikate-logo-desc">Zertifizierter idealo-Partner.</p>
+        </div>
+
+      </div>
+    </section>
+
+    {%- comment -%} SECURITY BLOCK {%- endcomment -%}
+    <section class="zertifikate-security">
+      <h2 class="zertifikate-security-title">Sicherheit & Vertrauen</h2>
+      <div class="zertifikate-security-grid">
+        <div class="zertifikate-security-item">Original-Software & gültige Lizenzen</div>
+        <div class="zertifikate-security-item">Rechtssichere Bestellprozesse</div>
+        <div class="zertifikate-security-item">DSGVO-konform</div>
+        <div class="zertifikate-security-item">Transparente Kundenkommunikation</div>
+      </div>
+    </section>
+
+    {%- comment -%} TRANSPARENCY NOTE {%- endcomment -%}
+    <section class="zertifikate-transparency">
+      <p class="zertifikate-transparency-text">
+        Wir setzen ausschließlich auf anerkannte Partner und offizielle Zertifizierungen, um höchste Sicherheit und Seriosität zu gewährleisten.
+      </p>
+    </section>
+  </main>
+</div>
+
+{% schema %}
+{
+  "name": "Zertifikate & Siegel",
+  "tag": "section",
+  "class": "section-zertifikate",
+  "settings": []
+}
+{% endschema %}

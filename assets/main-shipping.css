@@ -1,0 +1,575 @@
+/* ==============================================
+   SHIPPING PAGE STYLES
+   Enterprise, clear, trust-driven design
+   ============================================== */
+
+/* CSS Custom Properties */
+:root {
+  --shipping-text: #1a1a1a;
+  --shipping-text-muted: #555555;
+  --shipping-text-light: #777777;
+  --shipping-bg: #ffffff;
+  --shipping-bg-soft: #f8f9fa;
+  --shipping-bg-card: #ffffff;
+  --shipping-border: #e8e8e8;
+  --shipping-accent: #1a1a1a;
+  --shipping-success: #2e7d32;
+  --shipping-success-soft: #e8f5e9;
+  --shipping-info: #1976d2;
+  --shipping-info-soft: #e3f2fd;
+  --shipping-radius: 12px;
+  --shipping-radius-sm: 8px;
+  --shipping-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  --shipping-transition: 200ms ease;
+  --shipping-max-width: 760px;
+}
+
+/* ==============================================
+   BASE CONTAINER
+   ============================================== */
+.shipping-page {
+  background: var(--shipping-bg);
+  min-height: 100vh;
+}
+
+.shipping-container {
+  max-width: var(--shipping-max-width);
+  margin: 0 auto;
+  padding: 0 24px 100px;
+}
+
+/* ==============================================
+   1) HERO SECTION
+   ============================================== */
+.shipping-hero {
+  background: var(--shipping-bg);
+  padding: 72px 24px 56px;
+  text-align: center;
+}
+
+.shipping-hero-content {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.shipping-hero-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  color: var(--shipping-text);
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+
+.shipping-hero-subtitle {
+  font-size: clamp(16px, 2.5vw, 18px);
+  color: var(--shipping-text-muted);
+  margin: 0 0 36px;
+  line-height: 1.6;
+}
+
+.shipping-hero-divider {
+  width: 48px;
+  height: 3px;
+  background: var(--shipping-accent);
+  margin: 0 auto 20px;
+  border-radius: 2px;
+}
+
+.shipping-hero-meta {
+  font-size: 14px;
+  color: var(--shipping-text-light);
+  margin: 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.shipping-hero-meta svg {
+  opacity: 0.7;
+}
+
+/* ==============================================
+   2) SHIPPING OVERVIEW – KEY FACTS
+   ============================================== */
+.shipping-overview {
+  margin-bottom: 56px;
+}
+
+.shipping-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.shipping-highlight-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--shipping-bg-card);
+  border: 1px solid var(--shipping-border);
+  border-radius: var(--shipping-radius);
+  transition: var(--shipping-transition);
+}
+
+.shipping-highlight-card:hover {
+  box-shadow: var(--shipping-shadow);
+}
+
+.shipping-highlight-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: var(--shipping-bg-soft);
+  border-radius: var(--shipping-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shipping-highlight-icon svg {
+  width: 24px;
+  height: 24px;
+  color: var(--shipping-text);
+}
+
+.shipping-highlight-content {
+  flex: 1;
+}
+
+.shipping-highlight-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--shipping-text);
+  margin: 0 0 4px;
+}
+
+.shipping-highlight-text {
+  font-size: 13px;
+  color: var(--shipping-text-muted);
+  margin: 0;
+}
+
+/* ==============================================
+   3) CONTENT SECTIONS
+   ============================================== */
+.shipping-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.shipping-section {
+  display: flex;
+  gap: 20px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--shipping-border);
+}
+
+.shipping-section:first-child {
+  padding-top: 0;
+}
+
+.shipping-section:last-child {
+  border-bottom: none;
+}
+
+.shipping-section-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--shipping-bg-soft);
+  border-radius: var(--shipping-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shipping-section-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--shipping-text);
+}
+
+.shipping-section-content {
+  flex: 1;
+}
+
+.shipping-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--shipping-text);
+  margin: 0 0 12px;
+  line-height: 1.3;
+}
+
+.shipping-section-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--shipping-text-muted);
+  margin: 0;
+}
+
+.shipping-section-content p + p {
+  margin-top: 12px;
+}
+
+.shipping-section-content a {
+  color: var(--shipping-info);
+  text-decoration: none;
+}
+
+.shipping-section-content a:hover {
+  text-decoration: underline;
+}
+
+/* Shipping List */
+.shipping-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.shipping-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--shipping-text-muted);
+  margin-bottom: 8px;
+}
+
+.shipping-list li:last-child {
+  margin-bottom: 0;
+}
+
+.shipping-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  background: var(--shipping-border);
+  border-radius: 50%;
+}
+
+/* ==============================================
+   SPECIAL SECTION STYLES
+   ============================================== */
+
+/* Highlight Section (Versandkosten) */
+.shipping-section--highlight {
+  background: var(--shipping-success-soft);
+  margin: 0 -24px;
+  padding: 32px 24px;
+  border-radius: var(--shipping-radius);
+  border-bottom: none;
+}
+
+.shipping-section--highlight .shipping-section-icon {
+  background: var(--shipping-bg);
+}
+
+.shipping-section--highlight .shipping-section-icon svg {
+  color: var(--shipping-success);
+}
+
+/* Free Shipping Badge */
+.shipping-free-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--shipping-bg);
+  border-radius: var(--shipping-radius-sm);
+  margin-bottom: 16px;
+}
+
+.shipping-free-badge-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--shipping-success);
+}
+
+.shipping-free-badge-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--shipping-text);
+}
+
+/* Digital Section */
+.shipping-section--digital {
+  background: var(--shipping-info-soft);
+  margin: 0 -24px;
+  padding: 32px 24px;
+  border-radius: var(--shipping-radius);
+  border-bottom: none;
+}
+
+.shipping-section--digital .shipping-section-icon {
+  background: var(--shipping-bg);
+}
+
+.shipping-section--digital .shipping-section-icon svg {
+  color: var(--shipping-info);
+}
+
+/* Instant Badge */
+.shipping-instant-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--shipping-bg);
+  border-radius: var(--shipping-radius-sm);
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--shipping-info);
+}
+
+.shipping-instant-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Notice Section */
+.shipping-section--notice {
+  background: var(--shipping-bg-soft);
+  margin: 0 -24px;
+  padding: 32px 24px;
+  border-radius: var(--shipping-radius);
+  border-bottom: none;
+}
+
+/* ==============================================
+   5) SUPPORT BLOCK
+   ============================================== */
+.shipping-support {
+  margin-top: 56px;
+  background: var(--shipping-bg-card);
+  border: 1px solid var(--shipping-border);
+  border-radius: var(--shipping-radius);
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.shipping-support-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--shipping-text);
+  margin: 0 0 12px;
+}
+
+.shipping-support-text {
+  font-size: 15px;
+  color: var(--shipping-text-muted);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.shipping-support-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shipping-support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--shipping-radius-sm);
+  transition: var(--shipping-transition);
+}
+
+.shipping-support-link--primary {
+  background: var(--shipping-text);
+  color: var(--shipping-bg);
+}
+
+.shipping-support-link--primary:hover {
+  background: #333;
+}
+
+.shipping-support-link--secondary {
+  background: var(--shipping-bg-soft);
+  color: var(--shipping-text);
+  border: 1px solid var(--shipping-border);
+}
+
+.shipping-support-link--secondary:hover {
+  background: #f0f0f0;
+}
+
+.shipping-support-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==============================================
+   RESPONSIVE – TABLET (< 768px)
+   ============================================== */
+@media (max-width: 767px) {
+  .shipping-hero {
+    padding: 56px 20px 44px;
+  }
+  
+  .shipping-container {
+    padding: 0 20px 80px;
+  }
+  
+  .shipping-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .shipping-highlight-card {
+    padding: 16px;
+  }
+  
+  .shipping-highlight-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+  
+  .shipping-highlight-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .shipping-section {
+    padding: 28px 0;
+  }
+  
+  .shipping-section--highlight,
+  .shipping-section--digital,
+  .shipping-section--notice {
+    margin: 0 -20px;
+    padding: 28px 20px;
+  }
+  
+  .shipping-support {
+    padding: 32px 24px;
+  }
+}
+
+/* ==============================================
+   RESPONSIVE – MOBILE (< 480px)
+   ============================================== */
+@media (max-width: 479px) {
+  .shipping-hero {
+    padding: 48px 16px 36px;
+  }
+  
+  .shipping-hero-title {
+    font-size: 28px;
+  }
+  
+  .shipping-hero-subtitle {
+    font-size: 15px;
+  }
+  
+  .shipping-container {
+    padding: 0 16px 64px;
+  }
+  
+  .shipping-overview-grid {
+    gap: 10px;
+  }
+  
+  .shipping-highlight-card {
+    padding: 14px;
+    gap: 12px;
+  }
+  
+  .shipping-highlight-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+  
+  .shipping-highlight-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .shipping-highlight-title {
+    font-size: 14px;
+  }
+  
+  .shipping-highlight-text {
+    font-size: 12px;
+  }
+  
+  .shipping-section {
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 0;
+  }
+  
+  .shipping-section-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+  
+  .shipping-section-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .shipping-section-title {
+    font-size: 16px;
+  }
+  
+  .shipping-section-content p,
+  .shipping-list li {
+    font-size: 14px;
+  }
+  
+  .shipping-section--highlight,
+  .shipping-section--digital,
+  .shipping-section--notice {
+    margin: 0 -16px;
+    padding: 24px 16px;
+  }
+  
+  .shipping-free-badge {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  
+  .shipping-free-badge-text {
+    font-size: 14px;
+  }
+  
+  .shipping-free-badge-price {
+    font-size: 18px;
+  }
+  
+  .shipping-support {
+    padding: 28px 20px;
+  }
+  
+  .shipping-support-title {
+    font-size: 18px;
+  }
+  
+  .shipping-support-actions {
+    flex-direction: column;
+  }
+  
+  .shipping-support-link {
+    width: 100%;
+    justify-content: center;
+  }
+}

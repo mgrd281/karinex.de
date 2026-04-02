@@ -1,0 +1,26 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gift-cards-main": {
+      "type": "gift-cards-page",
+      "settings": {
+        "hero_title": "Digitale Geschenkkarten",
+        "hero_subtitle": "Das perfekte Geschenk. Sofort per E-Mail geliefert.",
+        "amounts": "25,50,100,200",
+        "min_custom_amount": 10,
+        "max_custom_amount": 500
+      }
+    }
+  },
+  "order": [
+    "gift-cards-main"
+  ]
+}

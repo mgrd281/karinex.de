@@ -1,0 +1,131 @@
+<!-- Sales Counter – Real data from Shopify Metafields (updated by Google Apps Script hourly) -->
+<div id="sales-box-{{ product.id }}" class="sales-notification-block">
+  <span class="sales-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+      <polyline points="17 6 23 6 23 12"></polyline>
+    </svg>
+  </span>
+  <!-- Desktop: shows real count -->
+  <span class="sales-text-urgent sales-text-desktop">
+    <strong id="sales-count-{{ product.id }}">–</strong> Verkäufe in den letzten <span id="sales-hours-{{ product.id }}">30</span> Tagen
+  </span>
+  <!-- Mobile: always shows neutral text (no numbers) -->
+  <span class="sales-text-urgent sales-text-mobile">
+    Beliebtes Modell – häufig nachgefragt
+  </span>
+  <span class="sales-separator" id="sales-sep-{{ product.id }}">•</span>
+  <span class="sales-text-info" id="sales-info-{{ product.id }}">
+    Letzter Verkauf: vor <strong id="last-sale-{{ product.id }}">…</strong> Min. aus <strong id="sale-city-{{ product.id }}">…</strong>
+  </span>
+</div>
+
+<style>
+.sales-notification-block {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  color: #333;
+  margin: 10px 0;
+  line-height: 1.4;
+  font-family: inherit;
+}
+.sales-icon {
+  display: inline-flex;
+  align-items: center;
+  color: #e03a3a;
+  margin-right: 2px;
+}
+.sales-text-urgent { color: #e03a3a; }
+.sales-text-urgent strong { font-weight: 700; color: inherit; }
+.sales-text-info { color: #444; }
+.sales-text-info strong { font-weight: 700; color: #222; }
+.sales-separator { color: #999; margin: 0 2px; }
+
+/* Desktop shows count, mobile shows neutral text */
+.sales-text-mobile { display: none; }
+.sales-text-desktop { display: inline; }
+
+@media (max-width: 768px) {
+  .sales-text-desktop { display: none !important; }
+  .sales-text-mobile {
+    display: inline !important;
+    color: #1D4739;
+    font-weight: 500;
+  }
+  .sales-icon { color: #1D4739; }
+  .sales-notification-block { font-size: 12px; }
+  /* Hide last-sale info on mobile (no numbers shown) */
+  .sales-separator,
+  #sales-info { display: none !important; }
+}
+@media (max-width: 480px) {
+  .sales-notification-block { font-size: 12px; }
+}
+</style>
+
+<script>
+(function() {
+  var pid = {{ product.id }};
+
+  // ── Real data injected server-side from Shopify Metafields ──────────────────
+  // These are updated every hour by KarinexRecentlySold.gs (Google Apps Script)
+  var realCount = {{ product.metafields.custom.recently_sold_count | default: 0 | times: 1 }};
+  var realHoursRaw = {{ product.metafields.custom.recently_sold_hours | default: 720 | times: 1 }};
+  var realDays = Math.round(realHoursRaw / 24) || 30;
+
+  var countEl  = document.getElementById('sales-count-' + pid);
+  var hoursEl  = document.getElementById('sales-hours-' + pid);
+  var sepEl    = document.getElementById('sales-sep-' + pid);
+  var infoEl   = document.getElementById('sales-info-' + pid);
+  var desktopEl = document.querySelector('#sales-box-' + pid + ' .sales-text-desktop');
+
+  if (!realCount || realCount < 2) {
+    // No real sales data yet → hide desktop counter completely
+    // Mobile already shows "Beliebtes Modell" via CSS
+    if (desktopEl) desktopEl.style.display = 'none';
+    if (sepEl)     sepEl.style.display     = 'none';
+    if (infoEl)    infoEl.style.display    = 'none';
+    return;
+  }
+
+  // We have real data → display it
+  if (countEl) countEl.innerText = realCount;
+  if (hoursEl) hoursEl.innerText = realDays;
+
+  // ── Last-sale minutes: session-stable random (2–57 min) ─────────────────────
+  var timeKey = 'kx_sale_t_' + pid;
+  var dateKey = 'kx_sale_d_' + pid;
+  var today   = new Date().toDateString();
+
+  if (localStorage.getItem(dateKey) !== today) {
+    localStorage.removeItem(timeKey);
+    localStorage.setItem(dateKey, today);
+  }
+
+  var mins = parseInt(localStorage.getItem(timeKey));
+  if (!mins || mins > 60) {
+    mins = Math.floor(Math.random() * 55) + 2;
+    localStorage.setItem(timeKey, mins);
+  }
+
+  var timeEl = document.getElementById('last-sale-' + pid);
+  if (timeEl) timeEl.innerText = mins;
+
+  // ── City list ────────────────────────────────────────────────────────────────
+  var cities = [
+    'Berlin','München','Hamburg','Köln','Frankfurt','Stuttgart','Düsseldorf','Leipzig',
+    'Dresden','Hannover','Bremen','Nürnberg','Dortmund','Essen','Lübeck','Kiel',
+    'Rostock','Flensburg','Aachen','Bonn','Münster','Trier','Mainz','Wuppertal',
+    'Bielefeld','Heidelberg','Freiburg','Ulm','Augsburg','Regensburg','Würzburg',
+    'Potsdam','Erfurt','Weimar','Jena','Magdeburg','Halle','Görlitz','Bamberg'
+  ];
+
+  var hourFactor = Math.floor(Date.now() / 3600000); // changes every hour
+  var cityEl = document.getElementById('sale-city-' + pid);
+  if (cityEl) cityEl.innerText = cities[(pid + realCount + hourFactor) % cities.length];
+
+})();
+</script>

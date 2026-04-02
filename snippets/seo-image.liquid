@@ -1,0 +1,23 @@
+{%- comment -%}
+  SEO Helper: Image with Dimensions
+  Ensures all images have width/height for better CLS
+  Usage: {% render 'seo-image', image: product.featured_image, width: 800, height: 600 %}
+{%- endcomment -%}
+
+{%- liquid
+  assign img_width = width | default: 800
+  assign img_height = height | default: 600
+  assign img_alt = image.alt | default: title | default: shop.name
+  assign img_loading = loading | default: 'lazy'
+  assign img_class = class | default: ''
+-%}
+
+<img
+  src="{{ image | image_url: width: img_width }}"
+  width="{{ img_width }}"
+  height="{{ img_height }}"
+  alt="{{ img_alt | escape }}"
+  loading="{{ img_loading }}"
+  {%- if img_class != blank %} class="{{ img_class }}"{% endif -%}
+  decoding="async"
+>

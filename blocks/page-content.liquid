@@ -1,0 +1,27 @@
+
+
+<rte-formatter>
+  {%- capture _pc -%}{{ page.content }}{%- endcapture -%}
+  {%- if _pc contains '<title>' -%}
+    {%- assign _segments = _pc | split: '<title>' -%}
+    {%- for _seg in _segments -%}
+      {%- if forloop.first -%}
+        {{- _seg -}}
+      {%- else -%}
+        {%- assign _after_close = _seg | split: '</title>' -%}
+        {%- for _piece in _after_close -%}
+          {%- unless forloop.first -%}{{- _piece -}}{%- endunless -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- else -%}
+    {{- page.content -}}
+  {%- endif -%}
+</rte-formatter>
+
+{% schema %}
+{
+  "name": "t:names.page_content",
+  "class": "rte"
+}
+{% endschema %}

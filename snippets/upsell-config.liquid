@@ -1,0 +1,44 @@
+{% comment %}
+  ===========================================
+  UPSELL CONFIGURATION
+  ===========================================
+  
+  WIE WIR ES BENUTZEN:
+  1. Finde den "Handle" des Produkts im Warenkorb (Trigger).
+     - Du findest ihn im Produktlink: karinex.de/products/THIS-IS-THE-HANDLE
+     - Oder auf der Produktseite unten (SEO section).
+  
+  2. Finde den "Handle" des Produkts, das du vorschlagen willst (Upsell).
+  
+  3. Fuege eine neue Regel unten im gleichen Format hinzu:
+     
+     {% when 'produkt-handle-im-warenkorb' %}
+        {% assign upsell_handle = 'vorgeschlagenes-produkt-handle' %}
+
+  ===========================================
+{% endcomment %}
+
+{% assign upsell_handle = nil %}
+
+{% case trigger_handle %}
+
+  {% comment %} --- BEISPIELE --- {% endcomment %}
+
+  {% comment %} If buying Windows 10 -> Suggest Office 2024 {% endcomment %}
+  {% when 'windows-10-pro' %} 
+     {% assign upsell_handle = 'microsoft-office-2024-professional-plus-download-kein-abo' %}
+
+  {% comment %} If buying Office 2024 -> Suggest Windows 11 {% endcomment %}
+  {% when 'microsoft-office-2024-professional-plus-download-kein-abo' %}
+     {% assign upsell_handle = 'windows-11-pro-key-kaufen-download' %}
+
+  {% comment %} Example with long handle (Real example) {% endcomment %}
+  {% when 'windows-10-enterprise-lizenz-32-64-bit-original-produktschlussel-sofort-e-mail-versand' %}
+     {% assign upsell_handle = 'microsoft-office-2024-professional-plus-download-kein-abo' %}
+
+  {% comment %} --- FUEGEN SIE HIER IHRE REGELN HINZU --- {% endcomment %}
+  
+  {% when 'original-produkt-handle-hier' %}
+     {% assign upsell_handle = 'vorgeschlagenes-produkt-handle-hier' %}
+
+{% endcase %}

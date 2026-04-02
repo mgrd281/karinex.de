@@ -1,0 +1,271 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+<div class="account-actions">
+  <div class="account-actions__main-menu">
+    <header class="account-actions__header">
+      <h2
+        id="{{ heading_id | default: 'account-heading' }}"
+        class="account-actions__title h5"
+      >
+        {% if customer and customer.first_name != blank %}
+          {{ 'content.account_title_personalized' | t: first_name: customer.first_name }}
+        {% else %}
+          {{ 'content.account_title' | t }}
+        {% endif %}
+      </h2>
+      {% if customer %}
+        <span class="account-actions__email">
+          {% if customer.email %}
+            {{ customer.email }}
+          {% elsif customer.phone %}
+            {{ customer.phone }}
+          {% endif %}
+        </span>
+      {% endif %}
+      <button
+        type="button"
+        class="account-actions__close"
+        onclick="this.closest('details')?.removeAttribute('open'); this.closest('dialog')?.close(); this.closest('[popover]')?.hidePopover();"
+        aria-label="{{ 'accessibility.close' | t }}"
+      >
+        <span class="svg-wrapper">
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </span>
+      </button>
+    </header>
+
+    {% unless customer %}
+      <div
+        class="account-actions__sign-ins"
+        data-skip-subtree-update="true"
+      >
+        <script
+          src="{{ 'account-login-actions.js' | asset_url }}"
+          type="module"
+          fetchpriority="low"
+        ></script>
+        <account-login-actions class="account-actions__shop-login">
+          {{ shop | login_button }}
+        </account-login-actions>
+
+
+        
+        <a
+          href="{% if request.design_mode %}{{ routes.account_url }}{% else %}{{ routes.storefront_login_url }}{% endif %}"
+          class="account-actions__link button button--secondary button--full-width google-login-button"
+        >
+          <span class="svg-wrapper" style="width: 18px; height: 18px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>
+          </span>
+          <span class="account-actions__sign-in-text">
+            Weiter mit Google
+          </span>
+        </a>
+      </div>
+    {% endunless %}
+
+    {% if customer %}
+    <nav class="account-actions__nav">
+      <ul class="account-actions__list">
+        <li class="account-actions__list-item">
+          <a
+            href="{{ routes.account_url }}"
+            class="account-actions__link link-styled"
+          >
+            {{ 'content.account_orders' | t }}
+          </a>
+        </li>
+        <li class="account-actions__list-item">
+          <a
+            href="{{ _root }}pages/rechnungen"
+            class="account-actions__link link-styled"
+          >
+            Meine Rechnungen
+          </a>
+        </li>
+        <li class="account-actions__list-item">
+          <a
+            href="{{ routes.account_addresses_url }}"
+            class="account-actions__link link-styled"
+          >
+            {{ 'content.account_profile' | t }}
+          </a>
+        </li>
+          <li class="account-actions__list-item">
+            <a
+              href="{{ routes.account_logout_url }}"
+              class="account-actions__link link-styled"
+            >
+              {{ 'actions.log_out' | t }}
+            </a>
+          </li>
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .account-actions {
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    /* Remove any default excessive heights */
+    height: auto; 
+  }
+
+  .account-actions__header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: none; /* User Request: Remove Divider Line */
+    gap: 10px;
+  }
+
+  .account-actions__title {
+    --font-h5--size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+    flex: 1;
+    text-align: left;
+    color: var(--color-foreground);
+    /* Remove old overflow logic that might cut long names awkwardly */
+    white-space: normal; 
+  }
+
+  /* Refined Close Button */
+  .account-actions__close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    margin-right: -8px; /* Pulled slightly to edge */
+  }
+  
+  .account-actions__close:hover {
+    background-color: rgba(0,0,0,0.06);
+    color: #000;
+  }
+
+  .account-actions__close .svg-wrapper {
+    width: 18px;
+    height: 18px;
+  }
+
+  .account-actions__email {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #666;
+    padding: 0 20px 10px 20px; /* Below Title */
+    word-break: break-all;
+  }
+
+  /* Sign In Area */
+  .account-actions__sign-ins {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .account-actions__link.button {
+    border-radius: 8px; /* Rounded corners */
+    font-weight: 600;
+    text-transform: none; /* remove legacy caps */
+    letter-spacing: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+  }
+  
+  .account-actions__link.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  .account-actions__nav {
+    padding: 8px 0;
+  }
+
+  .account-actions__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .account-actions__list-item {
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .account-actions__list-item:last-child {
+    border-bottom: none;
+  }
+
+  .account-actions__link.link-styled {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--color-foreground);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.1s ease;
+  }
+
+  .account-actions__link.link-styled:hover {
+    background-color: rgba(0,0,0,0.03);
+    color: #000;
+  }
+
+  .google-login-button {
+    margin-top: 10px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap; /* Prevent wrapping */
+    height: auto; /* Let padding define height or match other buttons */
+    min-height: 44px; /* Ensure sufficient touch target/height */
+    padding: 10px 20px;
+    gap: 10px; /* Space between icon and text */
+    text-decoration: none;
+  }
+  
+  .google-login-button:hover {
+    background-color: #f7f7f7;
+    border-color: #ccc;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Ensure text doesn't overflow or wrap */
+  .google-login-button .account-actions__sign-in-text {
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .button--full-width {
+    width: 100%;
+    justify-content: center;
+  }
+{% endstylesheet %}

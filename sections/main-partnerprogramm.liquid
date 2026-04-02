@@ -1,0 +1,564 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{% comment %} Ultra-Premium Affiliate Program Page – KARINEX {% endcomment %}
+
+<div class="kx-affiliate" id="kx-affiliate">
+
+  {%- comment -%} ═══ 1. HERO SECTION ═══ {%- endcomment -%}
+  <section class="kx-hero">
+    <div class="kx-hero__inner">
+      <span class="kx-hero__badge">KARINEX Partnerprogramm</span>
+      <h1 class="kx-hero__title">Verdienen Sie Geld mit dem KARINEX Partnerprogramm</h1>
+      <p class="kx-hero__sub">Empfehlen Sie hochwertige Produkte und verdienen Sie Provision für jeden Verkauf.</p>
+      <div class="kx-hero__ctas">
+        <button type="button" class="kx-btn kx-btn--primary" data-kx-modal>Jetzt Affiliate werden</button>
+        <a href="#kx-how" class="kx-btn kx-btn--ghost">Mehr erfahren</a>
+      </div>
+      <div class="kx-hero__trust">
+        <span>✓ Bis zu 20 % Provision</span>
+        <span>✓ 30 Tage Tracking</span>
+        <span>✓ Monatliche Auszahlung</span>
+        <span>✓ 100 % kostenlos</span>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 2. EARNINGS CALCULATOR ═══ {%- endcomment -%}
+  <section class="kx-calc" id="kx-calc">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Wie viel können Sie verdienen?</h2>
+      <p class="kx-section-sub">Berechnen Sie Ihren möglichen monatlichen Verdienst.</p>
+      <div class="kx-calc__grid">
+        <div class="kx-calc__fields">
+          <label class="kx-calc__label">
+            <span>Traffic pro Monat</span>
+            <input type="range" id="kx-traffic" min="100" max="100000" value="5000" step="100">
+            <output id="kx-traffic-val">5.000</output>
+          </label>
+          <label class="kx-calc__label">
+            <span>Conversion Rate</span>
+            <input type="range" id="kx-conv" min="0.5" max="10" value="2" step="0.1">
+            <output id="kx-conv-val">2,0 %</output>
+          </label>
+          <label class="kx-calc__label">
+            <span>Ø Warenkorb</span>
+            <input type="range" id="kx-aov" min="5" max="200" value="25" step="1">
+            <output id="kx-aov-val">25 €</output>
+          </label>
+        </div>
+        <div class="kx-calc__result">
+          <span class="kx-calc__result-label">Monatlicher Verdienst</span>
+          <span class="kx-calc__result-value" id="kx-result">€500</span>
+          <span class="kx-calc__result-note">bei 20 % Provision</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 3. WHY PARTNER ═══ {%- endcomment -%}
+  <section class="kx-why">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Warum Partner von KARINEX werden?</h2>
+      <div class="kx-why__grid">
+        <div class="kx-card kx-fade">
+          <div class="kx-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="kx-card__title">Hohe Provision</h3>
+          <p class="kx-card__text">Bis zu 20 % pro Verkauf</p>
+        </div>
+        <div class="kx-card kx-fade">
+          <div class="kx-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="kx-card__title">30 Tage Cookie</h3>
+          <p class="kx-card__text">Langfristige Conversion</p>
+        </div>
+        <div class="kx-card kx-fade">
+          <div class="kx-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+          </div>
+          <h3 class="kx-card__title">Marketing Tools</h3>
+          <p class="kx-card__text">Banner, Deep Links, Tracking</p>
+        </div>
+        <div class="kx-card kx-fade">
+          <div class="kx-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+          </div>
+          <h3 class="kx-card__title">Schnelle Auszahlung</h3>
+          <p class="kx-card__text">Monatliche Auszahlung</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 4. HOW IT WORKS ═══ {%- endcomment -%}
+  <section class="kx-how" id="kx-how">
+    <div class="kx-container">
+      <h2 class="kx-section-title">So funktioniert es</h2>
+      <div class="kx-steps">
+        <div class="kx-step kx-fade"><span class="kx-step__num">1</span><h3>Registrieren</h3><p>Kostenloses Konto anlegen</p></div>
+        <div class="kx-step__line"></div>
+        <div class="kx-step kx-fade"><span class="kx-step__num">2</span><h3>Affiliate Link erhalten</h3><p>Persönlichen Link generieren</p></div>
+        <div class="kx-step__line"></div>
+        <div class="kx-step kx-fade"><span class="kx-step__num">3</span><h3>Produkte empfehlen</h3><p>Teilen Sie Ihren Link</p></div>
+        <div class="kx-step__line"></div>
+        <div class="kx-step kx-fade"><span class="kx-step__num">4</span><h3>Provision verdienen</h3><p>Geld bei jedem Verkauf</p></div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 5. PRODUCTS TO PROMOTE ═══ {%- endcomment -%}
+  <section class="kx-products">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Produkte, die Sie bewerben können</h2>
+      <p class="kx-section-sub">Vier starke Kategorien mit hoher Conversion.</p>
+      <div class="kx-products__grid">
+        <div class="kx-prod kx-fade">
+          <div class="kx-prod__icon">💻</div>
+          <h3>Software</h3>
+          <span class="kx-prod__badge">20 % Provision</span>
+          <p>Ø Conversion: 4,2 %</p>
+        </div>
+        <div class="kx-prod kx-fade">
+          <div class="kx-prod__icon">⌚</div>
+          <h3>Uhren</h3>
+          <span class="kx-prod__badge">12 % Provision</span>
+          <p>Ø Conversion: 2,8 %</p>
+        </div>
+        <div class="kx-prod kx-fade">
+          <div class="kx-prod__icon">🧱</div>
+          <h3>LEGO</h3>
+          <span class="kx-prod__badge">10 % Provision</span>
+          <p>Ø Conversion: 3,5 %</p>
+        </div>
+        <div class="kx-prod kx-fade">
+          <div class="kx-prod__icon">🎒</div>
+          <h3>Accessories</h3>
+          <span class="kx-prod__badge">8 % Provision</span>
+          <p>Ø Conversion: 3,1 %</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 6. SOCIAL PROOF ═══ {%- endcomment -%}
+  <section class="kx-proof">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Bereits über 2.000 Partner verdienen mit KARINEX</h2>
+      <div class="kx-proof__stats">
+        <div class="kx-stat"><span class="kx-stat__val">4,8/5</span><span class="kx-stat__label">Partner Bewertung</span></div>
+        <div class="kx-stat"><span class="kx-stat__val">1M+</span><span class="kx-stat__label">Monatliche Besucher</span></div>
+        <div class="kx-stat"><span class="kx-stat__val">50.000+</span><span class="kx-stat__label">Bestellungen</span></div>
+      </div>
+      <div class="kx-testimonials">
+        <div class="kx-testimonial kx-fade">
+          <p>„Sehr hohe Conversion Rate. Die Produkte verkaufen sich quasi von selbst."</p>
+          <span>— Tech Influencer</span>
+        </div>
+        <div class="kx-testimonial kx-fade">
+          <p>„Perfekt für Vergleichsseiten. Schnelle Auszahlung und guter Support."</p>
+          <span>— Blogger</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 7. DASHBOARD PREVIEW ═══ {%- endcomment -%}
+  <section class="kx-dashboard">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Ihr Affiliate Dashboard</h2>
+      <p class="kx-section-sub">Verfolgen Sie Ihre Einnahmen, Klicks und Conversions in Echtzeit.</p>
+      <div class="kx-dashboard__features">
+        <span>📊 Tracking Links</span>
+        <span>💰 Revenue Stats</span>
+        <span>📈 Click Analytics</span>
+        <span>🏦 Payout History</span>
+      </div>
+      <div class="kx-dashboard__img">
+        <img src="{{ 'affiliate-dashboard-mockup.png' | asset_url }}" alt="KARINEX Affiliate Dashboard" loading="lazy" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 8. COMMISSION TABLE ═══ {%- endcomment -%}
+  <section class="kx-commission">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Provisionsstruktur</h2>
+      <div class="kx-table-wrap">
+        <table class="kx-table">
+          <thead><tr><th>Kategorie</th><th>Provision</th></tr></thead>
+          <tbody>
+            <tr><td>Software</td><td><strong>20 %</strong></td></tr>
+            <tr><td>Uhren</td><td><strong>12 %</strong></td></tr>
+            <tr><td>LEGO</td><td><strong>10 %</strong></td></tr>
+            <tr><td>Accessories</td><td><strong>8 %</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 9. FAQ ═══ {%- endcomment -%}
+  <section class="kx-faq">
+    <div class="kx-container">
+      <h2 class="kx-section-title">Häufig gestellte Fragen</h2>
+      <div class="kx-faq__list">
+        <details class="kx-faq__item"><summary>Was kostet das Affiliate Programm?</summary><p>Die Teilnahme ist zu 100 % kostenlos. Es gibt keine versteckten Kosten.</p></details>
+        <details class="kx-faq__item"><summary>Wann werde ich bezahlt?</summary><p>Die Auszahlung erfolgt monatlich nach Bestätigung der Bestellungen.</p></details>
+        <details class="kx-faq__item"><summary>Wie funktioniert das Tracking?</summary><p>Sie erhalten einen persönlichen Affiliate Link. Jeder Klick und Kauf wird 30 Tage lang verfolgt.</p></details>
+        <details class="kx-faq__item"><summary>Wer kann Partner werden?</summary><p>Website-Betreiber, Blogger, Influencer, Content-Creator und Unternehmen.</p></details>
+        <details class="kx-faq__item"><summary>Welche Marketing-Materialien erhalte ich?</summary><p>Banner, Deep Links, Produktfeeds und individuelle Tracking-Links.</p></details>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 10. FINAL CTA ═══ {%- endcomment -%}
+  <section class="kx-final">
+    <div class="kx-container">
+      <h2 class="kx-final__title">Starten Sie heute als KARINEX Partner</h2>
+      <p class="kx-final__text">Werden Sie Teil unseres wachsenden Affiliate Netzwerks und verdienen Sie mit jeder Empfehlung.</p>
+      <div class="kx-final__ctas">
+        <button type="button" class="kx-btn kx-btn--primary kx-btn--lg" data-kx-modal>Jetzt Affiliate werden</button>
+        <a href="{{ _root }}pages/kontakt" class="kx-btn kx-btn--ghost kx-btn--lg">Partner Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ REGISTRATION MODAL ═══ {%- endcomment -%}
+  <div class="kx-modal-overlay" id="kx-modal" aria-hidden="true">
+    <div class="kx-modal">
+      <button type="button" class="kx-modal__close" id="kx-modal-close" aria-label="Schließen">&times;</button>
+
+      <div class="kx-modal__form-view" id="kx-form-view">
+        <div class="kx-modal__header">
+          <span class="kx-modal__icon">🚀</span>
+          <h3 class="kx-modal__title">Affiliate Partner werden</h3>
+          <p class="kx-modal__sub">Füllen Sie das Formular aus und erhalten Sie sofort Ihren persönlichen Affiliate Link.</p>
+        </div>
+        <form id="kx-affiliate-form" class="kx-modal__form">
+          <div class="kx-modal__field">
+            <label for="kx-f-name">Vollständiger Name *</label>
+            <input type="text" id="kx-f-name" placeholder="Max Mustermann" required>
+          </div>
+          <div class="kx-modal__field">
+            <label for="kx-f-email">E-Mail-Adresse *</label>
+            <input type="email" id="kx-f-email" placeholder="max@beispiel.de" required>
+          </div>
+          <div class="kx-modal__field">
+            <label for="kx-f-website">Website / Social Media</label>
+            <input type="url" id="kx-f-website" placeholder="https://ihre-website.de">
+          </div>
+          <div class="kx-modal__field">
+            <label for="kx-f-type">Partner-Typ</label>
+            <select id="kx-f-type">
+              <option value="affiliate">Affiliate Partner (Website / Blog)</option>
+              <option value="influencer">Influencer (Instagram / TikTok)</option>
+              <option value="b2b">Reseller / B2B Partner</option>
+            </select>
+          </div>
+          <button type="submit" class="kx-btn kx-btn--primary kx-btn--full">Jetzt registrieren & Link erhalten</button>
+          <p class="kx-modal__note">✓ 100 % kostenlos · Keine Kreditkarte nötig</p>
+        </form>
+      </div>
+
+      <div class="kx-modal__success-view" id="kx-success-view" style="display:none">
+        <div class="kx-modal__header">
+          <span class="kx-modal__icon kx-modal__icon--success">✅</span>
+          <h3 class="kx-modal__title">Willkommen im Partnerprogramm!</h3>
+          <p class="kx-modal__sub">Ihr persönlicher Affiliate Link wurde erstellt.</p>
+        </div>
+        <div class="kx-modal__link-box">
+          <label>Ihr Affiliate Link:</label>
+          <div class="kx-modal__link-row">
+            <input type="text" id="kx-aff-link" readonly>
+            <button type="button" class="kx-btn kx-btn--primary kx-btn--copy" id="kx-copy-btn">Kopieren</button>
+          </div>
+          <p class="kx-modal__copied" id="kx-copied" style="display:none">✓ Link kopiert!</p>
+        </div>
+        <div class="kx-modal__next-steps">
+          <h4>Nächste Schritte:</h4>
+          <ol>
+            <li>Teilen Sie Ihren Link auf Ihrer Website oder Social Media</li>
+            <li>Verdienen Sie 20 % Provision für jeden Verkauf</li>
+            <li>Wir kontaktieren Sie per E-Mail mit weiteren Details</li>
+          </ol>
+        </div>
+        <button type="button" class="kx-btn kx-btn--ghost kx-btn--full kx-btn--dark" id="kx-modal-done">Fertig</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{%- comment -%} ═══════════════════════════ CSS ═══════════════════════════ {%- endcomment -%}
+<style>
+/* ── Reset & Base ── */
+.kx-affiliate{--kx:#0f3b2e;--kx-light:#d9f3e6;--kx-bg:#f8faf9;--kx-white:#fff;--kx-text:#1a1a1a;--kx-muted:#6b7280;--kx-radius:16px;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--kx-text);line-height:1.6;overflow-x:hidden}
+.kx-container{max-width:1120px;margin:0 auto;padding:0 24px}
+.kx-section-title{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;text-align:center;margin-bottom:.5rem;letter-spacing:-.02em;color:var(--kx-text)}
+.kx-section-sub{text-align:center;color:var(--kx-muted);font-size:1.05rem;margin-bottom:3rem}
+.kx-btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 32px;border-radius:999px;font-weight:600;font-size:.95rem;text-decoration:none;transition:all .25s ease;cursor:pointer;border:none}
+.kx-btn--primary{background:var(--kx);color:#fff}
+.kx-btn--primary:hover{background:#174a3a;transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,59,46,.25)}
+.kx-btn--ghost{background:transparent;border:2px solid rgba(255,255,255,.4);color:#fff}
+.kx-btn--ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.7)}
+.kx-btn--lg{padding:18px 40px;font-size:1.05rem}
+
+/* ── 1. HERO ── */
+.kx-hero{background:linear-gradient(135deg,#0a2e22 0%,#0f3b2e 40%,#1a5c47 100%);color:#fff;padding:clamp(80px,12vw,140px) 24px clamp(60px,10vw,120px);text-align:center;position:relative;overflow:hidden}
+.kx-hero::before{content:'';position:absolute;top:-40%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(217,243,230,.12) 0%,transparent 70%);border-radius:50%}
+.kx-hero::after{content:'';position:absolute;bottom:-30%;left:-15%;width:500px;height:500px;background:radial-gradient(circle,rgba(217,243,230,.08) 0%,transparent 70%);border-radius:50%}
+.kx-hero__inner{position:relative;z-index:1;max-width:760px;margin:0 auto}
+.kx-hero__badge{display:inline-block;background:rgba(217,243,230,.15);border:1px solid rgba(217,243,230,.25);padding:6px 20px;border-radius:999px;font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1.5rem;backdrop-filter:blur(8px)}
+.kx-hero__title{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin:0 0 1rem;letter-spacing:-.03em}
+.kx-hero__sub{font-size:clamp(1rem,2.5vw,1.2rem);color:rgba(255,255,255,.8);max-width:560px;margin:0 auto 2rem}
+.kx-hero__ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.kx-hero__trust{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:center;font-size:.85rem;color:rgba(255,255,255,.7)}
+
+/* ── 2. CALCULATOR ── */
+.kx-calc{background:var(--kx-bg);padding:clamp(60px,8vw,100px) 0}
+.kx-calc__grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.kx-calc__fields{display:flex;flex-direction:column;gap:28px}
+.kx-calc__label{display:flex;flex-direction:column;gap:8px}
+.kx-calc__label span{font-weight:600;font-size:.9rem}
+.kx-calc__label input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--kx) 0%,var(--kx-light) 100%);outline:none;cursor:pointer}
+.kx-calc__label input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--kx);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);cursor:pointer}
+.kx-calc__label output{font-weight:700;font-size:1.1rem;color:var(--kx)}
+.kx-calc__result{text-align:center;background:var(--kx-white);border-radius:var(--kx-radius);padding:48px 32px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.kx-calc__result-label{display:block;font-size:.9rem;color:var(--kx-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kx-calc__result-value{display:block;font-size:clamp(2.5rem,6vw,4rem);font-weight:800;color:var(--kx);letter-spacing:-.03em;line-height:1}
+.kx-calc__result-note{display:block;margin-top:12px;font-size:.85rem;color:var(--kx-muted)}
+
+/* ── 3. WHY ── */
+.kx-why{padding:clamp(60px,8vw,100px) 0;background:var(--kx-white)}
+.kx-why__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.kx-card{background:var(--kx-bg);border-radius:var(--kx-radius);padding:32px 24px;text-align:center;transition:transform .3s ease,box-shadow .3s ease}
+.kx-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(15,59,46,.1)}
+.kx-card__icon{width:52px;height:52px;margin:0 auto 16px;background:var(--kx-light);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--kx)}
+.kx-card__icon svg{width:26px;height:26px}
+.kx-card__title{font-weight:700;font-size:1.05rem;margin:0 0 6px}
+.kx-card__text{font-size:.9rem;color:var(--kx-muted);margin:0}
+
+/* ── 4. HOW IT WORKS ── */
+.kx-how{padding:clamp(60px,8vw,100px) 0;background:var(--kx-bg)}
+.kx-steps{display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:wrap;margin-top:3rem}
+.kx-step{text-align:center;flex:0 0 180px;padding:0 12px}
+.kx-step__num{width:48px;height:48px;border-radius:50%;background:var(--kx);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:1.2rem;margin-bottom:14px}
+.kx-step h3{font-size:1rem;font-weight:700;margin:0 0 4px}
+.kx-step p{font-size:.85rem;color:var(--kx-muted);margin:0}
+.kx-step__line{width:48px;height:2px;background:linear-gradient(90deg,var(--kx-light),var(--kx));margin-top:24px;flex-shrink:0;align-self:flex-start}
+
+/* ── 5. PRODUCTS ── */
+.kx-products{padding:clamp(60px,8vw,100px) 0;background:var(--kx-white)}
+.kx-products__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.kx-prod{background:var(--kx-bg);border-radius:var(--kx-radius);padding:32px 24px;text-align:center;transition:transform .3s,box-shadow .3s}
+.kx-prod:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(15,59,46,.08)}
+.kx-prod__icon{font-size:2.4rem;margin-bottom:12px}
+.kx-prod h3{font-weight:700;margin:0 0 8px}
+.kx-prod__badge{display:inline-block;background:var(--kx);color:#fff;padding:4px 14px;border-radius:999px;font-size:.78rem;font-weight:600;margin-bottom:8px}
+.kx-prod p{font-size:.85rem;color:var(--kx-muted);margin:0}
+
+/* ── 6. SOCIAL PROOF ── */
+.kx-proof{padding:clamp(60px,8vw,100px) 0;background:var(--kx);color:#fff;text-align:center}
+.kx-proof .kx-section-title{color:#fff}
+.kx-proof__stats{display:flex;justify-content:center;gap:clamp(32px,6vw,80px);margin:2rem 0 3rem;flex-wrap:wrap}
+.kx-stat__val{display:block;font-size:clamp(2rem,4vw,2.8rem);font-weight:800;letter-spacing:-.02em}
+.kx-stat__label{font-size:.85rem;color:rgba(255,255,255,.7)}
+.kx-testimonials{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:800px;margin:0 auto}
+.kx-testimonial{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--kx-radius);padding:28px 24px;text-align:left;backdrop-filter:blur(8px)}
+.kx-testimonial p{font-size:1.05rem;font-style:italic;margin:0 0 12px;line-height:1.5}
+.kx-testimonial span{font-size:.85rem;color:rgba(255,255,255,.6);font-weight:600}
+
+/* ── 7. DASHBOARD ── */
+.kx-dashboard{padding:clamp(60px,8vw,100px) 0;background:var(--kx-bg)}
+.kx-dashboard__features{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:2.5rem;font-size:.95rem;font-weight:600}
+.kx-dashboard__img{max-width:900px;margin:0 auto;border-radius:var(--kx-radius);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12)}
+.kx-dashboard__img img{width:100%;display:block}
+
+/* ── 8. COMMISSION TABLE ── */
+.kx-commission{padding:clamp(60px,8vw,100px) 0;background:var(--kx-white)}
+.kx-table-wrap{max-width:600px;margin:2rem auto 0;border-radius:var(--kx-radius);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.kx-table{width:100%;border-collapse:collapse}
+.kx-table th{background:var(--kx);color:#fff;padding:16px 24px;text-align:left;font-weight:600;font-size:.9rem;text-transform:uppercase;letter-spacing:.04em}
+.kx-table td{padding:16px 24px;border-bottom:1px solid #f0f0f0;font-size:.95rem}
+.kx-table tr:last-child td{border-bottom:none}
+.kx-table tr:hover td{background:var(--kx-light)}
+
+/* ── 9. FAQ ── */
+.kx-faq{padding:clamp(60px,8vw,100px) 0;background:var(--kx-bg)}
+.kx-faq__list{max-width:720px;margin:2rem auto 0;display:flex;flex-direction:column;gap:12px}
+.kx-faq__item{background:var(--kx-white);border-radius:var(--kx-radius);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.kx-faq__item summary{padding:20px 24px;font-weight:700;font-size:1rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.kx-faq__item summary:hover{background:var(--kx-bg)}
+.kx-faq__item summary::after{content:'+';font-size:1.4rem;font-weight:300;color:var(--kx);transition:transform .3s}
+.kx-faq__item[open] summary::after{transform:rotate(45deg)}
+.kx-faq__item summary::-webkit-details-marker{display:none}
+.kx-faq__item p{padding:0 24px 20px;margin:0;color:var(--kx-muted);line-height:1.7}
+
+/* ── 10. FINAL CTA ── */
+.kx-final{padding:clamp(80px,10vw,120px) 24px;background:linear-gradient(135deg,#0a2e22,#0f3b2e 50%,#1a5c47);color:#fff;text-align:center}
+.kx-final__title{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;margin:0 0 1rem;letter-spacing:-.02em}
+.kx-final__text{font-size:1.1rem;color:rgba(255,255,255,.8);margin:0 auto 2rem;max-width:520px}
+.kx-final__ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.kx-final .kx-btn--primary{background:#fff;color:var(--kx)}
+.kx-final .kx-btn--primary:hover{background:var(--kx-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.kx-final .kx-btn--ghost{border-color:rgba(255,255,255,.35);color:#fff}
+
+/* ── Animations ── */
+.kx-fade{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.kx-fade.is-visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .kx-why__grid,.kx-products__grid{grid-template-columns:repeat(2,1fr)}
+  .kx-calc__grid{grid-template-columns:1fr}
+  .kx-testimonials{grid-template-columns:1fr}
+  .kx-steps{gap:16px}
+  .kx-step__line{display:none}
+}
+@media(max-width:600px){
+  .kx-why__grid,.kx-products__grid{grid-template-columns:1fr}
+  .kx-hero__ctas{flex-direction:column;align-items:center}
+  .kx-hero__trust{flex-direction:column;align-items:center}
+  .kx-modal{margin:16px;max-height:calc(100vh - 32px)}
+  .kx-final__ctas{flex-direction:column;align-items:center}
+  .kx-steps{flex-direction:column;align-items:center}
+}
+
+/* ── MODAL ── */
+.kx-modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.kx-modal-overlay.is-open{opacity:1;visibility:visible}
+.kx-modal{background:#fff;border-radius:20px;padding:40px 36px;max-width:480px;width:100%;position:relative;transform:translateY(20px) scale(.97);transition:transform .35s ease;box-shadow:0 24px 64px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.kx-modal-overlay.is-open .kx-modal{transform:translateY(0) scale(1)}
+.kx-modal__close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.8rem;color:#999;cursor:pointer;line-height:1;transition:color .2s}
+.kx-modal__close:hover{color:#333}
+.kx-modal__header{text-align:center;margin-bottom:28px}
+.kx-modal__icon{font-size:2.4rem;display:block;margin-bottom:12px}
+.kx-modal__icon--success{font-size:3rem}
+.kx-modal__title{font-size:1.4rem;font-weight:800;margin:0 0 8px;color:var(--kx-text)}
+.kx-modal__sub{font-size:.92rem;color:var(--kx-muted);margin:0;line-height:1.5}
+.kx-modal__form{display:flex;flex-direction:column;gap:18px}
+.kx-modal__field{display:flex;flex-direction:column;gap:6px}
+.kx-modal__field label{font-size:.85rem;font-weight:600;color:var(--kx-text)}
+.kx-modal__field input,.kx-modal__field select{padding:13px 16px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:.95rem;font-family:inherit;transition:border-color .2s,box-shadow .2s;outline:none;background:#fafafa}
+.kx-modal__field input:focus,.kx-modal__field select:focus{border-color:var(--kx);box-shadow:0 0 0 3px rgba(15,59,46,.1);background:#fff}
+.kx-btn--full{width:100%;margin-top:6px}
+.kx-modal__note{text-align:center;font-size:.8rem;color:var(--kx-muted);margin:8px 0 0}
+.kx-modal__link-box{background:var(--kx-bg);border-radius:14px;padding:20px;margin-bottom:24px}
+.kx-modal__link-box label{font-size:.85rem;font-weight:600;display:block;margin-bottom:8px}
+.kx-modal__link-row{display:flex;gap:8px}
+.kx-modal__link-row input{flex:1;padding:12px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:.85rem;font-family:monospace;background:#fff}
+.kx-btn--copy{padding:12px 20px;font-size:.85rem;white-space:nowrap}
+.kx-modal__copied{color:var(--kx);font-weight:600;font-size:.85rem;margin:8px 0 0;text-align:center}
+.kx-modal__next-steps{margin-bottom:24px}
+.kx-modal__next-steps h4{font-size:.95rem;font-weight:700;margin:0 0 10px}
+.kx-modal__next-steps ol{margin:0;padding-left:20px;font-size:.9rem;color:var(--kx-muted);line-height:1.8}
+.kx-btn--dark{border:2px solid #e5e7eb;color:var(--kx-text)}
+.kx-btn--dark:hover{background:var(--kx-bg)}
+</style>
+
+{%- comment -%} ═══════════════════════════ JS ═══════════════════════════ {%- endcomment -%}
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  /* ── Calculator ── */
+  var t=document.getElementById('kx-traffic'),c=document.getElementById('kx-conv'),a=document.getElementById('kx-aov');
+  var tv=document.getElementById('kx-traffic-val'),cv=document.getElementById('kx-conv-val'),av=document.getElementById('kx-aov-val'),rv=document.getElementById('kx-result');
+  function calc(){
+    if(!t||!c||!a)return;
+    var traffic=parseFloat(t.value),conv=parseFloat(c.value)/100,aov=parseFloat(a.value);
+    var earn=Math.round(traffic*conv*aov*0.2);
+    tv.textContent=traffic.toLocaleString('de-DE');
+    cv.textContent=c.value.replace('.',',')+' %';
+    av.textContent=a.value+' €';
+    rv.textContent='€'+earn.toLocaleString('de-DE');
+  }
+  if(t){t.addEventListener('input',calc);c.addEventListener('input',calc);a.addEventListener('input',calc);calc();}
+
+  /* ── Fade-In Observer ── */
+  var fades=document.querySelectorAll('.kx-fade');
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-visible');obs.unobserve(e.target);}});
+    },{threshold:0.15});
+    fades.forEach(function(el){obs.observe(el);});
+  } else {
+    fades.forEach(function(el){el.classList.add('is-visible');});
+  }
+
+  /* ── Modal ── */
+  var modal=document.getElementById('kx-modal');
+  var formView=document.getElementById('kx-form-view');
+  var successView=document.getElementById('kx-success-view');
+  var form=document.getElementById('kx-affiliate-form');
+  var closeBtn=document.getElementById('kx-modal-close');
+  var doneBtn=document.getElementById('kx-modal-done');
+  var copyBtn=document.getElementById('kx-copy-btn');
+  var linkInput=document.getElementById('kx-aff-link');
+  var copiedMsg=document.getElementById('kx-copied');
+
+  function openModal(){modal.classList.add('is-open');document.body.style.overflow='hidden';}
+  function closeModal(){modal.classList.remove('is-open');document.body.style.overflow='';setTimeout(function(){formView.style.display='';successView.style.display='none';form.reset();copiedMsg.style.display='none';},300);}
+
+  document.querySelectorAll('[data-kx-modal]').forEach(function(btn){btn.addEventListener('click',openModal);});
+  if(closeBtn) closeBtn.addEventListener('click',closeModal);
+  if(doneBtn) doneBtn.addEventListener('click',closeModal);
+  if(modal) modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
+
+  if(form) form.addEventListener('submit',function(e){
+    e.preventDefault();
+    /* 1. Gather data */
+    var name=document.getElementById('kx-f-name').value.trim();
+    var email=document.getElementById('kx-f-email').value.trim();
+    var website=document.getElementById('kx-f-website').value.trim() || 'Nicht angegeben';
+    var type=document.getElementById('kx-f-type');
+    var typeText = type.options[type.selectedIndex].text;
+    
+    /* 2. Generate a simple unique affiliate link */
+    var code=name.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8);
+    var hash=0;for(var i=0;i<email.length;i++){hash=((hash<<5)-hash)+email.charCodeAt(i);hash|=0;}
+    code=code+Math.abs(hash).toString(36).slice(0,4);
+    var link=window.location.origin+'?ref='+code;
+    linkInput.value=link;
+    
+    /* 3. Send to Shopify Contact Form silently via AJAX */
+    var formData = new URLSearchParams();
+    formData.append('form_type', 'contact');
+    formData.append('utf8', '✓');
+    formData.append('contact[Name]', name);
+    formData.append('contact[email]', email);
+    formData.append('contact[Website/Social]', website);
+    formData.append('contact[Partner Typ]', typeText);
+    formData.append('contact[Generierter Link]', link);
+    formData.append('contact[Tags]', 'Affiliate, Partnerprogramm');
+    
+    fetch('/contact', {
+      method: 'POST',
+      body: formData,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }).catch(function(){}); // Ignore errors, show success anyway
+
+    /* 4. Show success screen immediately */
+    formView.style.display='none';
+    successView.style.display='block';
+  });
+
+  if(copyBtn) copyBtn.addEventListener('click',function(){
+    linkInput.select();linkInput.setSelectionRange(0,99999);
+    navigator.clipboard.writeText(linkInput.value).then(function(){copiedMsg.style.display='block';copyBtn.textContent='✓ Kopiert';setTimeout(function(){copyBtn.textContent='Kopieren';},2000);});
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Partnerprogramm",
+  "tag": "section",
+  "class": "section-partner",
+  "settings": []
+}
+{% endschema %}

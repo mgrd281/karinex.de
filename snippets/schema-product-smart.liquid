@@ -1,0 +1,157 @@
+{% comment %}
+  Smart Product Schema - Auto-detects Digital vs Physical
+  Digital: Software, Office, Windows, Microsoft
+  Physical: GAMES, LEGO, Herrenuhren, Damenuhren, Spielzeug
+  Mixed: BLACK FRIDAY (auto-detected per product)
+{% endcomment %}
+
+{% liquid
+  # Detect product type based on collections
+  assign is_digital = false
+  assign shipping_countries = 'DE'
+  
+  for collection in product.collections
+    if collection.handle contains 'software' or collection.handle contains 'office' or collection.handle contains 'windows' or collection.handle contains 'microsoft'
+      assign is_digital = true
+      assign shipping_countries = 'DE, AT, CH'
+      break
+    endif
+  endfor
+%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "image": [
+    {%- if product.selected_or_first_available_variant.featured_image -%}
+      "https:{{ product.selected_or_first_available_variant.featured_image | image_url: width: 800, format: 'webp' }}"
+      {%- for image in product.images -%}
+        {%- unless image == product.selected_or_first_available_variant.featured_image -%}
+          ,"https:{{ image | image_url: width: 800, format: 'webp' }}"
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- elsif product.featured_image -%}
+      "https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}"
+      {%- for image in product.images -%}
+        {%- unless image == product.featured_image -%}
+          ,"https:{{ image | image_url: width: 800, format: 'webp' }}"
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+  ],
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  "sku": "{{ product.selected_or_first_available_variant.sku | default: product.id }}",
+  "mpn": "{{ product.selected_or_first_available_variant.barcode | default: product.id }}",
+  {% if product.selected_or_first_available_variant.barcode != blank %}
+  "gtin13": "{{ product.selected_or_first_available_variant.barcode }}",
+  {% endif %}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | default: "Karinex" | json }}
+  },
+  {% if is_digital %}
+  "category": "Software/Digital Product",
+  {% else %}
+  "category": "Physical Product",
+  {% endif %}
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ canonical_url }}",
+    "priceCurrency": "{{ cart.currency.iso_code }}",
+    "price": "{{ product.selected_or_first_available_variant.price | default: product.price | divided_by: 100.0 | replace: ',', '.' }}",
+    {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+    "priceSpecification": {
+      "@type": "UnitPriceSpecification",
+      "priceCurrency": "{{ cart.currency.iso_code }}",
+      "price": "{{ product.selected_or_first_available_variant.compare_at_price | divided_by: 100.0 | replace: ',', '.' }}",
+      "priceType": "https://schema.org/ListPrice"
+    },
+    {%- endif -%}
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
+    "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "{{ shop.name | escape }}"
+    },
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": "0",
+        "currency": "{{ cart.currency.iso_code }}"
+      },
+      "shippingDestination": [
+        {% if is_digital %}
+        {
+          "@type": "DefinedRegion",
+          "addressCountry": ["DE", "AT", "CH"]
+        }
+        {% else %}
+        {
+          "@type": "DefinedRegion",
+          "addressCountry": "DE"
+        }
+        {% endif %}
+      ],
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        {% if is_digital %}
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        }
+        {% else %}
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 1,
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 1,
+          "maxValue": 3,
+          "unitCode": "DAY"
+        }
+        {% endif %}
+      }
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn",
+      "applicableCountry": "DE"
+    }
+  }
+  {%- assign rating_value = product.metafields.reviews.rating.value -%}
+  {%- assign rating_count = product.metafields.reviews.rating_count -%}
+  
+  {%- if product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_value = product.metafields.ddreviews.content.average_star -%}
+    {%- assign rating_count = product.metafields.ddreviews.content.total_reviews -%}
+  {%- endif -%}
+
+  {% if rating_value != blank and rating_value > 0 %}
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ rating_value }}",
+    "reviewCount": "{{ rating_count | default: 1 }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+  {% endif %}
+}
+</script>

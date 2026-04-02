@@ -1,0 +1,537 @@
+
+{%- assign _top_bar_cat = 'default' -%}
+
+{%- if template.name == 'product' -%}
+  {%- assign tb_type = product.type | downcase -%}
+  {%- assign tb_vendor = product.vendor | downcase -%}
+  {%- assign tb_tags = product.tags | join: ',' | downcase -%}
+  
+  {%- for _col in product.collections -%}
+    {%- assign _ch = _col.handle | downcase -%}
+    {%- assign _ct = _col.title | downcase -%}
+    {%- if _ch contains 'lego' or _ct contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}{%- break -%}
+    {%- elsif _ch contains 'uhr' or _ct contains 'uhr' or _ch contains 'watch' or _ch contains 'damenuhr' or _ch contains 'herrenuhr' or _ch contains 'luxus-uhr' -%}{%- assign _top_bar_cat = 'uhren' -%}{%- break -%}
+    {%- elsif _ch contains 'game' or _ct contains 'game' or _ch contains 'games' or _ch contains 'spielzeug' or _ch contains 'playstation' or _ch contains 'nintendo' or _ch contains 'xbox' -%}{%- assign _top_bar_cat = 'games' -%}{%- break -%}
+    {%- elsif _ch contains 'digital' or _ct contains 'software' or _ch contains 'lizenz' or _ch contains 'microsoft' or _ch contains 'antivirus' or _ch contains 'office' -%}{%- assign _top_bar_cat = 'digital' -%}{%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if _top_bar_cat == 'default' -%}
+    {%- if tb_vendor == 'lego' or tb_tags contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}
+    {%- elsif tb_type contains 'uhr' or tb_type contains 'watch' or tb_tags contains 'uhr' or tb_tags contains 'watch' or tb_vendor contains 'michael kors' or tb_vendor contains 'fossil' or tb_vendor contains 'emporio armani' or tb_vendor contains 'diesel' or tb_vendor contains 'casio' or tb_vendor contains 'tag heuer' or tb_vendor contains 'daniel wellington' -%}{%- assign _top_bar_cat = 'uhren' -%}
+    {%- elsif tb_type contains 'game' or tb_type contains 'spiel' or tb_tags contains 'game' or tb_tags contains 'games' -%}{%- assign _top_bar_cat = 'games' -%}
+    {%- elsif tb_type contains 'digital' or tb_type contains 'software' or tb_type contains 'lizenz' or tb_tags contains 'digital' or tb_tags contains 'software' or product.requires_shipping == false -%}{%- assign _top_bar_cat = 'digital' -%}
+    {%- endif -%}
+  {%- endif -%}
+
+{%- elsif template.name == 'collection' -%}
+  {%- assign _ch = collection.handle | downcase -%}
+  {%- assign _ct = collection.title | downcase -%}
+  {%- if _ch contains 'lego' or _ct contains 'lego' -%}{%- assign _top_bar_cat = 'lego' -%}
+  {%- elsif _ch contains 'uhr' or _ct contains 'uhr' or _ch contains 'watch' or _ch contains 'damenuhr' or _ch contains 'herrenuhr' or _ch contains 'luxus-uhr' -%}{%- assign _top_bar_cat = 'uhren' -%}
+  {%- elsif _ch contains 'game' or _ct contains 'game' or _ch contains 'games' or _ch contains 'spielzeug' or _ch contains 'playstation' or _ch contains 'nintendo' or _ch contains 'xbox' -%}{%- assign _top_bar_cat = 'games' -%}
+  {%- elsif _ch contains 'digital' or _ct contains 'software' or _ch contains 'lizenz' or _ch contains 'microsoft' or _ch contains 'antivirus' or _ch contains 'office' -%}{%- assign _top_bar_cat = 'digital' -%}
+  {%- endif -%}
+{%- endif -%}
+
+  <div id="announcement-bar-{{ section.id }}" class="announcement-bar-wrapper {% if template.name == 'product' %}is-pdp{% endif %}">
+    <div class="announcement-bar-content">
+      
+      {% if section.settings.show_timer %}
+        <div class="sale-timer-left">
+          <span class="timer-icon">⏳</span>
+          <span class="timer-text">Endet in:</span>
+          <span class="timer-countdown" id="countdown-compact">00:00:00</span>
+        </div>
+      {% endif %}
+      
+      <div class="announcement-center">
+        {%- if _top_bar_cat == 'uhren' -%}
+          <div class="announcement-message active">
+            <span class="announcement-text">{{ section.settings.text_uhren | default: 'Geprüfte Echtheit. Volle Garantie. Versicherter Wertversand.' }}</span>
+          </div>
+        {%- elsif _top_bar_cat == 'lego' -%}
+          <div class="announcement-message active">
+            <span class="announcement-text">{{ section.settings.text_lego | default: 'Werkseitig versiegelt (MISB). Sammlerschutz & sicherer Versand.' }}</span>
+          </div>
+        {%- elsif _top_bar_cat == 'digital' -%}
+          <div class="announcement-message active">
+            <span class="announcement-text">{{ section.settings.text_digital | default: '100 % legale Lizenzen. Blitzversand & deutscher Support.' }}</span>
+          </div>
+        {%- elsif _top_bar_cat == 'games' -%}
+          <div class="announcement-message active">
+            <span class="announcement-text">{{ section.settings.text_games | default: 'Factory Sealed. Offizielle deutsche Verkaufsversionen (USK).' }}</span>
+          </div>
+        {%- else -%}
+          {%- comment -%}Fallback to Theme Editor settings if default, or default brand strategy message{%- endcomment -%}
+          {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+              <div class="announcement-message {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+                <span class="announcement-text">{{ block.settings.text }}</span>
+                {% if block.settings.link != blank %}
+                  <a href="{{ block.settings.link }}" class="announcement-cta">{{ block.settings.link_text | default: 'JETZT KAUFEN' }}</a>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="announcement-message active">
+              <span class="announcement-text">{{ section.settings.text_default | default: 'Kompromisslose Qualität. Garantierte Originale. Trusted in DACH.' }}</span>
+            </div>
+          {% endif %}
+        {%- endif -%}
+      </div>
+      
+      {% if section.settings.show_timer %}
+        <div class="sale-timer-right">
+          <span class="timer-icon">⏳</span>
+          <span class="timer-text">Endet in:</span>
+          <span class="timer-countdown" id="countdown-right">00:00:00</span>
+        </div>
+      {% else %}
+        <div class="announcement-right-spacer"></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    /* GLOBAL FIXED HEIGHT & STYLE */
+    .announcement-bar-wrapper {
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      height: 38px;
+      min-height: 38px;
+      max-height: 38px;
+      font-family: var(--font-body-family);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      line-height: normal;
+    }
+
+    .announcement-bar-content {
+      width: 100%;
+      max-width: 1200px;
+      margin-inline: auto;
+      padding-inline: var(--page-margin);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* LEFT TIMER */
+    .sale-timer-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    /* RIGHT TIMER */
+    .sale-timer-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    .timer-icon {
+      font-size: 12px;
+    }
+    
+    .timer-text {
+      opacity: 0.9;
+    }
+    
+    .timer-countdown {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+    }
+    
+    @media (max-width: 480px) {
+      .sale-timer-left,
+      .sale-timer-right {
+        display: none !important; /* Hide countdown completely on mobile */
+      }
+      .timer-text {
+        display: none;
+      }
+    }
+
+    /* CENTER MESSAGE */
+    .announcement-center {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100%;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* RIGHT SPACER for balance */
+    .announcement-right-spacer {
+      width: 120px;
+      flex-shrink: 0;
+    }
+    
+    @media (max-width: 768px) {
+      .announcement-right-spacer {
+        display: none;
+      }
+    }
+
+    /* Message Styles */
+    .announcement-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0; 
+      opacity: 0;
+      transform: translateY(100%);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      visibility: hidden;
+    }
+
+    .announcement-message.active {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      z-index: 10;
+    }
+
+    .announcement-message.exit {
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .announcement-center:has(.announcement-message:only-child) .announcement-message,
+    .announcement-center .announcement-message:first-child:nth-last-child(1) {
+      position: relative;
+      left: 0;
+      transform: none;
+      visibility: visible;
+    }
+
+    .announcement-text {
+      font-weight: 600;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .announcement-cta {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: none;
+      padding-bottom: 0;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    /* Mobile: Keep horizontal layout */
+    @media (max-width: 768px) {
+      .announcement-bar-wrapper {
+        display: none !important; /* Hide entire bar on mobile */
+      }
+
+      .announcement-bar-content {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 10px;
+      }
+
+      .announcement-center {
+        justify-content: center;
+        width: auto;
+        flex: 1;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .announcement-message {
+        justify-content: center;
+        left: 0;
+        position: relative;
+        transform: none;
+      }
+      
+      .announcement-text {
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+        height: auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .announcement-cta {
+        display: none;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      // Countdown Timer - runs immediately
+      const targetDateStr = '{{ section.settings.timer_date }}';
+      let countdownInterval;
+      
+      function updateCountdown() {
+        const countdownLeft = document.getElementById('countdown-compact');
+        const countdownRight = document.getElementById('countdown-right');
+        
+        if (!countdownLeft && !countdownRight) return;
+        
+        const targetDate = new Date(targetDateStr).getTime();
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+        
+        if (distance < 0) {
+          if (countdownLeft) countdownLeft.innerText = 'Beendet';
+          if (countdownRight) countdownRight.innerText = 'Beendet';
+          document.querySelectorAll('.sale-timer-left, .sale-timer-right').forEach(el => {
+            el.style.background = 'rgba(255,0,0,0.3)';
+          });
+          if (countdownInterval) clearInterval(countdownInterval);
+          return;
+        }
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        const pad = (n) => n < 10 ? '0' + n : n;
+        
+        const totalSec = Math.floor(distance / 1000);
+        let timeText;
+        if (totalSec >= 86400) {
+          timeText = `${days}d ${pad(hours)}h ${pad(minutes)}m`;
+        } else if (totalSec >= 3600) {
+          timeText = `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+        } else if (totalSec >= 60) {
+          timeText = `${pad(minutes)}m ${pad(seconds)}s`;
+        } else {
+          timeText = `${pad(seconds)}s`;
+        }
+
+        const isUrgent = totalSec < 3600;
+        document.querySelectorAll('.sale-timer-left, .sale-timer-right').forEach(el => {
+          if (isUrgent) {
+            el.style.background = 'rgba(255,0,0,0.3)';
+          }
+        });
+        
+        if (countdownLeft) countdownLeft.innerText = timeText;
+        if (countdownRight) countdownRight.innerText = timeText;
+      }
+      
+      // Start timer immediately and every second
+      if (targetDateStr) {
+        countdownInterval = setInterval(updateCountdown, 1000);
+        // Run first update when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateCountdown);
+        } else {
+          updateCountdown();
+        }
+      }
+
+      // Announcement Rotator (disabled on mobile) - wait for DOM
+      function initRotator() {
+        const messages = document.querySelectorAll('#announcement-bar-{{ section.id }} .announcement-message');
+        if (messages.length > 1) {
+          const isMobile = window.innerWidth <= 768;
+          
+          if (!isMobile) {
+            let currentIndex = 0;
+            const intervalTime = 4000;
+
+            setInterval(() => {
+              const currentMessage = messages[currentIndex];
+            const nextIndex = (currentIndex + 1) % messages.length;
+            const nextMessage = messages[nextIndex];
+
+            currentMessage.classList.remove('active');
+            currentMessage.classList.add('exit');
+
+            nextMessage.classList.remove('exit');
+            nextMessage.classList.add('active');
+            
+            setTimeout(() => {
+               currentMessage.style.transition = 'none';
+               currentMessage.classList.remove('exit');
+               void currentMessage.offsetWidth; 
+               currentMessage.style.transition = '';
+            }, 500);
+
+            currentIndex = nextIndex;
+          }, intervalTime);
+        } else {
+          messages.forEach((msg, index) => {
+            if (index === 0) {
+              msg.classList.add('active');
+              msg.style.position = 'relative';
+            } else {
+              msg.style.display = 'none';
+            }
+          });
+        }
+        }
+      }
+      
+      // Init rotator when DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRotator);
+      } else {
+        initRotator();
+      }
+    })();
+  </script>
+
+
+{% schema %}
+{
+  "name": "Premium Announcement Bar",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Hintergrundfarbe",
+      "default": "#1D4739"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Textfarbe",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Texte für Produktkategorien"
+    },
+    {
+      "type": "text",
+      "id": "text_uhren",
+      "label": "Text für Uhren",
+      "default": "Geprüfte Echtheit. Volle Garantie. Versicherter Wertversand."
+    },
+    {
+      "type": "text",
+      "id": "text_lego",
+      "label": "Text für LEGO",
+      "default": "Werkseitig versiegelt (MISB). Sammlerschutz & sicherer Versand."
+    },
+    {
+      "type": "text",
+      "id": "text_games",
+      "label": "Text für Games",
+      "default": "Factory Sealed. Offizielle deutsche Verkaufsversionen (USK)."
+    },
+    {
+      "type": "text",
+      "id": "text_digital",
+      "label": "Text für Digital/Software",
+      "default": "100 % legale Lizenzen. Blitzversand & deutscher Support."
+    },
+    {
+      "type": "text",
+      "id": "text_default",
+      "label": "Standard Text (Fallback)",
+      "default": "Kompromisslose Qualität. Garantierte Originale. Trusted in DACH."
+    },
+    {
+      "type": "header",
+      "content": "Countdown Timer Einstellungen"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Höhe (Desktop)",
+      "min": 25,
+      "max": 60,
+      "step": 1,
+      "default": 36,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Countdown-Timer anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "timer_date",
+      "label": "Enddatum (YYYY-MM-DDTHH:MM)",
+      "default": "2026-01-31T23:59",
+      "info": "Format: 2025-12-31T23:59"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Ankündigung",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Super Sale: Bis zu 90% Rabatt"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text (CTA)",
+          "default": "JETZT KAUFEN"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium Announcement Bar",
+      "blocks": [
+        {
+          "type": "announcement"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
