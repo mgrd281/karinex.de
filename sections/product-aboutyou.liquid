@@ -646,6 +646,41 @@
         </details>
       </div>
 
+      {%- comment -%} ========== DAS PASST DAZU (Cross-Sell via Metafield) ========== {%- endcomment -%}
+      {%- assign _passt_dazu = product.metafields.custom.passt_dazu.value -%}
+      {%- if _passt_dazu != blank and _passt_dazu.size > 0 -%}
+        <div class="ay-passt-dazu">
+          <h2 class="ay-passt-dazu__title">Das passt dazu</h2>
+          <div class="ay-passt-dazu__grid">
+            {%- for item in _passt_dazu -%}
+              {%- if item.available or item.published_at != blank -%}
+                <a href="{{ item.url }}" class="ay-passt-dazu__card" aria-label="{{ item.title | escape }}">
+                  <div class="ay-passt-dazu__img-wrap">
+                    {%- if item.featured_image != blank -%}
+                      <img
+                        src="{{ item.featured_image | image_url: width: 400 }}"
+                        alt="{{ item.featured_image.alt | default: item.title | escape }}"
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        class="ay-passt-dazu__img"
+                      >
+                    {%- else -%}
+                      <div class="ay-passt-dazu__img-placeholder"></div>
+                    {%- endif -%}
+                  </div>
+                  <div class="ay-passt-dazu__info">
+                    <span class="ay-passt-dazu__vendor">{{ item.vendor }}</span>
+                    <span class="ay-passt-dazu__name">{{ item.title }}</span>
+                    <span class="ay-passt-dazu__price">{{ item.price | money }}</span>
+                  </div>
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+
     </div>
   </div>
 </div>
