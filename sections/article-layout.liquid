@@ -33,6 +33,7 @@
   {%- if article.tags.size > 0 -%}
   ,"keywords": {{ article.tags | join: ', ' | json }}
   {%- endif -%}
+  ,"articleBody": {{ article.content | strip_html | truncate: 5000 | json }}
   ,"inLanguage": "{{ request.locale.iso_code | replace: 'de', 'de-DE' | replace: 'en', 'en-US' | replace: 'pl', 'pl-PL' }}"
   ,"wordCount": {{ article.content | strip_html | split: ' ' | size }}
 }

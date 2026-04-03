@@ -749,6 +749,8 @@ nav[aria-label="Breadcrumb"],
            {% capture cld_thumb %}{% render 'cloudinary-image', image: media, product: product, width: 200 %}{% endcapture %}
 
            <div class="thumb-item {% if forloop.first %}active{% endif %}"
+                role="button"
+                tabindex="0"
                 onclick="window.updateMainImage({{ media_index }})"
                 data-index="{{ media_index }}"
                 data-media-id="{{ media.id }}"
@@ -769,6 +771,8 @@ nav[aria-label="Breadcrumb"],
            {% assign first_source = media.sources | first %}
            {% capture video_sources_json %}[{% for src in media.sources %}{"url":"{{ src.url }}","type":"{{ src.mime_type }}"}{% unless forloop.last %},{% endunless %}{% endfor %}]{% endcapture %}
            <div class="thumb-item"
+                role="button"
+                tabindex="0"
                 onclick="window.openVideoModal({{ media_index }})"
                 data-index="{{ media_index }}"
                 data-media-id="{{ media.id }}"
@@ -792,6 +796,8 @@ nav[aria-label="Breadcrumb"],
              endif
            %}
            <div class="thumb-item"
+                role="button"
+                tabindex="0"
                 onclick="window.openVideoModal({{ media_index }})"
                 data-index="{{ media_index }}"
                 data-media-id="{{ media.id }}"
@@ -810,6 +816,8 @@ nav[aria-label="Breadcrumb"],
            {% assign media_index = media_index | plus: 1 %}
          {% when 'model' %}
            <div class="thumb-item"
+                role="button"
+                tabindex="0"
                 onclick="window.updateMainImage({{ media_index }})"
                 data-index="{{ media_index }}"
                 data-type="model"

@@ -19,7 +19,7 @@
     "@type": "ImageObject",
     "url": "https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}"
   },
-  "totalTime": "PT10M",
+  "totalTime": "{% if product.type contains 'Windows' %}PT20M{% elsif product.type contains 'Office' %}PT15M{% else %}PT10M{% endif %}",
   "estimatedCost": {
     "@type": "MonetaryAmount",
     "currency": "{{ cart.currency.iso_code }}",
@@ -42,29 +42,25 @@
       "@type": "HowToStep",
       "position": 1,
       "name": "Download",
-      "text": "Laden Sie die Installationsdatei von der offiziellen Microsoft-Website herunter.",
-      "url": "{{ product.url }}#step1"
+      "text": "Laden Sie die Installationsdatei von der offiziellen Microsoft-Website herunter."
     },
     {
       "@type": "HowToStep",
       "position": 2,
       "name": "Installation starten",
-      "text": "Führen Sie die heruntergeladene Datei aus und folgen Sie dem Setup-Assistenten.",
-      "url": "{{ product.url }}#step2"
+      "text": "Führen Sie die heruntergeladene Datei aus und folgen Sie dem Setup-Assistenten."
     },
     {
       "@type": "HowToStep",
       "position": 3,
       "name": "Produktschlüssel eingeben",
-      "text": "Geben Sie den von Karinex erhaltenen Produktschlüssel ein, wenn Sie dazu aufgefordert werden.",
-      "url": "{{ product.url }}#step3"
+      "text": "Geben Sie den von Karinex erhaltenen Produktschlüssel ein, wenn Sie dazu aufgefordert werden."
     },
     {
       "@type": "HowToStep",
       "position": 4,
       "name": "Installation abschließen",
-      "text": "Befolgen Sie die verbleibenden Anweisungen und starten Sie Ihren Computer neu, wenn erforderlich.",
-      "url": "{{ product.url }}#step4"
+      "text": "Befolgen Sie die verbleibenden Anweisungen und starten Sie Ihren Computer neu, wenn erforderlich."
     }
   ]
 }

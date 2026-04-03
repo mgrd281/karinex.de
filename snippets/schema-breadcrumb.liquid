@@ -22,7 +22,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Startseite",
+      "name": "{% if request.locale.iso_code == 'en' %}Home{% elsif request.locale.iso_code == 'pl' %}Strona główna{% else %}Startseite{% endif %}",
       "item": "{{ shop.url }}"
     }
     {%- if best_col -%}
@@ -60,7 +60,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Startseite",
+      "name": "{% if request.locale.iso_code == 'en' %}Home{% elsif request.locale.iso_code == 'pl' %}Strona główna{% else %}Startseite{% endif %}",
       "item": "{{ shop.url }}"
     },
     {
@@ -89,7 +89,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Startseite",
+      "name": "{% if request.locale.iso_code == 'en' %}Home{% elsif request.locale.iso_code == 'pl' %}Strona główna{% else %}Startseite{% endif %}",
       "item": "{{ shop.url }}"
     },
     {
@@ -118,7 +118,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Startseite",
+      "name": "{% if request.locale.iso_code == 'en' %}Home{% elsif request.locale.iso_code == 'pl' %}Strona główna{% else %}Startseite{% endif %}",
       "item": "{{ shop.url }}"
     },
     {
