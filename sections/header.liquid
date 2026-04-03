@@ -1006,6 +1006,13 @@
     transition: opacity var(--animation-speed) var(--animation-easing);
   }
 
+  @media (hover: hover) {
+    .header-actions__action:hover,
+    .header__icon--menu:hover {
+      opacity: 0.55;
+    }
+  }
+
   /* Extend hover area through padding to prevent flickering on actual menu items */
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__link[aria-haspopup],
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__link,
