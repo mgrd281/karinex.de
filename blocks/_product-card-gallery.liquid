@@ -228,8 +228,20 @@
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
     transition: transform 0.2s ease;
   }
+  .product-card-video-icon circle {
+    transition: fill 0.25s ease;
+  }
+  .product-card-video-icon polygon {
+    transition: fill 0.25s ease;
+  }
   product-card:hover .product-card-video-icon {
     transform: scale(1.08);
+  }
+  product-card:hover .product-card-video-icon circle {
+    fill: rgba(0,0,0,0.6);
+  }
+  product-card:hover .product-card-video-icon polygon {
+    fill: #ffffff;
   }
   @media (max-width: 749px) {
     .product-card-video-icon svg {
