@@ -589,7 +589,6 @@
       var headers = mobileContainer.querySelectorAll('.lego-acc-header');
       for (var h = 0; h < headers.length; h++) {
         headers[h].addEventListener('click', function() {
-          console.log('Accordion header clicked:', this);
           toggleLegoAccordion(this);
         });
       }

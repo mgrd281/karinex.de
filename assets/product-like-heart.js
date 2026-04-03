@@ -16,7 +16,6 @@ class ProductLikeHeart extends HTMLElement {
     // Wait for global manager to be ready and initialize this element
     const waitForManager = () => {
       if (window.GlobalLikeManager) {
-        console.log('[ProductLikeHeart] Manager found, initializing heart');
         window.GlobalLikeManager.initializeHeart(this);
         this.initialized = true;
       } else {
@@ -27,11 +26,9 @@ class ProductLikeHeart extends HTMLElement {
 
     // Check immediately in case manager is already loaded
     if (window.GlobalLikeManager) {
-      console.log('[ProductLikeHeart] Manager already available, initializing');
       window.GlobalLikeManager.initializeHeart(this);
       this.initialized = true;
     } else {
-      console.log('[ProductLikeHeart] Waiting for manager...');
       waitForManager();
     }
   }
@@ -39,7 +36,6 @@ class ProductLikeHeart extends HTMLElement {
 
 if (!customElements.get('product-like-heart')) {
   customElements.define('product-like-heart', ProductLikeHeart);
-  console.log('[ProductLikeHeart] Custom element registered');
 }
 
 

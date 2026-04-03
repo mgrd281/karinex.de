@@ -9,8 +9,6 @@ class DynamischerCounter {
   init() {
     if (!this.articleId) return;
     
-    console.log('🔢 Dynamischer Counter gestartet für:', this.articleId);
-    console.log('📱 Device ID:', this.deviceId);
     
     // Sofort aktuelle Zahl anzeigen
     this.zeigeAktuelleZahl();
@@ -62,7 +60,6 @@ class DynamischerCounter {
     const key = `view_${this.deviceId}_${this.articleId}`;
     localStorage.setItem(key, 'true');
     localStorage.setItem(key + '_time', new Date().toISOString());
-    console.log('✅ Gerät markiert:', key);
   }
   
   erhoeheCounter() {
@@ -71,7 +68,6 @@ class DynamischerCounter {
     count += 1;
     localStorage.setItem(countKey, count.toString());
     
-    console.log('📈 Counter erhöht auf:', count);
     
     // Sofort aktualisieren mit Animation
     this.zeigeAktuelleZahl(true);
@@ -107,7 +103,6 @@ class DynamischerCounter {
     });
     
     // Debug Info in Console
-    console.log(`🔢 Aktuelle Zahl für ${this.articleId}: ${count}`);
   }
   
   // Statistik anzeigen
@@ -115,11 +110,6 @@ class DynamischerCounter {
     const countKey = `count_${this.articleId}`;
     const count = localStorage.getItem(countKey) || '0';
     
-    console.log('📊 Counter Stats:');
-    console.log('- Artikel:', this.articleId);
-    console.log('- Aktuelle Views:', count);
-    console.log('- Device ID:', this.deviceId);
-    console.log('- Schon gesehen:', this.deviceHatSchonGesehen());
   }
 }
 

@@ -1,5 +1,4 @@
 // TTS Player - Text to Speech für Artikel
-console.log('🔊 TTS Player wird geladen...');
 
 let isPlaying = false;
 let currentUtterance = null;
@@ -36,7 +35,6 @@ function startTTS() {
     return;
   }
   
-  console.log('📝 Text Länge:', text.length, 'Zeichen');
   
   // Deutsche Stimme finden
   const voices = speechSynthesis.getVoices();
@@ -55,7 +53,6 @@ function startTTS() {
     germanVoice = voices.find(voice => voice.lang.startsWith('en'));
   }
   
-  console.log('🗣️ Stimme:', germanVoice ? germanVoice.name : 'Standard');
   
   // Utterance erstellen
   currentUtterance = new SpeechSynthesisUtterance(text);
@@ -75,7 +72,6 @@ function startTTS() {
         <rect x="14" y="4" width="4" height="16"/>
       </svg>
     `;
-    console.log('▶️ TTS gestartet');
   };
   
   currentUtterance.onend = function() {
@@ -86,7 +82,6 @@ function startTTS() {
         <path d="M8 5v14l11-7z"/>
       </svg>
     `;
-    console.log('⏹️ TTS beendet');
   };
   
   currentUtterance.onerror = function(event) {
@@ -113,13 +108,11 @@ function stopTTS() {
     `;
   }
   
-  console.log('⏹️ TTS gestoppt');
 }
 
 // Voices laden
 if (speechSynthesis.onvoiceschanged !== undefined) {
   speechSynthesis.onvoiceschanged = function() {
-    console.log('🗣️ Voices geladen:', speechSynthesis.getVoices().length);
   };
 }
 
@@ -127,4 +120,3 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
 window.startTTS = startTTS;
 window.stopTTS = stopTTS;
 
-console.log('✅ TTS Player bereit!');

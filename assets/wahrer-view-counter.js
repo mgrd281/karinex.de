@@ -10,7 +10,6 @@ class WahrerViewCounter {
   init() {
     if (!this.articleId) return;
     
-    console.log('👁️ Wahrer Counter für Artikel:', this.articleId);
     
     // Prüfen ob dieser Browser heute bereits gezählt wurde
     if (!this.heuteBereitsBesucht()) {
@@ -72,7 +71,6 @@ class WahrerViewCounter {
     // Anzeige aktualisieren
     this.updateViewDisplay(aktuelleViews);
     
-    console.log('✅ Counter erhöht auf:', aktuelleViews);
   }
   
   zeigeAktuelleViews() {

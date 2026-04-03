@@ -11,8 +11,6 @@ class LifetimeViewCounter {
   init() {
     if (!this.articleId) return;
     
-    console.log('🖥️ Lifetime Counter für Artikel:', this.articleId);
-    console.log('🔍 Device Fingerprint:', this.deviceFingerprint);
     
     // Prüfen ob dieses Gerät diesen Artikel JE gesehen hat
     if (!this.deviceHatArtikelSchonGesehen()) {
@@ -87,7 +85,6 @@ class LifetimeViewCounter {
     // View Counter erhöhen
     this.erhoeheLifetimeCounter();
     
-    console.log('✅ Gerät als gesehen markiert:', deviceKey);
   }
   
   erhoeheLifetimeCounter() {
@@ -99,7 +96,6 @@ class LifetimeViewCounter {
     
     this.updateViewDisplay(aktuelleViews);
     
-    console.log('📈 Lifetime Counter erhöht auf:', aktuelleViews);
   }
   
   zeigeLifetimeViews() {
@@ -290,5 +286,4 @@ window.LifetimeViewCounter = LifetimeViewCounter;
 // Debug-Funktion
 window.showLifetimeStats = function() {
   const counter = new LifetimeViewCounter();
-  console.log('📊 Lifetime Stats:', counter.getDeviceStats());
 };
