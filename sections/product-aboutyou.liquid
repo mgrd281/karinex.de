@@ -1026,19 +1026,22 @@
   }
 
   /* ---- Sync "Im Warenkorb" badge on cart changes ---- */
-  document.addEventListener('cart:update', function(e) {
+  function syncAyCartBadge(e) {
     var badge = document.getElementById('ay-cart-badge');
     if (!badge) return;
     var pid = Number(badge.getAttribute('data-product-id'));
-    var resource = e.detail && e.detail.resource;
-    if (resource && resource.items) {
-      badge.style.display = resource.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
-    } else {
-      fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
-        badge.style.display = c.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
-      }).catch(function(){});
-    }
-  });
+    var items;
+    if (e.detail && e.detail.resource && e.detail.resource.items) items = e.detail.resource.items;
+    else if (e.detail && e.detail.cart && e.detail.cart.items) items = e.detail.cart.items;
+    if (items) { badge.style.display = items.some(function(i){return i.product_id===pid}) ? '' : 'none'; return; }
+    if (e.type === 'cart:empty') { badge.style.display = 'none'; return; }
+    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
+      badge.style.display = c.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
+    }).catch(function(){});
+  }
+  document.addEventListener('cart:update', syncAyCartBadge);
+  document.addEventListener('cart:refresh', syncAyCartBadge);
+  document.addEventListener('cart:empty', syncAyCartBadge);
 
   /* ---- Back in Stock submit (sold out state) ---- */
   var stockoutForm = document.getElementById('ay-stockout-form');

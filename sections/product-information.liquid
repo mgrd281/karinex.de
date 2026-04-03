@@ -5660,7 +5660,6 @@ function toggleDesc() {
 <script>
   (function(){
     try{
-      var evtName = 'cart:update';
       var handler = async function(ev){
         try{
           var src = ev && ev.detail && ev.detail.source;
@@ -5672,10 +5671,14 @@ function toggleDesc() {
           // Dynamically check cart contents for the badge
           try {
             var productId = {{ product.id | json }};
-            var resource = ev && ev.detail && ev.detail.resource;
+            var items;
+            if (ev && ev.detail && ev.detail.resource && ev.detail.resource.items) items = ev.detail.resource.items;
+            else if (ev && ev.detail && ev.detail.cart && ev.detail.cart.items) items = ev.detail.cart.items;
             var isInCart;
-            if (resource && resource.items) {
-              isInCart = resource.items.some(function(item) { return item.product_id === productId; });
+            if (ev.type === 'cart:empty') {
+              isInCart = false;
+            } else if (items) {
+              isInCart = items.some(function(item) { return item.product_id === productId; });
             } else {
               var cartRes = await fetch('/cart.js');
               var cartData = await cartRes.json();
@@ -5711,7 +5714,9 @@ function toggleDesc() {
           }
         }catch(_e){  }
       };
-      document.addEventListener(evtName, handler, { passive: true });
+      document.addEventListener('cart:update', handler, { passive: true });
+      document.addEventListener('cart:refresh', handler, { passive: true });
+      document.addEventListener('cart:empty', handler, { passive: true });
 
     }catch(e){  }
   })();

@@ -317,17 +317,17 @@
       badge.style.display = inCart[pid] ? '' : 'none';
     });
   }
-  document.addEventListener('cart:update', function(e){
-    // Use cart data from event if available (instant), otherwise fetch
-    var resource = e.detail && e.detail.resource;
-    if (resource && resource.items) {
-      syncCartBadges(resource.items);
-    } else {
-      fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
-        syncCartBadges(c.items);
-      }).catch(function(){});
-    }
-  });
+  function handleCartEvent(e) {
+    var items;
+    if (e.detail && e.detail.resource && e.detail.resource.items) items = e.detail.resource.items;
+    else if (e.detail && e.detail.cart && e.detail.cart.items) items = e.detail.cart.items;
+    if (items) { syncCartBadges(items); return; }
+    if (e.type === 'cart:empty') { syncCartBadges([]); return; }
+    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){ syncCartBadges(c.items); }).catch(function(){});
+  }
+  document.addEventListener('cart:update', handleCartEvent);
+  document.addEventListener('cart:refresh', handleCartEvent);
+  document.addEventListener('cart:empty', handleCartEvent);
 })();
 </script>
 
