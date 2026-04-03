@@ -21,8 +21,8 @@
       "type": "custom-similar-products",
       "name": "Similar Products (Custom)",
       "settings": {
-        "heading": "Wird oft zusammen angesehen",
-        "subheading": "DAS PASST DAZU",
+        "heading": "Das könnte Dir auch gefallen",
+        "subheading": "Ähnliche Produkte",
         "products_to_show": 4
       }
     },
