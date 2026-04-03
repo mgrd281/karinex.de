@@ -713,52 +713,6 @@
     });
   })();
 
-  /* ---- Inline Video Player (external videos) ---- */
-  window.ayPlayVideo = function (btn, type, src) {
-    var wrap = btn.closest('.ay-gallery__video-wrap');
-    if (!wrap || !src) return;
-    btn.style.display = 'none';
-    var poster = wrap.querySelector('.ay-gallery__video-poster');
-    if (poster) poster.style.display = 'none';
-
-    var iframe = document.createElement('iframe');
-    iframe.className = 'ay-gallery__inline-video';
-    iframe.src = src;
-    iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-    iframe.setAttribute('allowfullscreen', '');
-    iframe.style.border = '0';
-    wrap.appendChild(iframe);
-  };
-
-  /* ---- Native Video Player (Shopify-hosted videos) ---- */
-  document.querySelectorAll('.ay-gallery__play-btn--native').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var wrap = btn.closest('.ay-gallery__video-wrap--native');
-      if (!wrap) return;
-      var hidden = wrap.querySelector('.ay-gallery__video-hidden');
-      var poster = wrap.querySelector('.ay-gallery__video-poster--native');
-      var video = hidden ? hidden.querySelector('video') : null;
-
-      if (poster) poster.style.display = 'none';
-      btn.style.display = 'none';
-
-      if (hidden) {
-        hidden.style.position = 'absolute';
-        hidden.style.inset = '0';
-        hidden.style.width = '100%';
-        hidden.style.height = '100%';
-        hidden.style.opacity = '1';
-        hidden.style.pointerEvents = 'auto';
-      }
-      if (video) {
-        video.style.width = '100%';
-        video.style.height = '100%';
-        video.style.objectFit = 'cover';
-        video.play();
-      }
-    });
-  });
-
   /* ---- Variant Selection ---- */
   var productJson = {{ product.variants | json }};
   var selectedOptions = {};
