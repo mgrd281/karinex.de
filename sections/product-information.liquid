@@ -31,9 +31,10 @@
     {{ 'product-information.css' | asset_url | append: '?v=2' | stylesheet_tag }}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <script src="{{ 'thumbnail-scroll.js' | asset_url }}" defer></script>
-    <script src="{{ 'pdp-wishlist-counter.js' | asset_url }}"></script>
+    <script src="{{ 'pdp-wishlist-counter.js' | asset_url }}" defer></script>
     <script src="{{ 'cart-counter.js' | asset_url }}" defer></script>
     <style>
       :root {

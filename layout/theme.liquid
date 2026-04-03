@@ -590,6 +590,11 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- comment -%} Advanced Schema Markup - Elite SEO {%- endcomment -%}
     {%- render 'schema-website' -%}
     {%- render 'schema-webpage' -%}
+    {%- render 'schema-organization' -%}
+    {%- render 'schema-breadcrumb' -%}
+    {%- if request.page_type == 'page' and page.handle == 'faq' -%}
+      {%- render 'schema-faq' -%}
+    {%- endif -%}
 
 
     {% if request.design_mode %}
@@ -650,14 +655,6 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
 
 {%- comment -%} Moved to head {%- endcomment -%}
-
-
-    <!-- Elite SEO - Schema Markup -->
-    {% render 'schema-organization' %}
-    {% render 'schema-breadcrumb' %}
-    {% if request.page_type == 'page' and page.handle == 'faq' %}
-      {% render 'schema-faq' %}
-    {% endif %}
 
       
   <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">

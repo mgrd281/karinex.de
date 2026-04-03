@@ -3,100 +3,10 @@
   <!-- RSS Auto-Discovery -->
   <link rel="alternate" type="application/rss+xml" title="{{ shop.name }} - {{ blog.title }}" href="{{ shop.url }}{{ blog.url }}.atom">
   
-  <!-- Google News Sitemap Reference -->
-  <link rel="sitemap" type="application/xml" href="{{ shop.url }}/blogs/{{ blog.handle }}.google-news.xml">
-  
-  <!-- Enhanced Schema for Instant Indexing -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "headline": {{ article.title | json }},
-    "description": {{ article.excerpt | strip_html | truncate: 160 | json }},
-    "image": [
-      {%- if article.image -%}
-        {{ article.image | image_url: width: 800, format: 'webp' | json }},
-        {{ article.image | image_url: width: 800, format: 'webp' | json }},
-        {{ article.image | image_url: width: 400, format: 'webp' | json }}
-      {%- else -%}
-        {{ 'logo.png' | asset_url | json }}
-      {%- endif -%}
-    ],
-    "datePublished": {{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
-    "dateModified": {{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
-    "author": {
-      "@type": "Person",
-      "name": {{ article.author | json }}
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": {{ shop.name | json }},
-      "logo": {
-        "@type": "ImageObject",
-        "url": {{ 'logo.png' | asset_url | json }}
-      }
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": {{ shop.url | append: article.url | json }}
-    },
-    "wordCount": {{ article.content | strip_html | split: ' ' | size }},
-    "inLanguage": "{{ request.locale.iso_code | replace: 'de', 'de-DE' | replace: 'en', 'en-US' | replace: 'pl', 'pl-PL' }}",
-    "isAccessibleForFree": true,
-    "hasPart": {
-      "@type": "WebPageElement",
-      "isAccessibleForFree": true,
-      "cssSelector": ".blog-main-content"
-    }
-  }
-  </script>
-  
-  <!-- Instant Ping Script (Improved) -->
-  <script>
-  (function() {
-    // Note: Client-side pings to Google/Bing are often blocked by CORS.
-    // For 100% reliable instant indexing, please use the URL Inspection tool 
-    // in Google Search Console or a server-side Indexing API integration.
-    
-    const publishDate = new Date('{{ article.published_at | date: "%Y-%m-%dT%H:%M:%S" }}');
-    const now = new Date();
-    const hoursSincePublished = (now - publishDate) / (1000 * 60 * 60);
-    
-    if (hoursSincePublished <= 1) {
-      console.log('🚀 New article detected. Ready for indexing optimization.');
-      // The browser-side pings were removed to prevent CORS errors.
-      // Sitemaps and Schema remain active for crawler discovery.
-    }
-  })();
-  </script>
+  {%- comment -%} 
+    Schema removed — BlogPosting is already output by article-layout.liquid.
+    Duplicate NewsArticle + BlogPosting on the same page confuses Google.
+  {%- endcomment -%}
 {%- endif -%}
 
-<!-- Auto-Submit to Search APIs -->
-<script>
-(function() {
-  // Submit to Google Indexing API (requires service account setup)
-  function submitToGoogleIndexing() {
-    const url = window.location.href;
-    const data = {
-      url: url,
-      type: 'URL_UPDATED'
-    };
-    
-    // This would need server-side implementation with Google Indexing API
-    console.log('Ready for Google Indexing API submission:', data);
-    
-    // Fallback: Add to sitemap priority queue
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(registration => {
-        registration.active.postMessage({
-          type: 'INDEX_REQUEST',
-          url: url
-        });
-      });
-    }
-  }
-  
-  // Submit 30 seconds after page load (ensure content is ready)
-  setTimeout(submitToGoogleIndexing, 30000);
-})();
-</script>
+{%- comment -%} Ping scripts removed — use Google Search Console Indexing API instead {%- endcomment -%}
