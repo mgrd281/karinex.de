@@ -1,3 +1,43 @@
+{%- comment -%} BlogPosting Schema — Rich Results for Articles {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": "{{ article.url | prepend: shop.url }}#article",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ article.url | prepend: shop.url }}#webpage"
+  },
+  "headline": {{ article.title | json }},
+  "description": {{ article.excerpt_or_content | strip_html | truncate: 160 | json }},
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+  "dateModified": "{{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+  "author": {
+    "@type": "Person",
+    "name": {{ article.author | json }}
+  },
+  "publisher": {
+    "@id": "{{ shop.url }}/#organization"
+  },
+  "isPartOf": {
+    "@id": "{{ shop.url }}/#website"
+  }
+  {%- if article.image -%}
+  ,"image": {
+    "@type": "ImageObject",
+    "url": "https:{{ article.image | image_url: width: 1200, format: 'webp' }}",
+    "width": 1200,
+    "height": 630
+  }
+  {%- endif -%}
+  {%- if article.tags.size > 0 -%}
+  ,"keywords": {{ article.tags | join: ', ' | json }}
+  {%- endif -%}
+  ,"inLanguage": "{{ request.locale.iso_code | replace: 'de', 'de-DE' | replace: 'en', 'en-US' | replace: 'pl', 'pl-PL' }}"
+  ,"wordCount": {{ article.content | strip_html | split: ' ' | size }}
+}
+</script>
+
 <section class="article-layout">
   <!-- Hero Banner -->
   <div class="article-hero">

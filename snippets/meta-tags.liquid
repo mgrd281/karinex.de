@@ -313,7 +313,7 @@
     assign is_paginated = true
   endif
 -%}
-{%- if request.page_type == 'search' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' -%}
+{%- if request.page_type == 'search' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
   <meta name="robots" content="noindex, follow">
   <meta name="googlebot" content="noindex, follow">
   <meta name="bingbot" content="noindex, follow">

@@ -37,11 +37,14 @@
     <script>
       (function() {
         function loadThemeBasics() {
-          // 1. Font Awesome
-          const fa = document.createElement('link');
-          fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
-          fa.rel = 'stylesheet';
-          document.head.appendChild(fa);
+          // 1. Font Awesome — load only fontawesome-svg-core + solid + brands (~18KB vs 60KB full)
+          var faBase = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/';
+          ['fontawesome.min.css', 'solid.min.css', 'brands.min.css'].forEach(function(f) {
+            var l = document.createElement('link');
+            l.href = faBase + f;
+            l.rel = 'stylesheet';
+            document.head.appendChild(l);
+          });
 
           // 2. Usercentrics - Intercepted by manager
           const uc = document.createElement('script');
@@ -560,8 +563,18 @@
     
     {%- render 'performance-preload' -%}
     {%- render 'stylesheets' -%}
-    {{ 'safari-fix.css' | asset_url | stylesheet_tag }}
-    {{ 'usercentrics-custom.css' | asset_url | stylesheet_tag }}
+    <style>/* Safari Fix - Inlined to eliminate render-blocking */
+.cart-drawer__close-button,.cart-drawer__close-button:focus,.cart-drawer__close-button:focus-visible,.cart-drawer__close-button:active{border:none!important;outline:none!important;box-shadow:none!important;background-color:transparent!important}
+.cart-drawer__close-button::after{display:none!important;content:none!important}
+.cart-drawer__close-button{-webkit-tap-highlight-color:transparent}
+body{-webkit-overflow-scrolling:touch}
+header-component{padding-top:env(safe-area-inset-top);transform:none}
+:root{--layer-sticky:100;--layer-window-overlay:150;--layer-overlay:200;--layer-menu-drawer:300;--layer-temporary:400}
+#header-group{position:relative;z-index:var(--layer-sticky);overflow:visible}
+#shopify-section-global-sale-bar{position:relative;z-index:calc(var(--layer-sticky) - 10)}
+/* Usercentrics Host */
+aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;inset:0!important;pointer-events:none!important}
+    </style>
     {%- render 'fonts' -%}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
@@ -578,38 +591,50 @@
 
     {% capture content_for_header_no_title %}{{ content_for_header }}{% endcapture %}
     {{ content_for_header_no_title | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' }}
-  <!-- SEO Optimization: Prevent indexing of dynamic, slow vendor filter pages (Ahrefs Fix) -->
-  {%- if request.page_type == 'collection' and request.path contains '/vendors' and request.path contains 'q=' -%}
-    <meta name="robots" content="noindex, follow">
-  {%- endif -%}
 
-  <!-- SEO: search page noindex handled in meta-tags.liquid -->
+  <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->
 
-  <!-- Ahrefs Web Analytics -->
-  <script src="https://analytics.ahrefs.com/analytics.js" data-key="GzfQYRK7vmnwuekczK8sjw" async></script>
-
-  <!-- Trusted Shops - Deferred via smart-script-manager on user interaction -->
+  <!-- Ahrefs Web Analytics — Deferred to idle -->
   <script>
     (function() {
-      var ts = document.createElement('script');
-      ts.src = '//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js';
-      ts.async = true;
-      ts.charset = 'UTF-8';
-      ts.dataset.desktopYOffset = '0';
-      ts.dataset.mobileYOffset = '0';
-      ts.dataset.desktopDisableReviews = 'false';
-      ts.dataset.desktopEnableCustom = 'false';
-      ts.dataset.desktopPosition = 'right';
-      ts.dataset.desktopCustomWidth = '156';
-      ts.dataset.desktopEnableFadeout = 'false';
-      ts.dataset.disableMobile = 'false';
-      ts.dataset.disableTrustbadge = 'false';
-      ts.dataset.mobileCustomWidth = '156';
-      ts.dataset.mobileDisableReviews = 'false';
-      ts.dataset.mobileEnableCustom = 'false';
-      ts.dataset.mobilePosition = 'right';
-      ts.dataset.colorScheme = 'os-default';
-      document.head.appendChild(ts);
+      function loadAhrefs() {
+        var s = document.createElement('script');
+        s.src = 'https://analytics.ahrefs.com/analytics.js';
+        s.dataset.key = 'GzfQYRK7vmnwuekczK8sjw';
+        s.async = true;
+        document.head.appendChild(s);
+      }
+      if ('requestIdleCallback' in window) { requestIdleCallback(loadAhrefs, { timeout: 5000 }); }
+      else { setTimeout(loadAhrefs, 5000); }
+    })();
+  </script>
+
+  <!-- Trusted Shops - Deferred to idle for page speed -->
+  <script>
+    (function() {
+      function loadTS() {
+        var ts = document.createElement('script');
+        ts.src = '//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js';
+        ts.async = true;
+        ts.charset = 'UTF-8';
+        ts.dataset.desktopYOffset = '0';
+        ts.dataset.mobileYOffset = '0';
+        ts.dataset.desktopDisableReviews = 'false';
+        ts.dataset.desktopEnableCustom = 'false';
+        ts.dataset.desktopPosition = 'right';
+        ts.dataset.desktopCustomWidth = '156';
+        ts.dataset.desktopEnableFadeout = 'false';
+        ts.dataset.disableMobile = 'false';
+        ts.dataset.disableTrustbadge = 'false';
+        ts.dataset.mobileCustomWidth = '156';
+        ts.dataset.mobileDisableReviews = 'false';
+        ts.dataset.mobileEnableCustom = 'false';
+        ts.dataset.mobilePosition = 'right';
+        ts.dataset.colorScheme = 'os-default';
+        document.head.appendChild(ts);
+      }
+      if ('requestIdleCallback' in window) { requestIdleCallback(loadTS, { timeout: 4000 }); }
+      else { setTimeout(loadTS, 4000); }
     })();
   </script>
   </head>
@@ -692,13 +717,17 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
-    <!-- Tidio Chat - Deferred via smart-script-manager on user interaction -->
+    <!-- Tidio Chat - Deferred to idle for page speed -->
     <script>
       (function() {
-        var script = document.createElement('script');
-        script.src = "//code.tidio.co/4q9iv8qyklejixqbmjpsr94lrexejico.js";
-        script.async = true;
-        document.body.appendChild(script);
+        function loadTidio() {
+          var script = document.createElement('script');
+          script.src = "//code.tidio.co/4q9iv8qyklejixqbmjpsr94lrexejico.js";
+          script.async = true;
+          document.body.appendChild(script);
+        }
+        if ('requestIdleCallback' in window) { requestIdleCallback(loadTidio, { timeout: 6000 }); }
+        else { setTimeout(loadTidio, 6000); }
       })();
     </script>
 
@@ -706,8 +735,19 @@
 
     <!-- 🟢 SMART DEVICE TRACKING FOR ABANDONED CARTS -->
 
-    <!-- ⭐ Review Widget Script (Rechnung Profi Reviews App) -->
-    <script src="https://invoice-production-8cd6.up.railway.app/review-widget.js" async></script>
+    <!-- ⭐ Review Widget Script (Rechnung Profi Reviews App) — Deferred to idle -->
+    <script>
+      (function() {
+        function loadReviewWidget() {
+          var s = document.createElement('script');
+          s.src = 'https://invoice-production-8cd6.up.railway.app/review-widget.js';
+          s.async = true;
+          document.body.appendChild(s);
+        }
+        if ('requestIdleCallback' in window) { requestIdleCallback(loadReviewWidget, { timeout: 5000 }); }
+        else { setTimeout(loadReviewWidget, 5000); }
+      })();
+    </script>
 
   </body>
 

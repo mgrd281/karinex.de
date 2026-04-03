@@ -46,7 +46,7 @@
   "isPartOf": {
     "@id": "{{ shop.url }}/#website"
   },
-  "inLanguage": "de-DE",
+  "inLanguage": "{{ request.locale.iso_code | replace: 'de', 'de-DE' | replace: 'en', 'en-US' | replace: 'pl', 'pl-PL' }}",
   "datePublished": "{{ _date_published }}",
   "dateModified": "{{ _date_modified }}"
   {% if page_image %}
