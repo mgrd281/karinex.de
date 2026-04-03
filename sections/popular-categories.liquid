@@ -452,7 +452,7 @@
             {% if target_image %}
               <img
                 src="{{ target_image | image_url: width: 600 }}"
-                alt="{{ target_title }}"
+                alt="{{ target_title | escape }}"
                 class="ay-main-image"
                 loading="lazy"
                 width="600"
@@ -490,7 +490,7 @@
                   <a href="{{ product.url }}" title="{{ product.title }}" style="display:block; width:100%; height:100%;">
                     <img
                       src="{{ product.featured_image | image_url: width: 200 }}"
-                      alt="{{ product.title }}"
+                      alt="{{ product.title | escape }}"
                       class="ay-thumb-img"
                       loading="lazy"
                       width="200"
@@ -512,7 +512,7 @@
                   <a href="{{ product.url }}" title="{{ product.title }}" style="display:block; width:100%; height:100%;">
                     <img
                       src="{{ product.featured_image | image_url: width: 200 }}"
-                      alt="{{ product.title }}"
+                      alt="{{ product.title | escape }}"
                       class="ay-thumb-img"
                       loading="lazy"
                       width="200"

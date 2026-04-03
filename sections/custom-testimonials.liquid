@@ -133,7 +133,7 @@
           <div class="testimonial-author">
             <div class="author-avatar">
               {%- if block.settings.image != blank -%}
-                <img src="{{ block.settings.image | image_url: width: 100 }}" alt="{{ block.settings.author }}" width="50" height="50" loading="lazy" decoding="async">
+                <img src="{{ block.settings.image | image_url: width: 100 }}" alt="{{ block.settings.author | escape }}" width="50" height="50" loading="lazy" decoding="async">
               {%- else -%}
                 {{ block.settings.author | slice: 0, 1 }}
               {%- endif -%}

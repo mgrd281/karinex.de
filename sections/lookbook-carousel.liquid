@@ -35,6 +35,7 @@
           loop
           muted
           playsinline
+          style="aspect-ratio:16/9"
         >
           <source src="{{ section.settings.video }}" type="video/mp4">
         </video>
@@ -56,7 +57,7 @@
           {% if section.settings.brand_logo != blank %}
             <img
               src="{{ section.settings.brand_logo | image_url: width: 300 }}"
-              alt="{{ section.settings.brand_name | default: 'Brand Logo' }}"
+              alt="{{ section.settings.brand_name | default: 'Brand Logo' | escape }}"
               class="lookbook-carousel__brand-logo"
               loading="lazy"
             >

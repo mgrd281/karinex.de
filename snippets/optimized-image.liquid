@@ -24,7 +24,7 @@
 {% liquid
   assign image_width = width | default: 1000
   assign image_class = class | default: ''
-  assign image_alt = alt | default: image.alt | default: ''
+  assign image_alt = alt | default: image.alt | default: '' | escape
   assign image_loading = loading | default: 'lazy'
   assign image_fetchpriority = fetchpriority | default: 'auto'
   assign image_attrs = attrs | default: ''

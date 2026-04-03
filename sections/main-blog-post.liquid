@@ -89,7 +89,7 @@
           <div class="author-bio-box" data-nosnippet>
             <div class="author-image">
               {% if article.user.image %}
-                <img src="{{ article.user.image | image_url: width: 100, height: 100 }}" alt="{{ article.author }}" loading="lazy" width="80" height="80">
+                <img src="{{ article.user.image | image_url: width: 100, height: 100 }}" alt="{{ article.author | escape }}" loading="lazy" width="80" height="80">
               {% else %}
                 <div class="initials-avatar">{{ article.author | slice: 0, 1 }}</div>
               {% endif %}
@@ -253,7 +253,7 @@
                   <a href="${product.url}" class="blog-rp-card">
                     <div class="blog-rp-card__image">
                       ${hasDiscount ? `<span class="blog-rp-card__badge">-${discountPct}%</span>` : ''}
-                      <img src="${img}" alt="${title}" width="400" height="400" loading="lazy" decoding="async">
+                      <img src="${img}" alt="${title.replace(/\"/g,'&quot;')}" width="400" height="400" loading="lazy" decoding="async">
                     </div>
                     <div class="blog-rp-card__info">
                       ${vendor ? `<span class="blog-rp-card__vendor">${vendor}</span>` : ''}

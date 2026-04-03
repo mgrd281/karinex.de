@@ -372,7 +372,7 @@
                 <div class="article-card__footer">
                   <div class="article-author-mini">
                     {%- if article.user.image -%}
-                      <img src="{{ article.user.image | image_url: width: 32, height: 32 }}" alt="{{ article.user.name }}" class="author-avatar">
+                      <img src="{{ article.user.image | image_url: width: 32, height: 32 }}" alt="{{ article.user.name | escape }}" class="author-avatar">
                     {%- else -%}
                       <div class="author-avatar-placeholder"></div>
                     {%- endif -%}

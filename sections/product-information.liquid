@@ -760,7 +760,9 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ cld_thumb | strip }}"
                   alt="{% if media.alt %}{{ media.alt | escape }}{% else %}{{ product.title | escape }} - Produktansicht {{ forloop.index }} von {{ product.vendor | escape }}{% endif %}"
                   title="{{ product.title | escape }} - Bild {{ forloop.index }}"
-                  loading="lazy">
+                  loading="lazy"
+                  width="200"
+                  height="200">
            </div>
            {% assign media_index = media_index | plus: 1 %}
          {% when 'video' %}
@@ -779,12 +781,7 @@ nav[aria-label="Breadcrumb"],
              data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
-                  alt="{{ media.alt | default: product.title }} - Video"
-                  loading="lazy">
-             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
-           </div>
-           {% assign media_index = media_index | plus: 1 %}
-         {% when 'external_video' %}
+                  alt="{{ media.alt | default: product.title | escape }} - Video"
            {% liquid
              assign host = media.host
              assign embed_url = ''
@@ -806,7 +803,7 @@ nav[aria-label="Breadcrumb"],
              data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
-                  alt="{{ media.alt | default: product.title }} - Video"
+                  alt="{{ media.alt | default: product.title | escape }} - Video"
                   loading="lazy">
              <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
            </div>
@@ -820,7 +817,7 @@ nav[aria-label="Breadcrumb"],
                 data-variant-alt="{{ media.alt | downcase | escape }}"
                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
-                  alt="{{ media.alt | default: product.title }} - 3D Ansicht"
+                  alt="{{ media.alt | default: product.title | escape }} - 3D Ansicht"
                   loading="lazy">
              <span class="thumb-badge">3D</span>
            </div>
@@ -916,8 +913,8 @@ nav[aria-label="Breadcrumb"],
                              height="900"
                              id="zoom-image"
                              onclick="window.openProductLightbox()">
-                        <video class="main-video" playsinline preload="none" controls></video>
-                        <iframe class="main-iframe" title="Produktvideo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
+                        <video class="main-video" playsinline preload="none" controls width="900" height="506" style="aspect-ratio:16/9"></video>
+                        <iframe class="main-iframe" title="Produktvideo" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;aspect-ratio:16/9" width="900" height="506"></iframe>
 
                                                 <div class="video-indicator" style="display: none;">
                             <i class="fa-solid fa-play"></i> Video
@@ -1061,8 +1058,8 @@ nav[aria-label="Breadcrumb"],
                   <div class="video-modal__panel video-modal__panel--videos is-active" data-panel="videos">
            <div class="video-modal__body">
              <div class="video-modal__player">
-               <video id="videoModalNative" class="video-modal__media" controls playsinline preload="none"></video>
-               <iframe id="videoModalFrame" class="video-modal__media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
+               <video id="videoModalNative" class="video-modal__media" controls playsinline preload="none" style="aspect-ratio:16/9"></video>
+               <iframe id="videoModalFrame" class="video-modal__media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;aspect-ratio:16/9"></iframe>
                <button type="button" class="video-modal__play-overlay" id="videoPlayOverlay" aria-label="Play">
                  <span class="play-circle">
                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
@@ -3248,9 +3245,9 @@ nav[aria-label="Breadcrumb"],
                    tabindex="0">
               <input class="kvp-pro__radio" type="radio" name="option-{{ option_index }}" value="{{ val | escape }}" {% if is_active %}checked{% endif %} aria-label="{{ option_name }} {{ val }}">
               {% if variant_for_thumb %}
-                <img class="kvp-pro__thumb" src="{{ variant_for_thumb.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val }}" loading="lazy" decoding="async">
+                <img class="kvp-pro__thumb" src="{{ variant_for_thumb.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
               {% else %}
-                <img class="kvp-pro__thumb" src="{{ product.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val }}" loading="lazy" decoding="async">
+                <img class="kvp-pro__thumb" src="{{ product.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
               {% endif %}
               {% unless any_variant_available %}
                 <div class="kvp-pro__oos-icon">
@@ -4600,9 +4597,10 @@ function toggleDesc() {
         </div>
       </div>
 
-      <style>
+      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"></noscript>
 
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap');
+      <style>
 
         @keyframes brandFadeIn {
           from { opacity: 0; transform: translateY(10px); }

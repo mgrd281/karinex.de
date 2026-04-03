@@ -223,7 +223,7 @@
             const thumb = document.createElement('button');
             thumb.className = 'product-lightbox__thumb';
             if (i === currentLbIndex) thumb.classList.add('product-lightbox__thumb--active');
-            thumb.innerHTML = `<img src="${item.thumb}" alt="${item.alt}">`;
+            thumb.innerHTML = `<img src="${item.thumb}" alt="${(item.alt||'').replace(/"/g,'&quot;')}" width="80" height="80">`;
             thumb.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentLbIndex = i;

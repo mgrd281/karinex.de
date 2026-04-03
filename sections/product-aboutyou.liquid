@@ -115,6 +115,7 @@
                     src="{{ media | image_url: width: 800 }}"
                     alt="{{ media.alt | default: product.title | escape }}"
                     loading="{% if ay_cell_index < 2 %}eager{% else %}lazy{% endif %}"
+                    {% if ay_cell_index == 0 %}fetchpriority="high"{% endif %}
                     width="{{ media.width }}"
                     height="{{ media.height }}"
                     data-index="{{ ay_cell_index }}"
@@ -299,7 +300,7 @@
         <div class="ay-brand">
           {%- if _brand_logo_url -%}
             <a href="{{ product.vendor | url_for_vendor }}" aria-label="{{ product.vendor | escape }} Produkte" style="text-decoration:none;display:inline-block;">
-              <img class="ay-brand__logo{% if _vendor_down == 'emporio armani' or _vendor_down == 'casio' %} ay-brand__logo--half{% endif %}{% if _vendor_down == 'michael kors' %} ay-brand__logo--mk{% endif %}{% if _vendor_down == 'tag heuer' %} ay-brand__logo--tag{% endif %}" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}" width="120" height="40">
+              <img class="ay-brand__logo{% if _vendor_down == 'emporio armani' or _vendor_down == 'casio' %} ay-brand__logo--half{% endif %}{% if _vendor_down == 'michael kors' %} ay-brand__logo--mk{% endif %}{% if _vendor_down == 'tag heuer' %} ay-brand__logo--tag{% endif %}" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}" width="120" height="40" loading="lazy">
             </a>
           {%- else -%}
             <a href="{{ product.vendor | url_for_vendor }}" class="ay-brand__text" style="text-decoration:none;">{{ product.vendor }}</a>
@@ -1349,8 +1350,8 @@
     <div class="video-modal__panel video-modal__panel--videos is-active" data-panel="videos">
       <div class="video-modal__body">
         <div class="video-modal__player">
-          <video id="videoModalNative" class="video-modal__media" controls playsinline preload="none"></video>
-          <iframe id="videoModalFrame" class="video-modal__media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
+          <video id="videoModalNative" class="video-modal__media" controls playsinline preload="none" style="aspect-ratio:16/9"></video>
+          <iframe id="videoModalFrame" class="video-modal__media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;aspect-ratio:16/9"></iframe>
           <button type="button" class="video-modal__play-overlay" id="videoPlayOverlay" aria-label="Play">
             <span class="play-circle">
               <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
@@ -1399,8 +1400,10 @@
               <img class="bilder-main__img {% if ay_first_img %}is-active{% endif %}"
                    src="{{ media | image_url: width: 1200 }}"
                    alt="{{ media.alt | default: product.title | escape }}"
+                   width="{{ media.width }}"
+                   height="{{ media.height }}"
                    data-bilder-index="{{ forloop.index0 }}"
-                   {% if ay_first_img %}loading="eager"{% else %}loading="lazy"{% endif %}>
+                   {% if ay_first_img %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %}>
               {% assign ay_first_img = false %}
             {% endif %}
           {% endfor %}

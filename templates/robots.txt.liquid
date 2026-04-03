@@ -25,4 +25,8 @@
   {%- if group.sitemap != blank -%}
     {{ group.sitemap }}
   {%- endif -%}
+
+  {%- if group.user_agent contains '*' -%}
+    Sitemap: {{ shop.url }}/blogs/news.google-news.xml
+  {%- endif -%}
 {%- endfor -%}

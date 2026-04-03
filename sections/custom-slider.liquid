@@ -1241,7 +1241,7 @@
         <div class="col-right">
             <a href="{%- if use_random -%}{{ random_hero_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
                 {%- if use_random and random_hero_image != blank -%}
-                    <img class="prod" width="360" height="360" alt="{{ random_hero_title }}" src="{{ random_hero_image }}" fetchpriority="high" loading="eager">
+                    <img class="prod" width="360" height="360" alt="{{ random_hero_title | escape }}" src="{{ random_hero_image }}" fetchpriority="high" loading="eager">
                 {%- else -%}
                     <img class="prod" width="360" height="360" alt="Microsoft Office 2024" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/microsoft-office-2024-professional-plus-softwareindustrie24-bild__2_-png-Photoroom-2-1-1-2.webp?v=1762861959" fetchpriority="high" loading="eager">
                 {%- endif -%}

@@ -1014,7 +1014,7 @@
                   <div style="display:flex;flex-direction:column;gap:8px;">
                     ${products.map(p => `
                       <a href="${p.url}" style="color:#fff;text-decoration:none;background:rgba(255,255,255,0.15);padding:8px 15px;border-radius:6px;display:flex;align-items:center;gap:10px;">
-                        ${p.image ? `<img src="${p.image}" alt="${p.title}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">` : ''}
+                        ${p.image ? `<img src="${p.image}" alt="${p.title.replace(/"/g,'&quot;')}" width="40" height="40" style="width:40px;height:40px;object-fit:cover;border-radius:4px;">` : ''}
                         <span>${p.title}</span>
                       </a>
                     `).join('')}

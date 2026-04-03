@@ -777,7 +777,7 @@
                   {% if custom_hero_image %}
                     <img 
                       src="{{ custom_hero_image | image_url: width: 800, format: 'webp', quality: 65 }}" 
-                      alt="{{ item.title }}"
+                      alt="{{ item.title | escape }}"
                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                       {% if forloop.first %}fetchpriority="high"{% endif %}
                       decoding="async"
@@ -789,7 +789,7 @@
                   {% elsif item.featured_image %}
                     <img 
                       src="{{ item.featured_image | image_url: width: 800, format: 'webp', quality: 65 }}" 
-                      alt="{{ item.featured_image.alt | default: item.title }}"
+                      alt="{{ item.featured_image.alt | default: item.title | escape }}"
                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                       {% if forloop.first %}fetchpriority="high"{% endif %}
                       decoding="async"

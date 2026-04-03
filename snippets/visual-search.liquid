@@ -387,7 +387,7 @@
                {% if template.name == 'product' and p.id == product.id %}{% continue %}{% endif %}
                <a href="{{ p.url }}" class="vs-card">
                 <div class="vs-image-wrapper">
-                  <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" alt="{{ p.title | escape }}">
+                  <img src="{{ p.featured_image | img_url: '400x' }}" class="vs-image" loading="lazy" width="400" height="400" alt="{{ p.title | escape }}">
                 </div>
                 <div class="vs-card-title">{{ p.title }}</div>
                 <div class="vs-rating"><span>★★★★★</span><span class="vs-rating-count">({{ "now" | date: "%S" | plus: 12 }})</span></div>
@@ -472,7 +472,7 @@
         const price = p.price;
         const oldPrice = p.compare_at_price || p.compare_at || '';
         return `<a href="${p.url}" class="vs-card">
-          <div class="vs-image-wrapper"><img src="${img}" class="vs-image" loading="lazy" alt="${p.title}"></div>
+          <div class="vs-image-wrapper"><img src="${img}" class="vs-image" loading="lazy" width="400" height="400" alt="${p.title.replace(/"/g,'&quot;')}"></div>
           <div class="vs-card-title">${p.title}</div>
           <div class="vs-rating"><span>${stars}</span><span class="vs-rating-count">(${count})</span></div>
           <div class="vs-price-row">${ oldPrice ? `<span class="vs-price-old">${oldPrice}</span>` : '' }<span class="vs-price-new">${price}</span></div>

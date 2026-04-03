@@ -1,9 +1,8 @@
-{%- comment -%}Google News Sitemap{%- endcomment -%}
-<?xml version="1.0" encoding="UTF-8"?>
+{%- comment -%}Google News Sitemap{%- endcomment -%}{%- layout none -%}<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   {%- assign current_date = 'now' | date: "%Y-%m-%dT%H:%M:%S%z" -%}
-  {%- for article in blog.articles limit: 50 -%}
+  {%- for article in blog.articles limit: 1000 -%}
     <url>
       <loc>{{ shop.url }}{{ article.url }}</loc>
       <lastmod>{{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" }}</lastmod>
@@ -16,8 +15,6 @@
         <news:title>{{ article.title | escape }}</news:title>
         {%- if article.tags.size > 0 -%}
           <news:keywords>{{ article.tags | join: ', ' | escape }}</news:keywords>
-        {%- elsif article.excerpt -%}
-          <news:keywords>{{ article.excerpt | strip_html | truncate: 160 | replace: ',', ' ' | escape }}</news:keywords>
         {%- endif -%}
       </news:news>
     </url>

@@ -24,7 +24,7 @@
                 srcset="{{ article.image | image_url: width: 360, format: 'webp' }} 360w,
                   {{ article.image | image_url: width: 720, format: 'webp' }} 720w"
                 sizes="(max-width: 600px) 100vw, 360px"
-                alt="{{ article.title }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
+                alt="{{ article.title | escape }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
             </a>
             <div class="blog-card__category">{{ article.tags[0] }}</div>
             <h2 class="blog-card__title">{{ article.title | truncate: 60 }}</h2>
