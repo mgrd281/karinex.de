@@ -12,11 +12,9 @@ document.addEventListener('submit', async (e) => {
         // If the theme's product-form.js has already handled this (prevented default),
         // we back off to avoid double-adding items.
         if (e.defaultPrevented) {
-            console.log('Cart submission already handled by theme JS.');
             return;
         }
 
-        console.log('Failsafe: Intercepting cart submission to prevent redirect.');
         e.preventDefault();
 
         const submitBtn = form.querySelector('[type="submit"]');
@@ -39,7 +37,6 @@ document.addEventListener('submit', async (e) => {
             const addedItem = await response.json();
 
             if (response.ok) {
-                console.log('Failsafe: Item added successfully.', addedItem);
 
                 // 2. Fetch updated cart state AND the specific section HTML
                 // Find the cart-drawer section ID from the DOM

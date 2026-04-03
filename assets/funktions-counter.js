@@ -7,11 +7,9 @@ class FunktionsCounter {
   
   init() {
     if (!this.articleId) {
-      console.log('❌ Keine Artikel ID gefunden');
       return;
     }
     
-    console.log('🔢 Funktions Counter gestartet für:', this.articleId);
     
     // Sofort Zahl anzeigen
     this.ladeZeigeZahl();
@@ -42,7 +40,6 @@ class FunktionsCounter {
   markiereBesucht() {
     const key = `besucht_${this.articleId}`;
     localStorage.setItem(key, 'ja');
-    console.log('✅ Als besucht markiert:', key);
   }
   
   erhoeheUmEins() {
@@ -51,7 +48,6 @@ class FunktionsCounter {
     zahl += 1;
     localStorage.setItem(key, zahl.toString());
     
-    console.log('📈 Zahl erhöht auf:', zahl);
     
     // Sofort anzeigen mit Animation
     this.aktualisiereAnzeige(zahl, true);
@@ -72,13 +68,11 @@ class FunktionsCounter {
   
   aktualisiereAnzeige(zahl, mitAnimation) {
     const elemente = document.querySelectorAll('.funktionale-count');
-    console.log(`🎯 Suche ${elemente.length} Elemente mit .funktionale-count`);
     
     elemente.forEach((el, index) => {
       const alteZahl = parseInt(el.textContent) || 0;
       el.textContent = zahl;
       
-      console.log(`Element ${index}: ${alteZahl} → ${zahl}`);
       
       if (mitAnimation && zahl > alteZahl) {
         el.style.color = '#28a745';
@@ -102,13 +96,9 @@ class FunktionsCounter {
   
   // Test Funktion
   testCounter() {
-    console.log('🧪 Counter Test:');
-    console.log('- Artikel ID:', this.articleId);
-    console.log('- Schon besucht:', this.schonBesucht());
     
     const key = `zahl_${this.articleId}`;
     const zahl = localStorage.getItem(key) || '0';
-    console.log('- Aktuelle Zahl:', zahl);
     
     // Manuelles erhöhen zum Testen
     if (confirm('Counter manuell erhöhen?')) {
@@ -141,11 +131,6 @@ const counter = new FunktionsCounter();
 // Global für Tests
 window.testCounter = () => counter.testCounter();
 window.zeigeCounterInfo = () => {
-  console.log('📊 Counter Info:');
-  console.log('- Artikel:', counter.articleId);
-  console.log('- Besucht:', counter.schonBesucht());
   const key = `zahl_${counter.articleId}`;
-  console.log('- Zahl:', localStorage.getItem(key) || '0');
 };
 
-console.log('🚀 Funktions Counter geladen! Test mit: testCounter()');

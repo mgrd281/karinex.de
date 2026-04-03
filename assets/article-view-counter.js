@@ -94,17 +94,14 @@ class ArticleViewCounter {
       // Update display
       this.incrementViewDisplay();
       
-      console.log('✅ Article view tracked:', viewData);
       
     } catch (error) {
-      console.log('❌ Failed to track view:', error);
     }
   }
   
   async sendViewToServer(data) {
     // For now, we'll simulate server call
     // In production, this would be a real API call
-    console.log('📊 Sending view data to server:', data);
     
     // Simulate API call
     return new Promise((resolve) => {
@@ -156,7 +153,6 @@ class ArticleViewCounter {
       session_id: this.getSessionId()
     };
     
-    console.log('📈 Engagement tracked:', engagementData);
   }
   
   displayViewCount() {

@@ -12,7 +12,6 @@ class EchterViewCounter {
   init() {
     if (!this.articleId) return;
     
-    console.log('🇩🇪 ECHTER View Counter gestartet für Artikel:', this.articleId);
     
     // Prüfen ob heute bereits gezählt
     if (!this.heuteBereitsGesehen()) {
@@ -74,13 +73,11 @@ class EchterViewCounter {
         utm: this.getUTMParams()
       };
       
-      console.log('📊 Sende ECHTE View-Daten:', viewData);
       
       // An echte API senden
       const response = await this.sendeAnAPI(viewData);
       
       if (response?.success) {
-        console.log('✅ ECHTE View erfolgreich gespeichert!');
         this.updateViewDisplay(response.aktuelle_views || 1);
       } else {
         // Fallback: Local Storage mit echten Daten
@@ -109,7 +106,6 @@ class EchterViewCounter {
         return await response.json();
       }
     } catch (e) {
-      console.log('🔄 API nicht erreichbar, nutze Fallback');
     }
     
     return null;
@@ -124,7 +120,6 @@ class EchterViewCounter {
     const neueViews = views + 1;
     localStorage.setItem(key, neueViews.toString());
     
-    console.log('💾 Fallback: Views gespeichert:', neueViews);
     this.updateViewDisplay(neueViews);
   }
   
@@ -140,7 +135,6 @@ class EchterViewCounter {
         }
       }
     } catch (e) {
-      console.log('🔄 API Load Fallback');
     }
     
     // Fallback: Local Storage

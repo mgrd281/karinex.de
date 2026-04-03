@@ -78,7 +78,6 @@
     // ==== JSONBIN.IO MODE (Free Shared Counter) ====
     async function getAllWishlistData() {
       try {
-        console.log('[Wishlist] Fetching from JSONBin...');
         const response = await fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID + '/latest', {
           method: 'GET',
           headers: {
@@ -91,7 +90,6 @@
           throw new Error('Failed to fetch: ' + response.status);
         }
         const data = await response.json();
-        console.log('[Wishlist] JSONBin data:', data);
         return data.record || {};
       } catch (error) {
         console.error('[Wishlist] JSONBin fetch error:', error);
@@ -190,8 +188,6 @@
     }
 
     // ==== INITIALIZATION ====
-    console.log('[Wishlist] Initializing buttons found:', wishlistBtns.length);
-    console.log('[Wishlist] USE_LOCALSTORAGE:', USE_LOCALSTORAGE);
     
     wishlistBtns.forEach(function(btn) {
       const productHandle = btn.dataset.handle;
@@ -205,7 +201,6 @@
 
       // Get initial count
       getSharedCount(productHandle).then(function(count) {
-        console.log('[Wishlist] Got count for', productHandle, ':', count);
         updateCounterDisplay(counter, count);
       });
 

@@ -28,7 +28,6 @@ class BlogInstantIndexer {
   }
 
   startIndexingProcess() {
-    console.log('🚀 Indexing optimization active for new article...');
 
     // Phase 1: Browser-side pings are deactivated (CORS restrictions).
     // Discovery relies on updated Sitemaps and Schema.
@@ -71,9 +70,7 @@ class BlogInstantIndexer {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `hub.mode=publish&hub.url=${encodeURIComponent(rssUrl)}`
       });
-      console.log('✅ RSS feed update triggered');
     } catch (e) {
-      console.log('❌ RSS update failed:', e);
     }
   }
 
@@ -90,7 +87,6 @@ class BlogInstantIndexer {
       timestamp: new Date().toISOString()
     };
 
-    console.log('📋 Prepared API submission data:', submissionData);
 
     // Store for Service Worker to process
     localStorage.setItem('pendingIndexSubmission', JSON.stringify(submissionData));
@@ -118,7 +114,6 @@ class BlogInstantIndexer {
       btn.classList.add('priority-indexing');
     });
 
-    console.log('📱 Social signals generated');
   }
 
   setupServiceWorker() {
@@ -127,7 +122,6 @@ class BlogInstantIndexer {
         // Listen for messages from service worker
         navigator.serviceWorker.addEventListener('message', event => {
           if (event.data.type === 'INDEX_COMPLETE') {
-            console.log('🎉 Indexing completed:', event.data);
           }
         });
 
