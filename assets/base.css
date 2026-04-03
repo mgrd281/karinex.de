@@ -1023,70 +1023,7 @@ ul[product-grid-view='zoom-out'] .card-gallery>img {
   line-height: 1.2;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  :root:active-view-transition-type(product-grid) {
-    details[open] floating-panel-component {
-      view-transition-name: panel-content;
-
-      .checkbox *,
-      .facets__pill-label {
-        transition: none;
-      }
-
-      .facets--vertical & {
-        view-transition-name: none;
-      }
-    }
-
-    .product-grid {
-      view-transition-name: product-grid;
-    }
-
-    footer {
-      view-transition-name: footer;
-    }
-
-    .product-grid__item,
-    floating-panel-component {
-      transition: none;
-    }
-  }
-}
-
-::view-transition-group(panel-content) {
-  z-index: 1;
-}
-
-::view-transition-new(product-grid) {
-  animation-delay: 150ms;
-  animation-name: fadeInUp;
-  animation-duration: var(--animation-speed);
-  animation-timing-function: var(--animation-easing);
-}
-
-results-list[initialized] {
-  .product-grid__item {
-    transition: opacity var(--animation-speed) var(--animation-easing),
-      transform var(--animation-speed) var(--animation-easing);
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* View transition CSS removed to prevent flash/flicker */
 
 /* Collection and product list cards have equal heights */
 :is(.product-grid__item, .resource-list__item) .product-card {

@@ -46,13 +46,6 @@
   /* Product Grid */
   .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2rem;margin:2rem 0}
   
-  /* Hide non-critical content initially */
-  .below-fold{visibility:hidden}
-  
-  /* Loading state */
-  .loading{opacity:0;transition:opacity .3s}
-  .loaded{opacity:1}
-  
   /* Performance: Below-fold content optimization */
   footer,#footer-group-wrapper{content-visibility:auto;contain-intrinsic-size:0 500px}
   .product-recommendations{content-visibility:auto;contain-intrinsic-size:0 400px}
