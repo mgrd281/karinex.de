@@ -840,53 +840,125 @@
         overflow: visible !important;
       }
 
-      /* ─── Shared badge: small absolute overlay on icon ─── */
-      header-actions .icon-badge,
-      header-actions .cart-bubble,
-      header-actions .wishlist-count-badge {
-        position: absolute !important;
-        top: -4px !important;
-        right: -6px !important;
-        min-width: 14px !important;
-        height: 14px !important;
-        padding: 0 3px !important;
-        font-size: 9px !important;
-        font-weight: 700 !important;
-        line-height: 1 !important;
-        color: #fff !important;
-        background: #0f3b2e !important;
-        border-radius: 50px !important;
-        box-shadow: none !important;
-        border: none !important;
-        margin: 0 !important;
-        transform: none !important;
-        z-index: 2 !important;
-      }
+      /* ─── AboutYou-style: dot indicator + count text next to icon ─── */
       
-      /* Show badge only when has content */
-      header-actions .icon-badge:not([data-count="0"]):not(:empty),
-      header-actions .wishlist-count-badge:not([data-count="0"]):not(:empty),
-      header-actions .cart-bubble:not(.visually-hidden):not(:empty) {
+      /* Wishlist action: flex row for icon + number */
+      header-actions .action__wishlist {
         display: flex !important;
         align-items: center !important;
-        justify-content: center !important;
+        gap: 1px !important;
+        text-decoration: none !important;
       }
-      
-      /* Hide badge when count is 0 or cart is empty */
-      header-actions .icon-badge[data-count="0"],
-      header-actions .icon-badge:empty,
-      header-actions .wishlist-count-badge[data-count="0"],
-      header-actions .wishlist-count-badge:empty,
-      header-actions .cart-bubble.visually-hidden,
-      header-actions .cart-bubble:empty,
-      header-actions .cart-bubble[data-count="0"] {
-        display: none !important;
-        width: 0 !important;
-        height: 0 !important;
-        min-width: 0 !important;
+
+      /* Icon wrapper: relative for dot positioning */
+      header-actions .action__wishlist .icon-wrapper {
+        position: relative !important;
+      }
+
+      /* Wishlist dot indicator */
+      header-actions .wishlist-dot {
+        position: absolute !important;
+        top: -1px !important;
+        right: -2px !important;
+        width: 7px !important;
+        height: 7px !important;
+        background: #e06449 !important;
+        border-radius: 50% !important;
+        border: 1.5px solid var(--color-background, #fff) !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+      }
+
+      /* Wishlist count text next to icon */
+      header-actions .wishlist-count-text {
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: currentColor !important;
+        line-height: 1 !important;
+        background: none !important;
+        border: none !important;
         padding: 0 !important;
+        margin: 0 !important;
+        min-width: 0 !important;
+        height: auto !important;
+        border-radius: 0 !important;
+        position: static !important;
+      }
+      header-actions .wishlist-count-text[data-count="0"] {
+        display: none !important;
+      }
+
+      /* ─── Cart: AboutYou-style ─── */
+      header-actions cart-icon {
+        display: flex !important;
+        align-items: center !important;
+        gap: 1px !important;
+      }
+
+      /* Cart SVG wrapper: relative for dot */
+      header-actions cart-icon .svg-wrapper {
+        position: relative !important;
+      }
+
+      /* Cart dot indicator */
+      header-actions cart-icon .svg-wrapper::after {
+        content: '' !important;
+        position: absolute !important;
+        top: -1px !important;
+        right: -2px !important;
+        width: 7px !important;
+        height: 7px !important;
+        background: #e06449 !important;
+        border-radius: 50% !important;
+        border: 1.5px solid var(--color-background, #fff) !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+      }
+
+      /* Hide cart dot when cart is empty */
+      header-actions cart-icon:not(.header-actions__cart-icon--has-cart) .svg-wrapper::after {
+        display: none !important;
+      }
+
+      /* Cart bubble: inline text next to icon, not overlay circle */
+      header-actions .cart-bubble {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        min-width: 0 !important;
+        border-radius: 0 !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        aspect-ratio: auto !important;
+      }
+
+      header-actions .cart-bubble__background {
+        display: none !important;
+      }
+
+      header-actions .cart-bubble__text,
+      header-actions .cart-bubble__text-count {
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: currentColor !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+      }
+
+      /* Hide cart count when empty */
+      header-actions .cart-bubble.visually-hidden {
+        display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
+      }
+
+      /* Hide old-style badge classes */
+      header-actions .icon-badge,
+      header-actions .wishlist-count-badge {
+        display: none !important;
       }
       
       header-actions {
@@ -1020,76 +1092,136 @@
     content-visibility: visible;
   }
 
-  /* ═══ Header Actions: Premium Badge Styling ═══ */
+  /* ═══ Header Actions: AboutYou-Style Badge ═══ */
   
-  /* ═══ Badge: positioning context ═══ */
+  /* ═══ Positioning context ═══ */
   .header-actions__action {
     position: relative !important;
     overflow: visible !important;
   }
 
-  /* Icon wrapper needs position relative for badge overlay */
   .header-actions__action .icon-wrapper,
   .header-actions__action .svg-wrapper {
     position: relative !important;
   }
 
-  /* Small elegant badge overlaid on icon top-right */
-  /* Small elegant badge overlaid on icon top-right */
-  .header-actions__action .cart-bubble,
-  .header-actions__action .icon-badge,
-  .header-actions__action .wishlist-count-badge,
-  .header-actions__cart-icon .cart-bubble {
-    position: absolute !important;
-    top: -4px !important;
-    right: -6px !important;
-    left: auto !important;
-    bottom: auto !important;
-    min-width: 14px !important;
-    height: 14px !important;
-    padding: 0 3px !important;
-    font-size: 9px !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-    color: #fff !important;
-    background: #0f3b2e !important;
-    border-radius: 50px !important;
+  /* ═══ Wishlist: dot + count text ═══ */
+  .action__wishlist {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    box-shadow: none !important;
-    border: none !important;
-    transform: none !important;
-    margin: 0 !important;
-    z-index: 3 !important;
+    gap: 2px !important;
+    text-decoration: none !important;
   }
 
-  /* Hide badge when count = 0 or cart is empty - MUST come after display:flex rule */
+  .action__wishlist .wishlist-dot {
+    position: absolute !important;
+    top: -1px !important;
+    right: -2px !important;
+    width: 8px !important;
+    height: 8px !important;
+    background: #e06449 !important;
+    border-radius: 50% !important;
+    border: 1.5px solid var(--color-background, #fff) !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  .action__wishlist .wishlist-count-text {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: currentColor !important;
+    line-height: 1 !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: static !important;
+    min-width: 0 !important;
+    height: auto !important;
+    border-radius: 0 !important;
+  }
+
+  .action__wishlist .wishlist-count-text[data-count="0"] {
+    display: none !important;
+  }
+
+  /* Hide old badge classes */
+  .header-actions__action .icon-badge,
+  .header-actions__action .wishlist-count-badge {
+    display: none !important;
+  }
+
+  /* ═══ Cart: dot + count text ═══ */
+  .header-actions__cart-icon,
+  .header-actions__action:has(cart-icon) {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  cart-icon {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+  }
+
+  /* Cart dot indicator */
+  cart-icon .svg-wrapper::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -1px !important;
+    right: -2px !important;
+    width: 8px !important;
+    height: 8px !important;
+    background: #e06449 !important;
+    border-radius: 50% !important;
+    border: 1.5px solid var(--color-background, #fff) !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  /* Hide dot when cart is empty */
+  cart-icon:not(.header-actions__cart-icon--has-cart) .svg-wrapper::after {
+    display: none !important;
+  }
+
+  /* Cart bubble: inline text, not circle overlay */
+  .header-actions__action .cart-bubble,
+  .header-actions__cart-icon .cart-bubble {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    aspect-ratio: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
   .header-actions__action .cart-bubble.visually-hidden,
-  .header-actions__action .cart-bubble:empty,
   .header-actions__cart-icon .cart-bubble.visually-hidden,
-  .header-actions__cart-icon .cart-bubble:empty,
-  .header-actions__action .icon-badge[data-count="0"],
-  .header-actions__action .wishlist-count-badge[data-count="0"],
   .header-actions__action .cart-bubble[data-count="0"] {
     display: none !important;
   }
 
-  /* Hide decorative background elements */
+  /* Hide circle background */
   .header-actions__action .cart-bubble__background,
   .header-actions__cart-icon .cart-bubble__background,
-  .header-actions__action .cart-bubble::before,
-  .header-actions__action .cart-bubble::after {
+  .header-actions__action .cart-bubble::before {
     display: none !important;
   }
 
-  /* Ensure inner text inherits correct style */
+  /* Cart count text styling */
   .header-actions__action .cart-bubble__text,
   .header-actions__cart-icon .cart-bubble__text,
   .header-actions__action .cart-bubble__text-count {
-    color: #fff !important;
-    font-size: 9px !important;
-    font-weight: 700 !important;
+    color: currentColor !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
     line-height: 1 !important;
     padding: 0 !important;
   }

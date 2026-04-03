@@ -2696,39 +2696,25 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6)>*:not(.tax-note) {
   overflow: hidden;
 }
 
-/* Cart bubble */
+/* Cart bubble - AboutYou style (overridden in header.liquid for header context) */
 .cart-bubble {
   --cart-padding: 0;
-
-  position: absolute;
-  top: -2px;
-  right: -4px;
-  width: 14px;
-  height: 14px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border-width: 0;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: 0;
   margin: 0;
   z-index: 2;
-  border: 1.5px solid var(--color-background);
-  /* Creates a cutout effect against the background */
 }
 
 .cart-bubble__background {
-  position: absolute;
-  inset: 0;
-  background-color: #000000;
-  border-radius: 50%;
+  display: none;
 }
 
 .cart-bubble__text {
-  font-size: 8px;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  color: currentColor;
   z-index: var(--layer-flat);
   line-height: 1;
   display: flex;
