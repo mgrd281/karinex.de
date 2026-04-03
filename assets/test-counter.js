@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const elemente = document.querySelectorAll('.funktionale-count');
   
   if (elemente.length === 0) {
-    console.error('❌ Keine Elemente gefunden! Überprüfe class name im HTML');
     return;
   }
   

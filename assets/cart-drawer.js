@@ -158,7 +158,7 @@ class CartDrawerComponent extends DialogComponent {
         }
       }
     } catch (e) {
-      console.error('Failed to load recently viewed:', e);
+      // silently ignore
     }
   }
 }

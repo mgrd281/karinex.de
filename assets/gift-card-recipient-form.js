@@ -190,7 +190,6 @@ class GiftCardRecipientForm extends Component {
         break;
 
       default:
-        console.warn(`Unknown delivery mode: ${mode}`);
         // Default to self delivery
         this.refs.myEmailButton.checked = true;
         this.refs.recipientEmailButton.checked = false;

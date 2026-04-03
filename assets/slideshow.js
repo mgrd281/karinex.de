@@ -731,16 +731,16 @@ export class Slideshow extends Component {
 
     this.#scroll.snap = false;
 
-    document.addEventListener('pointermove', onPointerMove, { signal });
-    document.addEventListener('pointerup', onPointerUp, { signal });
+    document.addEventListener('pointermove', onPointerMove, { signal, passive: true });
+    document.addEventListener('pointerup', onPointerUp, { signal, passive: true });
     /**
      * pointerDown calls onPointerUp to fix an issue where the first tap-and-drag
      * on the zoom dialog is captured by the pointerMove/pointerUp listeners,
      * sometimes causing the slideshow to change slides unexpectedly
      */
-    document.addEventListener('pointerdown', onPointerUp, { signal });
-    document.addEventListener('pointercancel', onPointerUp, { signal });
-    document.addEventListener('pointercapturelost', onPointerUp, { signal });
+    document.addEventListener('pointerdown', onPointerUp, { signal, passive: true });
+    document.addEventListener('pointercancel', onPointerUp, { signal, passive: true });
+    document.addEventListener('pointercapturelost', onPointerUp, { signal, passive: true });
   };
 
   #handlePointerEnter = () => {

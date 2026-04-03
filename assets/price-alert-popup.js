@@ -301,7 +301,7 @@
              updateSlider();
            }
         })
-        .catch(function(e) { console.error("History Error", e); });
+        .catch(function() {});
     }
 
     fetchAndBuildChart();
@@ -679,7 +679,7 @@
       
       window.PriceAlertPopup.open({ handle: handle, title: title, image: image, price: price, comparePrice: comparePrice });
     } catch (err) {
-      console.error("[Price Alert] Error:", err);
+      // silently ignore
     }
   }, true);
 

@@ -9,7 +9,6 @@ class AYProductGallery {
     this.galleryEl = document.querySelector(`[data-section-id="${sectionId}"]`);
     
     if (!this.galleryEl) {
-      console.warn('Gallery element not found for section:', sectionId);
       return;
     }
 

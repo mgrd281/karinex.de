@@ -57,7 +57,6 @@ class WishlistHeart extends HTMLElement {
             const data = localStorage.getItem(this.STORAGE_KEY);
             return data ? JSON.parse(data) : [];
         } catch (e) {
-            console.error('Error reading wishlist from localStorage:', e);
             return [];
         }
     }
@@ -121,7 +120,7 @@ class WishlistHeart extends HTMLElement {
             // Notify theme components (wishlist page, counter, etc.)
             window.dispatchEvent(new Event('wishlist-updated'));
         } catch (e) {
-            console.error('Error saving wishlist to localStorage:', e);
+            // silently ignore
         }
     }
 }

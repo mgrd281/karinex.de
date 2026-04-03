@@ -85,7 +85,6 @@
     initializeHeart(heart) {
       const productHandle = heart.getAttribute('data-product-handle');
       if (!productHandle) {
-        console.warn('[GlobalLikeManager] No product handle found');
         return;
       }
 
@@ -94,12 +93,10 @@
       const counter = heart.querySelector('.like-heart__counter');
 
       if (!button) {
-        console.warn('[GlobalLikeManager] No button found in heart element');
         return;
       }
 
       if (!counter) {
-        console.warn('[GlobalLikeManager] No counter span found in heart element');
         return;
       }
 
@@ -194,7 +191,6 @@
      */
     displayCount(counter, count) {
       if (!counter) {
-        console.warn('[GlobalLikeManager] Counter element not found');
         return;
       }
       

@@ -20,7 +20,6 @@ function startTTS() {
                         document.querySelector('article');
   
   if (!articleContent) {
-    console.error('❌ Kein Artikel Inhalt gefunden!');
     alert('Artikel Inhalt nicht gefunden');
     return;
   }
@@ -30,7 +29,6 @@ function startTTS() {
   text = text.replace(/\s+/g, ' ').trim();
   
   if (!text || text.length < 50) {
-    console.error('❌ Text zu kurz!');
     alert('Kein ausreichender Text gefunden');
     return;
   }
@@ -85,7 +83,6 @@ function startTTS() {
   };
   
   currentUtterance.onerror = function(event) {
-    console.error('❌ TTS Fehler:', event);
     stopTTS();
     alert('Fehler bei der Wiedergabe');
   };

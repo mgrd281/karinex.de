@@ -176,8 +176,8 @@ class CartItemsComponent extends Component {
         // @ts-ignore
         window.initCartUpsell?.(true);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        // silently ignore
       })
       .finally(() => {
         this.#enableCartItems();

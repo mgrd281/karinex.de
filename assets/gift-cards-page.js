@@ -445,7 +445,6 @@
       showGiftCardModal(data);
       
     } catch (error) {
-      console.error('Error adding gift card:', error);
       showGiftCardModal(data);
     } finally {
       // Reset buttons

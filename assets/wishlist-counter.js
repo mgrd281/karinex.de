@@ -86,13 +86,11 @@
           }
         });
         if (!response.ok) {
-          console.error('[Wishlist] JSONBin fetch failed:', response.status, response.statusText);
           throw new Error('Failed to fetch: ' + response.status);
         }
         const data = await response.json();
         return data.record || {};
       } catch (error) {
-        console.error('[Wishlist] JSONBin fetch error:', error);
         return {};
       }
     }
@@ -140,7 +138,6 @@
 
         return productData.count;
       } catch (error) {
-        console.error('JSONBin update error:', error);
         return null;
       }
     }
@@ -153,7 +150,6 @@
         }
         return 0;
       } catch (error) {
-        console.error('Error getting product count:', error);
         return 0;
       }
     }

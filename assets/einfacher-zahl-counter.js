@@ -7,7 +7,6 @@
   const element = document.querySelector('.funktionale-count');
   
   if (!element) {
-    console.error('❌ KEIN ELEMENT GEFUNDEN!');
     return;
   }
   
@@ -87,6 +86,5 @@ setTimeout(() => {
   const element = document.querySelector('.funktionale-count');
   if (element) {
   } else {
-    console.error('❌ Element verschwunden!');
   }
 }, 1000);

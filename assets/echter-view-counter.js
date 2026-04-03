@@ -85,7 +85,6 @@ class EchterViewCounter {
       }
       
     } catch (fehler) {
-      console.error('❌ Fehler bei View Tracking:', fehler);
       this.fallbackSpeichern();
     }
   }

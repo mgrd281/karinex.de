@@ -72,12 +72,10 @@ document.addEventListener('submit', async (e) => {
                 }
 
             } else {
-                console.error('Failsafe: Cart add failed', addedItem);
                 // If AJAX fails (e.g. OOS), fallback to standard redirect so user sees error
                 window.location.href = '/cart';
             }
         } catch (err) {
-            console.error('Failsafe: Critical Error', err);
             window.location.href = '/cart';
         } finally {
             // No loading class to remove
