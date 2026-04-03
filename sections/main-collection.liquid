@@ -7,53 +7,6 @@
 ></script>
 
 {% if collection %}
-  <h1 class="visually-hidden">{{ collection.title | escape }} kaufen – Günstige Angebote & Schneller Versand bei Karinex</h1>
-  
-  {%- comment -%} SEO: Include keywords from title in body text - ONLY on page 1 to avoid duplicate content {%- endcomment -%}
-  {%- unless current_page > 1 -%}
-  <p class="visually-hidden">
-    Willkommen im Karinex Online Shop! Entdecken Sie {{ collection.title }} - günstige Angebote, Rabatte und schneller Versand. 
-    {% if collection.handle == 'software' %}Software kaufen - Windows, Office & mehr bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'games' %}Games & Spiele - PC, PlayStation, Xbox bei karinex Online Shop.{% endif %}
-    {% if collection.handle contains 'lego' %}LEGO® Sets - Spielzeug & Bausteine bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'sale' %}SALE - Angebote & Rabatte bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'uhren' or collection.handle == 'damenuhren' or collection.handle == 'boss-uhren' %}Uhren - Boss, Michael Kors, Armbanduhren bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'all' %}Alle Produkte - Software, Games, Uhren bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'playstation' %}PlayStation - Spiele, Controller & Zubehör bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'xbox' %}Xbox - Spiele, Controller & Zubehör bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'microsoft' %}Microsoft Produkte - Windows, Office, 365 bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'adobe' %}Adobe Software - Photoshop, Acrobat & mehr bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'antivirus' %}Antivirus Software - Schutz für PC & Mac bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'herrenuhren' %}Herrenuhren - Boss, Diesel, Emporio Armani bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'luxus-uhren' %}Luxus Uhren - Premium Armbanduhren bei karinex Online Shop.{% endif %}
-    {% if collection.handle == 'michael-kors-damenuhr' %}Michael Kors Damenuhren - Elegante Uhren bei karinex Online Shop.{% endif %}
-  </p>
-  {%- endunless -%}
-{% endif %}
-
-{% if collection %}
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org/",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Startseite",
-        "item": "{{ shop.url }}"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "{{ collection.title | escape }}",
-        "item": "{{ shop.url }}{{ collection.url }}"
-      }
-    ]
-  }
-  </script>
-{% endif %}
-
 {% javascript %}
   const url = new URL(window.location.href);
   if (url.hash) {

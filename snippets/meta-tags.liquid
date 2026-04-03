@@ -264,13 +264,16 @@
 <link rel="canonical" href="{{ clean_canonical }}">
 
 {%- comment -%} 
-  Hreflang: Single language site (German)
-  Using "de" without country code since we serve the same content to DE/AT/CH
-  x-default for international visitors
-  
-  UPDATE: Seobility flags "rel=alternate" to same URL as canonical as "duplicate canonical".
-  Since this is a single language site, we rely on <html lang="de-DE"> instead.
+  Hreflang: Multi-language site (DE default, EN, PL)
+  Required for Google to discover and index alternate locale versions.
+  Uses Shopify's built-in alternate locale URLs.
 {%- endcomment -%}
+{%- assign _hreflang_path = request.path | remove_first: '/en' | remove_first: '/pl' -%}
+{%- if _hreflang_path == blank -%}{%- assign _hreflang_path = '/' -%}{%- endif -%}
+<link rel="alternate" hreflang="de" href="{{ shop.url }}{{ _hreflang_path }}">
+<link rel="alternate" hreflang="en" href="{{ shop.url }}/en{{ _hreflang_path }}">
+<link rel="alternate" hreflang="pl" href="{{ shop.url }}/pl{{ _hreflang_path }}">
+<link rel="alternate" hreflang="x-default" href="{{ shop.url }}{{ _hreflang_path }}">
 
 {%- comment -%} ═══ PAGINATION (PREV/NEXT) ═══ {%- endcomment -%}
 {%- if paginate -%}

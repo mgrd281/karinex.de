@@ -285,28 +285,7 @@
 
 {%- endstyle -%}
 
-{% if blog %}
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org/",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Startseite",
-        "item": "{{ shop.url }}"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "{{ blog.title | escape }}",
-        "item": "{{ shop.url }}{{ blog.url }}"
-      }
-    ]
-  }
-  </script>
-{% endif %}
+
 
 <div class="main-blog section-{{ section.id }}-padding">
   <div class="page-width" style="max-width: 1400px;"><!-- Expanded from default ~1200px -->

@@ -628,9 +628,7 @@
     {% if request.page_type == 'page' and page.handle == 'faq' %}
       {% render 'schema-faq' %}
     {% endif %}
-    {% if request.page_type == 'article' %}
-      {% render 'schema-article' %}
-    {% endif %}
+
       
   <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">
     

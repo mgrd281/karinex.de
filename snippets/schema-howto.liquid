@@ -66,15 +66,7 @@
       "text": "Befolgen Sie die verbleibenden Anweisungen und starten Sie Ihren Computer neu, wenn erforderlich.",
       "url": "{{ product.url }}#step4"
     }
-  ],
-  "video": {
-    "@type": "VideoObject",
-    "name": "{{ product.title }} Installation Video",
-    "description": "Video-Anleitung zur Installation",
-    "thumbnailUrl": "https:{{ product.featured_image | image_url: width: 480 }}",
-    "contentUrl": "{{ shop.url }}/videos/{{ product.handle }}-installation.mp4",
-    "uploadDate": "{{ product.published_at | date: '%Y-%m-%d' }}"
-  }
+  ]
 }
 </script>
 {% endif %}
