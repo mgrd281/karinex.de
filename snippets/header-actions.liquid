@@ -95,19 +95,8 @@
       <span class="wishlist-dot" aria-hidden="true"></span>
     </span>
     <span id="wishlist-header-count" class="wishlist-count-text" data-count="0">0</span>
+    <script>try{var _w=JSON.parse(localStorage.getItem('wishlist')||'[]');if(_w.length>0){var _e=document.getElementById('wishlist-header-count');if(_e){_e.textContent=_w.length;_e.setAttribute('data-count',String(_w.length));_e.parentElement.setAttribute('data-wishlist-count',String(_w.length))}}}catch(e){}</script>
   </a>
-  <script>
-    // Instant wishlist count — getElementById is always available at parse time
-    try {
-      var _wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
-      var _el = document.getElementById('wishlist-header-count');
-      if (_wl.length > 0 && _el) {
-        _el.textContent = _wl.length;
-        _el.setAttribute('data-count', String(_wl.length));
-        _el.parentElement.setAttribute('data-wishlist-count', String(_wl.length));
-      }
-    } catch(e) {}
-  </script>
 
   <script>
     (function() {
