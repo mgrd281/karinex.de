@@ -13,7 +13,7 @@
         endif
       endfor
     %}
-    {% if has_video %}
+    {% if has_video and template.name == 'product' %}
       <a href="{{ product.url }}" class="product-card-video-icon" aria-label="Video abspielen" tabindex="-1">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="52" height="52" fill="none">
           <circle cx="32" cy="32" r="30" fill="rgba(255,255,255,0.92)" />
