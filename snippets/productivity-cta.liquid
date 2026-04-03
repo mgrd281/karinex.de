@@ -88,16 +88,17 @@
                 {% comment %} Detection logic: type, collections, tags {% endcomment %}
                 {% assign product_type_downcase = product.type | downcase %}
                 {% assign product_tags_downcase = product.tags | join: ',' | downcase %}
+                {% assign product_vendor_downcase = product.vendor | downcase %}
                 
                 {% comment %} Check for Digital/Software {% endcomment %}
                 {% if product_type_downcase contains 'digital' or product_type_downcase contains 'software' or product_type_downcase contains 'key' or product_tags_downcase contains 'digital' or product_tags_downcase contains 'software' or product_tags_downcase contains 'download' %}
                   {% assign cta_category = 'digital' %}
+                {% comment %} Check for LEGO/Toys — before Games so 'spiel' in type doesn't steal LEGO products {% endcomment %}
+                {% elsif product_vendor_downcase contains 'lego' or product_type_downcase contains 'lego' or product_type_downcase contains 'spielzeug' or product_type_downcase contains 'toy' or product_tags_downcase contains 'lego' or product_tags_downcase contains 'spielzeug' or product_tags_downcase contains 'toys' %}
+                  {% assign cta_category = 'lego' %}
                 {% comment %} Check for Games {% endcomment %}
                 {% elsif product_type_downcase contains 'game' or product_type_downcase contains 'spiel' or product_tags_downcase contains 'game' or product_tags_downcase contains 'spiel' or product_tags_downcase contains 'games' %}
                   {% assign cta_category = 'games' %}
-                {% comment %} Check for LEGO/Toys {% endcomment %}
-                {% elsif product_type_downcase contains 'lego' or product_type_downcase contains 'spielzeug' or product_type_downcase contains 'toy' or product_tags_downcase contains 'lego' or product_tags_downcase contains 'spielzeug' or product_tags_downcase contains 'toys' %}
-                  {% assign cta_category = 'lego' %}
                 {% comment %} Check for Watches (Uhren) {% endcomment %}
                 {% elsif product_type_downcase contains 'uhr' or product_type_downcase contains 'watch' or product_tags_downcase contains 'uhr' or product_tags_downcase contains 'watch' or product_tags_downcase contains 'uhren' or product_tags_downcase contains 'watches' %}
                   {% assign cta_category = 'watches' %}

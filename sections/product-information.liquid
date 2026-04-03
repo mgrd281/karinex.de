@@ -3000,9 +3000,11 @@ nav[aria-label="Breadcrumb"],
 {%- assign is_lego = false -%}
 {%- assign is_game = false -%}
 
+{%- assign vendor_lower = product.vendor | downcase -%}
+
 {%- if tags_csv contains 'cat_watch' -%}
   {%- assign is_watch = true -%}
-{%- elsif tags_csv contains 'cat_lego' -%}
+{%- elsif tags_csv contains 'cat_lego' or vendor_lower contains 'lego' -%}
   {%- assign is_lego = true -%}
 {%- elsif tags_csv contains 'cat_games' -%}
   {%- assign is_game = true -%}
@@ -3032,10 +3034,6 @@ nav[aria-label="Breadcrumb"],
       {%- assign is_lego = true -%}
     {%- endif -%}
   {%- endfor -%}
-  {%- assign vendor_lower = product.vendor | downcase -%}
-  {%- if vendor_lower contains 'lego' -%}
-    {%- assign is_lego = true -%}
-  {%- endif -%}
 {%- endif -%}
 
 {%- if is_watch == false and is_lego == false and is_game == false and is_digital == false -%}
