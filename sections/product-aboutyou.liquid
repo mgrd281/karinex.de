@@ -51,12 +51,6 @@
       assign _is_digital = true
     endif
   endif
-
-  assign _ay_vendor_lc = product.vendor | downcase
-  assign _ay_is_lego = false
-  if _ay_vendor_lc contains 'lego'
-    assign _ay_is_lego = true
-  endif
 -%}
 
 {%- comment -%} Product structured data (JSON-LD) {%- endcomment -%}
@@ -69,8 +63,7 @@
 
 <link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
 <style>
-  .ay-gallery__main-img { object-fit: {% if _ay_is_lego %}contain{% else %}cover{% endif %} !important; }
-  {% if _ay_is_lego %}.ay-gallery__cell { background: #f5f5f5; }{% endif %}
+  .ay-gallery__main-img { object-fit: cover !important; }
 </style>
 
 <div class="ay-product" data-section-id="{{ section.id }}">
