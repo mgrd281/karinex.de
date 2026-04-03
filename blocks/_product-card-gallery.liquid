@@ -317,10 +317,16 @@
       badge.style.display = inCart[pid] ? '' : 'none';
     });
   }
-  document.addEventListener('cart:update', function(){
-    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
-      syncCartBadges(c.items);
-    }).catch(function(){});
+  document.addEventListener('cart:update', function(e){
+    // Use cart data from event if available (instant), otherwise fetch
+    var resource = e.detail && e.detail.resource;
+    if (resource && resource.items) {
+      syncCartBadges(resource.items);
+    } else {
+      fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
+        syncCartBadges(c.items);
+      }).catch(function(){});
+    }
   });
 })();
 </script>

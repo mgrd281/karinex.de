@@ -5671,17 +5671,19 @@ function toggleDesc() {
 
           // Dynamically check cart contents for the badge
           try {
-            var cartRes = await fetch('/cart.js');
-            var cartData = await cartRes.json();
             var productId = {{ product.id | json }};
-            var isInCart = cartData.items.some(function(item) { return item.product_id === productId; });
+            var resource = ev && ev.detail && ev.detail.resource;
+            var isInCart;
+            if (resource && resource.items) {
+              isInCart = resource.items.some(function(item) { return item.product_id === productId; });
+            } else {
+              var cartRes = await fetch('/cart.js');
+              var cartData = await cartRes.json();
+              isInCart = cartData.items.some(function(item) { return item.product_id === productId; });
+            }
             var cartBadge = document.getElementById('product-in-cart-badge');
             if(cartBadge) {
-              if (isInCart) {
-                cartBadge.style.display = '';
-              } else {
-                cartBadge.style.display = 'none';
-              }
+              cartBadge.style.display = isInCart ? '' : 'none';
             }
           } catch(err) {
             console.error('Error checking cart for badge:', err);

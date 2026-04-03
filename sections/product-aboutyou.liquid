@@ -1026,13 +1026,18 @@
   }
 
   /* ---- Sync "Im Warenkorb" badge on cart changes ---- */
-  document.addEventListener('cart:update', function() {
+  document.addEventListener('cart:update', function(e) {
     var badge = document.getElementById('ay-cart-badge');
     if (!badge) return;
     var pid = Number(badge.getAttribute('data-product-id'));
-    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
-      badge.style.display = c.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
-    }).catch(function(){});
+    var resource = e.detail && e.detail.resource;
+    if (resource && resource.items) {
+      badge.style.display = resource.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
+    } else {
+      fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
+        badge.style.display = c.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
+      }).catch(function(){});
+    }
   });
 
   /* ---- Back in Stock submit (sold out state) ---- */
