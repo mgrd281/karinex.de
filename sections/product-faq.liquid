@@ -68,6 +68,8 @@
   {%- endif -%}
 {%- endif -%}
 
+{% render 'schema-faq-product', faq_category: _faq_cat %}
+
 <div class="kx-faq-wrapper product-info__faq-wrapper">
   {%- if _faq_cat == 'uhren' -%}
     {%- render 'faq-uhren' -%}

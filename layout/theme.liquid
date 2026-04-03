@@ -582,15 +582,6 @@
 
     {% capture content_for_header_no_title %}{{ content_for_header }}{% endcapture %}
     {{ content_for_header_no_title | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' }}
-  <!-- Performance Optimization: Preload Critical Fonts -->
-  <link rel="preload" href="https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low">
-  
-  <!-- Google Fonts: Roboto - Load on interaction for better TTFB -->
-
-
-  
-
-
   <!-- SEO Optimization: Prevent indexing of dynamic, slow vendor filter pages (Ahrefs Fix) -->
   {%- if request.page_type == 'collection' and request.path contains '/vendors' and request.path contains 'q=' -%}
     <meta name="robots" content="noindex, follow">
@@ -601,25 +592,29 @@
   <!-- Ahrefs Web Analytics -->
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="GzfQYRK7vmnwuekczK8sjw" async></script>
 
-  <!-- Trusted Shops Integration Code -->
-  <script
-    async
-    data-desktop-y-offset="0"
-    data-mobile-y-offset="0"
-    data-desktop-disable-reviews="false"
-    data-desktop-enable-custom="false"
-    data-desktop-position="right"
-    data-desktop-custom-width="156"
-    data-desktop-enable-fadeout="false"
-    data-disable-mobile="false"
-    data-disable-trustbadge="false"
-    data-mobile-custom-width="156"
-    data-mobile-disable-reviews="false"
-    data-mobile-enable-custom="false"
-    data-mobile-position="right"
-    data-color-scheme="os-default"
-    charset="UTF-8"
-    src="//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js">
+  <!-- Trusted Shops - Deferred via smart-script-manager on user interaction -->
+  <script>
+    (function() {
+      var ts = document.createElement('script');
+      ts.src = '//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js';
+      ts.async = true;
+      ts.charset = 'UTF-8';
+      ts.dataset.desktopYOffset = '0';
+      ts.dataset.mobileYOffset = '0';
+      ts.dataset.desktopDisableReviews = 'false';
+      ts.dataset.desktopEnableCustom = 'false';
+      ts.dataset.desktopPosition = 'right';
+      ts.dataset.desktopCustomWidth = '156';
+      ts.dataset.desktopEnableFadeout = 'false';
+      ts.dataset.disableMobile = 'false';
+      ts.dataset.disableTrustbadge = 'false';
+      ts.dataset.mobileCustomWidth = '156';
+      ts.dataset.mobileDisableReviews = 'false';
+      ts.dataset.mobileEnableCustom = 'false';
+      ts.dataset.mobilePosition = 'right';
+      ts.dataset.colorScheme = 'os-default';
+      document.head.appendChild(ts);
+    })();
   </script>
   </head>
 
@@ -638,11 +633,6 @@
     {% endif %}
       
   <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">
-    
-    {%- comment -%} SEO: Keywords from page title in body for homepage {%- endcomment -%}
-    {% if request.page_type == 'index' %}
-      <p class="visually-hidden">Willkommen bei Karinex® - Ihr Online-Shop für Software, Games, LEGO, Boss & Michael Kors Uhren. Microsoft Office & Windows Lizenzen günstig kaufen. Spiele, Sets und mehr - schneller Versand aus Deutschland. Angebote, Rabatte, Sale - Favoriten speichern in der Wunschliste.</p>
-    {% endif %}
     
     {% section 'global-sale-bar' %}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
@@ -708,15 +698,13 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
-    <!-- Tidio Chat - Handled by smart-script-manager -->
+    <!-- Tidio Chat - Deferred via smart-script-manager on user interaction -->
     <script>
       (function() {
-        setTimeout(function() {
-          var script = document.createElement('script');
-          script.src = "//code.tidio.co/4q9iv8qyklejixqbmjpsr94lrexejico.js";
-          script.async = true;
-          document.body.appendChild(script);
-        }, 100); // Manager intercepts this immediately
+        var script = document.createElement('script');
+        script.src = "//code.tidio.co/4q9iv8qyklejixqbmjpsr94lrexejico.js";
+        script.async = true;
+        document.body.appendChild(script);
       })();
     </script>
 

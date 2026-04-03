@@ -1,0 +1,82 @@
+{% comment %}
+  FAQPage JSON-LD for product pages
+  Renders category-specific FAQ schema matching the displayed FAQ section.
+  Usage: {% render 'schema-faq-product', faq_category: _faq_cat %}
+{% endcomment %}
+
+{%- if faq_category == 'uhren' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Ist die Uhr zu 100 % original?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, absolut. Wir garantieren die Authentizität jeder Uhr. Wir beziehen unsere Ware ausschließlich von autorisierten Partnern. Jede Uhr wird einer strengen Qualitätsprüfung unterzogen und mit allen Originalpapieren sowie der gültigen Seriennummer geliefert."}},
+    {"@type": "Question", "name": "Ist die Uhr neu und ungetragen?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, alle unsere Luxusuhren sind fabrikneu, originalverpackt und ungetragen. Sie erhalten die Uhr im exakten Zustand wie vom Hersteller vorgesehen – inklusive Box, Papieren und vollständigem Zubehör."}},
+    {"@type": "Question", "name": "Erhalte ich eine Herstellergarantie?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir liefern alle Uhren mit der vollen internationalen Herstellergarantie aus. Die ordnungsgemäß ausgefüllte Garantieurkunde bzw. Echtheitskarte liegt jeder Sendung bei."}},
+    {"@type": "Question", "name": "Wie sicher ist der Versand?", "acceptedAnswer": {"@type": "Answer", "text": "Uhren werden hochversichert per Wertversand (DHL Express oder UPS) versendet. Eine neutrale Umverpackung sorgt diskret für maximale Sicherheit bis zur persönlichen Übergabe gegen Unterschrift."}},
+    {"@type": "Question", "name": "Erhalte ich eine Rechnung mit ausgewiesener MwSt.?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, jede Lieferung enthält eine offizielle Rechnung mit separat ausgewiesener Mehrwertsteuer. Dies ist besonders für Geschäftskunden und Sammler wichtig."}}
+  ]
+}
+</script>
+
+{%- elsif faq_category == 'digital' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Ist der Lizenzschlüssel original und legal?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir garantieren 100 % legale und ungenutzte Original-Lizenzen. Alle Produktschlüssel unterliegen dem europäischen Erschöpfungsgrundsatz und sind rechtssicher für die dauerhafte Nutzung an Ihrem PC zertifiziert."}},
+    {"@type": "Question", "name": "Wann erhalte ich meinen Produktschlüssel?", "acceptedAnswer": {"@type": "Answer", "text": "Blitzversand: Die Zustellung erfolgt automatisiert in Echtzeit. Unmittelbar nach Abschluss der Zahlung erhalten Sie den Key sowie Download-Links und Anleitung innerhalb von 30–60 Sekunden per E-Mail."}},
+    {"@type": "Question", "name": "Bieten Sie Unterstützung bei der Aktivierung?", "acceptedAnswer": {"@type": "Answer", "text": "Ja. Jeder Lizenz liegt eine bebilderte Schritt-für-Schritt-Anleitung bei. Sollten dennoch Fragen auftreten, steht unser technischer Support bereit, um Sie bis zur erfolgreichen Aktivierung zu begleiten."}},
+    {"@type": "Question", "name": "Gilt das Widerrufsrecht auch für Digitale Keys?", "acceptedAnswer": {"@type": "Answer", "text": "Gemäß gesetzlicher Regelung erlischt das Widerrufsrecht bei digitalen Inhalten, sobald die Ausführung des Vertrags mit Ihrer ausdrücklichen Zustimmung und Kenntnisnahme über den Key-Versand begonnen hat."}},
+    {"@type": "Question", "name": "Erhalte ich eine ordnungsgemäße MwSt.-Rechnung?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, Sie erhalten automatisch eine PDF-Rechnung mit separat ausgewiesener Mehrwertsteuer. Diese ist voll steuerlich absetzbar und entspricht allen deutschen Buchhaltungsstandards."}}
+  ]
+}
+</script>
+
+{%- elsif faq_category == 'games' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Ist das Spiel neu und originalverpackt (sealed)?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir verkaufen ausschließlich fabrikneue, werkseitig versiegelte (Factory Sealed) Spiele. Jedes Spiel befindet sich in der unbeschädigten Originalverpackung – wie frisch aus dem Presswerk."}},
+    {"@type": "Question", "name": "Erhalte ich die offizielle deutsche Verkaufsversion?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir führen primär die offizielle deutsche Verkaufsversion mit USK-Kennzeichnung. Sollte es sich ausnahmsweise um einen EU-Import (PEGI) handeln, wird dies im Titel und in der Beschreibung explizit aufgeführt."}},
+    {"@type": "Question", "name": "Wie schnell erfolgt der Versand innerhalb Deutschlands?", "acceptedAnswer": {"@type": "Answer", "text": "Blitzversand: Bei Bestellung bis 14 Uhr versenden wir meist noch am selben Tag. Die Zustellung erfolgt per DHL oder Deutsche Post mit einer Regellieferzeit von 1–3 Werktagen."}},
+    {"@type": "Question", "name": "Ist das Spiel auf Deutsch spielbar?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, alle von uns angebotenen Spiele verfügen über deutsche Bildschirmtexte und meist auch über eine deutsche Sprachausgabe. Details zu den Sprachen finden Sie immer direkt in der Produktbeschreibung."}},
+    {"@type": "Question", "name": "Kann ich das Spiel zurückgeben?", "acceptedAnswer": {"@type": "Answer", "text": "Sie können ungeöffnete, noch originalversiegelte Spiele innerhalb von 14 Tagen retournieren. Bitte beachten Sie: Sobald die Versiegelung des Datenträgers entfernt wurde, erlischt das Widerrufsrecht gemäß § 312g BGB."}}
+  ]
+}
+</script>
+
+{%- elsif faq_category == 'lego' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Ist das LEGO® Set original und versiegelt?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir verkaufen ausschließlich originale LEGO® Neuware. Jedes Set ist werkseitig versiegelt (MISB – Mint in Sealed Box) und verfügt über alle unbeschädigten Original-Siegel."}},
+    {"@type": "Question", "name": "In welchem Zustand ist der Karton (OVP)?", "acceptedAnswer": {"@type": "Answer", "text": "Für Sammler elementar: Wir garantieren eine unbeschädigte, originalversiegelte Verpackung. Wir lagern unsere Sets lichtgeschützt und trocken, um einen exzellenten Zustand ohne grobe Dellen oder Risse zu gewährleisten."}},
+    {"@type": "Question", "name": "Wie wird das Set beim Versand geschützt?", "acceptedAnswer": {"@type": "Answer", "text": "Wir versenden in stabilen, doppelwelligen Export-Kartons mit reichlich Füllmaterial. So kommt Ihr Set im Sammlerzustand bei Ihnen an – sicher geschützt vor Transportschäden."}},
+    {"@type": "Question", "name": "Wie schnell erfolgt die Lieferung?", "acceptedAnswer": {"@type": "Answer", "text": "Bestellungen bis 14 Uhr verlassen meist noch am selben Tag unser Lager. Der Versand erfolgt per DHL mit einer Regellieferzeit von 1–3 Werktagen innerhalb Deutschlands."}},
+    {"@type": "Question", "name": "Kann ich das Set bei Nichtgefallen zurückgeben?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, Sie haben ein 14-tägiges Widerrufsrecht. Bitte beachten Sie: Bei Sammlerobjekten können wir nur dann den vollen Kaufpreis erstatten, wenn die werksseitige Versiegelung ungeöffnet ist."}}
+  ]
+}
+</script>
+
+{%- else -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Sind Ihre Produkte original?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, wir garantieren die Echtheit all unserer Produkte. Wir beziehen unsere Ware ausschließlich über verifizierte Lieferketten und autorisierte Markenpartner, um höchste Qualität und Originalität sicherzustellen."}},
+    {"@type": "Question", "name": "In welchem Zustand ist das Produkt?", "acceptedAnswer": {"@type": "Answer", "text": "Alle Produkte in unserem Shop sind fabrikneu, unbenutzt und werden in der Originalverpackung des Herstellers geliefert, sofern in der Produktbeschreibung nicht explizit anders angegeben."}},
+    {"@type": "Question", "name": "Wie schnell erfolgt die Lieferung?", "acceptedAnswer": {"@type": "Answer", "text": "Soweit nicht anders angegeben, beträgt die Lieferzeit innerhalb Deutschlands 1–3 Werktage nach Zahlungseingang. Der Versand erfolgt sicher verpackt über unsere Logistikpartner wie DHL."}},
+    {"@type": "Question", "name": "Wie läuft eine Rücksendung ab?", "acceptedAnswer": {"@type": "Answer", "text": "Sie können Ihre Bestellung innerhalb von 14 Tagen ohne Angabe von Gründen widerrufen. Nutzen Sie dazu einfach unser Retourenportal oder kontaktieren Sie unseren Kundensupport für das Rücksendelabel."}},
+    {"@type": "Question", "name": "Erhalte ich eine Rechnung mit ausgewiesener MwSt.?", "acceptedAnswer": {"@type": "Answer", "text": "Ja, zu jeder Bestellung erhalten Sie eine offizielle Rechnung, auf der die gesetzliche Mehrwertsteuer separat ausgewiesen ist. Die Rechnung wird Ihnen nach dem Versand automatisch per E-Mail zugestellt."}},
+    {"@type": "Question", "name": "Wann erhalte ich meine Sendungsnummer?", "acceptedAnswer": {"@type": "Answer", "text": "Sie erhalten Ihre Sendungsnummer automatisch per E-Mail, sobald Ihr Paket unser Lager verlassen hat und vom Versanddienstleister gescannt wurde. Dies geschieht in der Regel am Abend des Versandtages."}}
+  ]
+}
+</script>
+{%- endif -%}
