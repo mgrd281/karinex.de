@@ -4,20 +4,15 @@
   Usage: {% render 'schema-breadcrumb' %}
 {% endcomment %}
 
-{%- liquid
-  assign crumbs = ''
-  assign pos = 1
-
-  if request.page_type == 'product'
-    assign best_col = nil
-    for col in product.collections
-      assign h = col.handle
-      unless h == 'all' or h == 'alle' or h == 'frontpage'
-        assign best_col = col
-        break
-      endunless
-    endfor
--%}
+{%- if request.page_type == 'product' -%}
+  {%- assign best_col = nil -%}
+  {%- for col in product.collections -%}
+    {%- assign h = col.handle -%}
+    {%- unless h == 'all' or h == 'alle' or h == 'frontpage' -%}
+      {%- assign best_col = col -%}
+      {%- break -%}
+    {%- endunless -%}
+  {%- endfor -%}
 
 <script type="application/ld+json">
 {
