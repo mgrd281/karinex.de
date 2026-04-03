@@ -103,48 +103,40 @@
       if (window.wishlistScriptInitialized) return;
       window.wishlistScriptInitialized = true;
 
-      function updateWishlistCountHeader() {
-          const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-          const badges = document.querySelectorAll('.wishlist-count-text, .wishlist-count-badge');
-          
-          badges.forEach(badge => {
-              const current = badge.getAttribute('data-count');
-              if (current === String(wishlist.length)) return;
-              
-              if(wishlist.length > 0) {
-                  badge.textContent = wishlist.length;
-                  badge.setAttribute('data-count', wishlist.length);
-                  if (badge.closest) badge.closest('.action__wishlist')?.setAttribute('data-wishlist-count', wishlist.length);
-                  badge.classList.remove('icon-badge--pop');
-                  void badge.offsetWidth;
-                  badge.classList.add('icon-badge--pop');
-              } else {
-                  badge.textContent = '0';
-                  badge.setAttribute('data-count', '0');
-                  if (badge.closest) badge.closest('.action__wishlist')?.setAttribute('data-wishlist-count', '0');
-              }
+      function syncWishlistBadge() {
+          var wishlist, count;
+          try { wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]'); count = wishlist.length; } catch(e) { return; }
+          document.querySelectorAll('.wishlist-count-text').forEach(function(badge) {
+              if (badge.getAttribute('data-count') === String(count)) return;
+              badge.textContent = count;
+              badge.setAttribute('data-count', count);
+              var link = badge.closest('.action__wishlist');
+              if (link) link.setAttribute('data-wishlist-count', count);
           });
       }
 
-      function hideEmptyCartBubble() {
-          const cartBubbles = document.querySelectorAll('.header-actions__cart-icon .cart-bubble');
-          cartBubbles.forEach(bubble => {
-              const countEl = bubble.querySelector('.cart-bubble__text-count');
-              const count = countEl ? parseInt(countEl.textContent.trim() || '0', 10) : 0;
+      // React to wishlist toggle events
+      window.addEventListener('wishlist-updated', syncWishlistBadge);
+
+      // Re-sync after section hydration morph replaces DOM with server HTML (no localStorage data)
+      var debounceTimer;
+      new MutationObserver(function() {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(syncWishlistBadge, 16);
+      }).observe(document.documentElement, { subtree: true, childList: true });
+
+      // Hide empty cart bubble
+      document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('.header-actions__cart-icon .cart-bubble').forEach(function(bubble) {
+              var countEl = bubble.querySelector('.cart-bubble__text-count');
+              var count = countEl ? parseInt(countEl.textContent.trim() || '0', 10) : 0;
               if (count === 0 || bubble.classList.contains('visually-hidden')) {
                   bubble.style.display = 'none';
                   bubble.style.visibility = 'hidden';
                   bubble.style.opacity = '0';
               }
           });
-      }
-
-      // Only react to actual wishlist changes (toggle heart, etc.)
-      window.addEventListener('wishlist-updated', updateWishlistCountHeader);
-
-      // Run once on DOMContentLoaded for cart bubble only (wishlist already set inline)
-      document.addEventListener('DOMContentLoaded', hideEmptyCartBubble);
-
+      });
     })();
   </script>
 
