@@ -13,6 +13,7 @@
   "sections": {
     "product_recently_viewed_6P3zWq": {
       "type": "product-recently-viewed",
+      "disabled": true,
       "name": "Zuletzt angesehen",
       "settings": {}
     },
@@ -627,8 +628,8 @@
     }
   },
   "order": [
-    "custom_similar_products_FrWxgz",
     "product_recently_viewed_6P3zWq",
+    "custom_similar_products_FrWxgz",
     "custom_mobile_categories_azgmF6",
     "custom_footer_i34fPm",
     "section_bfa9EJ",
