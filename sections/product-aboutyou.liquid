@@ -93,7 +93,7 @@
                   <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
-                      src="{{ media.preview_image | image_url: width: 800 }}"
+                      src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                     >
@@ -106,15 +106,15 @@
                     assign ay_ext_host = media.host
                     assign ay_embed_url = ''
                     if ay_ext_host == 'youtube'
-                      assign ay_embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1'
+                      assign ay_embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1&vq=hd1080&hd=1'
                     elsif ay_ext_host == 'vimeo'
-                      assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0'
+                      assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0&quality=1080p'
                     endif
                   -%}
                   <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster"
-                      src="{{ media.preview_image | image_url: width: 800 }}"
+                      src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                     >
@@ -185,8 +185,8 @@
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="video"
                  data-video="{{ ay_v_first.url }}"
                  data-video-sources='{{ ay_v_sources }}'
-                 data-poster="{{ media.preview_image | image_url: width: 1600 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 75 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy">
             </div>
@@ -195,15 +195,15 @@
               assign ay_d_host = media.host
               assign ay_d_embed = ''
               if ay_d_host == 'youtube'
-                assign ay_d_embed = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1'
+                assign ay_d_embed = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1&vq=hd1080&hd=1'
               elsif ay_d_host == 'vimeo'
-                assign ay_d_embed = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0'
+                assign ay_d_embed = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0&quality=1080p'
               endif
             -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="external_video"
                  data-video="{{ ay_d_embed }}"
-                 data-poster="{{ media.preview_image | image_url: width: 1600 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 75 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy">
             </div>
@@ -1610,7 +1610,7 @@
       while(nativeVid.firstChild) nativeVid.removeChild(nativeVid.firstChild);
       nativeVid.removeAttribute('src');
       var sources = []; try{sources=JSON.parse(v.videoSources||'[]');}catch(e){}
-      if(sources.length>0) { sources.forEach(function(s){ var el=document.createElement('source');el.src=s.url;if(s.type)el.type=s.type;nativeVid.appendChild(el); }); } else { nativeVid.src=v.video; }
+      if(sources.length>0) { sources.sort(function(a,b){var aM=(a.type||'').indexOf('mp4')>-1?0:1;var bM=(b.type||'').indexOf('mp4')>-1?0:1;return aM-bM;}); sources.forEach(function(s){ var el=document.createElement('source');el.src=s.url;if(s.type)el.type=s.type;nativeVid.appendChild(el); }); } else { nativeVid.src=v.video; }
       nativeVid.classList.add('is-active'); nativeVid.load(); nativeVid.play().catch(function(){});
     } else {
       var url=v.video;

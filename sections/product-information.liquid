@@ -773,7 +773,7 @@ nav[aria-label="Breadcrumb"],
                 data-video="{{ first_source.url }}"
                 data-video-sources='{{ video_sources_json }}'
                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}"
-             data-poster="{{ media.preview_image | image_url: width: 1600, format: 'webp', quality: 80 }}"
+             data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title }} - Video"
@@ -786,9 +786,9 @@ nav[aria-label="Breadcrumb"],
              assign host = media.host
              assign embed_url = ''
              if host == 'youtube'
-               assign embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1'
+               assign embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1&vq=hd1080&hd=1'
              elsif host == 'vimeo'
-               assign embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0'
+               assign embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0&quality=1080p'
              endif
            %}
            <div class="thumb-item"
@@ -800,7 +800,7 @@ nav[aria-label="Breadcrumb"],
                 data-aspect="{{ media.aspect_ratio }}"
                 data-video="{{ embed_url }}"
                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}"
-             data-poster="{{ media.preview_image | image_url: width: 1600, format: 'webp', quality: 80 }}"
+             data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title }} - Video"
@@ -2084,10 +2084,15 @@ nav[aria-label="Breadcrumb"],
            // Clear old sources
            while (nativeVid.firstChild) nativeVid.removeChild(nativeVid.firstChild);
            nativeVid.removeAttribute('src');
-           // Add all sources for format compatibility
+           // Add all sources — sorted: MP4 first (Safari), then WebM (Chrome/FF)
            var sources = [];
            try { sources = JSON.parse(v.videoSources || '[]'); } catch(e) {}
            if (sources.length > 0) {
+             sources.sort(function(a, b) {
+               var aMP4 = (a.type || '').indexOf('mp4') > -1 ? 0 : 1;
+               var bMP4 = (b.type || '').indexOf('mp4') > -1 ? 0 : 1;
+               return aMP4 - bMP4;
+             });
              sources.forEach(function(s) {
                var sourceEl = document.createElement('source');
                sourceEl.src = s.url;
