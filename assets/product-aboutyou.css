@@ -186,6 +186,18 @@
 .ay-gallery__play-btn:hover {
     transform: translate(-50%, -50%) scale(1.1);
 }
+.ay-gallery__play-btn circle {
+    transition: fill 0.25s ease;
+}
+.ay-gallery__play-btn polygon {
+    transition: fill 0.25s ease;
+}
+.ay-gallery__cell:hover .ay-gallery__play-btn circle {
+    fill: rgba(0,0,0,0.6);
+}
+.ay-gallery__cell:hover .ay-gallery__play-btn polygon {
+    fill: #ffffff;
+}
 
 .ay-gallery__play-btn svg {
     width: 56px;
