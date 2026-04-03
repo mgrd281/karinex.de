@@ -62,6 +62,7 @@
   "offers": {
     {%- if product.variants.size > 1 -%}
     "@type": "AggregateOffer",
+    "url": "{{ canonical_url }}",
     "lowPrice": "{{ product.price_min | divided_by: 100.0 | replace: ',', '.' }}",
     "highPrice": "{{ product.price_max | divided_by: 100.0 | replace: ',', '.' }}",
     "priceCurrency": "{{ cart.currency.iso_code }}",

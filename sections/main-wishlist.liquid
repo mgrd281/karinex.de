@@ -499,6 +499,7 @@
 
 <script>
 (function() {
+  function escapeAttr(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
   document.addEventListener('DOMContentLoaded', async function() {
     var grid = document.getElementById('wl-grid');
     var loading = document.getElementById('wl-loading');
@@ -587,12 +588,12 @@
       }
 
       var cardHtml =
-        '<a href="' + url + '" class="wl-card__link" aria-label="' + title + '"></a>' +
+        '<a href="' + url + '" class="wl-card__link" aria-label="' + escapeAttr(title) + '"></a>' +
         '<button type="button" class="wl-card__delete" data-handle="' + handle + '" aria-label="Entfernen">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
         '</button>' +
         '<div class="wl-card__img-wrap">' +
-          '<img src="' + img + '" alt="' + title.replace(/"/g,'&quot;') + '" class="wl-card__img" loading="lazy" width="500" height="500">' +
+          '<img src="' + img + '" alt="' + escapeAttr(title) + '" class="wl-card__img" loading="lazy" width="500" height="500">' +
           badgeHtml +
           '<button type="button" class="wl-card__atc" data-variant-id="' + firstVariantId + '">' +
             '<span class="wl-atc__text">In den Warenkorb</span>' +

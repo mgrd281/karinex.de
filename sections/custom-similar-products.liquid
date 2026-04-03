@@ -441,6 +441,7 @@
                const resizeImage = (url, size) => {
                  try { return url.replace(/(\.[^.]*)$/, `_${size}$1`); } catch(e) { return url; }
                };
+               const escapeAttr = (s) => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
                // Extract sizes for hover panel
                const sizeOptionIdx = (product.options || []).findIndex(o => /gr[öo]ße|size/i.test(o));
@@ -463,10 +464,10 @@
 
                return `
                  <div class="csp-card" style="position: relative; display: flex; flex-direction: column;">
-                   <a href="${product.url}" style="position: absolute; inset: 0; z-index: 1;" aria-label="${title}"></a>
+                   <a href="${product.url}" style="position: absolute; inset: 0; z-index: 1;" aria-label="${escapeAttr(title)}"></a>
                    <div class="csp-image-wrapper">
                       <wishlist-heart data-product-handle="${handle}"></wishlist-heart>
-                      <img src="${resizeImage(product.featured_image, '400x')}" alt="${title.replace(/"/g,'&quot;')}" class="csp-image" loading="lazy" width="400" height="400">
+                      <img src="${resizeImage(product.featured_image, '400x')}" alt="${escapeAttr(title)}" class="csp-image" loading="lazy" width="400" height="400">
                       ${badgeHtml}
                    </div>
                    <div class="csp-info" style="pointer-events: none;">
@@ -475,10 +476,10 @@
                      ${priceHtml}
                    </div>
                    <div class="csp-card__hover-panel">
-                     <a href="${product.url}" class="csp-card__hover-link" aria-label="${title}"></a>
+                     <a href="${product.url}" class="csp-card__hover-link" aria-label="${escapeAttr(title)}"></a>
                      <div class="csp-image-wrapper">
                        <wishlist-heart data-product-handle="${handle}"></wishlist-heart>
-                       <img src="${resizeImage(product.featured_image, '400x')}" alt="${title.replace(/"/g,'&quot;')}" class="csp-image" loading="lazy" width="400" height="400">
+                       <img src="${resizeImage(product.featured_image, '400x')}" alt="${escapeAttr(title)}" class="csp-image" loading="lazy" width="400" height="400">
                        ${badgeHtml}
                      </div>
                      <div class="csp-card__hover-body">

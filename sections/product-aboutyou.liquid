@@ -1754,8 +1754,8 @@
   }
   function getEmbedCode(pageUrl) {
     var v=videoItems[currentVideoIdx]; if(!v)return '';
-    if(v.type==='external_video'&&v.video.indexOf('youtube.com')>-1){var yid=v.video.replace(/.*\/embed\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+yid+'" frameborder="0" allowfullscreen></iframe>';}
-    else if(v.type==='external_video'&&v.video.indexOf('vimeo.com')>-1){var vid2=v.video.replace(/.*\/video\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://player.vimeo.com/video/'+vid2+'" frameborder="0" allowfullscreen></iframe>';}
+    if(v.type==='external_video'&&v.video.indexOf('youtube.com')>-1){var yid=v.video.replace(/.*\/embed\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+yid+'" frameborder="0" loading="lazy" allowfullscreen></iframe>';}
+    else if(v.type==='external_video'&&v.video.indexOf('vimeo.com')>-1){var vid2=v.video.replace(/.*\/video\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://player.vimeo.com/video/'+vid2+'" frameborder="0" loading="lazy" allowfullscreen></iframe>';}
     return '<a href="'+pageUrl+'">'+document.title+'</a>';
   }
   function openSharePanel(url) {
