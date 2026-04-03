@@ -81,41 +81,8 @@
   }
   
   // ════════════════════════════════════════════════════════════════
-  // WISHLIST - Load After 2 Seconds or on Interaction
+  // WISHLIST - Already initialized inline in header-actions.liquid
   // ════════════════════════════════════════════════════════════════
-  
-  let wishlistLoaded = false;
-  
-  function loadWishlistScript() {
-    if (wishlistLoaded) return;
-    wishlistLoaded = true;
-    
-    // Initialize wishlist from localStorage
-    try {
-      const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-      
-      // Update wishlist count badge
-      const badge = document.querySelector('.wishlist-count, [data-wishlist-count]');
-      if (badge) {
-        badge.textContent = wishlist.length;
-        if (wishlist.length > 0) {
-          badge.style.display = 'flex';
-        }
-      }
-    } catch (e) {
-      console.error('Wishlist init error:', e);
-    }
-  }
-  
-  // Load wishlist after 2 seconds
-  setTimeout(loadWishlistScript, 2000);
-  
-  // Or on first wishlist button interaction
-  document.addEventListener('click', function(e) {
-    if (e.target.closest('[data-wishlist-btn], .wishlist-btn, .heart-icon')) {
-      loadWishlistScript();
-    }
-  }, { once: true, passive: true });
   
   // ════════════════════════════════════════════════════════════════
   // SLIDESHOW - Load Only When Visible

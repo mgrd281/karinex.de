@@ -81,12 +81,13 @@
       </dialog>
     </dialog-component>
 
+  <script>var __wc=0;try{__wc=JSON.parse(localStorage.getItem('wishlist')||'[]').length}catch(e){}</script>
   <a
     href="{{ _root }}pages/wishlist"
     class="header-actions__action action__wishlist"
     aria-label="Wunschliste"
-    data-wishlist-count="0"
   >
+    <script>document.currentScript.parentElement.setAttribute('data-wishlist-count',__wc)</script>
     <span class="visually-hidden">Wunschliste</span>
     <span class="svg-wrapper icon-wrapper">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="var(--icon-stroke-width, 1.5)" stroke="currentColor">
@@ -94,8 +95,7 @@
       </svg>
       <span class="wishlist-dot" aria-hidden="true"></span>
     </span>
-    <span id="wishlist-header-count" class="wishlist-count-text" data-count="0">0</span>
-    <script>try{var _w=JSON.parse(localStorage.getItem('wishlist')||'[]');if(_w.length>0){var _e=document.getElementById('wishlist-header-count');if(_e){_e.textContent=_w.length;_e.setAttribute('data-count',String(_w.length));_e.parentElement.setAttribute('data-wishlist-count',String(_w.length))}}}catch(e){}</script>
+    <span id="wishlist-header-count" class="wishlist-count-text"><script>document.currentScript.parentElement.setAttribute('data-count',__wc);document.write(__wc)</script></span>
   </a>
 
   <script>
