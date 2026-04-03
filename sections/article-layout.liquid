@@ -10,8 +10,8 @@
   },
   "headline": {{ article.title | json }},
   "description": {{ article.excerpt_or_content | strip_html | truncate: 160 | json }},
-  "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
-  "dateModified": "{{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+  "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}",
+  "dateModified": "{{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%:z' }}",
   "author": {
     "@type": "Person",
     "name": {{ article.author | json }}
