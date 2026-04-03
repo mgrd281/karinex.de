@@ -18,13 +18,13 @@
   "url": "{{ shop.url }}",
   "logo": {
     "@type": "ImageObject",
-    "url": "{{ shop.brand.logo | image_url: width: 600 }}",
+    "url": "https:{{ shop.brand.logo | image_url: width: 600 }}",
     "width": 600,
     "height": 200
   },
-  "image": "{{ shop.brand.logo | image_url: width: 800, format: 'webp' }}",
+  "image": "https:{{ shop.brand.logo | image_url: width: 800, format: 'webp' }}",
   "description": "Online-Shop für Software-Lizenzen, Games, LEGO, Uhren und Spielzeug. Schnelle Lieferung und Sofort-Downloads.",
-  "foundingDate": "2020",
+  "foundingDate": "2020-01-01",
   "knowsAbout": ["Software-Lizenzen", "Microsoft Office", "Microsoft Windows", "Video-Spiele", "LEGO", "Uhren"],
   "email": "shop@karinex.de",
   "telephone": "+49-1556-3133956",

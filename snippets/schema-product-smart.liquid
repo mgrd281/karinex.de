@@ -23,6 +23,7 @@
 {
   "@context": "https://schema.org/",
   "@type": "Product",
+  "url": "{{ canonical_url }}",
   "name": {{ product.title | json }},
   "image": [
     {%- if product.selected_or_first_available_variant.featured_image -%}
@@ -74,7 +75,7 @@
         "url": "{{ shop.url }}{{ variant.url }}",
         "priceCurrency": "{{ cart.currency.iso_code }}",
         "price": "{{ variant.price | divided_by: 100.0 | replace: ',', '.' }}",
-        "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
+        "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%dT23:59:59+01:00' }}",
         "availability": "{% if variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
         "itemCondition": "https://schema.org/NewCondition",
         "sku": "{{ variant.sku | default: variant.id }}",
@@ -95,7 +96,7 @@
       "priceType": "https://schema.org/ListPrice"
     },
     {%- endif -%}
-    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d' }}",
+    "priceValidUntil": "{{ 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%dT23:59:59+01:00' }}",
     "availability": "{% if product.selected_or_first_available_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
     "itemCondition": "https://schema.org/NewCondition",
     {%- endif -%}

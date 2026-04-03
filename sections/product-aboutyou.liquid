@@ -126,7 +126,7 @@
                 {%- elsif media.media_type == 'video' -%}
                   {%- assign ay_first_source = media.sources | first -%}
                   {%- capture ay_video_sources_json -%}[{% for src in media.sources %}{"url":"{{ src.url }}","type":"{{ src.mime_type }}"}{% unless forloop.last %},{% endunless %}{% endfor %}]{%- endcapture -%}
-                  <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
+                  <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
                       src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
@@ -147,7 +147,7 @@
                       assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0&quality=1080p'
                     endif
                   -%}
-                  <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
+                  <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster"
                       src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
