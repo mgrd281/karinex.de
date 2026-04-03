@@ -20,7 +20,8 @@
 {%- endif -%}
 
 {%- if description_content != blank or request.design_mode -%}
-  {{ 'collection-description-bottom.css' | asset_url | stylesheet_tag }}
+  <link rel="preload" href="{{ 'collection-description-bottom.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'collection-description-bottom.css' | asset_url }}"></noscript>
 
   <section class="cdb-section" aria-label="Beschreibung" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
     <div class="cdb-container">

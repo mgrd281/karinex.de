@@ -4,7 +4,8 @@
     assign _root = _root | append: '/'
   endunless
 -%}
-{{ 'main-faq.css' | asset_url | stylesheet_tag }}
+<link rel="preload" href="{{ 'main-faq.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'main-faq.css' | asset_url }}"></noscript>
 
 <div class="help-center">
   

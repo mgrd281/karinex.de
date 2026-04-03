@@ -453,6 +453,11 @@
   }
   
   function showGiftCardModal(data) {
+    function escapeHTML(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
     // Create modal for gift card request
     const modal = document.createElement('div');
     modal.className = 'gc-modal';
@@ -475,26 +480,26 @@
         
         <h3 class="gc-modal__title">Geschenkkarte anfragen</h3>
         <p class="gc-modal__text">
-          Deine ${data.amount}€ Geschenkkarte für <strong>${data.recipientName}</strong> wird per E-Mail versendet.
+          Deine ${escapeHTML(String(data.amount))}€ Geschenkkarte für <strong>${escapeHTML(data.recipientName)}</strong> wird per E-Mail versendet.
         </p>
         
         <div class="gc-modal__summary">
           <div class="gc-modal__row">
             <span>Betrag:</span>
-            <strong>${data.amount}€</strong>
+            <strong>${escapeHTML(String(data.amount))}€</strong>
           </div>
           <div class="gc-modal__row">
             <span>Empfänger:</span>
-            <strong>${data.recipientName}</strong>
+            <strong>${escapeHTML(data.recipientName)}</strong>
           </div>
           <div class="gc-modal__row">
             <span>E-Mail:</span>
-            <strong>${data.recipientEmail}</strong>
+            <strong>${escapeHTML(data.recipientEmail)}</strong>
           </div>
           ${data.message ? `
           <div class="gc-modal__row">
             <span>Nachricht:</span>
-            <strong>"${data.message}"</strong>
+            <strong>"${escapeHTML(data.message)}"</strong>
           </div>
           ` : ''}
         </div>

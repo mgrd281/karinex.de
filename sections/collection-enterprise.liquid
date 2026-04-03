@@ -11,7 +11,8 @@
 <!-- Google Fonts: Inter - loaded globally, using system fallback -->
 <!-- Fonts deferred for better performance -->
 
-{{ 'collection-enterprise.css' | asset_url | stylesheet_tag }}
+<link rel="preload" href="{{ 'collection-enterprise.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'collection-enterprise.css' | asset_url }}"></noscript>
 <style>.enterprise-collection { --ec-grid-cols: {{ grid_cols }}; }</style>
 
 <div class="enterprise-collection">

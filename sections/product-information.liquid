@@ -28,7 +28,8 @@
       {% render 'schema-howto' %}
     {%- endif -%}
 
-    {{ 'product-information.css' | asset_url | append: '?v=2' | stylesheet_tag }}
+    <link rel="preload" href="{{ 'product-information.css' | asset_url | append: '?v=2' }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ 'product-information.css' | asset_url | append: '?v=2' }}"></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">

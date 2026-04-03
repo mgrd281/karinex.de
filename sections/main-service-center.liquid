@@ -4,8 +4,10 @@
     assign _root = _root | append: '/'
   endunless
 -%}
-{{ 'main-about.css' | asset_url | stylesheet_tag }}
-{{ 'main-service-center.css' | asset_url | stylesheet_tag }}
+<link rel="preload" href="{{ 'main-about.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'main-about.css' | asset_url }}"></noscript>
+<link rel="preload" href="{{ 'main-service-center.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'main-service-center.css' | asset_url }}"></noscript>
 
 <div class="about-page">
 

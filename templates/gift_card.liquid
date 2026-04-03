@@ -4,7 +4,8 @@
 <html lang="{{ request.locale.iso_code }}">
   <head>
     {%- render 'stylesheets' -%}
-    {{ 'template-giftcard.css' | asset_url | stylesheet_tag }}
+    <link rel="preload" href="{{ 'template-giftcard.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ 'template-giftcard.css' | asset_url }}"></noscript>
 
     <script type="importmap">
       {

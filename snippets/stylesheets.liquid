@@ -1,4 +1,5 @@
-{{ 'overflow-list.css' | asset_url | preload_tag: as: 'style' }}
+<link rel="preload" href="{{ 'overflow-list.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ 'overflow-list.css' | asset_url }}"></noscript>
 <link rel="preload" href="{{ 'wishlist-heart.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="{{ 'wishlist-heart.css' | asset_url }}"></noscript>
 <link rel="preload" href="{{ 'base.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
