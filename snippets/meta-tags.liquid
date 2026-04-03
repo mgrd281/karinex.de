@@ -268,8 +268,16 @@
   Required for Google to discover and index alternate locale versions.
   Uses Shopify's built-in alternate locale URLs.
 {%- endcomment -%}
-{%- assign _hreflang_path = request.path | remove_first: '/en' | remove_first: '/pl' -%}
-{%- if _hreflang_path == blank -%}{%- assign _hreflang_path = '/' -%}{%- endif -%}
+{%- liquid
+  assign _hreflang_path = request.path
+  if _hreflang_path == '/en' or _hreflang_path == '/pl'
+    assign _hreflang_path = '/'
+  elsif _hreflang_path contains '/en/'
+    assign _hreflang_path = _hreflang_path | slice: 3, 9999
+  elsif _hreflang_path contains '/pl/'
+    assign _hreflang_path = _hreflang_path | slice: 3, 9999
+  endif
+-%}
 <link rel="alternate" hreflang="de" href="{{ shop.url }}{{ _hreflang_path }}">
 <link rel="alternate" hreflang="en" href="{{ shop.url }}/en{{ _hreflang_path }}">
 <link rel="alternate" hreflang="pl" href="{{ shop.url }}/pl{{ _hreflang_path }}">

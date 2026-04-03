@@ -290,9 +290,6 @@
 <div class="main-blog section-{{ section.id }}-padding">
   <div class="page-width" style="max-width: 1400px;"><!-- Expanded from default ~1200px -->
     
-    {%- comment -%} SEO: Keywords in body text (H1 is in blog-hero section) {%- endcomment -%}
-    <p class="visually-hidden">News & Ratgeber bei Karinex - Tipps, Anleitungen und Neuigkeiten rund um Software, Microsoft Office, Windows und Gaming.</p>
-    
     <header class="blog-header">
       <h2 class="blog-header__title">{{ blog.title | escape }} – Tipps, Anleitungen & Neuigkeiten</h2>
       {%- if section.settings.show_description and blog.all_tags.size > 0 -%}
