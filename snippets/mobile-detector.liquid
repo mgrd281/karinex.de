@@ -1,19 +1,4 @@
 {%- comment -%}
-  Mobile Detection for Adaptive Loading
-  Sets CSS class and JS variable
+  Mobile Detection — Pure CSS approach (no parser-blocking JS)
 {%- endcomment -%}
-
-<script>
-  // Ultra-lightweight mobile detection
-  (function() {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
-                     || window.innerWidth < 768;
-    
-    if (isMobile) {
-      document.documentElement.classList.add('is-mobile');
-      window.IS_MOBILE = true;
-    } else {
-      window.IS_MOBILE = false;
-    }
-  })();
-</script>
+<style>@media(max-width:767px){html{--is-mobile:1}}</style>

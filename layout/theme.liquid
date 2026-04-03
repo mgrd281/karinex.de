@@ -67,7 +67,7 @@
     {%- comment -%} ═══ GEO-LANGUAGE REDIRECT ════ {%- endcomment -%}
     {%- unless request.design_mode -%}
     <script>
-      (function() {
+      requestAnimationFrame(function() {
         // Country → Locale mapping
         var GEO_LOCALES = {
           // German → /de (default, no prefix needed)
@@ -161,7 +161,7 @@
             }
           })
           .catch(function() { /* Silently fail — keep current locale */ });
-      })();
+      });
     </script>
     {%- endunless -%}
 
@@ -171,7 +171,9 @@
          Shadow DOM blocks external CSS — this is the only way to style it.
          ═══════════════════════════════════════════════════════════════════ -->
     <script>
-      (function() {
+      if ('requestIdleCallback' in window) { requestIdleCallback(initUCStyles, { timeout: 3000 }); }
+      else { setTimeout(initUCStyles, 3000); }
+      function initUCStyles() {
         var UC_CSS = [
           /* ── GLOBALS (SCOPED) ── */
           '#uc-main-dialog.cmp *, #uc-main-dialog.cmp *::before, #uc-main-dialog.cmp *::after {',
@@ -464,7 +466,7 @@
         
         // Final fallback (one-time)
         setTimeout(tryInject, 4000);
-      })();
+      }
     </script>
     
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
@@ -484,7 +486,7 @@
 
     <!-- GLOBAL URL REDIRECT HANDLER - Fixes broken login/auth URLs -->
     <script>
-      (function() {
+      requestAnimationFrame(function() {
         const path = window.location.pathname.toLowerCase();
         const search = window.location.search;
         const urlParams = new URLSearchParams(search);
@@ -527,7 +529,7 @@
           window.location.replace(redirect || '/cart');
           return;
         }
-      })();
+      });
     </script>
 
     <!-- Performance Optimization - Resource Hints -->
@@ -756,35 +758,29 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       })();
     </script>
 
+    <script>
+      // Global Review Form Toggle
+      window.toggleReviewForm = function(btn) {
+          const reviewForm = document.getElementById('review-form'); if (!reviewForm) return;
+          const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
+          const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
+          const willOpen = !reviewForm.classList.contains('active');
+          reviewForm.classList.toggle('active'); btn.innerHTML = willOpen ? closeLabel : openLabel;
+          if (willOpen) reviewForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      // Global Tab Switcher
+      window.switchTab = function(btn) {
+          if (!btn) return;
+          const targetId = btn.getAttribute('data-tab'); if (!targetId) return;
+          const nav = btn.closest('.tab-nav'); if (!nav) return;
+          const container = nav.parentElement; if (!container) return;
+          nav.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+          btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
+          container.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
+          const target = container.querySelector('#' + targetId); if (target) target.classList.add('active');
+      };
+    </script>
+
   </body>
-
-
-  <script>
-
-    // Global Review Form Toggle
-    window.toggleReviewForm = function(btn) {
-        const reviewForm = document.getElementById('review-form'); if (!reviewForm) return;
-        const openLabel = '<i class="fa-solid fa-pen"></i> Bewertung schreiben';
-        const closeLabel = '<i class="fa-solid fa-times"></i> Bewertung verbergen';
-        const willOpen = !reviewForm.classList.contains('active');
-        reviewForm.classList.toggle('active'); btn.innerHTML = willOpen ? closeLabel : openLabel;
-        if (willOpen) reviewForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-
-    // Global Tab Switcher
-    window.switchTab = function(btn) {
-        if (!btn) return;
-        const targetId = btn.getAttribute('data-tab'); if (!targetId) return;
-        const nav = btn.closest('.tab-nav'); if (!nav) return;
-        const container = nav.parentElement; if (!container) return;
-        nav.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
-        btn.classList.add('active'); btn.setAttribute('aria-selected', 'true');
-        container.querySelectorAll('.tab-content').forEach(p => p.classList.remove('active'));
-        const target = container.querySelector('#' + targetId); if (target) target.classList.add('active');
-    };
-
-    // Usercentrics: no custom widget toggle needed (Cookiebot helper removed)
-  </script>
-
 </html>
 

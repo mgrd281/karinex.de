@@ -111,18 +111,18 @@
 <script
   src="{{ 'cart-drawer.js' | asset_url }}"
   type="module"
+  fetchpriority="low"
 ></script>
 <script
   src="{{ 'component-cart-items.js' | asset_url }}"
   type="module"
+  fetchpriority="low"
 ></script>
-<script
-  src="{{ 'product-form.js' | asset_url }}"
-  type="module"
-></script>
+{%- comment -%} product-form.js already loaded above with fetchpriority=low {%- endcomment -%}
 <script
   src="{{ 'fix-cart.js' | asset_url }}"
   defer
+  fetchpriority="low"
 ></script>
 
 <script
@@ -230,11 +230,7 @@
 {% endif %}
 
 {% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
-  <script
-    src="{{ 'fly-to-cart.js' | asset_url }}"
-    type="module"
-    fetchpriority="low"
-  ></script>
+  {%- comment -%} fly-to-cart.js already loaded unconditionally above {%- endcomment -%}
   <script
     src="{{ 'sticky-add-to-cart.js' | asset_url }}"
     type="module"
