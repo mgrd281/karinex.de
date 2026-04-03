@@ -787,6 +787,8 @@ nav[aria-label="Breadcrumb"],
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title | escape }} - Video"
                   loading="lazy" width="200" height="200" decoding="async">
+             <span class="thumb-badge" aria-label="Video"><i class="fa-solid fa-play"></i></span>
+           </div>
            {% liquid
              assign host = media.host
              assign embed_url = ''
