@@ -4,6 +4,23 @@
 
 {% capture children %}
   {% unless product == blank %}
+    {% liquid
+      assign has_video = false
+      for media in product.media
+        if media.media_type == 'video' or media.media_type == 'external_video'
+          assign has_video = true
+          break
+        endif
+      endfor
+    %}
+    {% if has_video %}
+      <a href="{{ product.url }}" class="product-card-video-icon" aria-label="Video abspielen" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="52" height="52" fill="none">
+          <circle cx="32" cy="32" r="30" fill="rgba(255,255,255,0.92)" />
+          <polygon points="26,20 46,32 26,44" fill="#1d4739" />
+        </svg>
+      </a>
+    {% endif %}
     <div
       class="product-badges product-badges--{{ settings.badge_position }}"
       style="
@@ -196,6 +213,29 @@
   }
   wishlist-heart .wishlist-social-proof {
     display: none !important;
+  }
+
+  /* Video play icon on product card */
+  .product-card-video-icon {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: var(--layer-flat, 2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    transition: transform 0.2s ease;
+  }
+  product-card:hover .product-card-video-icon {
+    transform: scale(1.08);
+  }
+  @media (max-width: 749px) {
+    .product-card-video-icon svg {
+      width: 42px;
+      height: 42px;
+    }
   }
 
   /* product-like-heart – transparent, no white circle */
