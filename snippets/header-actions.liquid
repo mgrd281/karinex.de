@@ -96,14 +96,15 @@
     <span class="wishlist-count-text" data-count="0">0</span>
   </a>
   <script>
-    // Instant wishlist count — runs synchronously before first paint
+    // Instant wishlist count — direct DOM reference, no querySelectorAll needed
     try {
       var _wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
       if (_wl.length > 0) {
-        document.querySelectorAll('.wishlist-count-text').forEach(function(el) {
-          el.textContent = _wl.length;
-          el.setAttribute('data-count', _wl.length);
-        });
+        var _a = document.currentScript.previousElementSibling;
+        var _txt = _a.querySelector('.wishlist-count-text');
+        var _dot = _a.querySelector('.wishlist-dot');
+        if (_txt) { _txt.textContent = _wl.length; _txt.setAttribute('data-count', String(_wl.length)); }
+        if (_dot) { _dot.style.display = ''; }
       }
     } catch(e) {}
   </script>
