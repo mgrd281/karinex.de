@@ -555,14 +555,9 @@
       header-component:not(:defined) * {
         visibility: hidden;
       }
-      /* Smooth transition when header becomes visible */
+      /* Header defined — show immediately, no animation flash */
       header-component:defined {
         visibility: visible;
-        animation: headerFadeIn 0.15s ease-out;
-      }
-      @keyframes headerFadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
       }
       /* Critical FOUC prevention — rules needed before base.css loads */
       .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
