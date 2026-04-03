@@ -193,7 +193,7 @@
     transition: fill 0.25s ease;
 }
 .ay-gallery__cell:hover .ay-gallery__play-btn circle {
-    fill: rgba(0,0,0,0.6);
+    fill: rgba(0,0,0,0.85);
 }
 .ay-gallery__cell:hover .ay-gallery__play-btn polygon {
     fill: #ffffff;
