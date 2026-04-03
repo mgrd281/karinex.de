@@ -126,13 +126,19 @@
                 {%- if ay_cell_index == 1 -%}
                   {%- assign has_unisex_tag = false -%}
                   {%- assign has_fast_tag = false -%}
+                  {%- assign ay_is_in_cart = false -%}
                   {%- if product.tags contains 'Unisex' or product.tags contains 'unisex' -%}
                     {%- assign has_unisex_tag = true -%}
                   {%- endif -%}
                   {%- if product.tags contains 'Fast Ausverkauft' -%}
                     {%- assign has_fast_tag = true -%}
                   {%- endif -%}
-                  {%- if has_fast_tag or has_unisex_tag -%}
+                  {%- for item in cart.items -%}
+                    {%- if item.product.id == product.id -%}
+                      {%- assign ay_is_in_cart = true -%}
+                      {%- break -%}
+                    {%- endif -%}
+                  {%- endfor -%}
                     <div class="ay-badge-stack">
                       {%- if has_fast_tag -%}
                         <span class="ay-badge-fast">Fast ausverkauft</span>
@@ -140,8 +146,8 @@
                       {%- if has_unisex_tag -%}
                         <span class="ay-badge-fast ay-badge-fast--white">Unisex</span>
                       {%- endif -%}
+                      <span class="ay-badge-fast ay-badge-fast--cart" id="ay-cart-badge" data-product-id="{{ product.id }}" {% unless ay_is_in_cart %}style="display:none"{% endunless %}>Im Warenkorb</span>
                     </div>
-                  {%- endif -%}
                 {%- endif -%}
               </div>
 
@@ -1007,6 +1013,10 @@
         document.querySelectorAll('cart-counter').forEach(function (el) {
           if (el.update) el.update();
         });
+
+        /* Show "Im Warenkorb" badge instantly */
+        var ayCartBadge = document.getElementById('ay-cart-badge');
+        if (ayCartBadge) ayCartBadge.style.display = '';
       })
       .catch(function () {
         btn.textContent = 'Fehler';
@@ -1014,6 +1024,16 @@
       });
     });
   }
+
+  /* ---- Sync "Im Warenkorb" badge on cart changes ---- */
+  document.addEventListener('cart:update', function() {
+    var badge = document.getElementById('ay-cart-badge');
+    if (!badge) return;
+    var pid = Number(badge.getAttribute('data-product-id'));
+    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
+      badge.style.display = c.items.some(function(i){return i.product_id===pid}) ? '' : 'none';
+    }).catch(function(){});
+  });
 
   /* ---- Back in Stock submit (sold out state) ---- */
   var stockoutForm = document.getElementById('ay-stockout-form');

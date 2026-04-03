@@ -96,6 +96,10 @@
     background: #ffffff;
 }
 
+.ay-badge-fast--cart {
+    background: #CDEBD9;
+}
+
 .ay-gallery__grid {
     display: flex;
     flex-direction: column;
