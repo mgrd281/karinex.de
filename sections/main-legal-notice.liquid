@@ -4,8 +4,7 @@
     assign _root = _root | append: '/'
   endunless
 -%}
-<link rel="preload" href="{{ 'main-legal-notice.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ 'main-legal-notice.css' | asset_url }}"></noscript>
+<link rel="stylesheet" href="{{ 'main-legal-notice.css' | asset_url }}">
 
 <div class="legal-page">
   

@@ -61,8 +61,7 @@
   {% render 'schema-howto' %}
 {%- endif -%}
 
-<link rel="preload" href="{{ 'product-aboutyou.css' | asset_url }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}"></noscript>
+<link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
 <style>
   .ay-gallery__main-img { object-fit: cover !important; }
 </style>
