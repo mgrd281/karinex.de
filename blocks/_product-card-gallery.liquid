@@ -63,7 +63,16 @@
         elsif product.available and current_inventory > 0 and current_inventory <= low_stock_threshold and is_sold_out == false
            assign is_low_stock = true
         endif
+
+        assign is_in_cart = false
+        for item in cart.items
+          if item.product.id == product.id
+            assign is_in_cart = true
+            break
+          endif
+        endfor
       %}
+      <div class="product-badges__badge product-badges__badge--rectangle product-badges__badge--in-cart" data-cart-badge data-product-id="{{ product.id }}" {% unless is_in_cart %}style="display:none"{% endunless %}>Im Warenkorb</div>
       {%- if is_sold_out or is_low_stock or product.compare_at_price > product.price -%}
         <div
           class="
@@ -157,6 +166,20 @@
 
   .product-badges--top-left {
     left: 0 !important;
+  }
+
+  .product-badges__badge--in-cart {
+    background: #CDEBD9 !important;
+    color: #111111 !important;
+    --color-foreground: #111111;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0.3px !important;
+    padding: 4px 10px !important;
+    border: none !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
   }
 
   .product-badges__badge--low-stock {
@@ -281,6 +304,26 @@
     display: none !important;
   }
 {% endstylesheet %}
+
+<script>
+(function(){
+  if(window.__cartBadgeInit) return;
+  window.__cartBadgeInit = true;
+  function syncCartBadges(cartItems) {
+    var inCart = {};
+    cartItems.forEach(function(item){ inCart[item.product_id] = true; });
+    document.querySelectorAll('[data-cart-badge]').forEach(function(badge){
+      var pid = Number(badge.getAttribute('data-product-id'));
+      badge.style.display = inCart[pid] ? '' : 'none';
+    });
+  }
+  document.addEventListener('cart:update', function(){
+    fetch('/cart.js').then(function(r){return r.json()}).then(function(c){
+      syncCartBadges(c.items);
+    }).catch(function(){});
+  });
+})();
+</script>
 
 {% schema %}
 {
