@@ -596,10 +596,7 @@
     <meta name="robots" content="noindex, follow">
   {%- endif -%}
 
-  <!-- SEO: noindex + nofollow for search result pages (Ahrefs Nofollow Fix) -->
-  {%- if request.page_type == 'search' -%}
-    <meta name="robots" content="noindex, nofollow">
-  {%- endif -%}
+  <!-- SEO: search page noindex handled in meta-tags.liquid -->
 
   <!-- Ahrefs Web Analytics -->
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="GzfQYRK7vmnwuekczK8sjw" async></script>
@@ -632,6 +629,7 @@
 
     <!-- Elite SEO - Schema Markup -->
     {% render 'schema-organization' %}
+    {% render 'schema-breadcrumb' %}
     {% if request.page_type == 'page' and page.handle == 'faq' %}
       {% render 'schema-faq' %}
     {% endif %}

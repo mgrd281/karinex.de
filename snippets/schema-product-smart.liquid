@@ -51,6 +51,9 @@
     "@type": "Brand",
     "name": {{ product.vendor | default: "Karinex" | json }}
   },
+  "manufacturer": {
+    "@id": "{{ shop.url }}/#organization"
+  },
   {% if is_digital %}
   "category": "Software/Digital Product",
   {% else %}

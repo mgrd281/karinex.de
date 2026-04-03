@@ -26,6 +26,41 @@
   endunless
 -%}
 
+{%- comment -%} Detect digital product for schema {%- endcomment -%}
+{%- liquid
+  assign _type_lc = product.type | downcase
+  assign _handle_lc = product.handle | downcase
+  assign _title_lc = product.title | downcase
+  assign _cols_csv = product.collections | map: 'handle' | join: ',' | downcase
+  assign _is_digital = false
+  if _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows' or _type_lc contains 'microsoft' or _type_lc contains 'esd' or _type_lc contains 'digital' or _type_lc contains 'key' or _type_lc contains 'lizenz' or _type_lc contains 'license' or _type_lc contains 'download'
+    assign _is_digital = true
+  endif
+  if _is_digital == false
+    if _cols_csv contains 'software' or _cols_csv contains 'digital' or _cols_csv contains 'microsoft' or _cols_csv contains 'office' or _cols_csv contains 'windows' or _cols_csv contains 'download' or _cols_csv contains 'key' or _cols_csv contains 'esd' or _cols_csv contains 'lizenz'
+      assign _is_digital = true
+    endif
+  endif
+  if _is_digital == false
+    if _handle_lc contains 'key' or _handle_lc contains 'software' or _handle_lc contains 'digital' or _handle_lc contains 'esd' or _handle_lc contains 'lizenz' or _handle_lc contains 'license' or _handle_lc contains 'download' or _handle_lc contains 'office' or _handle_lc contains 'microsoft' or _handle_lc contains 'windows'
+      assign _is_digital = true
+    endif
+  endif
+  if _is_digital == false
+    if _title_lc contains 'key' or _title_lc contains 'download' or _title_lc contains 'lizenzschlüssel' or _title_lc contains 'aktivierungsschlüssel' or _title_lc contains 'produktschlüssel'
+      assign _is_digital = true
+    endif
+  endif
+-%}
+
+{%- comment -%} Product structured data (JSON-LD) {%- endcomment -%}
+{% render 'schema-product-smart' %}
+
+{%- comment -%} HowTo schema for digital/software products {%- endcomment -%}
+{%- if _is_digital -%}
+  {% render 'schema-howto' %}
+{%- endif -%}
+
 {{ 'product-aboutyou.css' | asset_url | stylesheet_tag }}
 <style>
   .ay-gallery__main-img { object-fit: cover !important; }
@@ -78,7 +113,7 @@
                   <img
                     class="ay-gallery__main-img"
                     src="{{ media | image_url: width: 800 }}"
-                    alt="{{ media.alt | escape }}"
+                    alt="{{ media.alt | default: product.title | escape }}"
                     loading="{% if ay_cell_index < 2 %}eager{% else %}lazy{% endif %}"
                     width="{{ media.width }}"
                     height="{{ media.height }}"

@@ -8,13 +8,24 @@
 
 {% liquid
   assign page_type_schema = 'WebPage'
+  assign _date_published = 'now' | date: '%Y-%m-%d'
+  assign _date_modified = 'now' | date: '%Y-%m-%d'
   
   if request.page_type == 'product'
     assign page_type_schema = 'ItemPage'
+    assign _date_published = product.published_at | date: '%Y-%m-%d'
+    assign _date_modified = product.updated_at | default: product.published_at | date: '%Y-%m-%d'
   elsif request.page_type == 'collection'
     assign page_type_schema = 'CollectionPage'
+    assign _date_published = collection.published_at | date: '%Y-%m-%d'
+    assign _date_modified = collection.updated_at | default: collection.published_at | date: '%Y-%m-%d'
   elsif request.page_type == 'article'
     assign page_type_schema = 'WebPage'
+    assign _date_published = article.published_at | date: '%Y-%m-%d'
+    assign _date_modified = article.updated_at | default: article.published_at | date: '%Y-%m-%d'
+  elsif request.page_type == 'page'
+    assign _date_published = page.published_at | date: '%Y-%m-%d'
+    assign _date_modified = page.updated_at | default: page.published_at | date: '%Y-%m-%d'
   elsif request.page_type == 'index'
     assign page_type_schema = 'WebPage'
   endif
@@ -36,8 +47,8 @@
     "@id": "{{ shop.url }}/#website"
   },
   "inLanguage": "de-DE",
-  "datePublished": "{{ page.published_at | default: 'now' | date: '%Y-%m-%d' }}",
-  "dateModified": "{{ page.updated_at | default: 'now' | date: '%Y-%m-%d' }}"
+  "datePublished": "{{ _date_published }}",
+  "dateModified": "{{ _date_modified }}"
   {% if page_image %}
   ,
   "primaryImageOfPage": {

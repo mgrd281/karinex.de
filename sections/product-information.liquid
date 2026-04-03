@@ -25,6 +25,9 @@
 
     <p class="visually-hidden" data-nosnippet>{{ product.title }} bei Karinex Online-Shop kaufen.</p>
     {% render 'schema-product-smart' %}
+    {%- if is_digital -%}
+      {% render 'schema-howto' %}
+    {%- endif -%}
 
     {{ 'product-information.css' | asset_url | append: '?v=2' | stylesheet_tag }}
     <link rel="preconnect" href="https://fonts.googleapis.com">
