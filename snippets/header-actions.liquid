@@ -100,27 +100,24 @@
 
   <script>
     (function() {
-      // Use a unique name or IIFE to avoid global scope pollution if snippet is included multiple times
-      // We check if the function is already attached to window to avoid duplicate listeners
       if (window.wishlistScriptInitialized) return;
       window.wishlistScriptInitialized = true;
 
       function updateWishlistCountHeader() {
           const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
           const badges = document.querySelectorAll('.wishlist-count-text, .wishlist-count-badge');
-          const dots = document.querySelectorAll('.wishlist-dot');
           
           badges.forEach(badge => {
+              const current = badge.getAttribute('data-count');
+              if (current === String(wishlist.length)) return;
+              
               if(wishlist.length > 0) {
-                  const prevText = badge.textContent;
                   badge.textContent = wishlist.length;
                   badge.setAttribute('data-count', wishlist.length);
                   if (badge.closest) badge.closest('.action__wishlist')?.setAttribute('data-wishlist-count', wishlist.length);
-                  if (prevText !== String(wishlist.length)) {
-                    badge.classList.remove('icon-badge--pop');
-                    void badge.offsetWidth; // force reflow
-                    badge.classList.add('icon-badge--pop');
-                  }
+                  badge.classList.remove('icon-badge--pop');
+                  void badge.offsetWidth;
+                  badge.classList.add('icon-badge--pop');
               } else {
                   badge.textContent = '0';
                   badge.setAttribute('data-count', '0');
@@ -129,7 +126,6 @@
           });
       }
 
-      // Hide cart bubble if cart is empty on page load
       function hideEmptyCartBubble() {
           const cartBubbles = document.querySelectorAll('.header-actions__cart-icon .cart-bubble');
           cartBubbles.forEach(bubble => {
@@ -143,39 +139,11 @@
           });
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-          updateWishlistCountHeader();
-          hideEmptyCartBubble();
-      });
+      // Only react to actual wishlist changes (toggle heart, etc.)
       window.addEventListener('wishlist-updated', updateWishlistCountHeader);
-      
-      // Also run immediately in case DOM is ready
-      updateWishlistCountHeader();
-      hideEmptyCartBubble();
 
-      // Observer to handle dynamic header re-rendering (e.g. sticky header injections)
-      const observer = new MutationObserver((mutations) => {
-        // Debounce simple check
-        updateWishlistCountHeader();
-        hideEmptyCartBubble();
-      });
-      
-      // Observe the body for subtree changes (broad but ensures we catch header injections)
-      // Or better: observe specific header container if known. For now, let's rely on event + initial.
-      // Actually, if the header is re-rendered via AJAX, the script inside might NOT run again if it's stripping scripts,
-      // OR it might run again. 
-      // If the element is replaced, the old event listener on the element is gone (but here we listen on window/document).
-      // The old element is gone. The new element needs to be updated.
-      // Since we querySelectorAll every time, we just need a trigger.
-      
-      // Let's add a periodic check for a few seconds to handle slow hydration
-      let checks = 0;
-      const interval = setInterval(() => {
-          updateWishlistCountHeader();
-          hideEmptyCartBubble();
-          checks++;
-          if(checks > 10) clearInterval(interval); // check for 5 seconds
-      }, 500);
+      // Run once on DOMContentLoaded for cart bubble only (wishlist already set inline)
+      document.addEventListener('DOMContentLoaded', hideEmptyCartBubble);
 
     })();
   </script>
