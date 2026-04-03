@@ -19,7 +19,6 @@
         {%- elsif article.excerpt -%}
           <news:keywords>{{ article.excerpt | strip_html | truncate: 160 | replace: ',', ' ' | escape }}</news:keywords>
         {%- endif -%}
-        <news:stock_tickers></news:stock_tickers>
       </news:news>
     </url>
   {%- endfor -%}

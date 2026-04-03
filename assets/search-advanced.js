@@ -297,7 +297,7 @@ class AdvancedSearch {
     return `
       <div class="quick-view-product">
         <div class="quick-view-product__media">
-          <img src="${product.image}" alt="${product.title}" loading="lazy">
+          <img src="${product.image}" alt="${product.title.replace(/"/g,'&quot;')}" loading="lazy" width="200" height="200">
         </div>
         <div class="quick-view-product__info">
           <h2>${product.title}</h2>

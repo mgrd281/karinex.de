@@ -5,7 +5,7 @@
       {% for related_product in product.metafields.custom.frequently_bought %}
         <div class="fb-product">
           <a href="{{ related_product.url }}">
-            <img src="{{ related_product.featured_image | img_url: '200x200' }}" alt="{{ related_product.title }}">
+            <img src="{{ related_product.featured_image | img_url: '200x200' }}" alt="{{ related_product.title | escape }}" loading="lazy" width="200" height="200">
             <p class="fb-title">{{ related_product.title }}</p>
             <p class="fb-price">{{ related_product.price | money }}</p>
           </a>

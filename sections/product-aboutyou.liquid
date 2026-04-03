@@ -1652,7 +1652,7 @@
       var item = document.createElement('div');
       item.className = 'video-modal__list-item' + (i===currentVideoIdx?' is-active':'');
       item.setAttribute('data-video-idx',i);
-      item.innerHTML = '<div class="video-modal__list-thumb"><img src="'+(v.poster||v.src)+'" alt="'+(v.alt||productTitle).replace(/"/g,'&quot;')+'" loading="lazy"><span class="video-modal__list-thumb-play">&#9654;</span></div><div class="video-modal__list-info"><span class="video-modal__list-title">'+(v.alt||productTitle)+'</span><span class="video-modal__list-vendor">'+productVendor+'</span></div>';
+      item.innerHTML = '<div class="video-modal__list-thumb"><img src="'+(v.poster||v.src)+'" alt="'+(v.alt||productTitle).replace(/"/g,'&quot;')+'" loading="lazy" width="120" height="68"><span class="video-modal__list-thumb-play">&#9654;</span></div><div class="video-modal__list-info"><span class="video-modal__list-title">'+(v.alt||productTitle)+'</span><span class="video-modal__list-vendor">'+productVendor+'</span></div>';
       item.addEventListener('click', function(){ playVideo(i); });
       listEl.appendChild(item);
       if (!v.poster) tryGenerateAutoPoster(v,i, function(g){ if(!g) return; updateSidebarThumb(i,g); if(i===currentVideoIdx && nativeVid.classList.contains('is-active')) nativeVid.setAttribute('poster',g); });

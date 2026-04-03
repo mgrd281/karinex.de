@@ -1296,18 +1296,18 @@
              fetchpriority="high"
              loading="eager">
         <div class="col-left">
-            <a class="title" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Microsoft Windows 11</a>
-            <a class="subtitle" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Home <br>Pro <br>Enterprise</a>
-            <a class="price" href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">Ab 9,90 €</a>
+            <a class="title" href="{{ _root }}products/microsoft-windows-11-professional-64">Microsoft Windows 11</a>
+            <a class="subtitle" href="{{ _root }}products/microsoft-windows-11-professional-64">Home <br>Pro <br>Enterprise</a>
+            <a class="price" href="{{ _root }}products/microsoft-windows-11-professional-64">Ab 9,90 €</a>
 
             <div class="btn-group">
-                <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0{%- endif -%}">
+                <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}{{ _root }}products/microsoft-windows-11-professional-64{%- endif -%}">
                     {{ section.settings.cta_label | default: 'Zum Angebot' }}
                 </a>
             </div>
         </div>
         <div class="col-right">
-            <a href="https://www.karinex.de/products/microsoft-windows-11-professional-64?_pos=2&_psq=wind&_ss=e&_v=1.0">
+            <a href="{{ _root }}products/microsoft-windows-11-professional-64">
                 <img class="prod" width="360" height="360" loading="eager" fetchpriority="high" alt="Microsoft Windows 11" src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/Windows-11-Pro-softwareindustrie24-Photoroom-2.webp?v=1762861959">
             </a>
         </div>

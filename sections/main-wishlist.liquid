@@ -592,7 +592,7 @@
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
         '</button>' +
         '<div class="wl-card__img-wrap">' +
-          '<img src="' + img + '" alt="' + title + '" class="wl-card__img" loading="lazy">' +
+          '<img src="' + img + '" alt="' + title.replace(/"/g,'&quot;') + '" class="wl-card__img" loading="lazy" width="500" height="500">' +
           badgeHtml +
           '<button type="button" class="wl-card__atc" data-variant-id="' + firstVariantId + '">' +
             '<span class="wl-atc__text">In den Warenkorb</span>' +
