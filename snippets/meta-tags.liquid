@@ -473,22 +473,6 @@
 <meta name="msapplication-tooltip" content="{{ shop.name }} - {{ shop.description | truncate: 50 | escape }}">
 <meta name="msapplication-tap-highlight" content="no">
 
-{%- comment -%} ═══ RATING & REVIEW META ═══ {%- endcomment -%}
-{%- if request.page_type == 'product' -%}
-  {%- assign rating_value = product.metafields.reviews.rating.value -%}
-  {%- assign rating_count = product.metafields.reviews.rating_count -%}
-  
-  {%- if product.metafields.ddreviews.content.average_star -%}
-    {%- assign rating_value = product.metafields.ddreviews.content.average_star -%}
-    {%- assign rating_count = product.metafields.ddreviews.content.total_reviews -%}
-  {%- endif -%}
-  
-  {%- if rating_value and rating_value > 0 -%}
-    <meta name="rating" content="{{ rating_value }}">
-    <meta name="reviewCount" content="{{ rating_count | default: 1 }}">
-  {%- endif -%}
-{%- endif -%}
-
 {%- comment -%} ═══ CONTENT SECURITY & COPYRIGHT ═══ {%- endcomment -%}
 <meta name="copyright" content="© {{ 'now' | date: '%Y' }} {{ shop.name }}. Alle Rechte vorbehalten.">
 

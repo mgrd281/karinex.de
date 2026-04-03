@@ -1,9 +1,12 @@
 {% comment %}
   Organization Schema for SEO - Company Information
-  Updated: 05.02.2026 - v3
+  Updated: 03.04.2026 - v4
   Schema Type: Organization (valid for all properties)
-  NOTE: aggregateRating values should be updated periodically from Trusted Shops
+  aggregateRating now reads from Theme Settings → "SEO — Organization Rating"
 {% endcomment %}
+
+{%- assign org_rating = settings.org_rating_value | default: '4.73' -%}
+{%- assign org_reviews = settings.org_rating_count | default: '118' -%}
 
 <script type="application/ld+json">
 {
@@ -33,8 +36,8 @@
   },
   "aggregateRating": {
     "@type": "AggregateRating",
-    "ratingValue": "4.73",
-    "reviewCount": "118",
+    "ratingValue": "{{ org_rating }}",
+    "reviewCount": "{{ org_reviews }}",
     "bestRating": "5",
     "worstRating": "1"
   },

@@ -48,7 +48,7 @@
                       src="{{ brand_image | image_url: width: 900, format: 'webp' }}"
                       srcset="{{ brand_image | image_url: width: 450, format: 'webp' }} 450w, {{ brand_image | image_url: width: 700, format: 'webp' }} 700w, {{ brand_image | image_url: width: 900, format: 'webp' }} 900w"
                       sizes="(max-width: 749px) 70vw, (max-width: 989px) 40vw, 22vw"
-                      alt=""
+                      alt="{{ brand_title | escape }}"
                       loading="lazy"
                       decoding="async"
                     >

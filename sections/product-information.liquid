@@ -1129,7 +1129,7 @@ nav[aria-label="Breadcrumb"],
                    {% if media.media_type == 'image' %}
                      {% capture cld_thumb %}{% render 'cloudinary-image', image: media, product: product, width: 200 %}{% endcapture %}
                      <div class="bilder-thumb {% if img_idx == 0 %}is-active{% endif %}" data-bilder-idx="{{ forloop.index0 }}">
-                       <img src="{{ cld_thumb | strip }}" alt="" loading="lazy" width="200" height="200">
+                       <img src="{{ cld_thumb | strip }}" alt="{{ media.alt | default: product.title | escape }}" loading="lazy" width="200" height="200">
                      </div>
                      {% assign img_idx = img_idx | plus: 1 %}
                    {% endif %}
@@ -2033,7 +2033,7 @@ nav[aria-label="Breadcrumb"],
            item.setAttribute('data-video-idx', i);
            item.innerHTML =
              '<div class="video-modal__list-thumb">' +
-               '<img src="' + (v.poster || v.src) + '" alt="" loading="lazy">' +
+               '<img src="' + (v.poster || v.src) + '" alt="' + (v.alt || productTitle).replace(/"/g,'&quot;') + '" loading="lazy">' +
                '<span class="video-modal__list-thumb-play"><i class="fa-solid fa-play"></i></span>' +
              '</div>' +
              '<div class="video-modal__list-info">' +

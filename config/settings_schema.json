@@ -2323,5 +2323,26 @@
         "info": "Products with this tag will keep their original background."
       }
     ]
+  },
+  {
+    "name": "SEO — Organization Rating",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Trusted Shops Bewertung für das Organization-Schema. Werte regelmäßig aktualisieren."
+      },
+      {
+        "type": "text",
+        "id": "org_rating_value",
+        "label": "Bewertung (z.B. 4.73)",
+        "default": "4.73"
+      },
+      {
+        "type": "text",
+        "id": "org_rating_count",
+        "label": "Anzahl Bewertungen",
+        "default": "118"
+      }
+    ]
   }
 ]
