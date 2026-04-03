@@ -1,51 +1,6 @@
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div class="section color-{{ section.settings.color_scheme }}">
-  {%- if article and blog -%}
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": {{ article.title | json }},
-      "description": {{ article.excerpt | strip_html | truncate: 160 | json }},
-      "image": [
-        {%- if article.image -%}
-          {{ article.image | image_url: width: 800, format: 'webp' | json }},
-          {{ article.image | image_url: width: 800, format: 'webp' | json }},
-          {{ article.image | image_url: width: 400, format: 'webp' | json }}
-        {%- else -%}
-          {{ 'logo.png' | asset_url | json }}
-        {%- endif -%}
-      ],
-      "datePublished": {{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
-      "dateModified": {{ article.updated_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
-      "author": {
-        "@type": "Person",
-        "name": {{ article.author | json }},
-        "url": {{ shop.url | append: "/blogs/" | append: blog.handle | json }}
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": {{ shop.name | json }},
-        "logo": {
-          "@type": "ImageObject",
-          "url": {{ 'logo.png' | asset_url | json }}
-        }
-      },
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": {{ shop.url | append: article.url | json }}
-      },
-      "wordCount": {{ article.content | strip_html | split: ' ' | size }},
-      "inLanguage": "{{ shop.locale }}",
-      "isPartOf": {
-        "@type": "Blog",
-        "name": {{ blog.title | json }},
-        "url": {{ shop.url | append: blog.url | json }}
-      }
-    }
-    </script>
-
-  {%- endif -%}
+  {%- comment -%} BlogPosting schema moved to article-layout.liquid — single source of truth {%- endcomment -%}
   
   <!-- Performance Optimizations -->
   {%- if article -%}
@@ -90,11 +45,7 @@
       max-width: 1600px !important;
     "
   >
-    {%- comment -%} Hide duplicate title in header {%- endcomment -%}
-    <header class="blog-post-header" style="max-width: 1600px; margin: 0 auto; text-align: center; display: none;">
-      {%- content_for 'block', id: 'blog-post-title', type: 'text' %}
-      {%- content_for 'block', id: 'blog-post-details', type: '_blog-post-info-text' %}
-    </header>
+    {%- comment -%} Title rendered by article-layout.liquid {%- endcomment -%}
 
 
     

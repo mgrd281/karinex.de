@@ -1,8 +1,6 @@
 
 
-<script type="application/ld+json">
-  {{ section.settings.product | structured_data }}
-</script>
+{%- comment -%} Product schema handled by schema-product-smart.liquid {%- endcomment -%}
 
 {% capture media_gallery %}
   {% content_for 'block',

@@ -594,8 +594,10 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       {%- render 'theme-editor' -%}
     {% endif %}
 
-    {% capture content_for_header_no_title %}{{ content_for_header }}{% endcapture %}
-    {{ content_for_header_no_title | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' }}
+    {%- capture content_for_header_clean -%}{{ content_for_header }}{%- endcapture -%}
+    {%- assign content_for_header_clean = content_for_header_clean | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' -%}
+    {%- comment -%} Strip Shopify's duplicate canonical — ours is in meta-tags.liquid {%- endcomment -%}
+    {{ content_for_header_clean | replace: '<link rel="canonical"', '<link data-cfh-canonical rel="canonical"' }}
 
   <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->
 

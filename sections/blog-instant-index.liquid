@@ -41,7 +41,7 @@
       "@id": {{ shop.url | append: article.url | json }}
     },
     "wordCount": {{ article.content | strip_html | split: ' ' | size }},
-    "inLanguage": "{{ shop.locale }}",
+    "inLanguage": "{{ request.locale.iso_code | replace: 'de', 'de-DE' | replace: 'en', 'en-US' | replace: 'pl', 'pl-PL' }}",
     "isAccessibleForFree": true,
     "hasPart": {
       "@type": "WebPageElement",
