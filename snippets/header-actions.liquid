@@ -85,6 +85,7 @@
     href="{{ _root }}pages/wishlist"
     class="header-actions__action action__wishlist"
     aria-label="Wunschliste"
+    data-wishlist-count="0"
   >
     <span class="visually-hidden">Wunschliste</span>
     <span class="svg-wrapper icon-wrapper">
@@ -93,18 +94,17 @@
       </svg>
       <span class="wishlist-dot" aria-hidden="true"></span>
     </span>
-    <span class="wishlist-count-text" data-count="0">0</span>
+    <span id="wishlist-header-count" class="wishlist-count-text" data-count="0">0</span>
   </a>
   <script>
-    // Instant wishlist count — direct DOM reference, no querySelectorAll needed
+    // Instant wishlist count — getElementById is always available at parse time
     try {
       var _wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
-      if (_wl.length > 0) {
-        var _a = document.currentScript.previousElementSibling;
-        var _txt = _a.querySelector('.wishlist-count-text');
-        var _dot = _a.querySelector('.wishlist-dot');
-        if (_txt) { _txt.textContent = _wl.length; _txt.setAttribute('data-count', String(_wl.length)); }
-        if (_dot) { _dot.style.display = ''; }
+      var _el = document.getElementById('wishlist-header-count');
+      if (_wl.length > 0 && _el) {
+        _el.textContent = _wl.length;
+        _el.setAttribute('data-count', String(_wl.length));
+        _el.parentElement.setAttribute('data-wishlist-count', String(_wl.length));
       }
     } catch(e) {}
   </script>
@@ -126,6 +126,7 @@
                   const prevText = badge.textContent;
                   badge.textContent = wishlist.length;
                   badge.setAttribute('data-count', wishlist.length);
+                  if (badge.closest) badge.closest('.action__wishlist')?.setAttribute('data-wishlist-count', wishlist.length);
                   if (prevText !== String(wishlist.length)) {
                     badge.classList.remove('icon-badge--pop');
                     void badge.offsetWidth; // force reflow
@@ -134,6 +135,7 @@
               } else {
                   badge.textContent = '0';
                   badge.setAttribute('data-count', '0');
+                  if (badge.closest) badge.closest('.action__wishlist')?.setAttribute('data-wishlist-count', '0');
               }
           });
       }

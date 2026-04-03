@@ -889,8 +889,7 @@
       }
 
       /* Hide wishlist dot when count is 0 */
-      header-actions .action__wishlist .wishlist-count-text[data-count="0"] ~ .wishlist-dot,
-      header-actions .action__wishlist:has(.wishlist-count-text[data-count="0"]) .wishlist-dot {
+      header-actions .action__wishlist[data-wishlist-count="0"] .wishlist-dot {
         display: none !important;
       }
 
@@ -1152,7 +1151,7 @@
   }
 
   /* Hide wishlist dot when count is 0 */
-  .action__wishlist:has(.wishlist-count-text[data-count="0"]) .wishlist-dot {
+  .action__wishlist[data-wishlist-count="0"] .wishlist-dot {
     display: none !important;
   }
 
