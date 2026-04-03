@@ -88,17 +88,16 @@
                     onclick="ayLightbox.open({{ ay_cell_index }})"
                   >
                 {%- elsif media.media_type == 'video' -%}
-                  <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video">
-                    <div class="ay-gallery__video-hidden">
-                      {{ media | media_tag: autoplay: false, controls: true, preload: 'metadata', image_size: '800x' }}
-                    </div>
+                  {%- assign ay_first_source = media.sources | first -%}
+                  {%- capture ay_video_sources_json -%}[{% for src in media.sources %}{"url":"{{ src.url }}","type":"{{ src.mime_type }}"}{% unless forloop.last %},{% endunless %}{% endfor %}]{%- endcapture -%}
+                  <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
                       src="{{ media.preview_image | image_url: width: 800 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                     >
-                    <button class="ay-gallery__play-btn ay-gallery__play-btn--native" aria-label="Video abspielen">
+                    <button class="ay-gallery__play-btn ay-gallery__play-btn--native" aria-label="Video abspielen" type="button">
                       <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="rgba(255,255,255,0.92)"/><polygon points="20,14 36,24 20,34" fill="#1d4739"/></svg>
                     </button>
                   </div>
@@ -107,19 +106,19 @@
                     assign ay_ext_host = media.host
                     assign ay_embed_url = ''
                     if ay_ext_host == 'youtube'
-                      assign ay_embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&autoplay=1&modestbranding=1&playsinline=1'
+                      assign ay_embed_url = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1'
                     elsif ay_ext_host == 'vimeo'
-                      assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=1&title=0&byline=0&portrait=0'
+                      assign ay_embed_url = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0'
                     endif
                   -%}
-                  <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video">
+                  <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster"
                       src="{{ media.preview_image | image_url: width: 800 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                     >
-                    <button class="ay-gallery__play-btn" aria-label="Video abspielen" onclick="ayPlayVideo(this, 'external', '{{ ay_embed_url }}')">
+                    <button class="ay-gallery__play-btn" aria-label="Video abspielen" type="button">
                       <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="rgba(255,255,255,0.92)"/><polygon points="20,14 36,24 20,34" fill="#1d4739"/></svg>
                     </button>
                   </div>
@@ -170,6 +169,48 @@
           <strong class="ay-gallery__soldout-title">Ausverkauft</strong>
         </div>
       {%- endif -%}
+
+      {%- comment -%} Hidden video data for modal {%- endcomment -%}
+      <div class="ay-video-data" style="display:none" aria-hidden="true">
+        {%- assign ay_media_idx = 0 -%}
+        {%- for media in product.media -%}
+          {%- if media.media_type == 'image' -%}
+            <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="image"
+                 data-src="{{ media | image_url: width: 800 }}">
+              <img src="{{ media | image_url: width: 200 }}" alt="{{ media.alt | escape }}" loading="lazy">
+            </div>
+          {%- elsif media.media_type == 'video' -%}
+            {%- assign ay_v_first = media.sources | first -%}
+            {%- capture ay_v_sources -%}[{% for src in media.sources %}{"url":"{{ src.url }}","type":"{{ src.mime_type }}"}{% unless forloop.last %},{% endunless %}{% endfor %}]{%- endcapture -%}
+            <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="video"
+                 data-video="{{ ay_v_first.url }}"
+                 data-video-sources='{{ ay_v_sources }}'
+                 data-poster="{{ media.preview_image | image_url: width: 1600 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800 }}"
+                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
+              <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy">
+            </div>
+          {%- elsif media.media_type == 'external_video' -%}
+            {%- liquid
+              assign ay_d_host = media.host
+              assign ay_d_embed = ''
+              if ay_d_host == 'youtube'
+                assign ay_d_embed = 'https://www.youtube.com/embed/' | append: media.external_id | append: '?rel=0&modestbranding=1&playsinline=1&autoplay=0&controls=1'
+              elsif ay_d_host == 'vimeo'
+                assign ay_d_embed = 'https://player.vimeo.com/video/' | append: media.external_id | append: '?autoplay=0&title=0&byline=0&portrait=0'
+              endif
+            -%}
+            <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="external_video"
+                 data-video="{{ ay_d_embed }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1600 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800 }}"
+                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
+              <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy">
+            </div>
+          {%- endif -%}
+          {%- assign ay_media_idx = ay_media_idx | plus: 1 -%}
+        {%- endfor -%}
+      </div>
     </div>
 
     {%- comment -%} ========== RIGHT: PRODUCT INFO ========== {%- endcomment -%}
@@ -1274,6 +1315,540 @@
     tryMove();
   }
   window.addEventListener('load', moveReviews);
+})();
+</script>
+
+{%- comment -%} ========== VIDEO MODAL (same as Standard Vorlage) ========== {%- endcomment -%}
+<div id="videoModal" class="video-modal" aria-hidden="true">
+  <div class="video-modal__backdrop"></div>
+  <div class="video-modal__container">
+    <button type="button" class="video-modal__close" aria-label="Schließen">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="video-modal__tabs">
+      <button class="video-modal__tab is-active" data-tab="videos">VIDEOS</button>
+      <button class="video-modal__tab" data-tab="bilder">BILDER</button>
+    </div>
+    <div class="video-modal__panel video-modal__panel--videos is-active" data-panel="videos">
+      <div class="video-modal__body">
+        <div class="video-modal__player">
+          <video id="videoModalNative" class="video-modal__media" controls playsinline preload="none"></video>
+          <iframe id="videoModalFrame" class="video-modal__media" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="border:0;"></iframe>
+          <button type="button" class="video-modal__play-overlay" id="videoPlayOverlay" aria-label="Play">
+            <span class="play-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+          </button>
+        </div>
+        <div class="video-modal__sidebar" id="videoModalSidebar">
+          <div class="video-modal__sidebar-header">Videos für dieses Produkt</div>
+          <div class="video-modal__list" id="videoModalList"></div>
+        </div>
+      </div>
+      <div class="video-modal__engagement">
+        <div class="video-modal__views">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="videoModalViews">0 Aufrufe</span>
+        </div>
+        <div class="video-modal__reactions">
+          <button type="button" class="video-modal__react-btn" id="videoLikeBtn" aria-label="Gefällt mir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            <span id="videoLikeCount">0</span>
+          </button>
+          <div class="video-modal__react-divider"></div>
+          <button type="button" class="video-modal__react-btn" id="videoDislikeBtn" aria-label="Gefällt mir nicht">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+            <span id="videoDislikeCount">0</span>
+          </button>
+        </div>
+        <button type="button" class="video-modal__share-btn" id="videoShareBtn" aria-label="Teilen">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <span id="videoShareCount" style="display:none">0</span>
+          <span class="kx-share-label">Teilen</span>
+        </button>
+      </div>
+      <div class="video-modal__product-info">
+        <div class="video-modal__product-title">{{ product.title | escape }}</div>
+        <div class="video-modal__product-vendor">{{ product.vendor | escape }}</div>
+        <div class="video-modal__product-date" id="videoPublishDate"></div>
+      </div>
+    </div>
+    <div class="video-modal__panel video-modal__panel--bilder" data-panel="bilder">
+      <div class="bilder-layout">
+        <div class="bilder-main">
+          {% assign ay_first_img = true %}
+          {% for media in product.media %}
+            {% if media.media_type == 'image' %}
+              <img class="bilder-main__img {% if ay_first_img %}is-active{% endif %}"
+                   src="{{ media | image_url: width: 1200 }}"
+                   alt="{{ media.alt | default: product.title | escape }}"
+                   data-bilder-index="{{ forloop.index0 }}"
+                   {% if ay_first_img %}loading="eager"{% else %}loading="lazy"{% endif %}>
+              {% assign ay_first_img = false %}
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="bilder-sidebar">
+          <h3 class="bilder-sidebar__title">{{ product.title | escape }}</h3>
+          {% if product.variants.size > 1 %}
+            <div class="bilder-sidebar__variant">Stil: <strong>{{ product.selected_or_first_available_variant.title | escape }}</strong></div>
+          {% endif %}
+          <div class="bilder-sidebar__grid">
+            {% assign ay_img_idx2 = 0 %}
+            {% for media in product.media %}
+              {% if media.media_type == 'image' %}
+                <div class="bilder-thumb {% if ay_img_idx2 == 0 %}is-active{% endif %}" data-bilder-idx="{{ forloop.index0 }}">
+                  <img src="{{ media | image_url: width: 200 }}" alt="" loading="lazy">
+                </div>
+                {% assign ay_img_idx2 = ay_img_idx2 | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .video-modal { display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; padding-top:48px; }
+  .video-modal.is-open { display:flex; }
+  .video-modal__backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.65); cursor:pointer; }
+  .video-modal__container { position:relative; width:94vw; max-width:1200px; max-height:calc(100vh - 48px); min-height:auto; background:#fff; border-radius:10px; overflow:hidden; z-index:1; box-shadow:0 8px 40px rgba(0,0,0,0.35); display:flex; flex-direction:column; }
+  .video-modal__close { position:absolute; top:10px; right:14px; z-index:5; width:32px; height:32px; background:transparent; border:none; color:#555; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.2s,color 0.2s; }
+  .video-modal__close:hover { background:#f0f0f0; color:#111; }
+  .video-modal__tabs { display:flex; gap:0; border-bottom:1px solid #ddd; padding:0 20px; background:#fff; flex-shrink:0; }
+  .video-modal__tab { padding:14px 20px 12px; font-size:14px; font-weight:700; color:#555; background:transparent; border:none; cursor:pointer; border-bottom:3px solid transparent; transition:color 0.2s,border-color 0.2s; letter-spacing:0.3px; }
+  .video-modal__tab:hover { color:#0f1111; }
+  .video-modal__tab.is-active { color:#0f1111; border-bottom-color:#1d4739; }
+  .video-modal__panel { display:none; flex-direction:column; flex:1; min-height:0; }
+  .video-modal__panel.is-active { display:flex; }
+  .video-modal__body { display:flex; flex:1; min-height:0; }
+  .video-modal__player { flex:1; background:#000; position:relative; overflow:hidden; aspect-ratio:16/9; }
+  .video-modal__media { display:none; width:100%; height:100%; object-fit:cover; border:none; }
+  .video-modal__media.is-active { display:block; }
+  .video-modal__play-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:transparent; border:none; cursor:pointer; z-index:3; transition:opacity 0.25s; opacity:1; }
+  .video-modal__play-overlay .play-circle { width:72px; height:72px; border-radius:50%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; padding-left:4px; transition:transform 0.2s,background 0.2s; border:3px solid rgba(255,255,255,0.85); }
+  .video-modal__play-overlay:hover .play-circle { background:rgba(0,0,0,0.75); transform:scale(1.08); }
+  .video-modal__play-overlay.is-playing { opacity:0; pointer-events:none; }
+  .video-modal__sidebar { width:290px; background:#fff; border-left:1px solid #e8e8e8; overflow-y:auto; flex-shrink:0; }
+  .video-modal__sidebar-header { font-size:15px; font-weight:700; color:#0f1111; padding:14px 16px; background:#f0f2f2; border-bottom:1px solid #d5d9d9; }
+  .video-modal__list-item { display:flex; gap:12px; padding:12px 14px; cursor:pointer; transition:background 0.15s; align-items:flex-start; border-bottom:1px solid #f0f0f0; }
+  .video-modal__list-item:hover { background:#f7fafa; }
+  .video-modal__list-item.is-active { background:#e8f4f8; border-left:3px solid #1d4739; }
+  .video-modal__list-thumb { width:96px; height:60px; border-radius:4px; overflow:hidden; position:relative; flex-shrink:0; background:#e8e8e8; }
+  .video-modal__list-thumb img { width:100%; height:100%; object-fit:cover; }
+  .video-modal__list-thumb-play { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.25); color:#fff; font-size:20px; transition:background 0.2s; }
+  .video-modal__list-item:hover .video-modal__list-thumb-play { background:rgba(0,0,0,0.4); }
+  .video-modal__list-info { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .video-modal__list-title { color:#0f1111; font-size:13px; font-weight:600; line-height:1.4; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .video-modal__list-vendor { color:#565959; font-size:12px; }
+  .video-modal__engagement { display:flex; align-items:center; justify-content:space-between; padding:10px 24px; background:#fff; border-top:1px solid #e8e8e8; flex-shrink:0; gap:12px; }
+  .video-modal__views { display:flex; align-items:center; gap:6px; font-size:14px; font-weight:500; color:#606060; }
+  .video-modal__views svg { color:#606060; flex-shrink:0; }
+  .video-modal__reactions { display:flex; align-items:center; background:#f2f2f2; border-radius:20px; overflow:hidden; }
+  @keyframes kx-pop { 0%{transform:scale(1)} 40%{transform:scale(1.32)} 70%{transform:scale(0.88)} 100%{transform:scale(1)} }
+  @keyframes kx-count-up { 0%{transform:translateY(6px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+  .video-modal__react-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; background:transparent; cursor:pointer; font-size:14px; font-weight:600; color:#0f0f0f; transition:background 0.15s,color 0.15s; line-height:1; position:relative; user-select:none; }
+  .video-modal__react-btn svg { transition:transform 0.15s,fill 0.15s,stroke 0.15s; flex-shrink:0; }
+  .video-modal__react-btn:hover { background:#e5e5e5; }
+  .video-modal__react-btn:active { background:#d8d8d8; }
+  .video-modal__react-btn.is-active { color:#065fd4; }
+  .video-modal__react-btn.is-active svg { fill:#065fd4; stroke:#065fd4; }
+  .video-modal__react-btn.kx-pop svg { animation:kx-pop 0.35s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+  .video-modal__react-btn span { display:inline-block; min-width:14px; text-align:center; }
+  .video-modal__react-btn span.kx-count-anim { animation:kx-count-up 0.25s ease both; }
+  .video-modal__react-divider { width:1px; height:24px; background:#ccc; flex-shrink:0; }
+  #videoDislikeBtn { padding:8px 14px; }
+  .video-modal__share-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; background:#f2f2f2; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; color:#0f0f0f; transition:background 0.15s,color 0.15s; line-height:1; margin-left:auto; user-select:none; flex-shrink:0; }
+  .video-modal__share-btn:hover { background:#e5e5e5; }
+  .video-modal__share-btn:active { background:#d8d8d8; }
+  .video-modal__share-btn.is-active { color:#065fd4; }
+  .video-modal__share-btn.is-active svg { stroke:#065fd4; }
+  .video-modal__share-btn.kx-pop svg { animation:kx-pop 0.35s cubic-bezier(0.36,0.07,0.19,0.97) both; }
+  .kx-share-label { margin-left:2px; }
+  .video-modal__product-info { padding:14px 24px; border-top:1px solid #e8e8e8; background:#fff; flex-shrink:0; }
+  .video-modal__product-title { font-size:16px; font-weight:700; color:#0f1111; line-height:1.4; }
+  .video-modal__product-vendor { font-size:13px; color:#565959; margin-top:2px; }
+  .video-modal__product-date { font-size:12px; color:#909090; margin-top:5px; display:flex; align-items:center; gap:4px; }
+  .video-modal__product-date::before { content:''; display:inline-block; width:13px; height:13px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%23909090' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); background-size:contain; background-repeat:no-repeat; flex-shrink:0; }
+  .bilder-layout { display:flex; flex:1; min-height:0; overflow:hidden; }
+  .bilder-main { flex:1; display:flex; align-items:center; justify-content:center; background:#fff; padding:20px; overflow:hidden; position:relative; }
+  .bilder-main__img { display:none; max-width:100%; max-height:65vh; object-fit:contain; border-radius:4px; }
+  .bilder-main__img.is-active { display:block; }
+  .bilder-sidebar { width:300px; flex-shrink:0; border-left:1px solid #e8e8e8; padding:20px; overflow-y:auto; background:#fff; }
+  .bilder-sidebar__title { font-size:14px; font-weight:400; color:#0f1111; line-height:1.5; margin:0 0 10px; }
+  .bilder-sidebar__variant { font-size:13px; color:#565959; margin-bottom:14px; }
+  .bilder-sidebar__variant strong { color:#0f1111; }
+  .bilder-sidebar__grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .bilder-thumb { border:2px solid transparent; border-radius:4px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; aspect-ratio:1; }
+  .bilder-thumb:hover { border-color:#a8a8a8; }
+  .bilder-thumb.is-active { border-color:#007185; }
+  .bilder-thumb img { width:100%; height:100%; object-fit:cover; }
+
+  #kxShareBackdrop { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999998; opacity:0; transition:opacity 0.25s; pointer-events:none; }
+  #kxShareBackdrop.is-open { opacity:1; pointer-events:auto; }
+  #kxSharePanel { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.93); width:calc(100% - 32px); max-width:400px; background:#fff; border-radius:18px; box-shadow:0 8px 48px rgba(0,0,0,0.28); padding:22px 20px 24px; z-index:999999; opacity:0; pointer-events:none; transition:opacity 0.22s,transform 0.22s cubic-bezier(0.34,1.56,0.64,1); box-sizing:border-box; }
+  #kxSharePanel.is-open { opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1); }
+  .kx-share-panel__header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .kx-share-panel__title { font-size:18px; font-weight:700; color:#0f1111; }
+  .kx-share-panel__close { background:#f0f0f0; border:none; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:20px; display:flex; align-items:center; justify-content:center; color:#555; line-height:1; padding:0; }
+  .kx-share-panel__close:hover { background:#e0e0e0; }
+  .kx-share-panel__options { display:grid; grid-template-columns:repeat(5,1fr); gap:12px 4px; margin-bottom:18px; }
+  .kx-share-option { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; text-decoration:none; color:#0f1111; font-size:11px; font-weight:500; text-align:center; background:none; border:none; padding:0; }
+  .kx-share-option__icon { width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:transform 0.15s; flex-shrink:0; }
+  .kx-share-option:hover .kx-share-option__icon { transform:scale(1.1); }
+  .kx-share-option--wa .kx-share-option__icon { background:#25d366; }
+  .kx-share-option--fb .kx-share-option__icon { background:#1877f2; }
+  .kx-share-option--x .kx-share-option__icon { background:#000; }
+  .kx-share-option--mail .kx-share-option__icon { background:#ea4335; }
+  .kx-share-option--pin .kx-share-option__icon { background:#e60023; }
+  .kx-share-option--li .kx-share-option__icon { background:#0a66c2; }
+  .kx-share-option--ig .kx-share-option__icon { background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%); }
+  .kx-share-option--tt .kx-share-option__icon { background:#000; }
+  .kx-share-option--embed .kx-share-option__icon { background:#e8e8e8; }
+  .kx-share-panel__divider { height:1px; background:#f0f0f0; margin:0 0 14px; }
+  .kx-share-panel__link-row { display:flex; align-items:center; gap:8px; background:#f5f5f5; border-radius:10px; padding:10px 14px; }
+  .kx-share-panel__link-url { flex:1; font-size:13px; color:#555; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .kx-share-panel__copy-btn { background:#0f1111; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+  .kx-share-panel__copy-btn:hover { background:#333; }
+  #kxEmbedView { display:none; margin-top:14px; }
+  #kxEmbedView.is-open { display:block; }
+  .kx-embed-title { font-size:13px; font-weight:600; color:#333; margin-bottom:8px; }
+  .kx-embed-code { background:#f5f5f5; border-radius:8px; padding:10px 12px; font-size:11px; font-family:monospace; color:#333; word-break:break-all; line-height:1.5; max-height:72px; overflow-y:auto; margin-bottom:8px; border:1px solid #e0e0e0; }
+  #kxEmbedCopyBtn { background:#0f1111; color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:13px; font-weight:600; cursor:pointer; width:100%; }
+  #kxEmbedCopyBtn:hover { background:#333; }
+  #kxShareToast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.85); background:rgba(0,0,0,0.82); color:#fff; font-size:14px; font-weight:500; padding:12px 24px; border-radius:10px; opacity:0; transition:opacity 0.2s,transform 0.2s; pointer-events:none; z-index:9999999; white-space:nowrap; }
+  #kxShareToast.is-visible { opacity:1; transform:translate(-50%,-50%) scale(1); }
+
+  @media (max-width:768px) {
+    .video-modal { padding-top:0; }
+    .video-modal__container { width:100vw; max-width:100vw; height:100vh; max-height:100vh; border-radius:0; }
+    .video-modal__sidebar { display:none; }
+    .video-modal__body { min-height:250px; }
+    .video-modal__engagement { padding:8px 16px; }
+    .video-modal__views { font-size:13px; }
+    .video-modal__react-btn { padding:6px 12px; font-size:13px; }
+    .bilder-layout { flex-direction:column; }
+    .bilder-sidebar { width:100%; border-left:none; border-top:1px solid #e8e8e8; max-height:200px; }
+    .bilder-sidebar__grid { grid-template-columns:repeat(5,1fr); }
+  }
+</style>
+
+<script>
+(function() {
+  var modal = document.getElementById('videoModal');
+  if (!modal) return;
+  var backdrop = modal.querySelector('.video-modal__backdrop');
+  var closeBtn = modal.querySelector('.video-modal__close');
+  var nativeVid = document.getElementById('videoModalNative');
+  var iframe = document.getElementById('videoModalFrame');
+  var sidebar = document.getElementById('videoModalSidebar');
+  var listEl = document.getElementById('videoModalList');
+  var playOverlay = document.getElementById('videoPlayOverlay');
+  var productTitle = {{ product.title | json }};
+  var productVendor = {{ product.vendor | json }};
+
+  function updateOverlay(playing) {
+    if (playing) playOverlay.classList.add('is-playing');
+    else playOverlay.classList.remove('is-playing');
+  }
+  playOverlay.addEventListener('click', function() {
+    if (nativeVid.classList.contains('is-active')) {
+      nativeVid.play().catch(function(){});
+    } else if (iframe.classList.contains('is-active') && iframe.contentWindow) {
+      try { iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*'); iframe.contentWindow.postMessage('{"method":"play"}','*'); updateOverlay(true); } catch(e){}
+    }
+  });
+  nativeVid.addEventListener('play', function() { updateOverlay(true); });
+  nativeVid.addEventListener('pause', function() { updateOverlay(false); });
+  nativeVid.addEventListener('ended', function() { updateOverlay(false); });
+
+  modal.querySelectorAll('.video-modal__tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var target = this.getAttribute('data-tab');
+      modal.querySelectorAll('.video-modal__tab').forEach(function(t){ t.classList.remove('is-active'); });
+      modal.querySelectorAll('.video-modal__panel').forEach(function(p){ p.classList.remove('is-active'); });
+      this.classList.add('is-active');
+      modal.querySelector('[data-panel="'+target+'"]').classList.add('is-active');
+      if (target === 'bilder') {
+        nativeVid.pause && nativeVid.pause();
+        if (iframe.classList.contains('is-active') && iframe.contentWindow) {
+          try { iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','*'); iframe.contentWindow.postMessage('{"method":"pause"}','*'); } catch(e){}
+        }
+      } else if (target === 'videos') {
+        if (nativeVid.classList.contains('is-active') && nativeVid.src) nativeVid.play().catch(function(){});
+        if (iframe.classList.contains('is-active') && iframe.contentWindow) {
+          try { iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*'); iframe.contentWindow.postMessage('{"method":"play"}','*'); } catch(e){}
+        }
+      }
+    });
+  });
+
+  var videoItems = [];
+  function getVideoPosterFallback() {
+    var first = document.querySelector('.thumb-item[data-type="image"]');
+    if (!first) return '';
+    return first.getAttribute('data-src') || (first.querySelector('img') ? first.querySelector('img').src : '');
+  }
+  function updateSidebarThumb(idx, src) {
+    if (!src) return;
+    listEl.querySelectorAll('.video-modal__list-item[data-video-idx="'+idx+'"] img').forEach(function(img){ img.src = src; });
+  }
+  function tryGenerateAutoPoster(v, idx, onDone) {
+    if (!v || v.type !== 'video' || !v.video) { onDone && onDone(''); return; }
+    if (v._autoPosterTried) { onDone && onDone(v._autoPoster || ''); return; }
+    v._autoPosterTried = true;
+    var probe = document.createElement('video');
+    var done = false;
+    var tid = setTimeout(function(){ finalize(''); }, 3000);
+    function finalize(r) { if(done) return; done=true; clearTimeout(tid); try{probe.pause();probe.removeAttribute('src');probe.load();}catch(e){} v._autoPoster=r||''; onDone&&onDone(v._autoPoster); }
+    probe.muted=true; probe.playsInline=true; probe.preload='auto'; probe.crossOrigin='anonymous';
+    probe.addEventListener('error', function(){ finalize(''); }, {once:true});
+    probe.addEventListener('loadeddata', function(){ try{ var s=1.2; if(isFinite(probe.duration)&&probe.duration>0) s=Math.min(2.5,Math.max(0.4,probe.duration*0.25)); probe.currentTime=s; }catch(e){finalize('');} }, {once:true});
+    probe.addEventListener('seeked', function(){ try{ var w=probe.videoWidth||0,h=probe.videoHeight||0; if(!w||!h){finalize('');return;} var mW=960,oW=Math.min(w,mW),oH=Math.round((h/w)*oW); var c=document.createElement('canvas');c.width=oW;c.height=oH; var ctx=c.getContext('2d');if(!ctx){finalize('');return;} ctx.drawImage(probe,0,0,oW,oH); finalize(c.toDataURL('image/jpeg',0.82)); }catch(e){finalize('');} }, {once:true});
+    try{probe.src=v.video;probe.load();}catch(e){finalize('');}
+  }
+  function collectVideoItems() {
+    videoItems = [];
+    var fallback = getVideoPosterFallback();
+    document.querySelectorAll('.ay-video-data .thumb-item[data-type="video"], .ay-video-data .thumb-item[data-type="external_video"]').forEach(function(t) {
+      var img = t.querySelector('img');
+      var src = t.getAttribute('data-src') || (img ? img.src : '');
+      var poster = t.getAttribute('data-poster') || src || fallback;
+      videoItems.push({
+        type: t.getAttribute('data-type'),
+        video: t.getAttribute('data-video'),
+        videoSources: t.getAttribute('data-video-sources'),
+        src: src, poster: poster,
+        alt: img ? img.alt : '',
+        created: t.getAttribute('data-created') || '',
+        index: parseInt(t.getAttribute('data-index'),10)
+      });
+    });
+  }
+  var currentVideoIdx = 0;
+  function buildSidebar() {
+    sidebar.style.display = '';
+    listEl.innerHTML = '';
+    videoItems.forEach(function(v,i) {
+      var item = document.createElement('div');
+      item.className = 'video-modal__list-item' + (i===currentVideoIdx?' is-active':'');
+      item.setAttribute('data-video-idx',i);
+      item.innerHTML = '<div class="video-modal__list-thumb"><img src="'+(v.poster||v.src)+'" alt="" loading="lazy"><span class="video-modal__list-thumb-play">&#9654;</span></div><div class="video-modal__list-info"><span class="video-modal__list-title">'+(v.alt||productTitle)+'</span><span class="video-modal__list-vendor">'+productVendor+'</span></div>';
+      item.addEventListener('click', function(){ playVideo(i); });
+      listEl.appendChild(item);
+      if (!v.poster) tryGenerateAutoPoster(v,i, function(g){ if(!g) return; updateSidebarThumb(i,g); if(i===currentVideoIdx && nativeVid.classList.contains('is-active')) nativeVid.setAttribute('poster',g); });
+    });
+  }
+  function playVideo(idx) {
+    currentVideoIdx = idx;
+    var v = videoItems[idx];
+    updateOverlay(false);
+    nativeVid.pause && nativeVid.pause();
+    nativeVid.removeAttribute('src'); iframe.removeAttribute('src');
+    nativeVid.classList.remove('is-active'); iframe.classList.remove('is-active');
+    nativeVid.style.removeProperty('display'); iframe.style.removeProperty('display');
+    if (v.type === 'video') {
+      var ps = v.poster||v.src||getVideoPosterFallback();
+      if(ps) nativeVid.setAttribute('poster',ps); else nativeVid.removeAttribute('poster');
+      if(!v.poster) tryGenerateAutoPoster(v,idx,function(g){if(!g)return;updateSidebarThumb(idx,g);if(currentVideoIdx===idx&&nativeVid.classList.contains('is-active'))nativeVid.setAttribute('poster',g);});
+      while(nativeVid.firstChild) nativeVid.removeChild(nativeVid.firstChild);
+      nativeVid.removeAttribute('src');
+      var sources = []; try{sources=JSON.parse(v.videoSources||'[]');}catch(e){}
+      if(sources.length>0) { sources.forEach(function(s){ var el=document.createElement('source');el.src=s.url;if(s.type)el.type=s.type;nativeVid.appendChild(el); }); } else { nativeVid.src=v.video; }
+      nativeVid.classList.add('is-active'); nativeVid.load(); nativeVid.play().catch(function(){});
+    } else {
+      var url=v.video;
+      if(url.indexOf('youtube.com')>-1){url=url.replace('autoplay=0','autoplay=1');if(url.indexOf('enablejsapi')===-1) url+=(url.indexOf('?')>-1?'&':'?')+'enablejsapi=1';}
+      else if(url.indexOf('vimeo.com')>-1){url=url.replace('autoplay=0','autoplay=1');}
+      iframe.src=url; iframe.classList.add('is-active');
+      setTimeout(function(){updateOverlay(true);},500);
+    }
+    listEl.querySelectorAll('.video-modal__list-item').forEach(function(el,i){ el.classList.toggle('is-active',i===idx); });
+  }
+
+  window.openVideoModal = function(galleryIndex) {
+    collectVideoItems();
+    if (videoItems.length === 0) return;
+    var idx = 0;
+    for (var i=0; i<videoItems.length; i++) { if(videoItems[i].index===galleryIndex){idx=i;break;} }
+    modal.querySelectorAll('.video-modal__tab').forEach(function(t){t.classList.remove('is-active');});
+    modal.querySelectorAll('.video-modal__panel').forEach(function(p){p.classList.remove('is-active');});
+    modal.querySelector('[data-tab="videos"]').classList.add('is-active');
+    modal.querySelector('[data-panel="videos"]').classList.add('is-active');
+    buildSidebar(); modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+    playVideo(idx);
+  };
+  window.closeVideoModal = function() {
+    modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+    nativeVid.pause&&nativeVid.pause(); nativeVid.removeAttribute('src'); iframe.removeAttribute('src');
+    nativeVid.classList.remove('is-active'); iframe.classList.remove('is-active');
+  };
+  backdrop.addEventListener('click', window.closeVideoModal);
+  closeBtn.addEventListener('click', window.closeVideoModal);
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'&&modal.classList.contains('is-open')) window.closeVideoModal(); });
+
+  // Bilder panel
+  modal.querySelectorAll('.bilder-thumb').forEach(function(thumb) {
+    thumb.addEventListener('click', function() {
+      var idx = this.getAttribute('data-bilder-idx');
+      modal.querySelectorAll('.bilder-thumb').forEach(function(t){t.classList.remove('is-active');});
+      this.classList.add('is-active');
+      modal.querySelectorAll('.bilder-main__img').forEach(function(img){ img.classList.toggle('is-active', img.getAttribute('data-bilder-index')===idx); });
+    });
+  });
+
+  // Share panel
+  var shareBtn = document.getElementById('videoShareBtn');
+  var shareCountEl = document.getElementById('videoShareCount');
+  function setShareCount(n) { shareCountEl.textContent=n; shareCountEl.style.display=n>0?'':'none'; }
+
+  var shareBackdrop = document.createElement('div'); shareBackdrop.id='kxShareBackdrop'; document.body.appendChild(shareBackdrop);
+  var shareToast = document.createElement('div'); shareToast.id='kxShareToast'; document.body.appendChild(shareToast);
+  function showToast(msg) { shareToast.textContent=msg; shareToast.classList.add('is-visible'); setTimeout(function(){shareToast.classList.remove('is-visible');},2200); }
+
+  var waIcon='<svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+  var sharePanel = document.createElement('div'); sharePanel.id='kxSharePanel';
+  sharePanel.innerHTML =
+    '<div class="kx-share-panel__header"><span class="kx-share-panel__title">Teilen</span><button class="kx-share-panel__close" aria-label="Schließen">×</button></div>' +
+    '<div class="kx-share-panel__options">' +
+      '<a class="kx-share-option kx-share-option--wa" id="kxShareWa" href="#" target="_blank" rel="noopener"><span class="kx-share-option__icon">'+waIcon+'</span><span>WhatsApp</span></a>' +
+      '<a class="kx-share-option kx-share-option--fb" id="kxShareFb" href="#" target="_blank" rel="noopener"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span><span>Facebook</span></a>' +
+      '<a class="kx-share-option kx-share-option--x" id="kxShareX" href="#" target="_blank" rel="noopener"><span class="kx-share-option__icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.633L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span><span>X</span></a>' +
+      '<a class="kx-share-option kx-share-option--mail" id="kxShareMail" href="#"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span><span>E-Mail</span></a>' +
+      '<a class="kx-share-option kx-share-option--pin" id="kxSharePin" href="#" target="_blank" rel="noopener"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg></span><span>Pinterest</span></a>' +
+      '<a class="kx-share-option kx-share-option--li" id="kxShareLi" href="#" target="_blank" rel="noopener"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span><span>LinkedIn</span></a>' +
+      '<button class="kx-share-option kx-share-option--ig" id="kxShareIg"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span><span>Instagram</span></button>' +
+      '<button class="kx-share-option kx-share-option--tt" id="kxShareTt"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg></span><span>TikTok</span></button>' +
+      '<button class="kx-share-option kx-share-option--embed" id="kxShareEmbed"><span class="kx-share-option__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span><span>Einbetten</span></button>' +
+    '</div>' +
+    '<div class="kx-share-panel__divider"></div>' +
+    '<div class="kx-share-panel__link-row"><span class="kx-share-panel__link-url" id="kxShareUrl"></span><button class="kx-share-panel__copy-btn" id="kxShareCopyBtn">Kopieren</button></div>' +
+    '<div id="kxEmbedView"><p class="kx-embed-title">Einbettungscode:</p><div class="kx-embed-code" id="kxEmbedCode"></div><button id="kxEmbedCopyBtn">Code kopieren</button></div>';
+  document.body.appendChild(sharePanel);
+
+  function copyText(text,msg) {
+    if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){showToast(msg);}).catch(function(){});}
+    else{var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast(msg);}
+  }
+  function getEmbedCode(pageUrl) {
+    var v=videoItems[currentVideoIdx]; if(!v)return '';
+    if(v.type==='external_video'&&v.video.indexOf('youtube.com')>-1){var yid=v.video.replace(/.*\/embed\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://www.youtube.com/embed/'+yid+'" frameborder="0" allowfullscreen></iframe>';}
+    else if(v.type==='external_video'&&v.video.indexOf('vimeo.com')>-1){var vid2=v.video.replace(/.*\/video\/([^?]+).*/,'$1');return '<iframe width="560" height="315" src="https://player.vimeo.com/video/'+vid2+'" frameborder="0" allowfullscreen></iframe>';}
+    return '<a href="'+pageUrl+'">'+document.title+'</a>';
+  }
+  function openSharePanel(url) {
+    var enc=encodeURIComponent(url),ttl=encodeURIComponent(document.title);
+    document.getElementById('kxShareUrl').textContent=url;
+    document.getElementById('kxShareWa').href='https://wa.me/?text='+enc;
+    document.getElementById('kxShareFb').href='https://www.facebook.com/sharer/sharer.php?u='+enc;
+    document.getElementById('kxShareX').href='https://twitter.com/intent/tweet?url='+enc+'&text='+ttl;
+    var emailBody='Hallo,%0A%0AIch m%C3%B6chte dir dieses Produkt empfehlen:%0A%0A'+ttl+'%0A%0A'+enc+'%0A%0AViele%20Gr%C3%BC%C3%9Fe';
+    document.getElementById('kxShareMail').href='mailto:?subject='+ttl+'&body='+emailBody;
+    document.getElementById('kxSharePin').href='https://pinterest.com/pin/create/button/?url='+enc+'&description='+ttl;
+    document.getElementById('kxShareLi').href='https://www.linkedin.com/sharing/share-offsite/?url='+enc;
+    document.getElementById('kxEmbedView').classList.remove('is-open');
+    document.getElementById('kxEmbedCode').textContent='';
+    sharePanel.classList.add('is-open'); shareBackdrop.classList.add('is-open');
+  }
+  function closeSharePanel(){ sharePanel.classList.remove('is-open'); shareBackdrop.classList.remove('is-open'); }
+  shareBackdrop.addEventListener('click', closeSharePanel);
+  sharePanel.querySelector('.kx-share-panel__close').addEventListener('click', closeSharePanel);
+
+  var VIDEO_ENGAGEMENT_API = 'https://script.google.com/macros/s/AKfycbzRAE7_bK9_m1-nEhAfpHVmsDqHkqCmR-qSMlkSLc8F8_k61H-scIQiMUnNXdYZnUHnYQ/exec';
+  var viewsEl = document.getElementById('videoModalViews');
+  var likeBtn = document.getElementById('videoLikeBtn');
+  var dislikeBtn = document.getElementById('videoDislikeBtn');
+  var likeCountEl = document.getElementById('videoLikeCount');
+  var dislikeCountEl = document.getElementById('videoDislikeCount');
+  var publishDateEl = document.getElementById('videoPublishDate');
+  var CACHE_KEY = 'kx_vid_cache';
+
+  function timeAgo(iso) {
+    if(!iso) return ''; var s=String(iso).trim(), d=new Date(s.slice(0,10)+'T00:00:00');
+    if(isNaN(d.getTime())) return '';
+    var diff=Math.floor((Date.now()-d)/1000);
+    if(diff<0) return 'Gerade hochgeladen'; if(diff<86400) return 'Heute';
+    if(diff<2592000) return 'Vor '+Math.floor(diff/86400)+' Tagen';
+    if(diff<31536000) return 'Vor '+Math.floor(diff/2592000)+' Monaten';
+    return 'Vor '+Math.floor(diff/31536000)+' Jahren';
+  }
+  var prefetchStore={}, prefetchDone={};
+  function getCached(vid){ try{var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');return c[vid]||null;}catch(e){return null;} }
+  function setCache(vid,data){ try{var c=JSON.parse(localStorage.getItem(CACHE_KEY)||'{}');if(data.shares===undefined&&c[vid]&&c[vid].shares)data.shares=c[vid].shares;c[vid]=data;localStorage.setItem(CACHE_KEY,JSON.stringify(c));}catch(e){} }
+  function getVisitorId(){ var id=localStorage.getItem('kx_visitor_id');if(!id){id='v_'+Math.random().toString(36).substr(2,12)+'_'+Date.now();localStorage.setItem('kx_visitor_id',id);}return id; }
+  function videoId(){ var v=videoItems[currentVideoIdx];return v?(v.video||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80):''; }
+  function vidKey(v){ return v?(v.video||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80):''; }
+  function formatViews(n){ if(n>=1000000)return(n/1000000).toFixed(1).replace('.0','')+'Mio.';if(n>=1000)return(n/1000).toFixed(1).replace('.0','')+' Tsd.';return n.toLocaleString('de-DE'); }
+
+  function renderEngagement(data) {
+    var vid=videoId(), prev=prefetchStore[vid]||getCached(vid)||{};
+    var shares=data.shares!==undefined?data.shares:(prev.shares||0);
+    viewsEl.textContent=formatViews(data.views||0)+' Aufrufe';
+    likeCountEl.textContent=data.likes||0; dislikeCountEl.textContent=data.dislikes||0;
+    setShareCount(shares);
+    likeBtn.classList.toggle('is-active',data.myAction==='like');
+    dislikeBtn.classList.toggle('is-active',data.myAction==='dislike');
+    data.shares=shares; prefetchStore[vid]=data; setCache(vid,data);
+  }
+  function apiCall(action,vid,cb){
+    if(!vid||!VIDEO_ENGAGEMENT_API)return;
+    var url=VIDEO_ENGAGEMENT_API+'?action='+action+'&vid='+encodeURIComponent(vid)+'&uid='+encodeURIComponent(getVisitorId());
+    fetch(url).then(function(r){return r.json();}).then(function(data){if(cb)cb(data);}).catch(function(){});
+  }
+  function prefetchAll(){
+    if(!VIDEO_ENGAGEMENT_API)return;
+    collectVideoItems();
+    videoItems.forEach(function(v){var key=vidKey(v);if(!key||prefetchDone[key])return;prefetchDone[key]=true;
+      var url=VIDEO_ENGAGEMENT_API+'?action=get&vid='+encodeURIComponent(key)+'&uid='+encodeURIComponent(getVisitorId());
+      fetch(url).then(function(r){return r.json();}).then(function(data){var prev=prefetchStore[key]||getCached(key)||{};if(data.shares===undefined)data.shares=prev.shares||0;prefetchStore[key]=data;setCache(key,data);}).catch(function(){});
+    });
+  }
+  prefetchAll();
+
+  function initEngagement(){
+    var vid=videoId(), v=videoItems[currentVideoIdx];
+    if(publishDateEl) publishDateEl.textContent=(v&&v.created)?timeAgo(v.created):'';
+    if(prefetchStore[vid]){renderEngagement(prefetchStore[vid]);apiCall('view',vid,function(data){renderEngagement(data);});return;}
+    var cached=getCached(vid); if(cached)renderEngagement(cached);
+    if(!prefetchDone[vid])prefetchAll();
+    apiCall('view',vid,function(data){renderEngagement(data);});
+  }
+  var _engagementSeq=0;
+  function popBtn(btn){btn.classList.remove('kx-pop');void btn.offsetWidth;btn.classList.add('kx-pop');btn.addEventListener('animationend',function h(){btn.classList.remove('kx-pop');btn.removeEventListener('animationend',h);});}
+  function animCount(el){el.classList.remove('kx-count-anim');void el.offsetWidth;el.classList.add('kx-count-anim');el.addEventListener('animationend',function h(){el.classList.remove('kx-count-anim');el.removeEventListener('animationend',h);});}
+
+  function optimisticReact(action){
+    var seq=++_engagementSeq,vid=videoId();
+    var current=prefetchStore[vid]||getCached(vid)||{views:0,likes:0,dislikes:0,shares:0,myAction:''};
+    var o={views:current.views,likes:current.likes,dislikes:current.dislikes,shares:current.shares||0,myAction:current.myAction};
+    if(action==='like'){if(o.myAction==='like'){o.likes=Math.max(0,o.likes-1);o.myAction='';}else{if(o.myAction==='dislike')o.dislikes=Math.max(0,o.dislikes-1);o.likes+=1;o.myAction='like';}popBtn(likeBtn);}
+    else{if(o.myAction==='dislike'){o.dislikes=Math.max(0,o.dislikes-1);o.myAction='';}else{if(o.myAction==='like')o.likes=Math.max(0,o.likes-1);o.dislikes+=1;o.myAction='dislike';}popBtn(dislikeBtn);}
+    likeCountEl.textContent=o.likes;dislikeCountEl.textContent=o.dislikes;animCount(action==='like'?likeCountEl:dislikeCountEl);
+    likeBtn.classList.toggle('is-active',o.myAction==='like');dislikeBtn.classList.toggle('is-active',o.myAction==='dislike');
+    prefetchStore[vid]=o;setCache(vid,o);
+    apiCall(action,vid,function(data){if(seq!==_engagementSeq)return;if(data.shares===undefined)data.shares=prefetchStore[vid]?(prefetchStore[vid].shares||0):0;likeCountEl.textContent=data.likes||0;dislikeCountEl.textContent=data.dislikes||0;likeBtn.classList.toggle('is-active',data.myAction==='like');dislikeBtn.classList.toggle('is-active',data.myAction==='dislike');prefetchStore[vid]=data;setCache(vid,data);});
+  }
+  likeBtn.addEventListener('click',function(){optimisticReact('like');});
+  dislikeBtn.addEventListener('click',function(){optimisticReact('dislike');});
+
+  function recordShare(){
+    var vid=videoId(),current=prefetchStore[vid]||getCached(vid)||{views:0,likes:0,dislikes:0,shares:0,myAction:''};
+    var ns=(current.shares||0)+1;setShareCount(ns);animCount(shareCountEl);
+    if(current){current.shares=ns;prefetchStore[vid]=current;setCache(vid,current);}
+    apiCall('share',vid,function(data){var ss=data.shares!==undefined?data.shares:ns;setShareCount(ss);data.shares=ss;prefetchStore[vid]=data;setCache(vid,data);});
+  }
+  ['kxShareWa','kxShareFb','kxShareX','kxShareMail','kxSharePin','kxShareLi'].forEach(function(id){document.getElementById(id).addEventListener('click',function(){recordShare();});});
+  document.getElementById('kxShareCopyBtn').addEventListener('click',function(){copyText(document.getElementById('kxShareUrl').textContent,'Link kopiert!');recordShare();closeSharePanel();});
+  document.getElementById('kxShareIg').addEventListener('click',function(){copyText(document.getElementById('kxShareUrl').textContent,'Link kopiert! Jetzt in Instagram einfügen.');window.open('https://www.instagram.com/','_blank');recordShare();closeSharePanel();});
+  document.getElementById('kxShareTt').addEventListener('click',function(){copyText(document.getElementById('kxShareUrl').textContent,'Link kopiert! Jetzt in TikTok einfügen.');window.open('https://www.tiktok.com/','_blank');recordShare();closeSharePanel();});
+  document.getElementById('kxShareEmbed').addEventListener('click',function(){var url=document.getElementById('kxShareUrl').textContent;var code=getEmbedCode(url);document.getElementById('kxEmbedCode').textContent=code;document.getElementById('kxEmbedView').classList.toggle('is-open');});
+  document.getElementById('kxEmbedCopyBtn').addEventListener('click',function(){copyText(document.getElementById('kxEmbedCode').textContent,'Einbettungscode kopiert!');closeSharePanel();});
+  shareBtn.addEventListener('click',function(){var url=window.location.href.split('#')[0];openSharePanel(url);popBtn(shareBtn);});
+
+  var _origPlayVideo = playVideo;
+  playVideo = function(idx) { currentVideoIdx=idx; initEngagement(); _origPlayVideo(idx); };
 })();
 </script>
 
