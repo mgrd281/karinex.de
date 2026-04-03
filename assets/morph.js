@@ -73,6 +73,19 @@ export const MORPH_OPTIONS = {
       if (oldNode instanceof HTMLElement && newNode instanceof HTMLElement && oldNode.style.viewTransitionName) {
         newNode.style.viewTransitionName = oldNode.style.viewTransitionName;
       }
+
+      // Preserve wishlist count (set from localStorage, not available server-side)
+      if (oldNode.matches('.action__wishlist') && newNode.matches('.action__wishlist')) {
+        const wc = oldNode.getAttribute('data-wishlist-count');
+        if (wc && wc !== '0') newNode.setAttribute('data-wishlist-count', wc);
+      }
+      if (oldNode.id === 'wishlist-header-count' && newNode.id === 'wishlist-header-count') {
+        const dc = oldNode.getAttribute('data-count');
+        if (dc && dc !== '0') {
+          newNode.setAttribute('data-count', dc);
+          newNode.textContent = dc;
+        }
+      }
     }
   },
   onAfterUpdate(node) {
