@@ -128,8 +128,8 @@
                 {%- if media.media_type == 'image' -%}
                   {%- assign _ay_raw = media | image_url: width: 800 -%}
                   {%- if _ay_raw contains '.avif' -%}
-                    {%- assign _ay_src = media.src -%}
-                    {%- assign _ay_full = media.src -%}
+                    {%- assign _ay_src = media.preview_image.src -%}
+                    {%- assign _ay_full = media.preview_image.src -%}
                   {%- else -%}
                     {%- assign _ay_src = _ay_raw -%}
                     {%- assign _ay_full = media | image_url: width: 1600 -%}
@@ -263,8 +263,8 @@
           {%- if media.media_type == 'image' -%}
             {%- assign _ayt_raw = media | image_url: width: 800 -%}
             {%- if _ayt_raw contains '.avif' -%}
-              {%- assign _ayt_src = media.src -%}
-              {%- assign _ayt_thumb = media.src -%}
+              {%- assign _ayt_src = media.preview_image.src -%}
+              {%- assign _ayt_thumb = media.preview_image.src -%}
             {%- else -%}
               {%- assign _ayt_src = _ayt_raw -%}
               {%- assign _ayt_thumb = media | image_url: width: 200 -%}
