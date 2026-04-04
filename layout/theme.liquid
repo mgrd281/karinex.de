@@ -10,6 +10,40 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {%- comment -%} ═══ GEO-LANGUAGE AUTO-REDIRECT — must be FIRST in <head> ═══ {%- endcomment -%}
+    {%- unless request.design_mode -%}
+      {%- assign _geo_country = localization.country.iso_code -%}
+      {%- assign _cur_locale = request.locale.iso_code | downcase -%}
+
+      {%- assign _expected = 'en' -%}
+      {%- if _geo_country == 'DE' or _geo_country == 'AT' or _geo_country == 'CH' or _geo_country == 'LI' or _geo_country == 'LU' -%}
+        {%- assign _expected = 'de' -%}
+      {%- elsif _geo_country == 'PL' -%}
+        {%- assign _expected = 'pl' -%}
+      {%- endif -%}
+
+      {%- if _expected != _cur_locale -%}
+        {%- assign _path = request.path -%}
+        {%- if _cur_locale == 'en' -%}
+          {%- assign _path = _path | remove_first: '/en' -%}
+        {%- elsif _cur_locale == 'pl' -%}
+          {%- assign _path = _path | remove_first: '/pl' -%}
+        {%- endif -%}
+        {%- if _path == blank -%}{%- assign _path = '/' -%}{%- endif -%}
+
+        {%- if _expected == 'de' -%}
+          {%- assign _redirect_url = _path -%}
+        {%- elsif _path == '/' -%}
+          {%- assign _redirect_url = '/' | append: _expected -%}
+        {%- else -%}
+          {%- assign _redirect_url = '/' | append: _expected | append: _path -%}
+        {%- endif -%}
+
+        <script>if(document.cookie.indexOf('karinex_lang_set')===-1){window.location.replace('{{ _redirect_url }}');}</script>
+        <noscript><meta http-equiv="refresh" content="0;url={{ _redirect_url }}"></noscript>
+      {%- endif -%}
+    {%- endunless -%}
+
     {%- comment -%} ════ CORE PERFORMANCE PRECONNECTS (MAX 6) ════ {%- endcomment -%}
     {%- render 'affiliate-tracker' -%}
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
@@ -66,37 +100,6 @@
         }
       })();
     </script>
-
-    {%- comment -%} ═══ GEO-LANGUAGE AUTO-REDIRECT (Shopify native) ════ {%- endcomment -%}
-    {%- unless request.design_mode -%}
-      {%- assign _geo_country = localization.country.iso_code -%}
-      {%- assign _cur_locale = request.locale.iso_code | downcase -%}
-
-      {%- comment -%} Map country → expected locale: DE/AT/CH/LI/LU → de, PL → pl, all others → en {%- endcomment -%}
-      {%- assign _expected = 'en' -%}
-      {%- if _geo_country == 'DE' or _geo_country == 'AT' or _geo_country == 'CH' or _geo_country == 'LI' or _geo_country == 'LU' -%}
-        {%- assign _expected = 'de' -%}
-      {%- elsif _geo_country == 'PL' -%}
-        {%- assign _expected = 'pl' -%}
-      {%- endif -%}
-
-      {%- if _expected != _cur_locale -%}
-        <script>
-        (function(){
-          /* Respect manual language choice */
-          if(document.cookie.indexOf('karinex_lang_set')!==-1)return;
-          var p=window.location.pathname;
-          var clean=p.replace(/^\/(en|pl)(\/|$)/,'/')||'/';
-          {%- if _expected == 'de' -%}
-            var dest=clean;
-          {%- else -%}
-            var dest='/{{ _expected }}'+(clean==='/'?'':clean);
-          {%- endif -%}
-          window.location.replace(window.location.origin+dest+window.location.search+window.location.hash);
-        })();
-        </script>
-      {%- endif -%}
-    {%- endunless -%}
 
     <!-- ═══════════════════════════════════════════════════════════════════
          USERCENTRICS SHADOW DOM STYLE INJECTOR
