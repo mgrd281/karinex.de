@@ -646,54 +646,39 @@
         </details>
       </div>
 
-      {%- comment -%} ========== PERFEKT KOMBINIERT (Premium Cross-Sell via Metafield) ========== {%- endcomment -%}
+      {%- comment -%} ========== DAS PASST DAZU (Cross-Sell via Metafield) ========== {%- endcomment -%}
       {%- assign _passt_dazu = product.metafields.custom.passt_dazu.value -%}
       {%- if _passt_dazu != blank and _passt_dazu.size > 0 -%}
-        <section class="ay-passt-dazu">
-          <div class="ay-passt-dazu__header">
-            <h2 class="ay-passt-dazu__title">Perfekt kombiniert</h2>
-            <p class="ay-passt-dazu__subtitle">Entdecke passende Produkte zu deinen Favoriten</p>
-          </div>
+        <div class="ay-passt-dazu">
+          <h2 class="ay-passt-dazu__title">Das passt dazu</h2>
           <div class="ay-passt-dazu__grid">
             {%- for item in _passt_dazu -%}
               {%- if item.available or item.published_at != blank -%}
-                <div class="ay-passt-dazu__card-wrapper">
-                  <a href="{{ item.url }}" class="ay-passt-dazu__card" aria-label="{{ item.title | escape }}">
-                    <div class="ay-passt-dazu__img-wrap">
-                      {%- if item.featured_image != blank -%}
-                        <img
-                          src="{{ item.featured_image | image_url: width: 500 }}"
-                          alt="{{ item.featured_image.alt | default: item.title | escape }}"
-                          width="500"
-                          height="500"
-                          loading="lazy"
-                          class="ay-passt-dazu__img"
-                        >
-                      {%- else -%}
-                        <div class="ay-passt-dazu__img-placeholder"></div>
-                      {%- endif -%}
-                      <div class="ay-passt-dazu__overlay">
-                        <button class="ay-passt-dazu__add-btn" aria-label="In den Warenkorb" type="button" role="button">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="ay-passt-dazu__content">
-                      <span class="ay-passt-dazu__vendor">{{ item.vendor | upcase }}</span>
-                      <h3 class="ay-passt-dazu__name">{{ item.title }}</h3>
-                      <div class="ay-passt-dazu__footer">
-                        <span class="ay-passt-dazu__price">{{ item.price | money }}</span>
-                        {%- if item.compare_at_price > item.price -%}
-                          <span class="ay-passt-dazu__original">{{ item.compare_at_price | money }}</span>
-                        {%- endif -%}
-                      </div>
-                    </div>
-                  </a>
-                </div>
+                <a href="{{ item.url }}" class="ay-passt-dazu__card" aria-label="{{ item.title | escape }}">
+                  <div class="ay-passt-dazu__img-wrap">
+                    {%- if item.featured_image != blank -%}
+                      <img
+                        src="{{ item.featured_image | image_url: width: 400 }}"
+                        alt="{{ item.featured_image.alt | default: item.title | escape }}"
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        class="ay-passt-dazu__img"
+                      >
+                    {%- else -%}
+                      <div class="ay-passt-dazu__img-placeholder"></div>
+                    {%- endif -%}
+                  </div>
+                  <div class="ay-passt-dazu__info">
+                    <span class="ay-passt-dazu__vendor">{{ item.vendor }}</span>
+                    <span class="ay-passt-dazu__name">{{ item.title }}</span>
+                    <span class="ay-passt-dazu__price">{{ item.price | money }}</span>
+                  </div>
+                </a>
               {%- endif -%}
             {%- endfor -%}
           </div>
-        </section>
+        </div>
       {%- endif -%}
 
     </div>
@@ -1391,21 +1376,6 @@
     tryMove();
   }
   window.addEventListener('load', moveReviews);
-
-  /* ---- Perfekt kombiniert – Add to cart handler ---- */
-  document.querySelectorAll('.ay-passt-dazu__add-btn').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var cardEl = this.closest('.ay-passt-dazu__card');
-      if (cardEl) {
-        var productLink = cardEl.getAttribute('href');
-        if (productLink) {
-          window.location.href = productLink;
-        }
-      }
-    });
-  });
 })();
 </script>
 
