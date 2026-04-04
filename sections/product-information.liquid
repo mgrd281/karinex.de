@@ -35,6 +35,10 @@
 {%- if is_ch_market and product.metafields.custom.description_ch != blank -%}
   {%- assign market_description = product.metafields.custom.description_ch | newline_to_br -%}
 {%- endif -%}
+{%- assign market_title = product.title -%}
+{%- if is_ch_market and product.metafields.custom.title_ch != blank -%}
+  {%- assign market_title = product.metafields.custom.title_ch | strip -%}
+{%- endif -%}
 
     {% render 'schema-product-smart' %}
     {%- if is_digital -%}
@@ -1008,7 +1012,7 @@ nav[aria-label="Breadcrumb"],
                       class="pdp-bell-btn"
                       data-price-alert="true"
                       data-handle="{{ product.handle }}"
-                      data-title="{{ product.title | escape }}"
+                      data-title="{{ market_title | escape }}"
                       data-image="{{ _bell_img }}"
                       data-price="{{ _bell_variant.price }}"
                       data-compare-price="{{ _bell_variant.compare_at_price | default: '' }}"
@@ -1118,7 +1122,7 @@ nav[aria-label="Breadcrumb"],
              </button>
            </div>
            <div class="video-modal__product-info">
-             <div class="video-modal__product-title">{{ product.title | escape }}</div>
+             <div class="video-modal__product-title">{{ market_title | escape }}</div>
              <div class="video-modal__product-vendor">{{ product.vendor | escape }}</div>
              <div class="video-modal__product-date" id="videoPublishDate"></div>
            </div>
@@ -1140,7 +1144,7 @@ nav[aria-label="Breadcrumb"],
                {% endfor %}
              </div>
              <div class="bilder-sidebar">
-               <h3 class="bilder-sidebar__title">{{ product.title | escape }}</h3>
+               <h3 class="bilder-sidebar__title">{{ market_title | escape }}</h3>
                {% if product.variants.size > 1 %}
                  <div class="bilder-sidebar__variant">Stil:<strong>{{ product.selected_or_first_available_variant.title | escape }}</strong></div>
                {% endif %}
@@ -1857,7 +1861,7 @@ nav[aria-label="Breadcrumb"],
        var listEl = document.getElementById('videoModalList');
        var infoEl = document.getElementById('videoModalInfo');
        var playOverlay = document.getElementById('videoPlayOverlay');
-       var productTitle = '{{ product.title | escape }}';
+      var productTitle = '{{ market_title | escape }}';
        var productVendor = '{{ product.vendor | escape }}';
 
        // Play overlay logic – Amazon style: only play button, hidden when playing
@@ -2614,7 +2618,7 @@ nav[aria-label="Breadcrumb"],
 
                 {% render 'deal-countdown', product: product %}
 
-                <h1 class="product-title" style="margin-bottom: 6px;">{{ product.title | remove: ' - Default Title' | remove: '- Default Title' | remove: ' - Erwachsene / Männlich' | remove: ' - Erwachsene / Weiblich' | remove: ' - Männlich' | remove: ' - Weiblich' }}</h1>
+                <h1 class="product-title" style="margin-bottom: 6px;">{{ market_title | remove: ' - Default Title' | remove: '- Default Title' | remove: ' - Erwachsene / Männlich' | remove: ' - Erwachsene / Weiblich' | remove: ' - Männlich' | remove: ' - Weiblich' }}</h1>
 
                                 <div class="desktop-stock-badge">
                   {% liquid

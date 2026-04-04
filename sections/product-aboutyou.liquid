@@ -15,6 +15,10 @@
   if ay_is_ch_market and product.metafields.custom.description_ch != blank
     assign ay_market_description = product.metafields.custom.description_ch | newline_to_br
   endif
+  assign ay_market_title = product.title
+  if ay_is_ch_market and product.metafields.custom.title_ch != blank
+    assign ay_market_title = product.metafields.custom.title_ch | strip
+  endif
   if current_variant.available == false
     assign ay_is_sold_out = true
   endif
@@ -287,7 +291,7 @@
         {%- if product.vendor != blank -%}
           <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
         {%- else -%}
-          <span>{{ product.title | truncate: 40 }}</span>
+          <span>{{ ay_market_title | truncate: 40 }}</span>
         {%- endif -%}
       </nav>
 
@@ -329,7 +333,7 @@
       {%- endif -%}
 
       {%- comment -%} Title {%- endcomment -%}
-      <h1 class="ay-title">{{ product.title }}</h1>
+      <h1 class="ay-title">{{ ay_market_title }}</h1>
 
       {%- comment -%} Rating {%- endcomment -%}
       <div class="ay-rating" id="ay-product-rating" style="display: none;">
@@ -482,7 +486,7 @@
               {%- else -%}
                 <span class="ay-bis-modal__brand-text">{{ product.vendor }}</span>
               {%- endif -%}
-              <span class="ay-bis-modal__name">{{ product.title | truncate: 40 }}</span>
+              <span class="ay-bis-modal__name">{{ ay_market_title | truncate: 40 }}</span>
               <span class="ay-bis-modal__size-badge" id="ay-bis-size-badge"></span>
             </div>
           </div>
@@ -508,7 +512,7 @@
             <input type="hidden" id="ay-stockout-body" value="">
             <input type="hidden" id="ay-backinstock-webapp-url" value="{{ section.settings.backinstock_webapp_url | escape }}">
             <input type="hidden" id="ay-backinstock-seller-email" value="{{ section.settings.backinstock_seller_email | default: shop.email | escape }}">
-            <input type="hidden" id="ay-backinstock-product-title" value="{{ product.title | escape }}">
+            <input type="hidden" id="ay-backinstock-product-title" value="{{ ay_market_title | escape }}">
             <input type="hidden" id="ay-backinstock-variant-title" value="{{ current_variant.title | escape }}">
             <input type="hidden" id="ay-backinstock-product-handle" value="{{ product.handle | escape }}">
             <input type="hidden" id="ay-backinstock-variant-id" value="{{ current_variant.id }}">
@@ -1025,7 +1029,7 @@
           action: 'subscribe',
           email: email,
           size: currentSize,
-          productTitle: {{ product.title | json }},
+          productTitle: {{ ay_market_title | json }},
           variantTitle: currentSize,
           productHandle: {{ product.handle | json }},
           variantId: currentVariantId,
@@ -1171,7 +1175,7 @@
       }
 
       var sizeText = sizeSelect && sizeSelect.value ? sizeSelect.value : 'nicht angegeben';
-      bodyInput.value = 'Bitte benachrichtigen, wenn wieder verfuegbar: {{ product.title | escape }} | Variante: {{ current_variant.title | escape }} | Groesse: ' + sizeText + ' | URL: ' + window.location.href;
+      bodyInput.value = 'Bitte benachrichtigen, wenn wieder verfuegbar: {{ ay_market_title | escape }} | Variante: {{ current_variant.title | escape }} | Groesse: ' + sizeText + ' | URL: ' + window.location.href;
 
       function setSuccess() {
         statusEl.textContent = 'Du wirst erinnert';
@@ -1441,7 +1445,7 @@
         </button>
       </div>
       <div class="video-modal__product-info">
-        <div class="video-modal__product-title">{{ product.title | escape }}</div>
+        <div class="video-modal__product-title">{{ ay_market_title | escape }}</div>
         <div class="video-modal__product-vendor">{{ product.vendor | escape }}</div>
         <div class="video-modal__product-date" id="videoPublishDate"></div>
       </div>
@@ -1464,7 +1468,7 @@
           {% endfor %}
         </div>
         <div class="bilder-sidebar">
-          <h3 class="bilder-sidebar__title">{{ product.title | escape }}</h3>
+          <h3 class="bilder-sidebar__title">{{ ay_market_title | escape }}</h3>
           {% if product.variants.size > 1 %}
             <div class="bilder-sidebar__variant">Stil: <strong>{{ product.selected_or_first_available_variant.title | escape }}</strong></div>
           {% endif %}
@@ -1621,7 +1625,7 @@
   var sidebar = document.getElementById('videoModalSidebar');
   var listEl = document.getElementById('videoModalList');
   var playOverlay = document.getElementById('videoPlayOverlay');
-  var productTitle = {{ product.title | json }};
+  var productTitle = {{ ay_market_title | json }};
   var productVendor = {{ product.vendor | json }};
 
   function updateOverlay(playing) {
