@@ -28,6 +28,10 @@
   endif
 
   assign image_url = ''
+  assign _src_url = image | image_url: width: width, quality: 65
+  if use_cloudinary and _src_url contains '.avif'
+    assign use_cloudinary = false
+  endif
   if use_cloudinary
     assign shopify_url = image | image_url: width: width | split: '?' | first
     if shopify_url contains '//'
@@ -35,7 +39,7 @@
     endif
     assign image_url = 'https://res.cloudinary.com/' | append: cloud_name | append: '/image/fetch/f_auto,q_auto,e_background_removal/' | append: shopify_url
   else
-    assign image_url = image | image_url: width: width, quality: 65
+    assign image_url = _src_url
   endif
 -%}
 {{ image_url }}
