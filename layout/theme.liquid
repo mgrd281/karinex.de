@@ -67,106 +67,12 @@
       })();
     </script>
 
-    {%- comment -%} ═══ GEO-LANGUAGE REDIRECT ════ {%- endcomment -%}
-    {%- unless request.design_mode -%}
-    <script>
-      requestAnimationFrame(function() {
-        // Country → Locale mapping
-        var GEO_LOCALES = {
-          // German → /de (default, no prefix needed)
-          'DE': 'de', 'AT': 'de', 'CH': 'de', 'LI': 'de', 'LU': 'de',
-          // English
-          'US': 'en', 'GB': 'en', 'AU': 'en', 'CA': 'en', 'NZ': 'en', 
-          'IE': 'en', 'ZA': 'en', 'SG': 'en',
-          // Polish
-          'PL': 'pl'
-        };
-
-        var DEFAULT_LOCALE = 'de';
-        var SUPPORTED_LOCALES = ['de', 'en', 'pl'];
-
-        // Current locale from Shopify
-        var currentLocale = '{{ request.locale.iso_code | downcase }}';
-
-        // Cookie helpers
-        function getCookie(name) {
-          var match = document.cookie.match(new RegExp('(?:^|;)\\s*' + name + '=([^;]*)'));
-          return match ? decodeURIComponent(match[1]) : null;
-        }
-        function setCookie(name, value, days) {
-          var d = new Date();
-          d.setTime(d.getTime() + days * 86400000);
-          document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
-        }
-
-        // If user manually changed language, remember it and don't override
-        var MANUAL_COOKIE = 'karinex_lang_set';
-        var manualLang = getCookie(MANUAL_COOKIE);
-        
-        // Detect if user navigated to locale via URL manually (language switcher)
-        var pathLocale = window.location.pathname.match(/^\/(en|pl)(\/|$)/);
-        if (pathLocale) {
-          setCookie(MANUAL_COOKIE, pathLocale[1], 30);
-          return; // User chose this locale manually
-        }
-        if (currentLocale === DEFAULT_LOCALE && !window.location.pathname.match(/^\/(en|pl)/)) {
-          // Check if they manually chose German
-          if (manualLang === 'de') return;
-        }
-        
-        // If user has a manual cookie set, respect it
-        if (manualLang && SUPPORTED_LOCALES.indexOf(manualLang) !== -1) {
-          // Already on correct locale?
-          if (currentLocale === manualLang) return;
-          if (manualLang === DEFAULT_LOCALE) {
-            // Redirect to German (root path)
-            var targetPath = window.location.pathname.replace(/^\/(en|pl)/, '') || '/';
-            if (window.location.pathname !== targetPath) {
-              window.location.replace(targetPath + window.location.search);
-            }
-            return;
-          } else {
-            var targetPath = '/' + manualLang + window.location.pathname.replace(/^\/(en|pl)/, '');
-            if (window.location.pathname !== targetPath) {
-              window.location.replace(targetPath + window.location.search);
-            }
-            return;
-          }
-        }
-
-        // First visit: fetch geo and redirect
-        var GEO_COOKIE = 'karinex_geo_done';
-        if (getCookie(GEO_COOKIE)) return; // Already did geo redirect
-        setCookie(GEO_COOKIE, '1', 1); // Only run once per day
-
-        fetch('https://ipapi.co/json/', { cache: 'no-store', signal: AbortSignal.timeout(3000) })
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            var country = (data.country_code || '').toUpperCase();
-            var targetLocale = GEO_LOCALES[country] || null;
-
-            if (!targetLocale || targetLocale === currentLocale) return;
-
-            var currentPath = window.location.pathname;
-            var cleanPath = currentPath.replace(/^\/(en|pl)/, '') || '/';
-            var targetPath;
-
-            if (targetLocale === DEFAULT_LOCALE) {
-              targetPath = cleanPath;
-            } else {
-              targetPath = '/' + targetLocale + cleanPath;
-            }
-
-            if (currentPath !== targetPath) {
-              // Remember the geo-detected lang as manual so future navigations keep it
-              setCookie(MANUAL_COOKIE, targetLocale, 30);
-              window.location.replace(targetPath + window.location.search);
-            }
-          })
-          .catch(function() { /* Silently fail — keep current locale */ });
-      });
-    </script>
-    {%- endunless -%}
+    {%- comment -%} ═══ GEO-LANGUAGE REDIRECT (DISABLED) ════ {%- endcomment -%}
+    {%- comment -%}
+      Automatic geo-redirect removed to prevent unexpected locale changes.
+      Users now manage their language preference manually via language switcher.
+      This preserves their choice across all pages and product navigation.
+    {%- endcomment -%}
 
     <!-- ═══════════════════════════════════════════════════════════════════
          USERCENTRICS SHADOW DOM STYLE INJECTOR
