@@ -67,56 +67,35 @@
       })();
     </script>
 
-    {%- comment -%} ═══ GEO-LANGUAGE AUTO-REDIRECT ════ {%- endcomment -%}
+    {%- comment -%} ═══ GEO-LANGUAGE AUTO-REDIRECT (Shopify native) ════ {%- endcomment -%}
     {%- unless request.design_mode -%}
-    <script>
-    (function(){
-      /* ── Cookie helpers ── */
-      function gc(n){var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
+      {%- assign _geo_country = localization.country.iso_code -%}
+      {%- assign _cur_locale = request.locale.iso_code | downcase -%}
 
-      /* Skip if user manually chose a language or was already geo-detected */
-      if(gc('karinex_lang_set')||gc('karinex_geo_done'))return;
+      {%- comment -%} Map country → expected locale: DE/AT/CH/LI/LU → de, PL → pl, all others → en {%- endcomment -%}
+      {%- assign _expected = 'en' -%}
+      {%- if _geo_country == 'DE' or _geo_country == 'AT' or _geo_country == 'CH' or _geo_country == 'LI' or _geo_country == 'LU' -%}
+        {%- assign _expected = 'de' -%}
+      {%- elsif _geo_country == 'PL' -%}
+        {%- assign _expected = 'pl' -%}
+      {%- endif -%}
 
-      /* Mark geo-detection done immediately (90 days) — prevents double-fire */
-      document.cookie='karinex_geo_done=1;path=/;max-age=7776000;SameSite=Lax';
-
-      /* Country → locale: German-speaking → de, Poland → pl, everything else → en */
-      var MAP={'DE':'de','AT':'de','CH':'de','LI':'de','LU':'de','PL':'pl'};
-      var FALLBACK='en';
-
-      /* Current locale from <html lang="…"> */
-      var cur=(document.documentElement.lang||'de').split('-')[0].toLowerCase();
-      if(['de','en','pl'].indexOf(cur)<0) cur='de';
-
-      fetch('https://ipapi.co/country/',{cache:'no-store'})
-        .then(function(r){return r.text();})
-        .then(function(raw){
-          var cc=(raw||'').trim().toUpperCase();
-          if(cc.length!==2)return;
-
-          var target=MAP[cc]||FALLBACK;
-          if(target===cur)return; /* already on correct locale */
-
-          /* Build redirect URL */
+      {%- if _expected != _cur_locale -%}
+        <script>
+        (function(){
+          /* Respect manual language choice */
+          if(document.cookie.indexOf('karinex_lang_set')!==-1)return;
           var p=window.location.pathname;
-          /* Strip current locale prefix if present (/en/… or /pl/…) */
-          var clean=p.replace(/^\/(en|pl)(\/|$)/,'/');
-          if(!clean)clean='/';
-
-          var dest;
-          if(target==='de'){
-            dest=clean; /* default locale = no prefix */
-          }else{
-            dest='/'+target+(clean==='/'?'':clean);
-          }
-
-          window.location.replace(
-            window.location.origin+dest+window.location.search+window.location.hash
-          );
-        })
-        .catch(function(){/* fail silently — user stays on current locale */});
-    })();
-    </script>
+          var clean=p.replace(/^\/(en|pl)(\/|$)/,'/')||'/';
+          {%- if _expected == 'de' -%}
+            var dest=clean;
+          {%- else -%}
+            var dest='/{{ _expected }}'+(clean==='/'?'':clean);
+          {%- endif -%}
+          window.location.replace(window.location.origin+dest+window.location.search+window.location.hash);
+        })();
+        </script>
+      {%- endif -%}
     {%- endunless -%}
 
     <!-- ═══════════════════════════════════════════════════════════════════
