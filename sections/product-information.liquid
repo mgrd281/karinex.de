@@ -23,6 +23,19 @@
   {%- endif -%}
 {%- endif -%}
 
+{%- assign is_ch_market = false -%}
+{%- assign market_handle_lc = localization.market.handle | default: '' | downcase -%}
+{%- if market_handle_lc contains 'schweiz' or market_handle_lc contains 'switzerland' or market_handle_lc == 'ch' -%}
+  {%- assign is_ch_market = true -%}
+{%- endif -%}
+{%- if localization.country.iso_code == 'CH' -%}
+  {%- assign is_ch_market = true -%}
+{%- endif -%}
+{%- assign market_description = product.description -%}
+{%- if is_ch_market and product.metafields.custom.description_ch != blank -%}
+  {%- assign market_description = product.metafields.custom.description_ch | newline_to_br -%}
+{%- endif -%}
+
     {% render 'schema-product-smart' %}
     {%- if is_digital -%}
       {% render 'schema-howto' %}
@@ -3561,7 +3574,7 @@ nav[aria-label="Breadcrumb"],
 {% render 'product-information-scripts-styles', is_digital: is_digital %}
 
     <script>
-    window.PRODUCT_DESCRIPTION_ORIGINAL = {{ product.description | json }};
+    window.PRODUCT_DESCRIPTION_ORIGINAL = {{ market_description | json }};
   </script>
 
 </div></div>
@@ -3570,7 +3583,7 @@ nav[aria-label="Breadcrumb"],
     {% liquid
       # FULL SPECS PARSING LOGIC
       # Convert ALL possible line breaks to our delimiter
-      assign desc_with_breaks = product.description | replace: '</div>', '§§§' | replace: '</p>', '§§§' | replace: '<br>', '§§§' | replace: '<br/>', '§§§' | replace: '<br />', '§§§' | replace: '</li>', '§§§' | replace: '</strong>', '' | replace: '<strong>', ''
+      assign desc_with_breaks = market_description | replace: '</div>', '§§§' | replace: '</p>', '§§§' | replace: '<br>', '§§§' | replace: '<br/>', '§§§' | replace: '<br />', '§§§' | replace: '</li>', '§§§' | replace: '</strong>', '' | replace: '<strong>', ''
       assign description = desc_with_breaks | strip_html
       # Also replace actual newlines and multiple spaces
       assign description = description | newline_to_br | replace: '<br />', '§§§' | strip_html | strip
@@ -3600,7 +3613,7 @@ nav[aria-label="Breadcrumb"],
       assign description = description | replace: 'Typ:', '§§§Typ:'
       assign description = description | replace: 'Stil:', '§§§Stil:'
 
-      assign clean_description = product.description
+      assign clean_description = market_description
 
       # Initialize dynamic spec arrays (up to 20 rows)
       assign spec_r1_label = ''
@@ -3954,7 +3967,7 @@ nav[aria-label="Breadcrumb"],
         endfor
 
       # Clean description = everything BEFORE the specs keyword
-      assign clean_description = product.description | split: specs_keyword | first
+      assign clean_description = market_description | split: specs_keyword | first
       endif
 
       # Priority system - metafields > description parsing > defaults

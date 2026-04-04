@@ -3,6 +3,18 @@
   assign ay_is_sold_out = false
   assign ay_has_real_size_options = false
   assign ay_size_option_position = 0
+  assign ay_is_ch_market = false
+  assign ay_market_handle = localization.market.handle | default: '' | downcase
+  if ay_market_handle contains 'schweiz' or ay_market_handle contains 'switzerland' or ay_market_handle == 'ch'
+    assign ay_is_ch_market = true
+  endif
+  if localization.country.iso_code == 'CH'
+    assign ay_is_ch_market = true
+  endif
+  assign ay_market_description = product.description
+  if ay_is_ch_market and product.metafields.custom.description_ch != blank
+    assign ay_market_description = product.metafields.custom.description_ch | newline_to_br
+  endif
   if current_variant.available == false
     assign ay_is_sold_out = true
   endif
@@ -579,14 +591,14 @@
 
       {%- comment -%} Accordions {%- endcomment -%}
       <div class="ay-accordions">
-        {%- if product.description != blank -%}
+        {%- if ay_market_description != blank -%}
           <details class="ay-accordion">
             <summary class="ay-accordion__trigger">
               Produktbeschreibung
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </summary>
             <div class="ay-accordion__content">
-              {{ product.description }}
+              {{ ay_market_description }}
             </div>
           </details>
         {%- endif -%}
