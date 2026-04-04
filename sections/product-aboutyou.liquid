@@ -126,16 +126,24 @@
 
               <div class="ay-gallery__cell">
                 {%- if media.media_type == 'image' -%}
+                  {%- assign _ay_raw = media | image_url: width: 800 -%}
+                  {%- if _ay_raw contains '.avif' -%}
+                    {%- assign _ay_src = media.src -%}
+                    {%- assign _ay_full = media.src -%}
+                  {%- else -%}
+                    {%- assign _ay_src = _ay_raw -%}
+                    {%- assign _ay_full = media | image_url: width: 1600 -%}
+                  {%- endif -%}
                   <img
                     class="ay-gallery__main-img"
-                    src="{{ media | image_url: width: 800 }}"
+                    src="{{ _ay_src }}"
                     alt="{{ media.alt | default: product.title | escape }}"
                     loading="{% if ay_cell_index < 2 %}eager{% else %}lazy{% endif %}"
                     {% if ay_cell_index == 0 %}fetchpriority="high"{% endif %}
                     width="{{ media.width }}"
                     height="{{ media.height }}"
                     data-index="{{ ay_cell_index }}"
-                    data-full="{{ media | image_url: width: 1600 }}"
+                    data-full="{{ _ay_full }}"
                     data-type="image"
                     onclick="ayLightbox.open({{ ay_cell_index }})"
                   >
@@ -253,9 +261,17 @@
         {%- assign ay_media_idx = 0 -%}
         {%- for media in product.media -%}
           {%- if media.media_type == 'image' -%}
+            {%- assign _ayt_raw = media | image_url: width: 800 -%}
+            {%- if _ayt_raw contains '.avif' -%}
+              {%- assign _ayt_src = media.src -%}
+              {%- assign _ayt_thumb = media.src -%}
+            {%- else -%}
+              {%- assign _ayt_src = _ayt_raw -%}
+              {%- assign _ayt_thumb = media | image_url: width: 200 -%}
+            {%- endif -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="image"
-                 data-src="{{ media | image_url: width: 800 }}">
-              <img src="{{ media | image_url: width: 200 }}" alt="{{ media.alt | escape }}" loading="lazy" width="200" height="200">
+                 data-src="{{ _ayt_src }}">
+              <img src="{{ _ayt_thumb }}" alt="{{ media.alt | escape }}" loading="lazy" width="200" height="200">
             </div>
           {%- elsif media.media_type == 'video' -%}
             {%- assign ay_v_first = media.sources | first -%}

@@ -762,9 +762,9 @@ nav[aria-label="Breadcrumb"],
          {% when 'image' %}
            {%- assign _raw_src = media | image_url: width: 800 -%}
            {%- if _raw_src contains '.avif' -%}
-             {%- assign _img_800 = media | image_url: width: 800 -%}
-             {%- assign _img_2000 = media | image_url: width: 2000 -%}
-             {%- assign _img_thumb = media | image_url: width: 200 -%}
+             {%- assign _img_800 = media.src -%}
+             {%- assign _img_2000 = media.src -%}
+             {%- assign _img_thumb = media.src -%}
            {%- else -%}
              {%- capture _img_800 -%}{% render 'cloudinary-image', image: media, product: product, width: 800 %}{%- endcapture -%}
              {%- capture _img_2000 -%}{% render 'cloudinary-image', image: media, product: product, width: 2000 %}{%- endcapture -%}
@@ -957,7 +957,7 @@ nav[aria-label="Breadcrumb"],
 
                         {%- assign _main_raw = product.featured_image | image_url: width: 800 -%}
                         {%- if _main_raw contains '.avif' -%}
-                          {%- assign _main_src = _main_raw -%}
+                          {%- assign _main_src = product.featured_image.src -%}
                         {%- else -%}
                           {%- capture _main_src -%}{% render 'cloudinary-image', image: product.featured_image, product: product, width: 800 %}{%- endcapture -%}
                         {%- endif -%}
@@ -997,7 +997,7 @@ nav[aria-label="Breadcrumb"],
                               {% when 'image' %}
                                 {%- assign _mob_raw = media | image_url: width: 800 -%}
                                 {%- if _mob_raw contains '.avif' -%}
-                                  {%- assign _mob_src = _mob_raw -%}
+                                  {%- assign _mob_src = media.src -%}
                                 {%- else -%}
                                   {%- capture _mob_src -%}{% render 'cloudinary-image', image: media, product: product, width: 800 %}{%- endcapture -%}
                                 {%- endif -%}
@@ -1177,7 +1177,7 @@ nav[aria-label="Breadcrumb"],
                  {% if media.media_type == 'image' %}
                    {%- assign _bl_raw = media | image_url: width: 1200 -%}
                    {%- if _bl_raw contains '.avif' -%}
-                     {%- assign _bl_lg = _bl_raw -%}
+                     {%- assign _bl_lg = media.src -%}
                    {%- else -%}
                      {%- capture _bl_lg -%}{% render 'cloudinary-image', image: media, product: product, width: 1200 %}{%- endcapture -%}
                    {%- endif -%}
@@ -1201,7 +1201,7 @@ nav[aria-label="Breadcrumb"],
                    {% if media.media_type == 'image' %}
                      {%- assign _bt_raw = media | image_url: width: 200 -%}
                      {%- if _bt_raw contains '.avif' -%}
-                       {%- assign _bt_thumb = _bt_raw -%}
+                       {%- assign _bt_thumb = media.src -%}
                      {%- else -%}
                        {%- capture _bt_thumb -%}{% render 'cloudinary-image', image: media, product: product, width: 200 %}{%- endcapture -%}
                      {%- endif -%}
