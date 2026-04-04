@@ -1,25 +1,19 @@
-Redirect from	Redirect to
-/encollections/vendors	/en/collections/vendors
-/plcollections/vendors	/pl/collections/vendors
-/en/encollections/vendors	/en/collections/vendors
-/pl/plcollections/vendors	/pl/collections/vendors
-/encollections/vendors?q=Microsoft	/en/collections/vendors?q=Microsoft
-/plcollections/vendors?q=Microsoft	/pl/collections/vendors?q=Microsoft
-/encollections/vendors?q=LEGO	/en/collections/vendors?q=LEGO
-/plcollections/vendors?q=LEGO	/pl/collections/vendors?q=LEGO
-/encollections/vendors?q=Boss	/en/collections/vendors?q=Boss
-/plcollections/vendors?q=Boss	/pl/collections/vendors?q=Boss
-/collections/windows-11	/collections/software
-/en/collections/windows-11	/en/collections/software
-/pl/collections/windows-11	/pl/collections/software
-/pages/windows-11-key-kaufen	/pages/windows-11-aktivierung
-/pages/windows-11-aktivierungs-anleitung	/pages/windows-11-aktivierung
-/products/windows-11-pro-key	/products/windows-11-pro-key-kaufen-download
-/products/windows-11-home-key	/products/windows-11-home-key-kaufen-download
-/collections/office-2021	/collections/microsoft-office
-/en/collections/office-2021	/en/collections/microsoft-office
-/pl/collections/office-2021	/pl/collections/microsoft-office
-/pages/office-2021-kaufen	/collections/microsoft-office
-/collections/microsoft	/collections/microsoft-office-windows
-/en/collections/microsoft	/en/collections/microsoft-office-windows
-/pl/collections/microsoft	/pl/collections/microsoft-office-windows
+"Redirect from","Redirect to"
+"/encollections/vendors","/en/collections/vendors"
+"/plcollections/vendors","/pl/collections/vendors"
+"/en/encollections/vendors","/en/collections/vendors"
+"/pl/plcollections/vendors","/pl/collections/vendors"
+"/collections/windows-11","/collections/software"
+"/en/collections/windows-11","/en/collections/software"
+"/pl/collections/windows-11","/pl/collections/software"
+"/pages/windows-11-key-kaufen","/pages/windows-11-aktivierung"
+"/pages/windows-11-aktivierungs-anleitung","/pages/windows-11-aktivierung"
+"/products/windows-11-pro-key","/products/windows-11-pro-key-kaufen-download"
+"/products/windows-11-home-key","/products/windows-11-home-key-kaufen-download"
+"/collections/office-2021","/collections/microsoft-office"
+"/en/collections/office-2021","/en/collections/microsoft-office"
+"/pl/collections/office-2021","/pl/collections/microsoft-office"
+"/pages/office-2021-kaufen","/collections/microsoft-office"
+"/collections/microsoft","/collections/microsoft-office-windows"
+"/en/collections/microsoft","/en/collections/microsoft-office-windows"
+"/pl/collections/microsoft","/pl/collections/microsoft-office-windows"
