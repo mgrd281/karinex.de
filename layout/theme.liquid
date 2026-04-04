@@ -67,12 +67,57 @@
       })();
     </script>
 
-    {%- comment -%} ═══ GEO-LANGUAGE REDIRECT (DISABLED) ════ {%- endcomment -%}
-    {%- comment -%}
-      Automatic geo-redirect removed to prevent unexpected locale changes.
-      Users now manage their language preference manually via language switcher.
-      This preserves their choice across all pages and product navigation.
-    {%- endcomment -%}
+    {%- comment -%} ═══ GEO-LANGUAGE AUTO-REDIRECT ════ {%- endcomment -%}
+    {%- unless request.design_mode -%}
+    <script>
+    (function(){
+      /* ── Cookie helpers ── */
+      function gc(n){var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
+
+      /* Skip if user manually chose a language or was already geo-detected */
+      if(gc('karinex_lang_set')||gc('karinex_geo_done'))return;
+
+      /* Mark geo-detection done immediately (90 days) — prevents double-fire */
+      document.cookie='karinex_geo_done=1;path=/;max-age=7776000;SameSite=Lax';
+
+      /* Country → locale: German-speaking → de, Poland → pl, everything else → en */
+      var MAP={'DE':'de','AT':'de','CH':'de','LI':'de','LU':'de','PL':'pl'};
+      var FALLBACK='en';
+
+      /* Current locale from <html lang="…"> */
+      var cur=(document.documentElement.lang||'de').split('-')[0].toLowerCase();
+      if(['de','en','pl'].indexOf(cur)<0) cur='de';
+
+      fetch('https://ipapi.co/country/',{cache:'no-store'})
+        .then(function(r){return r.text();})
+        .then(function(raw){
+          var cc=(raw||'').trim().toUpperCase();
+          if(cc.length!==2)return;
+
+          var target=MAP[cc]||FALLBACK;
+          if(target===cur)return; /* already on correct locale */
+
+          /* Build redirect URL */
+          var p=window.location.pathname;
+          /* Strip current locale prefix if present (/en/… or /pl/…) */
+          var clean=p.replace(/^\/(en|pl)(\/|$)/,'/');
+          if(!clean)clean='/';
+
+          var dest;
+          if(target==='de'){
+            dest=clean; /* default locale = no prefix */
+          }else{
+            dest='/'+target+(clean==='/'?'':clean);
+          }
+
+          window.location.replace(
+            window.location.origin+dest+window.location.search+window.location.hash
+          );
+        })
+        .catch(function(){/* fail silently — user stays on current locale */});
+    })();
+    </script>
+    {%- endunless -%}
 
     <!-- ═══════════════════════════════════════════════════════════════════
          USERCENTRICS SHADOW DOM STYLE INJECTOR
