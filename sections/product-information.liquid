@@ -749,7 +749,7 @@ nav[aria-label="Breadcrumb"],
 </style>
   <main class="container">
                 <div class="product-main">
-                                                {% assign images_count = product.media | where: 'media_type', 'image' | size %}
+                                                {% assign images_count = product.media.size %}
             <div class="product-gallery">
                                 <div class="thumbs-rail {% if images_count > 4 %}is-scroll{% else %}is-static{% endif %}">
                 {% if images_count > 4 %}
@@ -850,6 +850,25 @@ nav[aria-label="Breadcrumb"],
              <span class="thumb-badge">3D</span>
            </div>
            {% assign media_index = media_index | plus: 1 %}
+         {% else %}
+           {% if media.preview_image %}
+           <div class="thumb-item {% if forloop.first %}active{% endif %}"
+                role="button"
+                tabindex="0"
+                onclick="window.updateMainImage({{ media_index }})"
+                data-index="{{ media_index }}"
+                data-media-id="{{ media.id }}"
+                data-variant-alt="{{ media.alt | downcase | escape }}"
+                data-type="image"
+                data-aspect="{{ media.aspect_ratio }}"
+                data-src="{{ media.preview_image | image_url: width: 800, quality: 65 }}"
+                data-zoom="{{ media.preview_image | image_url: width: 2000 }}">
+             <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
+                  alt="{% if media.alt %}{{ media.alt | escape }}{% else %}{{ product.title | escape }} - Produktansicht {{ forloop.index }}{% endif %}"
+                  loading="lazy" decoding="async" width="200" height="200">
+           </div>
+           {% assign media_index = media_index | plus: 1 %}
+           {% endif %}
        {% endcase %}
      {% endfor %}
                 </div>
@@ -986,6 +1005,12 @@ nav[aria-label="Breadcrumb"],
                                 </div>
                               {% when 'model' %}
                                 {{ media | model_viewer_tag: class: 'mobile-slide-model' }}
+                              {% else %}
+                                {% if media.preview_image %}
+                                <img src="{{ media.preview_image | image_url: width: 800, quality: 65 }}"
+                                     alt="{{ media.alt | default: product.title | escape }}"
+                                     loading="lazy" width="900" height="900">
+                                {% endif %}
                             {% endcase %}
                           </div>
                         {% endfor %}
