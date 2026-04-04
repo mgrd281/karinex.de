@@ -153,7 +153,7 @@
                   <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
-                      src="{{ media.preview_image | image_url: width: 1200, quality: 85 }}"
+                      src="{{ media.preview_image | image_url: width: 1200 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                       width="1200"
@@ -177,7 +177,7 @@
                   <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster"
-                      src="{{ media.preview_image | image_url: width: 1200, quality: 85 }}"
+                      src="{{ media.preview_image | image_url: width: 1200 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                       width="1200"
@@ -192,7 +192,7 @@
                 {%- if media.media_type != 'image' and media.media_type != 'video' and media.media_type != 'external_video' and media.preview_image -%}
                   <img
                     class="ay-gallery__main-img"
-                    src="{{ media.preview_image | image_url: width: 800, quality: 65 }}"
+                    src="{{ media.preview_image | image_url: width: 800 }}"
                     alt="{{ media.alt | default: product.title | escape }}"
                     loading="{% if ay_cell_index < 2 %}eager{% else %}lazy{% endif %}"
                     width="{{ media.preview_image.width | default: 800 }}"
@@ -279,8 +279,8 @@
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="video"
                  data-video="{{ ay_v_first.url }}"
                  data-video-sources='{{ ay_v_sources }}'
-                 data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800, quality: 75 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy" width="200" height="200">
             </div>
@@ -296,15 +296,15 @@
             -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="external_video"
                  data-video="{{ ay_d_embed }}"
-                 data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800, quality: 75 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy" width="200" height="200">
             </div>
           {%- endif -%}
           {%- if media.media_type != 'image' and media.media_type != 'video' and media.media_type != 'external_video' and media.preview_image -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="image"
-                 data-src="{{ media.preview_image | image_url: width: 800, quality: 65 }}">
+                 data-src="{{ media.preview_image | image_url: width: 800 }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | escape }}" loading="lazy" width="200" height="200">
             </div>
           {%- endif -%}

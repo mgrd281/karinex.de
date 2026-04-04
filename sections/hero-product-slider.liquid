@@ -768,32 +768,32 @@
                   {% assign custom_hero_image = item.metafields.custom.hero_transparent_image %}
                   {% if forloop.first %}
                     {% if custom_hero_image %}
-                      <link rel="preload" as="image" href="{{ custom_hero_image | image_url: width: 800, quality: 65 }}">
+                      <link rel="preload" as="image" href="{{ custom_hero_image | image_url: width: 800 }}">
                     {% elsif item.featured_image %}
-                      <link rel="preload" as="image" href="{{ item.featured_image | image_url: width: 800, quality: 65 }}">
+                      <link rel="preload" as="image" href="{{ item.featured_image | image_url: width: 800 }}">
                     {% endif %}
 {%- comment -%} PERFORMANCE: remove.bg preconnect moved to interaction logic if necessary, removing link for PageSpeed {%- endcomment -%}
                   {% endif %}
                   {% if custom_hero_image %}
                     <img 
-                      src="{{ custom_hero_image | image_url: width: 800, quality: 65 }}" 
+                      src="{{ custom_hero_image | image_url: width: 800 }}" 
                       alt="{{ item.title | escape }}"
                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                       {% if forloop.first %}fetchpriority="high"{% endif %}
                       decoding="async"
-                      data-removebg-src="{{ custom_hero_image | image_url: width: 420, quality: 65 }}"
+                      data-removebg-src="{{ custom_hero_image | image_url: width: 420 }}"
                       width="420"
                       height="315"
                       class="hero-transparent-img"
                     />
                   {% elsif item.featured_image %}
                     <img 
-                      src="{{ item.featured_image | image_url: width: 800, quality: 65 }}" 
+                      src="{{ item.featured_image | image_url: width: 800 }}" 
                       alt="{{ item.featured_image.alt | default: item.title | escape }}"
                       loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                       {% if forloop.first %}fetchpriority="high"{% endif %}
                       decoding="async"
-                      data-removebg-src="{{ item.featured_image | image_url: width: 420, quality: 65 }}"
+                      data-removebg-src="{{ item.featured_image | image_url: width: 420 }}"
                       width="420"
                       height="315"
                     />

@@ -46,11 +46,11 @@
 {%- if banner_image != blank -%}
   <div class="collection-banner{% if section.settings.banner_full_width %} collection-banner--full-width{% endif %}">
     <img
-          src="{{ banner_image | image_url: width: 1600, quality: 82 }}"
-          srcset="{{ banner_image | image_url: width: 640, quality: 72 }} 640w,
-            {{ banner_image | image_url: width: 960, quality: 75 }} 960w,
-            {{ banner_image | image_url: width: 1280, quality: 78 }} 1280w,
-            {{ banner_image | image_url: width: 1600, quality: 82 }} 1600w"
+          src="{{ banner_image | image_url: width: 1600 }}"
+          srcset="{{ banner_image | image_url: width: 640 }} 640w,
+            {{ banner_image | image_url: width: 960 }} 960w,
+            {{ banner_image | image_url: width: 1280 }} 1280w,
+            {{ banner_image | image_url: width: 1600 }} 1600w"
       sizes="100vw"
       alt="{{ banner_image.alt | default: collection.title | escape }}"
       {% if banner_image.width %}width="{{ banner_image.width }}"{% endif %}

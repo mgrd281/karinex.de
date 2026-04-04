@@ -68,7 +68,7 @@
       type="image/webp"
       srcset="
         {%- for width in width_list -%}
-          {{ image | image_url: width: width, quality: 65 }} {{ width }}w
+          {{ image | image_url: width: width }} {{ width }}w
           {%- unless forloop.last -%}, {%- endunless -%}
         {%- endfor -%}
       "
@@ -80,7 +80,7 @@
       type="image/jpeg"
       srcset="
         {%- for width in width_list -%}
-          {{ image | image_url: width: width, format: 'pjpg', quality: 65 }} {{ width }}w
+          {{ image | image_url: width: width, format: 'pjpg' }} {{ width }}w
           {%- unless forloop.last -%}, {%- endunless -%}
         {%- endfor -%}
       "

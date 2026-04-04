@@ -28,7 +28,7 @@
   endif
 
   assign image_url = ''
-  assign _src_url = image | image_url: width: width, quality: 65
+  assign _src_url = image | image_url: width: width
   if use_cloudinary and _src_url contains '.avif'
     assign use_cloudinary = false
   endif
