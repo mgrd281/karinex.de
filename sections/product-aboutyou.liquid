@@ -848,7 +848,7 @@
     }
 
     var url = new URL(window.location);
-    url.searchParams.set('variant', variant.id);
+    url.searchParams.delete('variant');
     history.replaceState(null, '', url.toString());
   }
 

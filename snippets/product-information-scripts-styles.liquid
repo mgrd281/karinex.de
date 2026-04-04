@@ -1201,7 +1201,7 @@ button.frage-trigger-btn span {
       }
       if(window.history && window.history.replaceState){
         const url = new URL(window.location.href);
-        url.searchParams.set('variant', variant.id);
+        url.searchParams.delete('variant');
         window.history.replaceState({}, '', url.toString());
       }
       const select = document.querySelector('form [name="id"]');
