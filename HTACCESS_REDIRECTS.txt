@@ -1,0 +1,55 @@
+# HTACCESS REDIRECTS FOR KARINEX 404 PAGES
+# Place in your web root .htaccess or create new file
+# These are 301 (permanent) redirects that preserve SEO value
+
+# CRITICAL: Fix malformed locale prefix URLs first (template bug fix)
+# These redirects are TEMPORARY until the code bug is fixed
+
+# Redirect malformed /encollections/ URLs (missing slash between locale and path)
+RewriteRule ^encollections/vendors$ /en/collections/vendors [R=301,L]
+RewriteRule ^encollections/vendors/(.*)$ /en/collections/vendors/$1 [R=301,L]
+
+# With query parameters (vendor filters)
+RewriteCond %{QUERY_STRING} ^(.*)$
+RewriteRule ^encollections/vendors$ /en/collections/vendors?%1 [R=301,L]
+
+# Redirect malformed /plcollections/ URLs
+RewriteRule ^plcollections/vendors$ /pl/collections/vendors [R=301,L]
+RewriteRule ^plcollections/vendors/(.*)$ /pl/collections/vendors/$1 [R=301,L]
+
+# With query parameters (vendor filters)
+RewriteCond %{QUERY_STRING} ^(.*)$
+RewriteRule ^plcollections/vendors$ /pl/collections/vendors?%1 [R=301,L]
+
+# Redirect root /collections/vendors to /collections (or /en/collections if that's preferred)
+RewriteRule ^collections/vendors$ /collections [R=301,L]
+RewriteRule ^collections/vendors/(.*)$ /collections/$1 [R=301,L]
+
+# Fix Windows 11 Pro product URLs (if product was deleted)
+# Option A: Redirect to correct Windows 11 product
+RewriteRule ^en/products/windows-11-pro$ /en/products/windows-11-pro-key-kaufen-download [R=301,L]
+RewriteRule ^pl/products/windows-11-pro$ /pl/products/windows-11-pro-key-kaufen-download [R=301,L]
+RewriteRule ^products/windows-11-pro$ /pages/windows-11-key-kaufen [R=301,L]
+
+# Option B: Keep as is (if you prefer to handle on frontend)
+# Just remove these lines if you're fixing via internal link update
+
+# Fix missing collections
+# If herren-uhren collection was deleted, redirect to watches category or homepage
+RewriteRule ^collections/herren-uhren$ /collections/maenner-uhren [R=301,L]
+
+# ============================================
+# ALTERNATIVE: For Shopify users
+# Use Shopify Admin → Settings → URL Redirects
+# ============================================
+# 
+# Redirect FROM              | Redirect TO
+# /encollections/vendors/    | /en/collections/vendors/
+# /plcollections/vendors/    | /pl/collections/vendors/
+# /collections/vendors       | /collections
+# /en/products/windows-11-pro | /en/products/windows-11-pro-key-kaufen-download
+# /pl/products/windows-11-pro | /pl/products/windows-11-pro-key-kaufen-download
+#
+# Note: Shopify URL Redirects automatically handle query parameters,
+# so you don't need to manually add ?q=params
+

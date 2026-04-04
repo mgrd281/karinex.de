@@ -1,0 +1,26 @@
+Priority,PR,URL,Inlinks,Root_Cause,Fix_Type,Expected_Impact
+CRITICAL,4,https://www.karinex.de/collections/vendors,234,Locale path malformation,Template fix + redirect,234 links recovered
+CRITICAL,2,https://www.karinex.de/encollections/vendors?q=Microsoft,135,Locale prefix concat bug,Template fix + redirect,135 links recovered
+CRITICAL,2,https://www.karinex.de/plcollections/vendors?q=Microsoft,135,Locale prefix concat bug,Template fix + redirect,135 links recovered
+CRITICAL,2,https://www.karinex.de/en/collections/vendors,117,Missing slash in locale path,Redirect or fix routing,117 links recovered
+CRITICAL,2,https://www.karinex.de/pl/collections/vendors,117,Missing slash in locale path,Redirect or fix routing,117 links recovered
+HIGH,0,https://www.karinex.de/encollections/vendors?q=Michael%20Kors,30,Locale prefix concat bug,Template fix + redirect,30 links recovered
+HIGH,0,https://www.karinex.de/plcollections/vendors?q=Michael%20Kors,30,Locale prefix concat bug,Template fix + redirect,30 links recovered
+HIGH,0,https://www.karinex.de/encollections/vendors?q=LEGO%C2%AE,15,Locale prefix concat bug,Template fix + redirect,15 links recovered
+HIGH,0,https://www.karinex.de/plcollections/vendors?q=LEGO%C2%AE,15,Locale prefix concat bug,Template fix + redirect,15 links recovered
+MEDIUM,0,https://www.karinex.de/en/products/windows-11-pro,1,Product URL deleted/changed,Update link in content,1 link recovered
+MEDIUM,0,https://www.karinex.de/pl/products/windows-11-pro,1,Product URL deleted/changed,Update link in content,1 link recovered
+MEDIUM,0,https://www.karinex.de/products/windows-11-pro,1,Product URL deleted/changed,Update link in content,1 link recovered
+MEDIUM,0,https://www.karinex.de/collections/herren-uhren,1,Collection page deleted or moved,Create or redirect,1 link recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=Microsoft%20Corporation,9,Locale prefix concat bug,Template fix + redirect,9 links recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=Microsoft%20Corporation,9,Locale prefix concat bug,Template fix + redirect,9 links recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=Microsoft%20Visio,3,Locale prefix concat bug,Template fix + redirect,3 links recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=Microsoft%20Visio,3,Locale prefix concat bug,Template fix + redirect,3 links recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=Diesel,7,Locale prefix concat bug,Template fix + redirect,7 links recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=Diesel,7,Locale prefix concat bug,Template fix + redirect,7 links recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=BOSS,12,Locale prefix concat bug,Template fix + redirect,12 links recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=BOSS,12,Locale prefix concat bug,Template fix + redirect,12 links recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=Emporio%20Armani,4,Locale prefix concat bug,Template fix + redirect,4 links recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=Emporio%20Armani,4,Locale prefix concat bug,Template fix + redirect,4 links recovered
+LOW,0,https://www.karinex.de/encollections/vendors?q=Sony,1,Locale prefix concat bug,Template fix + redirect,1 link recovered
+LOW,0,https://www.karinex.de/plcollections/vendors?q=Sony,1,Locale prefix concat bug,Template fix + redirect,1 link recovered
