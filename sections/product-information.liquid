@@ -799,8 +799,8 @@ nav[aria-label="Breadcrumb"],
                 data-video="{{ first_source.url }}"
                 data-video-sources='{{ video_sources_json }}'
                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}"
-             data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
-                data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
+             data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
+                data-src="{{ media.preview_image | image_url: width: 800, quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title | escape }} - Video"
                   loading="lazy" width="200" height="200" decoding="async">
@@ -826,8 +826,8 @@ nav[aria-label="Breadcrumb"],
                 data-aspect="{{ media.aspect_ratio }}"
                 data-video="{{ embed_url }}"
                 data-created="{{ product.published_at | date: '%Y-%m-%d' }}"
-             data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
-                data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
+             data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
+                data-src="{{ media.preview_image | image_url: width: 800, quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title | escape }} - Video"
                   loading="lazy" width="200" height="200" decoding="async">
@@ -843,7 +843,7 @@ nav[aria-label="Breadcrumb"],
                 data-type="model"
                 data-media-id="{{ media.id }}"
                 data-variant-alt="{{ media.alt | downcase | escape }}"
-                data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}">
+                data-src="{{ media.preview_image | image_url: width: 800, quality: 65 }}">
              <img src="{{ media.preview_image | image_url: width: 200, height: 200, crop: 'center', quality: 65 }}"
                   alt="{{ media.alt | default: product.title | escape }} - 3D Ansicht"
                   loading="lazy" width="200" height="200" decoding="async">
@@ -972,14 +972,14 @@ nav[aria-label="Breadcrumb"],
                                      height="900">
                               {% when 'video' %}
                                 <div class="mobile-video-poster" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ forloop.index0 }})" style="position:relative;cursor:pointer;">
-                                  <img src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}"
+                                  <img src="{{ media.preview_image | image_url: width: 800, quality: 65 }}"
                                        alt="{{ media.alt | default: product.title | escape }} - Video"
                                        loading="lazy" width="900" height="900" style="width:100%;height:100%;object-fit:cover;">
                                   <span class="mobile-video-play-overlay"><i class="fa-solid fa-play"></i></span>
                                 </div>
                               {% when 'external_video' %}
                                 <div class="mobile-video-poster" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ forloop.index0 }})" style="position:relative;cursor:pointer;">
-                                  <img src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 65 }}"
+                                  <img src="{{ media.preview_image | image_url: width: 800, quality: 65 }}"
                                        alt="{{ media.alt | default: product.title | escape }} - Video"
                                        loading="lazy" width="900" height="900" style="width:100%;height:100%;object-fit:cover;">
                                   <span class="mobile-video-play-overlay"><i class="fa-solid fa-play"></i></span>
@@ -3204,7 +3204,7 @@ nav[aria-label="Breadcrumb"],
                title="{{ sibling.title | escape }}"
                style="text-decoration: none;">
               <img class="kvp-pro__thumb"
-                   src="{{ sibling.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}"
+                   src="{{ sibling.featured_image | image_url: width: 300, quality: 65 }}"
                    width="300" height="300"
                    alt="{{ sibling.title | escape }}"
                    loading="lazy"
@@ -3271,9 +3271,9 @@ nav[aria-label="Breadcrumb"],
                    tabindex="0">
               <input class="kvp-pro__radio" type="radio" name="option-{{ option_index }}" value="{{ val | escape }}" {% if is_active %}checked{% endif %} aria-label="{{ option_name }} {{ val }}">
               {% if variant_for_thumb %}
-                <img class="kvp-pro__thumb" src="{{ variant_for_thumb.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
+                <img class="kvp-pro__thumb" src="{{ variant_for_thumb.featured_image | image_url: width: 300, quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
               {% else %}
-                <img class="kvp-pro__thumb" src="{{ product.featured_image | image_url: width: 300, format: 'webp', quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
+                <img class="kvp-pro__thumb" src="{{ product.featured_image | image_url: width: 300, quality: 65 }}" width="300" height="300" alt="{{ val | escape }}" loading="lazy" decoding="async">
               {% endif %}
               {% unless any_variant_available %}
                 <div class="kvp-pro__oos-icon">

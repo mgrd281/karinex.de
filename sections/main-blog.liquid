@@ -315,12 +315,12 @@
                 <div class="article-card__image-wrapper">
                   <a href="{{ article.url }}">
                     <img
-                      srcset="{{ article.image | image_url: width: 165, format: 'webp' }} 165w,
-                        {{ article.image | image_url: width: 360, format: 'webp' }} 360w,
-                        {{ article.image | image_url: width: 533, format: 'webp' }} 533w,
-                        {{ article.image | image_url: width: 720, format: 'webp' }} 720w,
-                        {{ article.image | image_url: width: 800, format: 'webp' }} 800w"
-                      src="{{ article.image | image_url: width: 533, format: 'webp' }}"
+                      srcset="{{ article.image | image_url: width: 165 }} 165w,
+                        {{ article.image | image_url: width: 360 }} 360w,
+                        {{ article.image | image_url: width: 533 }} 533w,
+                        {{ article.image | image_url: width: 720 }} 720w,
+                        {{ article.image | image_url: width: 800 }} 800w"
+                      src="{{ article.image | image_url: width: 533 }}"
                       sizes="(min-width: 1200px) {% if is_hero %}50vw{% else %}33vw{% endif %}, (min-width: 750px) 50vw, 100vw"
                       alt="{{ article.image.alt | default: article.title | escape }}"
                       class="article-card__image"

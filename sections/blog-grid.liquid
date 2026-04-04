@@ -20,9 +20,9 @@
           <article class="blog-card">
             <a href="{{ article.url }}" class="blog-card__image-link">
               <img
-                src="{{ article.image | image_url: width: 720, format: 'webp' }}"
-                srcset="{{ article.image | image_url: width: 360, format: 'webp' }} 360w,
-                  {{ article.image | image_url: width: 720, format: 'webp' }} 720w"
+                src="{{ article.image | image_url: width: 720 }}"
+                srcset="{{ article.image | image_url: width: 360 }} 360w,
+                  {{ article.image | image_url: width: 720 }} 720w"
                 sizes="(max-width: 600px) 100vw, 360px"
                 alt="{{ article.title | escape }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
             </a>

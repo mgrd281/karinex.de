@@ -18,7 +18,7 @@
   "description": "Schritt-für-Schritt-Anleitung zur Installation von {{ product.title }}",
   "image": {
     "@type": "ImageObject",
-    "url": "https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}"
+    "url": "https:{{ product.featured_image | image_url: width: 800 }}"
   },
   "totalTime": "{% if product.type contains 'Windows' %}PT20M{% elsif product.type contains 'Office' %}PT15M{% else %}PT10M{% endif %}",
   "estimatedCost": {

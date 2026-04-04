@@ -27,17 +27,17 @@
   "name": {{ product.title | json }},
   "image": [
     {%- if product.selected_or_first_available_variant.featured_image -%}
-      "https:{{ product.selected_or_first_available_variant.featured_image | image_url: width: 800, format: 'webp' }}"
+      "https:{{ product.selected_or_first_available_variant.featured_image | image_url: width: 800 }}"
       {%- for image in product.images -%}
         {%- unless image == product.selected_or_first_available_variant.featured_image -%}
-          ,"https:{{ image | image_url: width: 800, format: 'webp' }}"
+          ,"https:{{ image | image_url: width: 800 }}"
         {%- endunless -%}
       {%- endfor -%}
     {%- elsif product.featured_image -%}
-      "https:{{ product.featured_image | image_url: width: 800, format: 'webp' }}"
+      "https:{{ product.featured_image | image_url: width: 800 }}"
       {%- for image in product.images -%}
         {%- unless image == product.featured_image -%}
-          ,"https:{{ image | image_url: width: 800, format: 'webp' }}"
+          ,"https:{{ image | image_url: width: 800 }}"
         {%- endunless -%}
       {%- endfor -%}
     {%- endif -%}

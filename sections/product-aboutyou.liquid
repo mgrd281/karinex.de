@@ -145,7 +145,7 @@
                   <div class="ay-gallery__video-wrap ay-gallery__video-wrap--native" data-index="{{ ay_cell_index }}" data-type="video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster ay-gallery__video-poster--native"
-                      src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
+                      src="{{ media.preview_image | image_url: width: 1200, quality: 85 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                       width="1200"
@@ -169,7 +169,7 @@
                   <div class="ay-gallery__video-wrap" data-index="{{ ay_cell_index }}" data-type="external_video" role="button" tabindex="0" aria-label="Video abspielen" onclick="window.openVideoModal({{ ay_cell_index }})" style="cursor:pointer">
                     <img
                       class="ay-gallery__main-img ay-gallery__video-poster"
-                      src="{{ media.preview_image | image_url: width: 1200, format: 'webp', quality: 85 }}"
+                      src="{{ media.preview_image | image_url: width: 1200, quality: 85 }}"
                       alt="{{ media.alt | default: product.title | escape }} - Video"
                       loading="lazy"
                       width="1200"
@@ -249,8 +249,8 @@
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="video"
                  data-video="{{ ay_v_first.url }}"
                  data-video-sources='{{ ay_v_sources }}'
-                 data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 75 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800, quality: 75 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy" width="200" height="200">
             </div>
@@ -266,8 +266,8 @@
             -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="external_video"
                  data-video="{{ ay_d_embed }}"
-                 data-poster="{{ media.preview_image | image_url: width: 1920, format: 'webp', quality: 90 }}"
-                 data-src="{{ media.preview_image | image_url: width: 800, format: 'webp', quality: 75 }}"
+                 data-poster="{{ media.preview_image | image_url: width: 1920, quality: 90 }}"
+                 data-src="{{ media.preview_image | image_url: width: 800, quality: 75 }}"
                  data-created="{{ product.published_at | date: '%Y-%m-%d' }}">
               <img src="{{ media.preview_image | image_url: width: 200 }}" alt="{{ media.alt | default: product.title | escape }} - Video" loading="lazy" width="200" height="200">
             </div>

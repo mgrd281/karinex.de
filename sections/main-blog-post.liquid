@@ -7,7 +7,7 @@
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ 'section-main-blog-post.css' | asset_url }}" as="style">
     {%- if article.image -%}
-      <link rel="preload" as="image" href="{{ article.image | image_url: width: 800, format: 'webp' }}" imagesrcset="{{ article.image | image_url: width: 400, format: 'webp' }} 400w, {{ article.image | image_url: width: 600, format: 'webp' }} 600w, {{ article.image | image_url: width: 800, format: 'webp' }} 800w" imagesizes="(max-width: 768px) 100vw, 50vw">
+      <link rel="preload" as="image" href="{{ article.image | image_url: width: 800 }}" imagesrcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 600 }} 600w, {{ article.image | image_url: width: 800 }} 800w" imagesizes="(max-width: 768px) 100vw, 50vw">
     {%- endif -%}
     
     <!-- DNS prefetch for external domains -->

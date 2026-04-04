@@ -35,7 +35,7 @@
     endif
     assign image_url = 'https://res.cloudinary.com/' | append: cloud_name | append: '/image/fetch/f_auto,q_auto,e_background_removal/' | append: shopify_url
   else
-    assign image_url = image | image_url: width: width, format: 'webp', quality: 65
+    assign image_url = image | image_url: width: width, quality: 65
   endif
 -%}
 {{ image_url }}
