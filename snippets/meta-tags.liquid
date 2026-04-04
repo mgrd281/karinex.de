@@ -305,8 +305,9 @@
 {%- comment -%} 
   Hreflang: Multi-language site (DE default, EN, PL)
   Required for Google to discover and index alternate locale versions.
-  Uses Shopify's built-in alternate locale URLs.
+  Only output on indexable pages — skip search, cart, 404, account pages.
 {%- endcomment -%}
+{%- unless request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
 {%- liquid
   assign _hreflang_path = request.path
   if _hreflang_path == '/en' or _hreflang_path == '/pl'
@@ -321,6 +322,7 @@
 <link rel="alternate" hreflang="en" href="{{ shop.url }}/en{{ _hreflang_path }}">
 <link rel="alternate" hreflang="pl" href="{{ shop.url }}/pl{{ _hreflang_path }}">
 <link rel="alternate" hreflang="x-default" href="{{ shop.url }}{{ _hreflang_path }}">
+{%- endunless -%}
 
 {%- comment -%} ═══ PAGINATION (PREV/NEXT) ═══ {%- endcomment -%}
 {%- if paginate -%}

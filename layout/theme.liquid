@@ -535,7 +535,10 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- capture content_for_header_clean -%}{{ content_for_header }}{%- endcapture -%}
     {%- assign content_for_header_clean = content_for_header_clean | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' -%}
     {%- comment -%} Strip Shopify's duplicate canonical — ours is in meta-tags.liquid {%- endcomment -%}
-    {{ content_for_header_clean | replace: '<link rel="canonical"', '<link data-cfh-canonical rel="canonical"' }}
+    {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="canonical"', '<link data-cfh-canonical rel="canonical"' -%}
+    {%- comment -%} Strip Shopify's duplicate hreflang — ours is in meta-tags.liquid {%- endcomment -%}
+    {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="alternate" hreflang=', '<link data-cfh-hreflang rel="alternate" hreflang=' -%}
+    {{ content_for_header_clean }}
 
   <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->
 
