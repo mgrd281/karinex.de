@@ -1,0 +1,154 @@
+{% comment %}
+  ═══════════════════════════════════════════════
+  KARINEX REFERRAL POPUP
+  Detects ?ref= on ANY page → shows email popup → reveals FREUNDE10 code
+  Include in theme.liquid before </body>
+  ═══════════════════════════════════════════════
+{% endcomment %}
+
+<div id="kx-ref-overlay" class="kx-ref-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Einladungs-Rabatt">
+  <div class="kx-ref-overlay__backdrop"></div>
+  <div class="kx-ref-overlay__modal">
+    <button type="button" class="kx-ref-overlay__close" aria-label="Schließen">&times;</button>
+
+    {%- comment -%} ─── STEP 1: EMAIL FORM ─── {%- endcomment -%}
+    <div class="kx-ref-step" id="kx-ref-step1">
+      <div class="kx-ref-step__icon">🎁</div>
+      <h2 class="kx-ref-step__title">Du hast <span>10% Rabatt</span> geschenkt bekommen!</h2>
+      <p class="kx-ref-step__sub">Ein Freund hat dir diesen exklusiven Rabatt bei Karinex geschenkt. Gib deine E-Mail ein und erhalte sofort deinen Gutscheincode.</p>
+      <div class="kx-ref-step__form">
+        <input type="email" id="kx-ref-email" class="kx-ref-step__input" placeholder="name@beispiel.de" autocomplete="email">
+        <p class="kx-ref-step__error" id="kx-ref-error"></p>
+        <button type="button" id="kx-ref-submit" class="kx-ref-step__btn">Gutschein erhalten</button>
+        <p class="kx-ref-step__hint">Kein Spam. Nur für deinen Gutschein.</p>
+      </div>
+    </div>
+
+    {%- comment -%} ─── STEP 2: CODE REVEAL ─── {%- endcomment -%}
+    <div class="kx-ref-step" id="kx-ref-step2" style="display:none">
+      <div class="kx-ref-step__check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h2 class="kx-ref-step__title">Dein Gutschein ist da!</h2>
+      <p class="kx-ref-step__sub">Gültig für deine erste Bestellung bei karinex.de</p>
+      <div class="kx-ref-step__code-box">
+        <span class="kx-ref-step__code-label">Dein Code</span>
+        <span class="kx-ref-step__code" id="kx-ref-code">FREUNDE10</span>
+      </div>
+      <button type="button" id="kx-ref-copy" class="kx-ref-step__copy-btn">Code kopieren</button>
+      <a href="/collections/all" class="kx-ref-step__shop-btn">Jetzt einkaufen mit -10%</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .kx-ref-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .kx-ref-overlay__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); }
+  .kx-ref-overlay__modal { position: relative; background: #1a1a1a; color: #fff; border-radius: 24px; max-width: 440px; width: 100%; padding: 40px 32px; text-align: center; box-shadow: 0 32px 64px rgba(0,0,0,.5); animation: kxRefIn .35s ease-out; }
+  @keyframes kxRefIn { from { opacity: 0; transform: translateY(24px) scale(.96); } to { opacity: 1; transform: none; } }
+  .kx-ref-overlay__close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border: none; background: rgba(255,255,255,.08); color: rgba(255,255,255,.5); font-size: 22px; border-radius: 50%; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .kx-ref-overlay__close:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+  .kx-ref-step__icon { font-size: 3.5rem; margin-bottom: 16px; }
+  .kx-ref-step__title { font-size: 1.35rem; font-weight: 800; margin: 0 0 8px; line-height: 1.25; }
+  .kx-ref-step__title span { color: #c9a84c; }
+  .kx-ref-step__sub { font-size: .9rem; color: rgba(255,255,255,.55); line-height: 1.55; margin: 0 0 24px; }
+  .kx-ref-step__input { width: 100%; padding: 16px 20px; border: 1px solid rgba(255,255,255,.15); border-radius: 12px; background: rgba(255,255,255,.05); color: #fff; font-size: 1rem; outline: none; transition: border-color .2s; box-sizing: border-box; }
+  .kx-ref-step__input:focus { border-color: #c9a84c; }
+  .kx-ref-step__input::placeholder { color: rgba(255,255,255,.3); }
+  .kx-ref-step__error { color: #ff6b6b; font-size: .85rem; margin: 8px 0 0; min-height: 1.2em; }
+  .kx-ref-step__btn { width: 100%; padding: 16px; margin-top: 12px; border: none; border-radius: 12px; background: #c9a84c; color: #1a1a1a; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .25s; }
+  .kx-ref-step__btn:hover { background: #b8953f; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,.3); }
+  .kx-ref-step__btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .kx-ref-step__hint { font-size: .72rem; color: rgba(255,255,255,.3); margin: 12px 0 0; }
+
+  .kx-ref-step__check { width: 56px; height: 56px; margin: 0 auto 16px; background: rgba(201,168,76,.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .kx-ref-step__check svg { width: 28px; height: 28px; color: #c9a84c; }
+  .kx-ref-step__code-box { background: rgba(201,168,76,.1); border: 2px dashed #c9a84c; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .kx-ref-step__code-label { display: block; font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,.4); margin-bottom: 6px; }
+  .kx-ref-step__code { display: block; font-size: 1.8rem; font-weight: 800; color: #c9a84c; letter-spacing: 4px; user-select: all; }
+  .kx-ref-step__copy-btn { display: inline-block; padding: 12px 28px; border: 1px solid rgba(255,255,255,.15); border-radius: 100px; background: transparent; color: #fff; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s; margin-bottom: 12px; }
+  .kx-ref-step__copy-btn:hover { border-color: #c9a84c; color: #c9a84c; }
+  .kx-ref-step__shop-btn { display: block; padding: 16px; border-radius: 100px; background: #c9a84c; color: #1a1a1a; font-size: .95rem; font-weight: 700; text-decoration: none; transition: all .25s; }
+  .kx-ref-step__shop-btn:hover { background: #b8953f; transform: translateY(-1px); }
+
+  @media (max-width: 480px) {
+    .kx-ref-overlay__modal { padding: 32px 20px; border-radius: 20px; }
+    .kx-ref-step__title { font-size: 1.15rem; }
+    .kx-ref-step__code { font-size: 1.5rem; letter-spacing: 3px; }
+  }
+</style>
+
+<script>
+(function(){
+  /* Only activate when ?ref= is present */
+  var params = new URLSearchParams(window.location.search);
+  var refCode = params.get('ref');
+  if (!refCode) return;
+
+  /* Check if already claimed */
+  try { if (localStorage.getItem('kx_ref_claimed')) return; } catch(e){}
+
+  var overlay = document.getElementById('kx-ref-overlay');
+  var step1 = document.getElementById('kx-ref-step1');
+  var step2 = document.getElementById('kx-ref-step2');
+  var emailInput = document.getElementById('kx-ref-email');
+  var submitBtn = document.getElementById('kx-ref-submit');
+  var errorEl = document.getElementById('kx-ref-error');
+  var copyBtn = document.getElementById('kx-ref-copy');
+  var closeBtn = overlay.querySelector('.kx-ref-overlay__close');
+  var backdrop = overlay.querySelector('.kx-ref-overlay__backdrop');
+
+  /* Show popup after short delay */
+  setTimeout(function(){ overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }, 800);
+
+  function closePopup(){
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closePopup);
+  backdrop.addEventListener('click', closePopup);
+
+  submitBtn.addEventListener('click', function(){
+    var email = emailInput.value.trim();
+    errorEl.textContent = '';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorEl.textContent = 'Bitte gib eine gültige E-Mail-Adresse ein.';
+      emailInput.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird gesendet…';
+
+    fetch('/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'form_type': 'customer',
+        'utf8': '\u2713',
+        'customer[email]': email,
+        'customer[tags]': 'referral,ref_' + refCode + ',FREUNDE10',
+        'customer[accepts_marketing]': 'true'
+      })
+    }).then(function(){ showCode(); }).catch(function(){ showCode(); });
+  });
+
+  emailInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitBtn.click(); });
+
+  function showCode(){
+    step1.style.display = 'none';
+    step2.style.display = 'block';
+    try { localStorage.setItem('kx_ref_claimed', '1'); } catch(e){}
+  }
+
+  copyBtn.addEventListener('click', function(){
+    navigator.clipboard.writeText('FREUNDE10').then(function(){
+      copyBtn.textContent = 'Kopiert ✓';
+      setTimeout(function(){ copyBtn.textContent = 'Code kopieren'; }, 2500);
+    });
+  });
+})();
+</script>
