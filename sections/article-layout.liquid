@@ -143,6 +143,11 @@
           | split: '<meta name="description"'
           | first
         -%}
+        {%- comment -%} Ensure hidden tracking pixels in article HTML are non-content images with empty alt text {%- endcomment -%}
+        {%- assign clean_content = clean_content
+          | replace: '<img src="https://invoice-production-8cd6.up.railway.app/api/ai/track', '<img alt="" aria-hidden="true" role="presentation" src="https://invoice-production-8cd6.up.railway.app/api/ai/track'
+          | replace: "<img src='https://invoice-production-8cd6.up.railway.app/api/ai/track", "<img alt='' aria-hidden='true' role='presentation' src='https://invoice-production-8cd6.up.railway.app/api/ai/track"
+        -%}
         {{ clean_content }}
 
         <!-- Share & Actions -->
