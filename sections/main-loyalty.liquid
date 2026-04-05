@@ -3,6 +3,35 @@
   unless _root == '/'
     assign _root = _root | append: '/'
   endunless
+
+  if customer
+    assign kx_pts = customer.metafields.karinex.loyalty_points.value | default: 0 | plus: 0
+    assign kx_tier_raw = customer.metafields.karinex.loyalty_tier.value | default: 'bronze'
+
+    if kx_pts >= 3000
+      assign kx_tier = 'gold'
+      assign kx_tier_label = 'Gold'
+      assign kx_cashback = 10
+      assign kx_progress = 100
+      assign kx_next_tier = ''
+      assign kx_pts_to_next = 0
+    elsif kx_pts >= 1000
+      assign kx_tier = 'silber'
+      assign kx_tier_label = 'Silber'
+      assign kx_cashback = 7
+      assign kx_pts_in = kx_pts | minus: 1000
+      assign kx_progress = kx_pts_in | times: 100 | divided_by: 2000
+      assign kx_next_tier = 'Gold'
+      assign kx_pts_to_next = 3000 | minus: kx_pts
+    else
+      assign kx_tier = 'bronze'
+      assign kx_tier_label = 'Bronze'
+      assign kx_cashback = 5
+      assign kx_progress = kx_pts | times: 100 | divided_by: 1000
+      assign kx_next_tier = 'Silber'
+      assign kx_pts_to_next = 1000 | minus: kx_pts
+    endif
+  endif
 -%}
 {% comment %} ═══════════════════════════════════════════════════════
   KARINEX LOYALTY & REFERRAL PROGRAM – Enterprise Grade
@@ -45,6 +74,53 @@
       </div>
     </div>
   </section>
+
+  {%- comment -%} ═══ 1b. PERSONAL DASHBOARD (logged-in only) ═══ {%- endcomment -%}
+  {%- if customer -%}
+  <section class="kx-ly-dash">
+    <div class="kx-ly-container">
+      <div class="kx-ly-dash__box">
+        <div class="kx-ly-dash__greeting">
+          <div>
+            <h2 class="kx-ly-dash__name">Hallo, {{ customer.first_name | default: customer.email | split: '@' | first }}!</h2>
+            <span class="kx-ly-dash__tier-badge kx-ly-dash__tier-badge--{{ kx_tier }}">{{ kx_tier_label }}-Mitglied</span>
+          </div>
+        </div>
+
+        <div class="kx-ly-dash__stats">
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_pts }}</span>
+            <span class="kx-ly-dash__stat-label">Punkte</span>
+          </div>
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_tier_label }}</span>
+            <span class="kx-ly-dash__stat-label">Status</span>
+          </div>
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_cashback }}%</span>
+            <span class="kx-ly-dash__stat-label">Cashback</span>
+          </div>
+        </div>
+
+        <div class="kx-ly-dash__progress">
+          <div class="kx-ly-dash__bar">
+            <div class="kx-ly-dash__fill" style="width: {{ kx_progress }}%"></div>
+          </div>
+          {%- if kx_next_tier != '' -%}
+            <p class="kx-ly-dash__next">Noch <strong>{{ kx_pts_to_next }}</strong> Punkte bis {{ kx_next_tier }}</p>
+          {%- else -%}
+            <p class="kx-ly-dash__next">Höchste Stufe erreicht — du genießt alle Vorteile!</p>
+          {%- endif -%}
+        </div>
+
+        <div class="kx-ly-dash__actions">
+          <a href="#kx-ly-redeem" class="kx-ly-btn kx-ly-btn--primary">Punkte einlösen</a>
+          <a href="#kx-ly-referral" class="kx-ly-btn kx-ly-btn--outline">Freunde einladen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
 
   {%- comment -%} ═══ 2. HOW IT WORKS ═══ {%- endcomment -%}
   <section class="kx-ly-how" id="kx-ly-how">
@@ -184,7 +260,8 @@
       <p class="kx-ly-section-sub">Steige auf und erhalte exklusive Vorteile</p>
       <div class="kx-ly-tiers__grid">
 
-        <div class="kx-ly-tiers__card">
+        <div class="kx-ly-tiers__card{% if customer and kx_tier == 'bronze' %} kx-ly-tiers__card--active{% endif %}">
+          {%- if customer and kx_tier == 'bronze' -%}<span class="kx-ly-tiers__badge">Dein Status</span>{%- endif -%}
           <div class="kx-ly-tiers__icon kx-ly-tiers__icon--bronze">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
           </div>
@@ -197,7 +274,8 @@
           </ul>
         </div>
 
-        <div class="kx-ly-tiers__card kx-ly-tiers__card--silver">
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--silver{% if customer and kx_tier == 'silber' %} kx-ly-tiers__card--active{% endif %}">
+          {%- if customer and kx_tier == 'silber' -%}<span class="kx-ly-tiers__badge">Dein Status</span>{%- endif -%}
           <div class="kx-ly-tiers__icon kx-ly-tiers__icon--silver">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
           </div>
@@ -211,8 +289,8 @@
           </ul>
         </div>
 
-        <div class="kx-ly-tiers__card kx-ly-tiers__card--gold">
-          <span class="kx-ly-tiers__badge">Exklusiv</span>
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--gold{% if customer and kx_tier == 'gold' %} kx-ly-tiers__card--active{% endif %}">
+          <span class="kx-ly-tiers__badge">{%- if customer and kx_tier == 'gold' -%}Dein Status{%- else -%}Exklusiv{%- endif -%}</span>
           <div class="kx-ly-tiers__icon kx-ly-tiers__icon--gold">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
           </div>
@@ -240,15 +318,15 @@
           <p>Teile deinen persönlichen Link. Dein Freund erhält <strong>10% Rabatt</strong> auf die erste Bestellung. Du erhältst <strong>500 Punkte</strong> (= €5).</p>
           {%- if customer -%}
             <div class="kx-ly-referral__link-box">
-              <input type="text" id="kx-ref-link" value="https://www.karinex.de/?ref={{ customer.id | base64_encode | truncate: 8, '' }}" readonly class="kx-ly-referral__input">
+              <input type="text" id="kx-ref-link" value="https://www.karinex.de/?ref={{ customer.id }}" readonly class="kx-ly-referral__input">
               <button type="button" class="kx-ly-btn kx-ly-btn--primary kx-ly-referral__copy" onclick="navigator.clipboard.writeText(document.getElementById('kx-ref-link').value);this.textContent='Kopiert ✓';setTimeout(()=>{this.textContent='Link kopieren'},2000)">Link kopieren</button>
             </div>
             <div class="kx-ly-referral__share">
               <span>Teilen via:</span>
-              <a href="https://wa.me/?text=Schau%20mal%20bei%20karinex.de%20vorbei!%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id | base64_encode | truncate: 8, '' }}" target="_blank" rel="noopener nofollow" class="kx-ly-referral__social" aria-label="WhatsApp">
+              <a href="https://wa.me/?text=Schau%20mal%20bei%20karinex.de%20vorbei!%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" target="_blank" rel="noopener nofollow" class="kx-ly-referral__social" aria-label="WhatsApp">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.463A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-2.17 0-4.18-.58-5.924-1.592l-.424-.252-2.744.868.831-2.675-.277-.44A9.798 9.798 0 012.182 12c0-5.424 4.394-9.818 9.818-9.818S21.818 6.576 21.818 12s-4.394 9.818-9.818 9.818z"/></svg>
               </a>
-              <a href="mailto:?subject=10%25%20Rabatt%20bei%20karinex.de&body=Hey!%20Schau%20mal%20bei%20karinex.de%20vorbei.%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id | base64_encode | truncate: 8, '' }}" class="kx-ly-referral__social" aria-label="Email">
+              <a href="mailto:?subject=10%25%20Rabatt%20bei%20karinex.de&body=Hey!%20Schau%20mal%20bei%20karinex.de%20vorbei.%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" class="kx-ly-referral__social" aria-label="Email">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
               </a>
             </div>

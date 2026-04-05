@@ -78,7 +78,13 @@
         </div>
         <div class="account-actions__rewards-info">
           <span class="account-actions__rewards-label">Meine Rewards</span>
-          <span class="account-actions__rewards-pts">Punkte sammeln & sparen →</span>
+          {%- assign acct_pts = customer.metafields.karinex.loyalty_points.value | default: 0 | plus: 0 -%}
+          {%- assign acct_tier = customer.metafields.karinex.loyalty_tier.value | default: 'Bronze' -%}
+          {%- if acct_pts > 0 -%}
+            <span class="account-actions__rewards-pts">{{ acct_pts }} Punkte · {{ acct_tier | capitalize }}</span>
+          {%- else -%}
+            <span class="account-actions__rewards-pts">Punkte sammeln & sparen →</span>
+          {%- endif -%}
         </div>
       </a>
     </div>

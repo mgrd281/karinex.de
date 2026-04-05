@@ -128,6 +128,30 @@
 .kx-ly-cta h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin: 0 0 12px; }
 .kx-ly-cta p { opacity: .7; margin: 0 0 32px; }
 
+/* ─── PERSONAL DASHBOARD ─── */
+.kx-ly-dash { padding: 0 20px; margin-top: -40px; position: relative; z-index: 2; }
+.kx-ly-dash__box { max-width: 800px; margin: 0 auto; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); box-shadow: 0 8px 40px rgba(0,0,0,.1); padding: 40px; border: 1px solid rgba(201,168,76,.15); }
+.kx-ly-dash__greeting { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.kx-ly-dash__name { font-size: 1.4rem; font-weight: 800; margin: 0 0 8px; }
+.kx-ly-dash__tier-badge { display: inline-block; padding: 5px 16px; border-radius: 100px; font-size: .75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.kx-ly-dash__tier-badge--bronze { background: #f5e6d0; color: #8b5e34; }
+.kx-ly-dash__tier-badge--silber { background: #e8e8e8; color: #555; }
+.kx-ly-dash__tier-badge--gold { background: var(--kx-ly-gold-light); color: #8b6914; }
+.kx-ly-dash__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.kx-ly-dash__stat { text-align: center; padding: 16px; background: var(--kx-ly-bg); border-radius: 12px; }
+.kx-ly-dash__stat-num { display: block; font-size: 1.6rem; font-weight: 800; color: var(--kx-ly-dark); }
+.kx-ly-dash__stat-label { font-size: .75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+.kx-ly-dash__progress { margin-bottom: 24px; }
+.kx-ly-dash__bar { height: 8px; background: #eee; border-radius: 8px; overflow: hidden; }
+.kx-ly-dash__fill { height: 100%; background: linear-gradient(90deg, var(--kx-ly-gold) 0%, #d4af37 100%); border-radius: 8px; transition: width .6s ease; min-width: 4px; }
+.kx-ly-dash__next { font-size: .85rem; color: #666; margin: 10px 0 0; text-align: center; }
+.kx-ly-dash__actions { display: flex; gap: 12px; justify-content: center; }
+.kx-ly-btn--outline { background: transparent; color: var(--kx-ly-dark); border: 1px solid #ddd; }
+.kx-ly-btn--outline:hover { border-color: var(--kx-ly-gold); color: var(--kx-ly-gold); }
+
+/* ─── ACTIVE TIER CARD ─── */
+.kx-ly-tiers__card--active { border: 2px solid var(--kx-ly-gold) !important; background: linear-gradient(180deg, #fffdf5 0%, #fff 40%) !important; box-shadow: 0 8px 32px rgba(201,168,76,.15); }
+
 /* ═══ MOBILE ═══ */
 @media (max-width: 768px) {
   .kx-ly-hero { padding: 60px 20px 50px; }
@@ -144,4 +168,11 @@
   .kx-ly-referral__gift { flex-direction: column; gap: 16px; }
   .kx-ly-referral__arrow { transform: rotate(90deg); width: 48px; }
   .kx-ly-cta { padding: 50px 20px; }
+  .kx-ly-dash { margin-top: -30px; }
+  .kx-ly-dash__box { padding: 24px 20px; }
+  .kx-ly-dash__name { font-size: 1.1rem; }
+  .kx-ly-dash__stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kx-ly-dash__stat { padding: 12px 8px; }
+  .kx-ly-dash__stat-num { font-size: 1.2rem; }
+  .kx-ly-dash__actions { flex-direction: column; }
 }
