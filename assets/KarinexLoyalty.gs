@@ -82,7 +82,7 @@ function doGet(e) {
         return handleAdminList_();
 
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.4' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.5' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -812,7 +812,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'neu\')" data-p="neu"><span class="ic">&#10133;</span> Neuer Kunde</a>'
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.4</div>'
++ '<div class="sb-f">Karinex Loyalty v2.5</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -822,6 +822,7 @@ function getAdminHtml_() {
 + '<div class="sc gr"><div class="lb">Gesamtpunkte</div><div class="vl" id="sP">&#8212;</div></div>'
 + '<div class="sc go"><div class="lb">Gold Kunden</div><div class="vl" id="sG">&#8212;</div></div>'
 + '<div class="sc si"><div class="lb">Silber Kunden</div><div class="vl" id="sS">&#8212;</div></div>'
++ '<div class="sc" style="border-left:3px solid var(--bronze)"><div class="lb">Bronze Kunden</div><div class="vl" id="sB" style="color:var(--bronze)">&#8212;</div></div>'
 + '</div>'
 + '<div class="cd"><h2>&#128203; Letzte Aktivitaeten</h2><div id="rAct"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
@@ -836,8 +837,8 @@ function getAdminHtml_() {
 + '<div style="display:flex;gap:8px"><button class="bg" onclick="doAdj(false)">+ Hinzufuegen</button><button class="br" onclick="doAdj(true)">&#8722; Abziehen</button></div>'
 + '<div id="aMsg" class="msg"></div></div></div>'
 + '<div class="cd"><h2>&#128101; Alle Kunden <span id="cCnt" style="font-weight:400;color:#94a3b8;font-size:13px"></span></h2>'
-+ '<button class="bd" onclick="doList()" style="margin-bottom:16px">Liste laden</button>'
-+ '<div id="cTbl"><div class="emp">Auf &quot;Liste laden&quot; klicken</div></div></div>'
++ '<div style="display:flex;gap:8px;margin-bottom:16px"><button class="bd" onclick="doList()">&#8635; Aktualisieren</button></div>'
++ '<div id="cTbl"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
 + '<div class="pg" id="pg-neu">'
 + '<div class="pt">Neuer Kunde <span>Kunde im System registrieren</span></div>'
@@ -853,27 +854,27 @@ function getAdminHtml_() {
 + '<div class="cd">'
 + '<div style="display:flex;gap:8px;margin-bottom:16px"><input type="email" id="hEm" placeholder="E-Mail filtern (optional)" style="margin-bottom:0">'
 + '<button class="bt" onclick="doHist()">Laden</button><button class="bo" onclick="document.getElementById(\'hEm\').value=\'\';doHist()">Alle</button></div>'
-+ '<div id="hTbl"><div class="emp">Auf &quot;Laden&quot; klicken</div></div></div>'
++ '<div id="hTbl"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
 + '</div>'
 + '<div class="toast" id="tst"></div>'
 + '<script>'
-+ 'function go(p){var pgs=document.querySelectorAll(\'.pg\');for(var i=0;i<pgs.length;i++)pgs[i].classList.remove(\'on\');document.getElementById(\'pg-\'+p).classList.add(\'on\');var lk=document.querySelectorAll(\'.nav a\');for(var j=0;j<lk.length;j++)lk[j].classList.remove(\'on\');var a=document.querySelector(\'[data-p="\'+p+\'"]\');if(a)a.classList.add(\'on\');if(p===\'dash\')loadDash();document.getElementById(\'sb\').classList.remove(\'open\')}'
++ 'function go(p){var pgs=document.querySelectorAll(\'.pg\');for(var i=0;i<pgs.length;i++)pgs[i].classList.remove(\'on\');document.getElementById(\'pg-\'+p).classList.add(\'on\');var lk=document.querySelectorAll(\'.nav a\');for(var j=0;j<lk.length;j++)lk[j].classList.remove(\'on\');var a=document.querySelector(\'[data-p="\'+p+\'"]\');if(a)a.classList.add(\'on\');if(p===\'dash\')loadDash();if(p===\'cust\')doList();if(p===\'hist\')doHist();document.getElementById(\'sb\').classList.remove(\'open\')}'
 + 'function tst(m,t){var e=document.getElementById(\'tst\');e.textContent=m;e.className=\'toast \'+(t||\'ok\')+\' show\';setTimeout(function(){e.classList.remove(\'show\')},3500)}'
 + 'function sm(id,t,m){var e=document.getElementById(id);e.className=\'msg \'+t;e.textContent=m;e.style.display=\'block\'}'
 + 'function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,\'.\')}'
-+ 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
++ 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber);document.getElementById(\'sB\').textContent=fmt(s.bronze)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
 + 'function doSearch(){var em=document.getElementById(\'sEm\').value.trim();if(!em){sm(\'sMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'sMsg\',\'ok\',\'Suche...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'sMsg\',\'err\',\'Kunde nicht gefunden\');document.getElementById(\'cDet\').style.display=\'none\';return}document.getElementById(\'sMsg\').style.display=\'none\';showCust(d)}).withFailureHandler(function(e){sm(\'sMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomer(em)}'
 + 'function showCust(d){document.getElementById(\'cDet\').style.display=\'block\';var h=\'<div style="flex:1"><div class="em">\'+d.email+\'</div><div class="mt"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div></div>\';h+=\'<div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div></div>\';if(d.next_tier)h+=\'<div style="text-align:right"><div class="mt">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div></div>\';document.getElementById(\'cCard\').innerHTML=h}'
 + 'function doAdj(rm){var em=document.getElementById(\'sEm\').value.trim();var pts=parseInt(document.getElementById(\'aP\').value)||0;var re=document.getElementById(\'aR\').value.trim();if(!em||!pts){sm(\'aMsg\',\'err\',\'E-Mail und Punkte eingeben\');return}sm(\'aMsg\',\'ok\',\'Wird gespeichert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'aMsg\',\'err\',(d&&d.error)||\'Fehler\');return}var si=d.changed>0?\'+\':\'\';tst(si+d.changed+\' Punkte \u2014 Neuer Stand: \'+fmt(d.points)+\' (\'+d.tier+\')\',\'ok\');document.getElementById(\'aMsg\').style.display=\'none\';document.getElementById(\'aP\').value=\'\';document.getElementById(\'aR\').value=\'\';doSearch()}).withFailureHandler(function(e){sm(\'aMsg\',\'err\',e.message)}).adminAdjustPoints(em,pts,re,rm)}'
-+ 'function doList(){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}document.getElementById(\'cCnt\').textContent=\'(\'+d.total+\')\';if(!d.customers.length){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Noch keine Kunden</div>\';return}var h=\'<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Aktualisiert</th></tr></thead><tbody>\';for(var i=0;i<d.customers.length;i++){var c=d.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';h+=\'<tr class="ck" data-em="\'+c.email+\'" onclick="selC(this.dataset.em)"><td>\'+c.email+\'</td><td><strong>\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+dt+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'cTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminListCustomers()}'
++ 'function doList(){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}document.getElementById(\'cCnt\').textContent=\'(\'+d.total+\')\';if(!d.customers.length){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Noch keine Kunden</div>\';return}var h=\'<table><thead><tr><th>#</th><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Cashback</th><th>Aktualisiert</th></tr></thead><tbody>\';for(var i=0;i<d.customers.length;i++){var c=d.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';var cb=c.tier===\'gold\'?10:c.tier===\'silber\'?7:5;h+=\'<tr class="ck" data-em="\'+c.email+\'" onclick="selC(this.dataset.em)"><td style="color:#94a3b8;font-weight:600">\'+String(i+1)+\'</td><td>\'+c.email+\'</td><td><strong>\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+cb+\'%</td><td>\'+dt+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'cTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminListCustomers()}'
 + 'function selC(em){document.getElementById(\'sEm\').value=em;doSearch();window.scrollTo(0,0)}'
 + 'function doReg(){var em=document.getElementById(\'nEm\').value.trim();var pts=parseInt(document.getElementById(\'nPt\').value)||0;var re=document.getElementById(\'nRe\').value.trim();if(!em){sm(\'nMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'nMsg\',\'ok\',\'Wird registriert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'nMsg\',\'err\',(d&&d.error)||\'Fehler\');return}sm(\'nMsg\',\'ok\',\'Kunde registriert: \'+d.email+\' \u2014 \'+fmt(d.points)+\' Punkte (\'+d.tier+\')\');tst(\'Neuer Kunde: \'+d.email,\'ok\');document.getElementById(\'nEm\').value=\'\';document.getElementById(\'nPt\').value=\'\';document.getElementById(\'nRe\').value=\'\'}).withFailureHandler(function(e){sm(\'nMsg\',\'err\',e.message)}).adminAddNewCustomer(em,pts,re)}'
 + 'function doHist(){var em=document.getElementById(\'hEm\').value.trim();document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}if(!d.history.length){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Keine Eintraege</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var i=0;i<d.history.length;i++){var r=d.history[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td style="white-space:nowrap">\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';if(d.total>200)h+=\'<div class="emp" style="padding:12px">Zeige 200 von \'+d.total+\'</div>\';document.getElementById(\'hTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetHistory(em)}'
 + 'document.getElementById(\'sEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doSearch()});'
 + 'document.getElementById(\'nEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doReg()});'
 + 'document.getElementById(\'hEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doHist()});'
-+ 'loadDash();'
++ 'loadDash();doList();doHist();'
 + '</script></body></html>';
 }
 
