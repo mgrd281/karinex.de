@@ -69,8 +69,30 @@
     {% endunless %}
 
     {% if customer %}
+
+    {%- comment -%} ═══ REWARDS WIDGET ═══ {%- endcomment -%}
+    <div class="account-actions__rewards">
+      <a href="{{ _root }}pages/rewards" class="account-actions__rewards-box">
+        <div class="account-actions__rewards-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="account-actions__rewards-info">
+          <span class="account-actions__rewards-label">Meine Rewards</span>
+          <span class="account-actions__rewards-pts">Punkte sammeln & sparen →</span>
+        </div>
+      </a>
+    </div>
+
     <nav class="account-actions__nav">
       <ul class="account-actions__list">
+        <li class="account-actions__list-item">
+          <a
+            href="{{ _root }}pages/rewards"
+            class="account-actions__link link-styled"
+          >
+            🎁 Rewards
+          </a>
+        </li>
         <li class="account-actions__list-item">
           <a
             href="{{ routes.account_url }}"
@@ -267,5 +289,43 @@
   .button--full-width {
     width: 100%;
     justify-content: center;
+  }
+
+  /* ═══ REWARDS WIDGET ═══ */
+  .account-actions__rewards {
+    padding: 12px 20px;
+  }
+  .account-actions__rewards-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #fffdf5 0%, #fff 100%);
+    border: 1px solid #f0e6c8;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all .2s ease;
+  }
+  .account-actions__rewards-box:hover {
+    border-color: #c9a84c;
+    box-shadow: 0 4px 12px rgba(201,168,76,.15);
+  }
+  .account-actions__rewards-icon {
+    flex-shrink: 0;
+    color: #c9a84c;
+  }
+  .account-actions__rewards-label {
+    display: block;
+    font-weight: 700;
+    font-size: .9rem;
+    color: #1a1a1a;
+  }
+  .account-actions__rewards-pts {
+    display: block;
+    font-size: .75rem;
+    color: #c9a84c;
+    font-weight: 600;
+    margin-top: 2px;
   }
 {% endstylesheet %}
