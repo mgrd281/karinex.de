@@ -32,6 +32,11 @@ function doPost(e) {
 }
 
 function doGet(e) {
+  var p = e && e.parameter ? e.parameter : {};
+  var action = String(p.action || '').trim().toLowerCase();
+  if (action === 'create_code' && p.email) {
+    return handleCreateCode_({ email: p.email, ref: p.ref || 'direct' });
+  }
   return asJson_({ ok: true, service: 'karinex-referral', version: '1.0' });
 }
 

@@ -59,8 +59,30 @@ function doGet(e) {
         if (p.email) return handleGetPointsByEmail_(p.email);
         return asJson_({ ok: false, error: 'missing_identifier' });
 
+      /* ── Admin endpoints ── */
+      case 'admin_dashboard':
+        if (!verifyAdmin_(p.key)) return asJson_({ ok: false, error: 'unauthorized' });
+        return serveAdminDashboard_();
+
+      case 'admin_get':
+        if (!verifyAdmin_(p.key)) return asJson_({ ok: false, error: 'unauthorized' });
+        if (!p.email) return asJson_({ ok: false, error: 'missing_email' });
+        return handleGetPointsByEmail_(p.email);
+
+      case 'admin_add':
+        if (!verifyAdmin_(p.key)) return asJson_({ ok: false, error: 'unauthorized' });
+        return handleAdminPoints_(p.email, parseInt(p.points) || 0, p.reason || 'Admin-Gutschrift');
+
+      case 'admin_remove':
+        if (!verifyAdmin_(p.key)) return asJson_({ ok: false, error: 'unauthorized' });
+        return handleAdminPoints_(p.email, -(Math.abs(parseInt(p.points) || 0)), p.reason || 'Admin-Abzug');
+
+      case 'admin_list':
+        if (!verifyAdmin_(p.key)) return asJson_({ ok: false, error: 'unauthorized' });
+        return handleAdminList_();
+
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.0' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.1' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -539,6 +561,237 @@ function generateCode_(prefix) {
 function asJson_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN: Authentication & Handlers
+   ═══════════════════════════════════════════════════════ */
+
+function verifyAdmin_(key) {
+  var adminKey = PropertiesService.getScriptProperties().getProperty('ADMIN_KEY');
+  return adminKey && key === adminKey;
+}
+
+function handleAdminPoints_(email, points, reason) {
+  email = String(email || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return asJson_({ ok: false, error: 'invalid_email' });
+  }
+  if (!points || points === 0) return asJson_({ ok: false, error: 'invalid_points' });
+
+  addPoints_(email, points, reason, '');
+
+  /* Update Shopify metafields if customer exists */
+  try {
+    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var result = shopifyGQL_(q);
+    var nodes = result.data && result.data.customers && result.data.customers.nodes;
+    if (nodes && nodes.length) {
+      var newData = getCustomerData_(email);
+      var newTier = getTier_(newData.points);
+      updateCustomerMetafields_(nodes[0].id, newData.points, newTier.name);
+      try { updateCustomerTierTag_(nodes[0].id, newTier.name); } catch(e) {}
+    }
+  } catch(e) {}
+
+  var updated = getCustomerData_(email);
+  var tier = getTier_(updated.points);
+  return asJson_({ ok: true, email: email, points: updated.points, tier: tier.name, changed: points });
+}
+
+function handleAdminList_() {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.points.getDataRange().getValues();
+    var customers = [];
+    for (var i = 1; i < data.length; i++) {
+      customers.push({
+        email: String(data[i][0]),
+        points: parseInt(data[i][1]) || 0,
+        tier: String(data[i][2] || 'bronze'),
+        updated: data[i][3] ? new Date(data[i][3]).toISOString() : ''
+      });
+    }
+    customers.sort(function(a, b) { return b.points - a.points; });
+    return asJson_({ ok: true, customers: customers, total: customers.length });
+  } catch(e) {
+    return asJson_({ ok: false, error: e.message });
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN: Dashboard HTML
+   ═══════════════════════════════════════════════════════ */
+
+function serveAdminDashboard_() {
+  var html = HtmlService.createHtmlOutput(getAdminHtml_())
+    .setTitle('Karinex Admin — Loyalty Points')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return html;
+}
+
+function getAdminHtml_() {
+  return '<!DOCTYPE html>'
++ '<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
++ '<title>Karinex Admin — Punkte</title>'
++ '<style>'
++ '*{box-sizing:border-box;margin:0;padding:0}'
++ 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:20px}'
++ '.container{max-width:800px;margin:0 auto}'
++ 'h1{font-size:24px;margin-bottom:24px;color:#1a1a1a}'
++ 'h1 span{color:#888;font-weight:400;font-size:14px}'
++ '.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}'
++ '.card h2{font-size:16px;margin-bottom:16px;color:#1a1a1a}'
++ 'label{display:block;font-size:13px;color:#666;margin-bottom:4px;font-weight:500}'
++ 'input,select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}'
++ 'input:focus{border-color:#1a1a1a}'
++ '.row{display:flex;gap:12px}'
++ '.row>div{flex:1}'
++ 'button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}'
++ '.btn-primary{background:#1a1a1a;color:#fff}'
++ '.btn-primary:hover{background:#333}'
++ '.btn-add{background:#16a34a;color:#fff}'
++ '.btn-add:hover{background:#15803d}'
++ '.btn-remove{background:#dc2626;color:#fff}'
++ '.btn-remove:hover{background:#b91c1c}'
++ '.btn-search{background:#1a1a1a;color:#fff;width:100%}'
++ '.actions{display:flex;gap:8px;margin-top:4px}'
++ '.result{padding:16px;border-radius:8px;margin-top:12px;font-size:14px;display:none}'
++ '.result.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;display:block}'
++ '.result.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;display:block}'
++ '.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;text-transform:uppercase}'
++ '.badge.gold{background:#fef3c7;color:#92400e}'
++ '.badge.silber{background:#f1f5f9;color:#475569}'
++ '.badge.bronze{background:#fed7aa;color:#9a3412}'
++ '.customer-info{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:8px;margin-bottom:16px}'
++ '.customer-info .pts{font-size:28px;font-weight:700}'
++ '.customer-info .label{font-size:12px;color:#888}'
++ 'table{width:100%;border-collapse:collapse;font-size:13px}'
++ 'th{text-align:left;padding:8px 12px;border-bottom:2px solid #eee;color:#888;font-weight:500;font-size:12px;text-transform:uppercase}'
++ 'td{padding:8px 12px;border-bottom:1px solid #f3f3f3}'
++ 'tr:hover td{background:#f9fafb}'
++ '.empty{text-align:center;padding:40px;color:#aaa}'
++ '@media(max-width:600px){.row{flex-direction:column}.actions{flex-direction:column}}'
++ '</style></head><body>'
++ '<div class="container">'
++ '<h1>Karinex Loyalty Admin <span>Punkte verwalten</span></h1>'
++ ''
++ '<div class="card">'
++ '<h2>🔍 Kunden suchen</h2>'
++ '<label>E-Mail-Adresse</label>'
++ '<input type="email" id="email" placeholder="kunde@beispiel.de">'
++ '<button class="btn-search" onclick="searchCustomer()">Kunden suchen</button>'
++ '<div id="searchResult" class="result"></div>'
++ '</div>'
++ ''
++ '<div class="card" id="pointsCard" style="display:none">'
++ '<h2>📊 Punkte anpassen</h2>'
++ '<div class="customer-info" id="customerInfo"></div>'
++ '<div class="row">'
++ '<div><label>Punkte</label><input type="number" id="points" placeholder="z.B. 500" min="1"></div>'
++ '<div><label>Grund</label><input type="text" id="reason" placeholder="z.B. Gutschrift, Support-Bonus"></div>'
++ '</div>'
++ '<div class="actions">'
++ '<button class="btn-add" onclick="adjustPoints(\'add\')">＋ Punkte hinzufügen</button>'
++ '<button class="btn-remove" onclick="adjustPoints(\'remove\')">－ Punkte abziehen</button>'
++ '</div>'
++ '<div id="adjustResult" class="result"></div>'
++ '</div>'
++ ''
++ '<div class="card">'
++ '<h2>👥 Alle Kunden <span id="totalCount"></span></h2>'
++ '<button class="btn-primary" onclick="loadAll()" style="margin-bottom:16px">Liste laden</button>'
++ '<div id="customerList"><div class="empty">Klicke auf "Liste laden"</div></div>'
++ '</div>'
++ '</div>'
++ ''
++ '<script>'
++ 'var BASE=location.href.split("?")[0];'
++ 'var KEY=new URLSearchParams(location.search).get("key")||"";'
++ ''
++ 'function api(action,params){'
++ '  var u=BASE+"?action="+action+"&key="+encodeURIComponent(KEY);'
++ '  for(var k in params)u+="&"+k+"="+encodeURIComponent(params[k]);'
++ '  return fetch(u).then(function(r){return r.json()});'
++ '}'
++ ''
++ 'function searchCustomer(){'
++ '  var em=document.getElementById("email").value.trim();'
++ '  if(!em){show("searchResult","err","Bitte E-Mail eingeben");return}'
++ '  show("searchResult","ok","Suche...");'
++ '  api("admin_get",{email:em}).then(function(d){'
++ '    if(!d.ok){show("searchResult","err","Fehler: "+(d.error||"unbekannt"));document.getElementById("pointsCard").style.display="none";return}'
++ '    show("searchResult","ok","✅ "+d.email+" — "+d.points+" Punkte — Tier: "+d.tier);'
++ '    showPointsCard(d);'
++ '  }).catch(function(e){show("searchResult","err","Netzwerkfehler: "+e.message)});'
++ '}'
++ ''
++ 'function showPointsCard(d){'
++ '  document.getElementById("pointsCard").style.display="block";'
++ '  document.getElementById("customerInfo").innerHTML='
++ '    \'<div><div class="pts">\'+d.points+\'</div><div class="label">Punkte</div></div>\'+'
++ '    \'<div class="badge \'+d.tier+\'">\'+d.tier+\'</div>\'+'
++ '    (d.next_tier?\'<div><div class="label">Nächstes Tier: \'+d.next_tier+\' (noch \'+d.points_to_next+\' Punkte)</div></div>\':\'<div class="label">Höchstes Tier ✨</div>\');'
++ '}'
++ ''
++ 'function adjustPoints(type){'
++ '  var em=document.getElementById("email").value.trim();'
++ '  var pts=parseInt(document.getElementById("points").value)||0;'
++ '  var reason=document.getElementById("reason").value.trim()||""+'
++ '    (type==="add"?"Admin-Gutschrift":"Admin-Abzug");'
++ '  if(!em||!pts){show("adjustResult","err","E-Mail und Punkte eingeben");return}'
++ '  show("adjustResult","ok","Wird gespeichert...");'
++ '  var action=type==="add"?"admin_add":"admin_remove";'
++ '  api(action,{email:em,points:pts,reason:reason}).then(function(d){'
++ '    if(!d.ok){show("adjustResult","err","Fehler: "+(d.error||"unbekannt"));return}'
++ '    var sign=d.changed>0?"+":"";'
++ '    show("adjustResult","ok","✅ "+sign+d.changed+" Punkte — Neuer Stand: "+d.points+" ("+d.tier+")");'
++ '    showPointsCard({points:d.points,tier:d.tier,next_tier:null,points_to_next:0});'
++ '    searchCustomer();'
++ '  }).catch(function(e){show("adjustResult","err","Netzwerkfehler: "+e.message)});'
++ '}'
++ ''
++ 'function loadAll(){'
++ '  document.getElementById("customerList").innerHTML=\'<div class="empty">Lädt...</div>\';'
++ '  api("admin_list",{}).then(function(d){'
++ '    if(!d.ok||!d.customers){document.getElementById("customerList").innerHTML=\'<div class="empty">Fehler</div>\';return}'
++ '    document.getElementById("totalCount").textContent="("+d.total+")";'
++ '    if(!d.customers.length){document.getElementById("customerList").innerHTML=\'<div class="empty">Noch keine Kunden</div>\';return}'
++ '    var h=\'<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Letzte Änderung</th></tr></thead><tbody>\';'
++ '    d.customers.forEach(function(c){'
++ '      var dt=c.updated?new Date(c.updated).toLocaleDateString("de-DE"):"-";'
++ '      h+=\'<tr style="cursor:pointer" onclick="document.getElementById(\\\'email\\\').value=\\\'\'+c.email+\'\\\';searchCustomer()"><td>\'+c.email+\'</td><td><strong>\'+c.points+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+dt+\'</td></tr>\';'
++ '    });'
++ '    h+="</tbody></table>";'
++ '    document.getElementById("customerList").innerHTML=h;'
++ '  }).catch(function(e){document.getElementById("customerList").innerHTML=\'<div class="empty">Fehler: \'+e.message+\'</div>\'});'
++ '}'
++ ''
++ 'function show(id,cls,msg){var el=document.getElementById(id);el.className="result "+cls;el.textContent=msg;el.style.display="block"}'
++ ''
++ 'document.getElementById("email").addEventListener("keydown",function(e){if(e.key==="Enter")searchCustomer()});'
++ '</script></body></html>';
+}
+
+/* ═══════════════════════════════════════════════════════
+   SETUP: Admin Key Generation
+   ═══════════════════════════════════════════════════════ */
+
+/** Creates a random admin key for the dashboard. Run ONCE from GAS editor. */
+function setupAdminKey() {
+  var props = PropertiesService.getScriptProperties();
+  var existing = props.getProperty('ADMIN_KEY');
+  if (existing) {
+    Logger.log('⚠️ Admin-Key existiert bereits: ' + existing);
+    Logger.log('Dashboard-URL: <DEINE_GAS_URL>?action=admin_dashboard&key=' + existing);
+    return;
+  }
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var key = '';
+  for (var i = 0; i < 32; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+  props.setProperty('ADMIN_KEY', key);
+  Logger.log('✅ Admin-Key erstellt: ' + key);
+  Logger.log('Dashboard-URL: <DEINE_GAS_URL>?action=admin_dashboard&key=' + key);
 }
 
 /* ═══════════════════════════════════════════════════════
