@@ -82,7 +82,7 @@ function doGet(e) {
         return handleAdminList_();
 
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.1' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.3' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -683,6 +683,67 @@ function adminListCustomers() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   ADMIN: Stats, Registration & History
+   ═══════════════════════════════════════════════════════ */
+
+function adminGetStats() {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.points.getDataRange().getValues();
+    var s = { total: 0, gold: 0, silber: 0, bronze: 0, totalPoints: 0 };
+    for (var i = 1; i < data.length; i++) {
+      s.total++;
+      s.totalPoints += parseInt(data[i][1]) || 0;
+      var t = String(data[i][2] || 'bronze').toLowerCase();
+      if (t === 'gold') s.gold++; else if (t === 'silber') s.silber++; else s.bronze++;
+    }
+    return { ok: true, stats: s };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+function adminAddNewCustomer(email, initialPoints, reason) {
+  email = String(email || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'invalid_email' };
+  var ex = getCustomerData_(email);
+  if (ex.row > 0) return { ok: false, error: 'Kunde existiert bereits' };
+  initialPoints = parseInt(initialPoints) || 0;
+  if (initialPoints > 0) {
+    addPoints_(email, initialPoints, reason || 'Willkommensbonus', '');
+  } else {
+    try {
+      var sheets = getOrCreateLoyaltySheet_();
+      sheets.points.appendRow([email, 0, 'bronze', new Date()]);
+      sheets.history.appendRow([new Date(), email, '+0', reason || 'Kunde registriert', 0]);
+    } catch(e) { return { ok: false, error: e.message }; }
+  }
+  try {
+    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var result = shopifyGQL_(q);
+    var nodes = result.data && result.data.customers && result.data.customers.nodes;
+    if (nodes && nodes.length) {
+      var nd = getCustomerData_(email); var nt = getTier_(nd.points);
+      updateCustomerMetafields_(nodes[0].id, nd.points, nt.name);
+    }
+  } catch(e) {}
+  var d = getCustomerData_(email); var t = getTier_(d.points);
+  return { ok: true, email: email, points: d.points, tier: t.name };
+}
+
+function adminGetHistory(email) {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.history.getDataRange().getValues();
+    var hist = []; email = email ? String(email).trim().toLowerCase() : '';
+    for (var i = 1; i < data.length; i++) {
+      var r = { date: data[i][0] ? new Date(data[i][0]).toISOString() : '', email: String(data[i][1] || ''), points: String(data[i][2] || ''), reason: String(data[i][3] || ''), balance: parseInt(data[i][4]) || 0 };
+      if (!email || r.email.toLowerCase() === email) hist.push(r);
+    }
+    hist.reverse();
+    return { ok: true, history: hist.slice(0, 200), total: hist.length };
+  } catch(e) { return { ok: false, error: e.message }; }
+}
+
+/* ═══════════════════════════════════════════════════════
    ADMIN: Dashboard HTML
    ═══════════════════════════════════════════════════════ */
 
@@ -696,144 +757,123 @@ function serveAdminDashboard_() {
 function getAdminHtml_() {
   return '<!DOCTYPE html>'
 + '<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-+ '<title>Karinex Admin — Punkte</title>'
++ '<title>Karinex Admin</title>'
 + '<style>'
++ ':root{--bg:#f0f2f5;--sb:#0f172a;--sb-h:#1e293b;--card:#fff;--accent:#6366f1;--accent-l:#818cf8;--green:#22c55e;--red:#ef4444;--gold:#f59e0b;--silver:#94a3b8;--bronze:#f97316;--txt:#1e293b;--txt2:#64748b;--bdr:#e2e8f0;--r:12px}'
 + '*{box-sizing:border-box;margin:0;padding:0}'
-+ 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f5f5;color:#1a1a1a;padding:20px}'
-+ '.container{max-width:800px;margin:0 auto}'
-+ 'h1{font-size:24px;margin-bottom:24px;color:#1a1a1a}'
-+ 'h1 span{color:#888;font-weight:400;font-size:14px}'
-+ '.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}'
-+ '.card h2{font-size:16px;margin-bottom:16px;color:#1a1a1a}'
-+ 'label{display:block;font-size:13px;color:#666;margin-bottom:4px;font-weight:500}'
-+ 'input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}'
-+ 'input:focus{border-color:#1a1a1a}'
-+ '.row{display:flex;gap:12px}'
-+ '.row>div{flex:1}'
-+ 'button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}'
-+ '.btn-primary{background:#1a1a1a;color:#fff}'
-+ '.btn-primary:hover{background:#333}'
-+ '.btn-add{background:#16a34a;color:#fff}'
-+ '.btn-add:hover{background:#15803d}'
-+ '.btn-remove{background:#dc2626;color:#fff}'
-+ '.btn-remove:hover{background:#b91c1c}'
-+ '.btn-search{background:#1a1a1a;color:#fff;width:100%}'
-+ '.actions{display:flex;gap:8px;margin-top:4px}'
-+ '.result{padding:16px;border-radius:8px;margin-top:12px;font-size:14px;display:none}'
-+ '.result.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;display:block}'
-+ '.result.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;display:block}'
-+ '.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;text-transform:uppercase}'
-+ '.badge.gold{background:#fef3c7;color:#92400e}'
-+ '.badge.silber{background:#f1f5f9;color:#475569}'
-+ '.badge.bronze{background:#fed7aa;color:#9a3412}'
-+ '.customer-info{display:flex;align-items:center;gap:16px;padding:16px;background:#f9fafb;border-radius:8px;margin-bottom:16px}'
-+ '.customer-info .pts{font-size:28px;font-weight:700}'
-+ '.customer-info .label{font-size:12px;color:#888}'
++ 'body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);display:flex;min-height:100vh}'
++ '.sb{width:260px;background:var(--sb);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100}'
++ '.sb-h{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.1)}.sb-h h1{font-size:20px;font-weight:700;letter-spacing:1px}.sb-h p{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}'
++ '.nav{flex:1;padding:16px 0}'
++ '.nav a{display:flex;align-items:center;gap:12px;padding:12px 20px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;cursor:pointer;border-left:3px solid transparent}'
++ '.nav a:hover,.nav a.on{background:var(--sb-h);color:#fff;border-left-color:var(--accent)}'
++ '.nav a .ic{width:20px;text-align:center;font-size:16px}'
++ '.sb-f{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:rgba(255,255,255,.3)}'
++ '.mn{margin-left:260px;flex:1;padding:32px;min-height:100vh}'
++ '.pg{display:none}.pg.on{display:block}'
++ '.pt{font-size:24px;font-weight:700;margin-bottom:24px}.pt span{font-weight:400;color:var(--txt2);font-size:14px;margin-left:8px}'
++ '.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px}'
++ '.sc{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}.sc .lb{font-size:11px;color:var(--txt2);text-transform:uppercase;font-weight:600;letter-spacing:.5px}.sc .vl{font-size:32px;font-weight:700;margin-top:8px}'
++ '.sc.a .vl{color:var(--accent)}.sc.go .vl{color:var(--gold)}.sc.si .vl{color:var(--silver)}.sc.gr .vl{color:var(--green)}'
++ '.cd{background:var(--card);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}'
++ '.cd h2{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}'
++ 'label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}'
++ 'input{width:100%;padding:10px 14px;border:1.5px solid var(--bdr);border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s;background:#fff}input:focus{border-color:var(--accent)}'
++ '.rw{display:flex;gap:12px}.rw>div{flex:1}'
++ 'button{padding:10px 20px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}'
++ '.bt{background:var(--accent);color:#fff}.bt:hover{background:var(--accent-l);transform:translateY(-1px)}'
++ '.bg{background:var(--green);color:#fff}.bg:hover{background:#16a34a}'
++ '.br{background:var(--red);color:#fff}.br:hover{background:#dc2626}'
++ '.bd{background:var(--txt);color:#fff}.bd:hover{background:#334155}'
++ '.bo{background:transparent;color:var(--txt);border:1.5px solid var(--bdr)}.bo:hover{border-color:var(--txt)}'
++ '.bf{width:100%}'
++ '.badge{display:inline-block;padding:3px 12px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}'
++ '.badge.gold{background:#fef3c7;color:#92400e}.badge.silber{background:#f1f5f9;color:#475569}.badge.bronze{background:#fed7aa;color:#9a3412}'
++ '.cc{display:flex;align-items:center;gap:20px;padding:20px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:var(--r);margin-bottom:16px}'
++ '.cc .pts{font-size:36px;font-weight:800;color:var(--accent)}.cc .mt{font-size:12px;color:var(--txt2)}.cc .em{font-size:14px;font-weight:600;margin-bottom:4px}'
 + 'table{width:100%;border-collapse:collapse;font-size:13px}'
-+ 'th{text-align:left;padding:8px 12px;border-bottom:2px solid #eee;color:#888;font-weight:500;font-size:12px;text-transform:uppercase}'
-+ 'td{padding:8px 12px;border-bottom:1px solid #f3f3f3}'
-+ 'tr:hover td{background:#f9fafb}'
-+ '.empty{text-align:center;padding:40px;color:#aaa}'
-+ '.loading{opacity:.5;pointer-events:none}'
-+ '@media(max-width:600px){.row{flex-direction:column}.actions{flex-direction:column}}'
++ 'th{text-align:left;padding:10px 14px;border-bottom:2px solid var(--bdr);color:var(--txt2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}'
++ 'td{padding:10px 14px;border-bottom:1px solid #f1f5f9}tr:hover td{background:#f8fafc}tr.ck{cursor:pointer}'
++ '.msg{padding:14px 16px;border-radius:8px;font-size:14px;margin-top:12px;display:none;font-weight:500}'
++ '.msg.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;display:block}'
++ '.msg.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;display:block}'
++ '.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:10px;color:#fff;font-size:14px;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.15);max-width:400px}'
++ '.toast.show{transform:translateX(0)}.toast.ok{background:#22c55e}.toast.err{background:#ef4444}'
++ '.emp{text-align:center;padding:40px;color:var(--txt2);font-size:14px}'
++ '.mob{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--sb);color:#fff;border:none;border-radius:8px;width:40px;height:40px;font-size:20px;cursor:pointer}'
++ '@media(max-width:768px){.sb{transform:translateX(-100%);transition:transform .3s}.sb.open{transform:translateX(0)}.mn{margin-left:0;padding:16px;padding-top:60px}.mob{display:block}.rw{flex-direction:column}.stats{grid-template-columns:1fr 1fr}.cc{flex-direction:column;text-align:center}}'
 + '</style></head><body>'
-+ '<div class="container">'
-+ '<h1>Karinex Loyalty Admin <span>Punkte verwalten</span></h1>'
-+ ''
-+ '<div class="card">'
-+ '<h2>&#128269; Kunden suchen</h2>'
-+ '<label>E-Mail-Adresse</label>'
-+ '<input type="email" id="email" placeholder="kunde@beispiel.de">'
-+ '<button class="btn-search" onclick="searchCustomer()">Kunden suchen</button>'
-+ '<div id="searchResult" class="result"></div>'
++ '<button class="mob" onclick="document.getElementById(\'sb\').classList.toggle(\'open\')">&#9776;</button>'
++ '<nav class="sb" id="sb">'
++ '<div class="sb-h"><h1>KARINEX</h1><p>Admin Panel</p></div>'
++ '<div class="nav">'
++ '<a onclick="go(\'dash\')" class="on" data-p="dash"><span class="ic">&#128202;</span> Dashboard</a>'
++ '<a onclick="go(\'cust\')" data-p="cust"><span class="ic">&#128269;</span> Kunden</a>'
++ '<a onclick="go(\'neu\')" data-p="neu"><span class="ic">&#10133;</span> Neuer Kunde</a>'
++ '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '</div>'
-+ ''
-+ '<div class="card" id="pointsCard" style="display:none">'
-+ '<h2>&#128202; Punkte anpassen</h2>'
-+ '<div class="customer-info" id="customerInfo"></div>'
-+ '<div class="row">'
-+ '<div><label>Punkte</label><input type="number" id="points" placeholder="z.B. 500" min="1"></div>'
-+ '<div><label>Grund</label><input type="text" id="reason" placeholder="z.B. Gutschrift, Support-Bonus"></div>'
++ '<div class="sb-f">Karinex Loyalty v2.3</div>'
++ '</nav>'
++ '<div class="mn">'
++ '<div class="pg on" id="pg-dash">'
++ '<div class="pt">Dashboard</div>'
++ '<div class="stats">'
++ '<div class="sc a"><div class="lb">Gesamt Kunden</div><div class="vl" id="sT">&#8212;</div></div>'
++ '<div class="sc gr"><div class="lb">Gesamtpunkte</div><div class="vl" id="sP">&#8212;</div></div>'
++ '<div class="sc go"><div class="lb">Gold Kunden</div><div class="vl" id="sG">&#8212;</div></div>'
++ '<div class="sc si"><div class="lb">Silber Kunden</div><div class="vl" id="sS">&#8212;</div></div>'
 + '</div>'
-+ '<div class="actions">'
-+ '<button class="btn-add" onclick="doAdjust(false)">+ Punkte hinzufuegen</button>'
-+ '<button class="btn-remove" onclick="doAdjust(true)">- Punkte abziehen</button>'
++ '<div class="cd"><h2>&#128203; Letzte Aktivitaeten</h2><div id="rAct"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
-+ '<div id="adjustResult" class="result"></div>'
++ '<div class="pg" id="pg-cust">'
++ '<div class="pt">Kunden verwalten</div>'
++ '<div class="cd"><h2>&#128269; Kunden suchen</h2>'
++ '<div style="display:flex;gap:8px"><input type="email" id="sEm" placeholder="E-Mail eingeben..." style="margin-bottom:0"><button class="bt" onclick="doSearch()" style="white-space:nowrap">Suchen</button></div>'
++ '<div id="sMsg" class="msg"></div></div>'
++ '<div id="cDet" style="display:none"><div class="cd"><h2>&#128202; Kundendaten</h2><div class="cc" id="cCard"></div>'
++ '<h2 style="margin-top:16px">&#9998; Punkte anpassen</h2>'
++ '<div class="rw"><div><label>Punkte</label><input type="number" id="aP" placeholder="z.B. 500" min="1"></div><div><label>Grund</label><input type="text" id="aR" placeholder="z.B. Support-Bonus"></div></div>'
++ '<div style="display:flex;gap:8px"><button class="bg" onclick="doAdj(false)">+ Hinzufuegen</button><button class="br" onclick="doAdj(true)">&#8722; Abziehen</button></div>'
++ '<div id="aMsg" class="msg"></div></div></div>'
++ '<div class="cd"><h2>&#128101; Alle Kunden <span id="cCnt" style="font-weight:400;color:#94a3b8;font-size:13px"></span></h2>'
++ '<button class="bd" onclick="doList()" style="margin-bottom:16px">Liste laden</button>'
++ '<div id="cTbl"><div class="emp">Auf &quot;Liste laden&quot; klicken</div></div></div>'
 + '</div>'
-+ ''
-+ '<div class="card">'
-+ '<h2>&#128101; Alle Kunden <span id="totalCount"></span></h2>'
-+ '<button class="btn-primary" onclick="loadAll()" style="margin-bottom:16px">Liste laden</button>'
-+ '<div id="customerList"><div class="empty">Klicke auf "Liste laden"</div></div>'
++ '<div class="pg" id="pg-neu">'
++ '<div class="pt">Neuer Kunde <span>Kunde im System registrieren</span></div>'
++ '<div class="cd" style="max-width:500px"><h2>&#10133; Kunde registrieren</h2>'
++ '<label>E-Mail-Adresse *</label><input type="email" id="nEm" placeholder="kunde@beispiel.de">'
++ '<label>Startpunkte</label><input type="number" id="nPt" placeholder="0 (optional)" min="0">'
++ '<label>Grund / Notiz</label><input type="text" id="nRe" placeholder="z.B. Willkommensbonus">'
++ '<button class="bt bf" onclick="doReg()" style="margin-top:8px">Kunde registrieren</button>'
++ '<div id="nMsg" class="msg"></div></div>'
++ '</div>'
++ '<div class="pg" id="pg-hist">'
++ '<div class="pt">Verlauf <span>Alle Punktebuchungen</span></div>'
++ '<div class="cd">'
++ '<div style="display:flex;gap:8px;margin-bottom:16px"><input type="email" id="hEm" placeholder="E-Mail filtern (optional)" style="margin-bottom:0">'
++ '<button class="bt" onclick="doHist()">Laden</button><button class="bo" onclick="document.getElementById(\'hEm\').value=\'\';doHist()">Alle</button></div>'
++ '<div id="hTbl"><div class="emp">Auf &quot;Laden&quot; klicken</div></div></div>'
 + '</div>'
 + '</div>'
-+ ''
++ '<div class="toast" id="tst"></div>'
 + '<script>'
-+ 'function show(id,cls,msg){var el=document.getElementById(id);el.className="result "+cls;el.textContent=msg;el.style.display="block"}'
-+ ''
-+ 'function searchCustomer(){'
-+ '  var em=document.getElementById("email").value.trim();'
-+ '  if(!em){show("searchResult","err","Bitte E-Mail eingeben");return}'
-+ '  show("searchResult","ok","Suche...");'
-+ '  google.script.run.withSuccessHandler(function(d){'
-+ '    if(!d||!d.ok){show("searchResult","err","Fehler: "+((d&&d.error)||"unbekannt"));document.getElementById("pointsCard").style.display="none";return}'
-+ '    show("searchResult","ok","OK: "+d.email+" - "+d.points+" Punkte - Tier: "+d.tier);'
-+ '    showPointsCard(d);'
-+ '  }).withFailureHandler(function(e){'
-+ '    show("searchResult","err","Fehler: "+e.message);'
-+ '  }).adminGetCustomer(em);'
-+ '}'
-+ ''
-+ 'function showPointsCard(d){'
-+ '  document.getElementById("pointsCard").style.display="block";'
-+ '  var h="<div><div class=\\"pts\\">"+d.points+"</div><div class=\\"label\\">Punkte</div></div>";'
-+ '  h+="<div class=\\"badge "+d.tier+"\\">"+d.tier+"</div>";'
-+ '  if(d.next_tier){h+="<div><div class=\\"label\\">Naechstes Tier: "+d.next_tier+" (noch "+d.points_to_next+" Punkte)</div></div>"}'
-+ '  else{h+="<div class=\\"label\\">Hoechstes Tier</div>"}'
-+ '  document.getElementById("customerInfo").innerHTML=h;'
-+ '}'
-+ ''
-+ 'function doAdjust(isRemove){'
-+ '  var em=document.getElementById("email").value.trim();'
-+ '  var pts=parseInt(document.getElementById("points").value)||0;'
-+ '  var reason=document.getElementById("reason").value.trim();'
-+ '  if(!em||!pts){show("adjustResult","err","E-Mail und Punkte eingeben");return}'
-+ '  show("adjustResult","ok","Wird gespeichert...");'
-+ '  google.script.run.withSuccessHandler(function(d){'
-+ '    if(!d||!d.ok){show("adjustResult","err","Fehler: "+((d&&d.error)||"unbekannt"));return}'
-+ '    var sign=d.changed>0?"+":"";'
-+ '    show("adjustResult","ok","OK: "+sign+d.changed+" Punkte - Neuer Stand: "+d.points+" ("+d.tier+")");'
-+ '    searchCustomer();'
-+ '  }).withFailureHandler(function(e){'
-+ '    show("adjustResult","err","Fehler: "+e.message);'
-+ '  }).adminAdjustPoints(em,pts,reason,isRemove);'
-+ '}'
-+ ''
-+ 'function loadAll(){'
-+ '  document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Laedt...</div>";'
-+ '  google.script.run.withSuccessHandler(function(d){'
-+ '    if(!d||!d.ok||!d.customers){document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Fehler</div>";return}'
-+ '    document.getElementById("totalCount").textContent="("+d.total+")";'
-+ '    if(!d.customers.length){document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Noch keine Kunden</div>";return}'
-+ '    var h="<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Letzte Aenderung</th></tr></thead><tbody>";'
-+ '    for(var i=0;i<d.customers.length;i++){'
-+ '      var c=d.customers[i];'
-+ '      var dt=c.updated?new Date(c.updated).toLocaleDateString("de-DE"):"-";'
-+ '      h+="<tr style=\\"cursor:pointer\\" data-email=\\""+c.email+"\\"><td>"+c.email+"</td><td><strong>"+c.points+"</strong></td><td><span class=\\"badge "+c.tier+"\\">"+c.tier+"</span></td><td>"+dt+"</td></tr>";'
-+ '    }'
-+ '    h+="</tbody></table>";'
-+ '    document.getElementById("customerList").innerHTML=h;'
-+ '    var rows=document.querySelectorAll("tr[data-email]");'
-+ '    for(var j=0;j<rows.length;j++){'
-+ '      rows[j].addEventListener("click",function(){document.getElementById("email").value=this.getAttribute("data-email");searchCustomer()});'
-+ '    }'
-+ '  }).withFailureHandler(function(e){'
-+ '    document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Fehler: "+e.message+"</div>";'
-+ '  }).adminListCustomers();'
-+ '}'
-+ ''
-+ 'document.getElementById("email").addEventListener("keydown",function(e){if(e.key==="Enter")searchCustomer()});'
++ 'function go(p){var pgs=document.querySelectorAll(\'.pg\');for(var i=0;i<pgs.length;i++)pgs[i].classList.remove(\'on\');document.getElementById(\'pg-\'+p).classList.add(\'on\');var lk=document.querySelectorAll(\'.nav a\');for(var j=0;j<lk.length;j++)lk[j].classList.remove(\'on\');var a=document.querySelector(\'[data-p="\'+p+\'"]\');if(a)a.classList.add(\'on\');if(p===\'dash\')loadDash();document.getElementById(\'sb\').classList.remove(\'open\')}'
++ 'function tst(m,t){var e=document.getElementById(\'tst\');e.textContent=m;e.className=\'toast \'+(t||\'ok\')+\' show\';setTimeout(function(){e.classList.remove(\'show\')},3500)}'
++ 'function sm(id,t,m){var e=document.getElementById(id);e.className=\'msg \'+t;e.textContent=m;e.style.display=\'block\'}'
++ 'function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,\'.\')}'
++ 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
++ 'function doSearch(){var em=document.getElementById(\'sEm\').value.trim();if(!em){sm(\'sMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'sMsg\',\'ok\',\'Suche...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'sMsg\',\'err\',\'Kunde nicht gefunden\');document.getElementById(\'cDet\').style.display=\'none\';return}document.getElementById(\'sMsg\').style.display=\'none\';showCust(d)}).withFailureHandler(function(e){sm(\'sMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomer(em)}'
++ 'function showCust(d){document.getElementById(\'cDet\').style.display=\'block\';var h=\'<div style="flex:1"><div class="em">\'+d.email+\'</div><div class="mt"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div></div>\';h+=\'<div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div></div>\';if(d.next_tier)h+=\'<div style="text-align:right"><div class="mt">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div></div>\';document.getElementById(\'cCard\').innerHTML=h}'
++ 'function doAdj(rm){var em=document.getElementById(\'sEm\').value.trim();var pts=parseInt(document.getElementById(\'aP\').value)||0;var re=document.getElementById(\'aR\').value.trim();if(!em||!pts){sm(\'aMsg\',\'err\',\'E-Mail und Punkte eingeben\');return}sm(\'aMsg\',\'ok\',\'Wird gespeichert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'aMsg\',\'err\',(d&&d.error)||\'Fehler\');return}var si=d.changed>0?\'+\':\'\';tst(si+d.changed+\' Punkte \u2014 Neuer Stand: \'+fmt(d.points)+\' (\'+d.tier+\')\',\'ok\');document.getElementById(\'aMsg\').style.display=\'none\';document.getElementById(\'aP\').value=\'\';document.getElementById(\'aR\').value=\'\';doSearch()}).withFailureHandler(function(e){sm(\'aMsg\',\'err\',e.message)}).adminAdjustPoints(em,pts,re,rm)}'
++ 'function doList(){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}document.getElementById(\'cCnt\').textContent=\'(\'+d.total+\')\';if(!d.customers.length){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Noch keine Kunden</div>\';return}var h=\'<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Aktualisiert</th></tr></thead><tbody>\';for(var i=0;i<d.customers.length;i++){var c=d.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';h+=\'<tr class="ck" onclick="selC(\\'\'+c.email+\'\\')"><td>\'+c.email+\'</td><td><strong>\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+dt+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'cTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminListCustomers()}'
++ 'function selC(em){document.getElementById(\'sEm\').value=em;doSearch();window.scrollTo(0,0)}'
++ 'function doReg(){var em=document.getElementById(\'nEm\').value.trim();var pts=parseInt(document.getElementById(\'nPt\').value)||0;var re=document.getElementById(\'nRe\').value.trim();if(!em){sm(\'nMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'nMsg\',\'ok\',\'Wird registriert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'nMsg\',\'err\',(d&&d.error)||\'Fehler\');return}sm(\'nMsg\',\'ok\',\'Kunde registriert: \'+d.email+\' \u2014 \'+fmt(d.points)+\' Punkte (\'+d.tier+\')\');tst(\'Neuer Kunde: \'+d.email,\'ok\');document.getElementById(\'nEm\').value=\'\';document.getElementById(\'nPt\').value=\'\';document.getElementById(\'nRe\').value=\'\'}).withFailureHandler(function(e){sm(\'nMsg\',\'err\',e.message)}).adminAddNewCustomer(em,pts,re)}'
++ 'function doHist(){var em=document.getElementById(\'hEm\').value.trim();document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}if(!d.history.length){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Keine Eintraege</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var i=0;i<d.history.length;i++){var r=d.history[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td style="white-space:nowrap">\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';if(d.total>200)h+=\'<div class="emp" style="padding:12px">Zeige 200 von \'+d.total+\'</div>\';document.getElementById(\'hTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetHistory(em)}'
++ 'document.getElementById(\'sEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doSearch()});'
++ 'document.getElementById(\'nEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doReg()});'
++ 'document.getElementById(\'hEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doHist()});'
++ 'loadDash();'
 + '</script></body></html>';
 }
 
