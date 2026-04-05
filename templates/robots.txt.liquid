@@ -15,12 +15,11 @@
   {# Search result pages should not be crawled/indexed #}
   Disallow: /search
   Disallow: /search?*
-
-  {%- if group.user_agent contains 'Googlebot' -%}
-    {# Force disallow of dynamic vendor filter pages to save crawl budget #}
-    Disallow: /collections/vendors?q=*
-    Disallow: /collections/vendors?*q=*
-  {%- endif -%}
+  {# OAuth login redirects — always noindex, waste of crawl budget #}
+  Disallow: /customer_authentication/
+  {# Vendor filter pages #}
+  Disallow: /collections/vendors
+  Disallow: /collections/vendors?*
 
   {%- if group.sitemap != blank -%}
     {{ group.sitemap }}

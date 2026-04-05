@@ -102,7 +102,7 @@
   {% if product.vendor != blank %}
     <li class="meta-list-item">
       <i class="fa-solid fa-tag"></i>
-      <span class="meta-text"><span class="meta-label">Marke:</span> <a class="meta-value" href="{{ _root | append: 'collections/vendors?q=' | append: product.vendor | url_param_escape }}">{{ product.vendor }}</a></span>
+      <span class="meta-text"><span class="meta-label">Marke:</span> <span class="meta-value">{{ product.vendor }}</span></span>
     </li>
   {% endif %}
 

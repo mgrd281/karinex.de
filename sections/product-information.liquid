@@ -460,10 +460,9 @@
         {%- endif -%}
         {%- if product and product.vendor != blank -%}
           <li>
-            <a href="{{ routes.root_url | append: 'collections/vendors?q=' | append: product.vendor | url_param_escape }}"
-               title="Alle Produkte von {{ product.vendor | escape }}">
+            <span title="{{ product.vendor | escape }}">
               {{ product.vendor }}
-            </a>
+            </span>
           </li>
         {%- endif -%}
       </ol>
