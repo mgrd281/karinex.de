@@ -52,6 +52,11 @@
   if product.id == empty or product == blank
     assign onboarding = true
   endif
+
+  assign product_url_clean = product.url
+  if product_url_clean contains '?'
+    assign product_url_clean = product_url_clean | split: '?' | first
+  endif
 %}
 
 {%- if settings.transition_to_main_product -%}
@@ -78,7 +83,7 @@
     id="{{ product_card_id | md5 }}"
     {% unless onboarding %}
       {%- comment -%} SEO: Force canonical URL structure (No parameters) {%- endcomment -%}
-      href="{{ product.url }}"
+      href="{{ product_url_clean }}"
     {% endunless %}
     class="product-card__link"
     ref="productCardLink"

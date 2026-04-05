@@ -31,6 +31,11 @@
       assign featured_media_url = resource.featured_media.preview_image | image_url: width: image_width
     endif
   endif
+
+  assign resource_url_clean = resource.url
+  if resource_url_clean contains '?'
+    assign resource_url_clean = resource_url_clean | split: '?' | first
+  endif
 %}
 
 {%- if resource_type == 'product' and settings.transition_to_main_product -%}
@@ -42,12 +47,12 @@
 {%- endif -%}
 <div
   class="resource-card{% if style == 'overlay' %} resource-card--overlay{% endif %}"
-  href="{{ resource.url }}"
+  href="{{ resource_url_clean }}"
   data-resource-type="{{ resource_type }}"
 >
   <a
     class="resource-card__link"
-    href="{{ resource.url }}"
+    href="{{ resource_url_clean }}"
   >
     <span class="visually-hidden">
       {{ resource.title }}

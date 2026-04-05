@@ -10,6 +10,9 @@
   endif
   
   assign url = product.url
+  if url contains '?'
+    assign url = url | split: '?' | first
+  endif
 %}
 
 {% capture card_content %}
