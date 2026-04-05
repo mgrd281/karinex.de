@@ -742,78 +742,78 @@
           
           // Office 2024
           'office-2024': '/collections/microsoft-office-2024',
-          'office-2024-pro': '/search?q=office+2024+professional',
-          'office-2024-professional': '/search?q=office+2024+professional',
-          'office-2024-professional-plus': '/search?q=office+2024+professional+plus',
-          'office-2024-standard': '/search?q=office+2024+standard',
-          'office-2024-mac': '/search?q=office+2024+mac',
+          'office-2024-pro': '/collections/microsoft-office-2024',
+          'office-2024-professional': '/collections/microsoft-office-2024',
+          'office-2024-professional-plus': '/collections/microsoft-office-2024',
+          'office-2024-standard': '/collections/microsoft-office-2024',
+          'office-2024-mac': '/collections/microsoft-office-2024',
           
           // Office 2021
           'office-2021': '/collections/office-2021',
-          'office-2021-pro': '/search?q=office+2021+professional',
-          'office-2021-professional': '/search?q=office+2021+professional',
-          'office-2021-professional-plus': '/search?q=office+2021+professional+plus',
-          'office-2021-home': '/search?q=office+2021+home',
-          'office-2021-mac': '/search?q=office+2021+mac',
+          'office-2021-pro': '/collections/office-2021',
+          'office-2021-professional': '/collections/office-2021',
+          'office-2021-professional-plus': '/collections/office-2021',
+          'office-2021-home': '/collections/office-2021',
+          'office-2021-mac': '/collections/office-2021',
           
           // Office 2019
           'office-2019': '/collections/office-2019',
-          'office-2019-pro': '/search?q=office+2019+professional',
-          'office-2019-professional': '/search?q=office+2019+professional',
-          'office-2019-professional-plus': '/search?q=office+2019+professional+plus',
+          'office-2019-pro': '/collections/office-2019',
+          'office-2019-professional': '/collections/office-2019',
+          'office-2019-professional-plus': '/collections/office-2019',
           
           // Microsoft 365
           'microsoft-365': '/collections/microsoft-365',
           'office-365': '/collections/microsoft-365',
           'm365': '/collections/microsoft-365',
-          '365-family': '/search?q=microsoft+365+family',
-          '365-personal': '/search?q=microsoft+365+personal',
-          '365-business': '/search?q=microsoft+365+business',
+          '365-family': '/collections/microsoft-365',
+          '365-personal': '/collections/microsoft-365',
+          '365-business': '/collections/microsoft-365',
           
           // Windows 11
           'windows-11': '/collections/software',
           'win-11': '/collections/software',
           'windows-11-pro': '/products/windows-11-pro-key-kaufen-download',
-          'windows-11-professional': '/search?q=windows+11+professional',
-          'windows-11-home': '/search?q=windows+11+home',
-          'windows-11-enterprise': '/search?q=windows+11+enterprise',
+          'windows-11-professional': '/collections/software',
+          'windows-11-home': '/collections/software',
+          'windows-11-enterprise': '/collections/software',
           
           // Windows 10
           'windows-10': '/collections/windows-10',
           'win-10': '/collections/windows-10',
-          'windows-10-pro': '/search?q=windows+10+pro',
-          'windows-10-professional': '/search?q=windows+10+professional',
-          'windows-10-home': '/search?q=windows+10+home',
-          'windows-10-enterprise': '/search?q=windows+10+enterprise',
+          'windows-10-pro': '/collections/windows-10',
+          'windows-10-professional': '/collections/windows-10',
+          'windows-10-home': '/collections/windows-10',
+          'windows-10-enterprise': '/collections/windows-10',
           
           // Windows Server
-          'windows-server': '/search?q=windows+server',
-          'windows-server-2022': '/search?q=windows+server+2022',
-          'windows-server-2019': '/search?q=windows+server+2019',
-          'server-2022': '/search?q=windows+server+2022',
-          'server-2019': '/search?q=windows+server+2019',
+          'windows-server': '/collections/software',
+          'windows-server-2022': '/collections/software',
+          'windows-server-2019': '/collections/software',
+          'server-2022': '/collections/software',
+          'server-2019': '/collections/software',
           
           // Project & Visio
-          'project': '/search?q=microsoft+project',
-          'project-2021': '/search?q=project+2021',
-          'project-2019': '/search?q=project+2019',
-          'visio': '/search?q=microsoft+visio',
-          'visio-2021': '/search?q=visio+2021',
-          'visio-2019': '/search?q=visio+2019',
+          'project': '/collections/software',
+          'project-2021': '/collections/software',
+          'project-2019': '/collections/software',
+          'visio': '/collections/software',
+          'visio-2021': '/collections/software',
+          'visio-2019': '/collections/software',
           
           // Antivirus & Security
-          'antivirus': '/search?q=antivirus',
-          'kaspersky': '/search?q=kaspersky',
-          'norton': '/search?q=norton',
-          'mcafee': '/search?q=mcafee',
-          'avira': '/search?q=avira',
-          'bitdefender': '/search?q=bitdefender',
+          'antivirus': '/collections/software',
+          'kaspersky': '/collections/software',
+          'norton': '/collections/software',
+          'mcafee': '/collections/software',
+          'avira': '/collections/software',
+          'bitdefender': '/collections/software',
           
           // Other Software
-          'adobe': '/search?q=adobe',
-          'photoshop': '/search?q=adobe+photoshop',
-          'acrobat': '/search?q=adobe+acrobat',
-          'autocad': '/search?q=autocad',
+          'adobe': '/collections/software',
+          'photoshop': '/collections/software',
+          'acrobat': '/collections/software',
+          'autocad': '/collections/software',
           
           // Collections
           'bestseller': '/collections/unsere-bestseller',
@@ -963,15 +963,15 @@
         // 4. Fallback patterns (regex-based)
         if (!redirectUrl) {
           const redirectRules = [
-            // Product patterns - redirect to search
-            { pattern: /\/products\/(.+)/, redirect: (match) => `/search?q=${match[1].replace(/-/g, ' ')}` },
+            // Product patterns - keep users on an indexable shopping page
+            { pattern: /\/products\/(.+)/, redirect: () => '/collections/all' },
             
             // Collection patterns
-            { pattern: /\/collections\/(.+)/, redirect: (match) => `/search?q=${match[1].replace(/-/g, ' ')}` },
+            { pattern: /\/collections\/(.+)/, redirect: () => '/collections/all' },
             
             // Common typos & old URLs
-            { pattern: /\/(produkte?|artikel|shop)\/(.+)/, redirect: (match) => `/search?q=${match[2].replace(/-/g, ' ')}` },
-            { pattern: /\/(kategorie|category)\/(.+)/, redirect: (match) => `/search?q=${match[2].replace(/-/g, ' ')}` },
+            { pattern: /\/(produkte?|artikel|shop)\/(.+)/, redirect: () => '/collections/all' },
+            { pattern: /\/(kategorie|category)\/(.+)/, redirect: () => '/collections/all' },
             
             // Windows products (any format)
             { pattern: /win(dows)?[-_\s]?11/i, redirect: () => '/collections/software' },
