@@ -538,6 +538,7 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="canonical"', '<link data-cfh-canonical rel="canonical"' -%}
     {%- comment -%} Strip Shopify's duplicate hreflang — ours is in meta-tags.liquid {%- endcomment -%}
     {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="alternate" hreflang=', '<link data-cfh-hreflang rel="not-alternate" data-hreflang=' -%}
+    {%- assign content_for_header_clean = content_for_header_clean | replace: '<link data-cfh-hreflang rel="alternate" hreflang=', '<link data-cfh-hreflang rel="not-alternate" data-hreflang=' -%}
     {{ content_for_header_clean }}
 
   <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->
