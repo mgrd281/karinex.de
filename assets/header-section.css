@@ -1,0 +1,745 @@
+  body {
+    --header-height: 60px;
+    --header-group-height: var(--header-height);
+    --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
+  }
+
+  .header {
+    display: block;
+  }
+
+  .header[transparent] {
+    --language-button-background-color: transparent;
+    --language-button-border-color: transparent;
+
+    /* used to apply transparency to .header__row, will only ever be transparent or unset */
+    --header-bg-color: transparent;
+
+    /* used to display the appropriate logo based on transparency state */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    /* transparent color scheme on .header should never apply its background color */
+    background-color: transparent;
+    z-index: 1000;
+    transition: none !important;
+
+    &[transparent='not-sticky'][data-sticky-state='active'],
+    /* Only show opaque background when hovering over menu items with children (mega menu)
+       Multiple selectors for performance: each simple :has() check is faster than one complex selector with multiple conditions */
+    &:has(.mega-menu__list:hover),
+    &:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'], [data-animating])),
+    &:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'], [data-animating])) {
+      --header-logo-display: unset;
+      --header-logo-inverse-display: unset;
+      --header-bg-color: unset;
+      --color-foreground: inherit;
+      --color-foreground-rgb: inherit;
+      --color-background: inherit;
+      --color-background-rgb: inherit;
+      --color-border: inherit;
+      --color-border-rgb: inherit;
+
+      .header__row {
+        /* Faster transition for "in" animation */
+        transition: color var(--animation-values-fast), border-color var(--animation-values-fast),
+          background-color var(--animation-values-fast);
+      }
+    }
+
+    .header__row {
+      /* Slower transition for "out" animation */
+      transition: color var(--animation-values-slow), border-color var(--animation-values-slow),
+        background-color var(--animation-values-slow);
+    }
+  }
+
+  :is(.header[transparent]:not([data-sticky-state='active']), .header[transparent='always'][data-sticky-state='active'])
+    .header__row:not(
+      :has(
+          .mega-menu__list:hover,
+          .menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'], [data-animating]),
+          .menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'], [data-animating])
+        )
+    ) {
+    /* while transparent, header-row ignores its color-scheme settings, pull from the header-component */
+    --color-foreground: inherit;
+    --color-foreground-rgb: inherit;
+    --color-border: inherit;
+    --color-border-rgb: inherit;
+    --color-primary-button-background: inherit;
+    --color-primary-button-text: inherit;
+  }
+
+  .header--inherit-color-scheme-on-menu-open:has(.mega-menu__list:hover) .header__row,
+  .header--inherit-color-scheme-on-menu-open:has(
+      .menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'], [data-animating])
+    )
+    .header__row,
+  .header--inherit-color-scheme-on-menu-open:has(
+      .menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'], [data-animating])
+    )
+    .header__row {
+    --color-foreground: inherit;
+    --color-foreground-rgb: inherit;
+    --color-background: inherit;
+    --color-background-rgb: inherit;
+    --color-border: inherit;
+    --color-border-rgb: inherit;
+  }
+
+  .header-section {
+    position: relative;
+    z-index: var(--layer-heightened);
+  }
+
+  header-component[sticky],
+  .header-section:has(> #header-component[sticky]) {
+    position: sticky !important;
+    top: var(--announcement-height, 0px) !important;
+    z-index: 1000 !important;
+    transition: none !important;
+    display: block !important;
+  }
+
+  /* Handle scroll-up mode: hide when idle (scrolling down) */
+  header-component[sticky='scroll-up'][data-sticky-state='idle'] {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease !important;
+  }
+
+  /* Cart Drawer Overlays Everything */
+  .cart-drawer__dialog {
+    z-index: 5000 !important;
+  }
+
+  /* Premium smooth open/close animation */
+  .cart-drawer__dialog[open] {
+    animation-duration: 0.28s !important;
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  }
+  .cart-drawer__dialog[open].dialog-closing {
+    animation-duration: 0.22s !important;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1) !important;
+  }
+
+  header-component[sticky='scroll-up'][data-sticky-state='active'] {
+    transform: translateY(0);
+    transition: transform 0.3s ease !important;
+  }
+
+  /* Ensure height is maintained to prevent CLS */
+  .header-section {
+    min-height: var(--header-height, 0);
+  }
+
+  .header-section:has(> #header-component[transparent]) {
+    min-height: 0;
+  }
+
+  .header[data-sticky-state] {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+    opacity: 1;
+  }
+
+  .header-section {
+    box-shadow: none !important;
+    border-bottom: none !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .header-section {
+      min-height: 0 !important;
+    }
+    .header__columns {
+      --padding-block-start: 10px !important; /* Overriden to remove white void */
+      --padding-block-end: 0px !important;
+    }
+  }
+
+  .header[data-sticky-state='active'] {
+    view-transition-name: sticky-header;
+    box-shadow: none !important;
+    border-bottom: none !important;
+  }
+
+  .header[data-sticky-state='idle'],
+  .header[data-sticky-state='active'][data-animating] {
+    opacity: 0;
+  }
+
+  .header__row {
+    position: relative;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    /* will default to bg from its color scheme unless --header-bg-color is transparent */
+    background-color: var(--header-bg-color, var(--color-background));
+  }
+
+  .header__row--top:not(.divider--page-width),
+  .header__row--top.divider--page-width .header__columns {
+    border-bottom: none !important;
+  }
+
+  .header__row--bottom {
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  .template-product .header__row--divider {
+    display: block !important;
+  }
+
+  .template-product .header__row--divider .header__columns {
+    max-width: 1200px !important;
+    margin-inline: auto !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .header__row,
+    .header__row--top:not(.divider--page-width),
+    .header__row--top.divider--page-width .header__columns {
+      border-bottom: none !important;
+      border-bottom-width: 0 !important;
+    }
+  }
+
+  .header__row.divider--page-width:not(.section--page-width) .header__columns {
+    @media screen and (min-width: 750px) {
+      padding-inline-start: 0;
+      padding-inline-end: 0;
+      margin-inline-start: var(--page-margin);
+      margin-inline-end: var(--page-margin);
+    }
+  }
+
+  .header__column {
+    display: flex;
+    align-items: center;
+
+    /* on mobile, header__column nodes are ignored to create a new grid-template-area based on all visible content */
+    @media screen and (max-width: 749px) {
+      display: contents;
+    }
+  }
+
+  .header__column--left,
+  .header__column--center {
+    gap: var(--gap-xl);
+    grid-area: left;
+  }
+
+  .header__column--center {
+    justify-content: center;
+    grid-area: center;
+
+    header-menu:only-child .overflow-menu::part(list) {
+      justify-content: center;
+    }
+  }
+
+  .header__column--right {
+    gap: 12px;
+    justify-content: flex-end;
+    grid-area: right;
+
+    .overflow-menu::part(list) {
+      justify-content: flex-end;
+    }
+  }
+
+  .header__columns {
+    /* Three column layout */
+    --header-left: 1fr;
+    --header-center: auto;
+    --header-right: 1fr;
+    --header-template-columns: var(--header-left) var(--header-center) var(--header-right);
+
+    /* Mobile layout */
+    --header-mobile-bookend: 44px;
+
+    display: grid;
+    grid-template-areas: 'left center right';
+    grid-gap: var(--gap-xl);
+    grid-template-columns: var(--header-template-columns);
+
+    /* If menu is in center column */
+    &:has(.header__column--center header-menu) {
+      --header-center: auto;
+      --header-left: minmax(max-content, 1fr);
+      --header-right: minmax(max-content, 1fr);
+    }
+
+    /* If there is no center column, make the column the menu is in grow eagerly */
+    &:where(:not(:has(.header__column--center))) {
+      @media screen and (min-width: 750px) {
+        --header-template-columns: var(--header-left) var(--header-right);
+
+        grid-template-areas: 'left right';
+      }
+
+      /* If the header-menu is in the right column */
+      &:has(.header__column--right header-menu) {
+        --header-right: auto;
+        --header-left: minmax(max-content, 1fr);
+      }
+
+      /* If the header-menu is in the left column */
+      &:has(.header__column--left header-menu) {
+        --header-left: auto;
+        --header-right: minmax(max-content, 1fr);
+      }
+    }
+
+    @media screen and (max-width: 749px) {
+      --header-template-columns: minmax(var(--header-mobile-bookend), max-content) minmax(var(--header-mobile-bookend), max-content) 1fr
+        minmax(var(--header-mobile-bookend), max-content) minmax(max-content, auto);
+
+      grid-template-areas: 'leftA leftB center rightA rightB';
+      grid-column: span 3;
+      column-gap: 0;
+      align-items: center;
+      padding-block: 0;
+      padding-inline: 0 var(--padding-3xs);
+
+      .header-logo {
+        grid-area: leftB;
+        justify-self: start;
+        padding-left: 4px; /* Reduced space from menu */
+        margin-top: -6px; /* Pull logo a bit closer to top edge */
+      }
+
+      .search-action {
+        grid-area: rightA;
+        justify-self: end;
+        margin-right: 4px; /* Match header-actions gap */
+      }
+
+      header-actions {
+        grid-area: rightB;
+      }
+      
+      /* Standardize Mobile Icon Sizes - Balanced Spacing */
+      .header__icon--menu,
+      .search-action,
+      header-actions .header-actions__action {
+         min-width: 40px !important; /* Touch target */
+         width: auto !important;
+         height: 44px !important;
+         display: flex !important;
+         align-items: center !important;
+         justify-content: center !important;
+         margin: 0 !important;
+         padding: 0 4px !important;
+      }
+      
+      /* ─── Badge overflow: badges must paint outside touch-target box ─── */
+      header-actions .header-actions__action {
+        overflow: visible !important;
+      }
+
+      /* ─── AboutYou-style: dot indicator + count text next to icon ─── */
+      
+      /* Wishlist action: flex row for icon + number */
+      header-actions .action__wishlist {
+        display: flex !important;
+        align-items: center !important;
+        gap: 1px !important;
+        text-decoration: none !important;
+      }
+
+      /* Icon wrapper: relative for dot positioning */
+      header-actions .action__wishlist .icon-wrapper {
+        position: relative !important;
+      }
+
+      /* Wishlist dot indicator */
+      header-actions .wishlist-dot {
+        position: absolute !important;
+        top: 2px !important;
+        right: -1px !important;
+        width: 6px !important;
+        height: 6px !important;
+        background: #0f3b2e !important;
+        border-radius: 50% !important;
+        border: none !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+      }
+
+      /* Wishlist count text next to icon */
+      header-actions .wishlist-count-text {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: currentColor !important;
+        line-height: 1 !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        min-width: 0 !important;
+        height: auto !important;
+        border-radius: 0 !important;
+        position: static !important;
+      }
+      header-actions .wishlist-count-text[data-count="0"] {
+        display: none !important;
+      }
+
+      /* Hide wishlist dot when count is 0 */
+      header-actions .action__wishlist[data-wishlist-count="0"] .wishlist-dot {
+        display: none !important;
+      }
+
+      /* ─── Cart: AboutYou-style ─── */
+      header-actions cart-icon {
+        display: flex !important;
+        align-items: center !important;
+        gap: 1px !important;
+      }
+
+      /* Cart SVG wrapper: relative for dot */
+      header-actions cart-icon .svg-wrapper {
+        position: relative !important;
+      }
+
+      /* Cart dot indicator */
+      header-actions cart-icon .svg-wrapper::after {
+        content: '' !important;
+        position: absolute !important;
+        top: 2px !important;
+        right: 1px !important;
+        width: 6px !important;
+        height: 6px !important;
+        background: #0f3b2e !important;
+        border-radius: 50% !important;
+        border: none !important;
+        z-index: 2 !important;
+        pointer-events: none !important;
+      }
+
+      /* Hide cart dot when cart is empty */
+      header-actions cart-icon:not(.header-actions__cart-icon--has-cart) .svg-wrapper::after {
+        display: none !important;
+      }
+
+      /* Cart bubble: inline text next to icon, not overlay circle */
+      header-actions .cart-bubble {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        min-width: 0 !important;
+        border-radius: 0 !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        aspect-ratio: auto !important;
+      }
+
+      header-actions .cart-bubble__background {
+        display: none !important;
+      }
+
+      header-actions .cart-bubble__text,
+      header-actions .cart-bubble__text-count {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: currentColor !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+      }
+
+      /* Hide cart count when empty */
+      header-actions .cart-bubble.visually-hidden {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+
+      /* Hide old-style badge classes */
+      header-actions .icon-badge,
+      header-actions .wishlist-count-badge {
+        display: none !important;
+      }
+      
+      header-actions {
+         display: flex !important;
+         align-items: center !important;
+         gap: 8px !important; 
+         padding-right: 8px !important; 
+      }
+      
+      .header__icon--menu svg,
+      .search-action svg,
+      header-actions .header-actions__action svg {
+         width: 22px !important;
+         height: 22px !important;
+      }
+      
+      .header-logo {
+         padding-left: 0 !important; /* Remove padding as touch target handles spacing */
+      }
+    }
+  }
+
+  /* Single column layout if there are no columns within */
+  .header__columns:not(:has(.header__column)) {
+    grid-template-columns: 1fr;
+  }
+
+  /* Theme hover dimming removed for normalized header action logic */
+  {% comment %}
+  @media (hover: hover) {
+    ...
+  }
+  {% endcomment %}
+
+  /* Ensure smooth transitions for all interactive elements */
+  header-menu,
+  .header-actions__action,
+  .dropdown-localization__button,
+  .header__icon--menu {
+    transition: opacity var(--animation-speed) var(--animation-easing);
+  }
+
+  @media (hover: hover) {
+    .header-actions__action:hover,
+    .header__icon--menu:hover {
+      color: #000 !important;
+      filter: brightness(0);
+    }
+  }
+
+  /* Extend hover area through padding to prevent flickering on actual menu items */
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__link[aria-haspopup],
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__link,
+  .menu-list__list-item:where(:not([slot='overflow'])) > button.menu-list__link {
+    margin-block: calc(-2 * var(--header-padding));
+    padding-block: calc(2 * var(--header-padding));
+    margin-inline: calc(-1 * var(--gap-xl) / 2);
+    padding-inline: calc(var(--gap-xl) / 2);
+  }
+
+  /* Set header paddings based on height setting */
+  .header {
+    --header-padding: var(--padding-sm);
+    --font-paragraph--line-height: 1;
+    contain: layout style;
+  }
+
+  .header:has(#Details-menu-drawer-container[open]) {
+    contain: style;
+  }
+
+  .header.header--compact {
+    --header-padding: var(--padding-2xs);
+  }
+
+  .header__columns {
+    --padding-block-start: var(--header-padding);
+    --padding-block-end: var(--header-padding);
+  }
+
+  @media screen and (min-width: 750px) {
+    /* Only apply 1200px width on product pages */
+    .template-product .header__columns {
+      width: 100%;
+      max-width: 1200px;
+      margin-inline: auto;
+    }
+  }
+
+  .header:not(.header--compact) .header__row--bottom {
+    --header-padding: var(--padding-xs);
+  }
+
+  .header--collapse-row-paddings {
+    .header__row--top .header__columns {
+      --padding-block-end: 0px;
+    }
+
+    .header__row--bottom .header__columns {
+      --padding-block-start: 0px;
+    }
+  }
+
+  /* When the header is transparent, add a margin to a potential header-section below it */
+  .header-section:has(.header[transparent]) + .shopify-section {
+    margin-top: var(--header-height);
+  }
+
+  /* When the header is transparent, and when there is no header-section below it, offset the first main-section with
+   * the height of the header
+   */
+
+  main > .shopify-section:first-child .section:not(.disable-section-top-offset) {
+    &.spacing-style,
+    .spacing-style {
+      --section-top-offset: calc(var(--header-height) * var(--transparent-header-offset-boolean));
+
+      /* Any nested sections should not be offset */
+      :is(.spacing-style, .inherit-spacing) {
+        --section-top-offset: 0px;
+      }
+    }
+
+    /* Make sticky content immediately stick to the top of the page */
+    .sticky-content {
+      margin-top: calc(var(--header-height) * var(--transparent-header-offset-boolean) * -1);
+    }
+  }
+
+  /* Optimize layout performance for hidden menus */
+  .header-menu .menu-list__submenu {
+    content-visibility: auto;
+    contain-intrinsic-size: 0px 500px;
+  }
+
+  /* Force visibility when open/animating to prevent layout issues */
+  .header-menu details[open] .menu-list__submenu,
+  .header-menu .menu-list__submenu[data-active] {
+    content-visibility: visible;
+  }
+
+  /* ═══ Header Actions: AboutYou-Style Badge ═══ */
+  
+  /* ═══ Positioning context ═══ */
+  .header-actions__action {
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .header-actions__action .icon-wrapper,
+  .header-actions__action .svg-wrapper {
+    position: relative !important;
+  }
+
+  /* ═══ Wishlist: dot + count text ═══ */
+  .action__wishlist {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    text-decoration: none !important;
+  }
+
+  .action__wishlist .wishlist-dot {
+    position: absolute !important;
+    top: 2px !important;
+    right: -1px !important;
+    width: 7px !important;
+    height: 7px !important;
+    background: #0f3b2e !important;
+    border-radius: 50% !important;
+    border: none !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  .action__wishlist .wishlist-count-text {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: currentColor !important;
+    line-height: 1 !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    position: static !important;
+    min-width: 0 !important;
+    height: auto !important;
+    border-radius: 0 !important;
+  }
+
+  .action__wishlist .wishlist-count-text[data-count="0"] {
+    display: none !important;
+  }
+
+  /* Hide wishlist dot when count is 0 */
+  .action__wishlist[data-wishlist-count="0"] .wishlist-dot {
+    display: none !important;
+  }
+
+  /* Hide old badge classes */
+  .header-actions__action .icon-badge,
+  .header-actions__action .wishlist-count-badge {
+    display: none !important;
+  }
+
+  /* ═══ Cart: dot + count text ═══ */
+  .header-actions__cart-icon,
+  .header-actions__action:has(cart-icon) {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  cart-icon {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+  }
+
+  /* Cart dot indicator */
+  cart-icon .svg-wrapper::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 1px !important;
+    width: 7px !important;
+    height: 7px !important;
+    background: #0f3b2e !important;
+    border-radius: 50% !important;
+    border: none !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+  }
+
+  /* Hide dot when cart is empty */
+  cart-icon:not(.header-actions__cart-icon--has-cart) .svg-wrapper::after {
+    display: none !important;
+  }
+
+  /* Cart bubble: inline text, not circle overlay */
+  .header-actions__action .cart-bubble,
+  .header-actions__cart-icon .cart-bubble {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    aspect-ratio: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .header-actions__action .cart-bubble.visually-hidden,
+  .header-actions__cart-icon .cart-bubble.visually-hidden,
+  .header-actions__action .cart-bubble[data-count="0"] {
+    display: none !important;
+  }
+
+  /* Hide circle background */
+  .header-actions__action .cart-bubble__background,
+  .header-actions__cart-icon .cart-bubble__background,
+  .header-actions__action .cart-bubble::before {
+    display: none !important;
+  }
+
+  /* Cart count text styling */
+  .header-actions__action .cart-bubble__text,
+  .header-actions__cart-icon .cart-bubble__text,
+  .header-actions__action .cart-bubble__text-count {
+    color: currentColor !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+  }
