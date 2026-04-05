@@ -2344,5 +2344,20 @@
         "default": "118"
       }
     ]
+  },
+  {
+    "name": "Referral System",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Referral-Popup: Wenn jemand karinex.de/?ref=XXXX öffnet, erscheint ein Popup zur E-Mail-Eingabe. Die Google Apps Script Web App erstellt dann automatisch einen einzigartigen 10%-Rabattcode in Shopify."
+      },
+      {
+        "type": "text",
+        "id": "referral_api_url",
+        "label": "Referral API URL (Google Apps Script)",
+        "info": "Die Web App URL aus dem KarinexReferralCodes.gs Deployment. Ohne URL wird der statische Code FREUNDE10 angezeigt."
+      }
+    ]
   }
 ]

@@ -86,9 +86,6 @@
   var refCode = params.get('ref');
   if (!refCode) return;
 
-  /* Check if already claimed */
-  try { if (localStorage.getItem('kx_ref_claimed')) return; } catch(e){}
-
   var overlay = document.getElementById('kx-ref-overlay');
   var step1 = document.getElementById('kx-ref-step1');
   var step2 = document.getElementById('kx-ref-step2');
@@ -96,8 +93,36 @@
   var submitBtn = document.getElementById('kx-ref-submit');
   var errorEl = document.getElementById('kx-ref-error');
   var copyBtn = document.getElementById('kx-ref-copy');
+  var codeEl = document.getElementById('kx-ref-code');
   var closeBtn = overlay.querySelector('.kx-ref-overlay__close');
   var backdrop = overlay.querySelector('.kx-ref-overlay__backdrop');
+
+  function bindCopy(code){
+    copyBtn.onclick = function(){
+      navigator.clipboard.writeText(code).then(function(){
+        copyBtn.textContent = 'Kopiert ✓';
+        setTimeout(function(){ copyBtn.textContent = 'Code kopieren'; }, 2500);
+      });
+    };
+  }
+
+  /* Check if already claimed — show saved code */
+  try {
+    var saved = localStorage.getItem('kx_ref_code');
+    if (saved) {
+      codeEl.textContent = saved;
+      step1.style.display = 'none';
+      step2.style.display = 'block';
+      setTimeout(function(){ overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }, 800);
+      bindCopy(saved);
+      closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; document.body.style.overflow = ''; });
+      backdrop.addEventListener('click', function(){ overlay.style.display = 'none'; document.body.style.overflow = ''; });
+      return;
+    }
+  } catch(e){}
+
+  /* ── GAS Web App URL ── */
+  var REFERRAL_API = '{{ settings.referral_api_url | default: "" }}';
 
   /* Show popup after short delay */
   setTimeout(function(){ overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }, 800);
@@ -121,8 +146,9 @@
     }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Wird gesendet…';
+    submitBtn.textContent = 'Code wird erstellt…';
 
+    /* Also subscribe via Shopify contact form */
     fetch('/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -130,25 +156,46 @@
         'form_type': 'customer',
         'utf8': '\u2713',
         'customer[email]': email,
-        'customer[tags]': 'referral,ref_' + refCode + ',FREUNDE10',
         'customer[accepts_marketing]': 'true'
       })
-    }).then(function(){ showCode(); }).catch(function(){ showCode(); });
+    }).catch(function(){});
+
+    /* Call GAS API to create unique Shopify discount code */
+    if (REFERRAL_API) {
+      fetch(REFERRAL_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_code', email: email, ref: refCode })
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.ok && data.code) {
+          showCode(data.code);
+        } else {
+          /* Fallback to static code if API fails */
+          showCode('FREUNDE10');
+        }
+      })
+      .catch(function(){
+        showCode('FREUNDE10');
+      });
+    } else {
+      /* No API configured — use static code */
+      showCode('FREUNDE10');
+    }
   });
 
   emailInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitBtn.click(); });
 
-  function showCode(){
+  function showCode(code){
+    codeEl.textContent = code;
     step1.style.display = 'none';
     step2.style.display = 'block';
-    try { localStorage.setItem('kx_ref_claimed', '1'); } catch(e){}
+    try {
+      localStorage.setItem('kx_ref_code', code);
+      localStorage.setItem('kx_ref_claimed', '1');
+    } catch(e){}
+    bindCopy(code);
   }
-
-  copyBtn.addEventListener('click', function(){
-    navigator.clipboard.writeText('FREUNDE10').then(function(){
-      copyBtn.textContent = 'Kopiert ✓';
-      setTimeout(function(){ copyBtn.textContent = 'Code kopieren'; }, 2500);
-    });
-  });
 })();
 </script>
