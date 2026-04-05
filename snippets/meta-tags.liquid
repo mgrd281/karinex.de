@@ -310,18 +310,30 @@
 {%- unless request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
 {%- liquid
   assign _hreflang_path = request.path
-  if _hreflang_path == '/en' or _hreflang_path == '/pl'
-    assign _hreflang_path = '/'
+  if _hreflang_path == '/' or _hreflang_path == '/en' or _hreflang_path == '/pl' or _hreflang_path == '/en/' or _hreflang_path == '/pl/'
+    assign _hreflang_path = ''
   elsif _hreflang_path contains '/en/'
     assign _hreflang_path = _hreflang_path | slice: 3, 9999
   elsif _hreflang_path contains '/pl/'
     assign _hreflang_path = _hreflang_path | slice: 3, 9999
   endif
+
+  if _hreflang_path == ''
+    assign _href_de = shop.url | append: '/'
+    assign _href_en = shop.url | append: '/en'
+    assign _href_pl = shop.url | append: '/pl'
+    assign _href_x_default = shop.url | append: '/'
+  else
+    assign _href_de = shop.url | append: _hreflang_path
+    assign _href_en = shop.url | append: '/en' | append: _hreflang_path
+    assign _href_pl = shop.url | append: '/pl' | append: _hreflang_path
+    assign _href_x_default = shop.url | append: _hreflang_path
+  endif
 -%}
-<link rel="alternate" hreflang="de" href="{{ shop.url }}{{ _hreflang_path }}">
-<link rel="alternate" hreflang="en" href="{{ shop.url }}/en{{ _hreflang_path }}">
-<link rel="alternate" hreflang="pl" href="{{ shop.url }}/pl{{ _hreflang_path }}">
-<link rel="alternate" hreflang="x-default" href="{{ shop.url }}{{ _hreflang_path }}">
+<link rel="alternate" hreflang="de" href="{{ _href_de }}">
+<link rel="alternate" hreflang="en" href="{{ _href_en }}">
+<link rel="alternate" hreflang="pl" href="{{ _href_pl }}">
+<link rel="alternate" hreflang="x-default" href="{{ _href_x_default }}">
 {%- endunless -%}
 
 {%- comment -%} ═══ PAGINATION (PREV/NEXT) ═══ {%- endcomment -%}
