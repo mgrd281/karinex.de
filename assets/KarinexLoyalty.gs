@@ -620,6 +620,69 @@ function handleAdminList_() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   ADMIN: Server-side functions called by google.script.run
+   ═══════════════════════════════════════════════════════ */
+
+function adminGetCustomer(email) {
+  email = String(email).trim().toLowerCase();
+  var data = getCustomerData_(email);
+  var tier = getTier_(data.points);
+  var next = getNextTier_(data.points);
+  return {
+    ok: true, email: email, points: data.points,
+    tier: tier.name, cashback: tier.cashback,
+    next_tier: next ? next.name : null,
+    points_to_next: next ? next.min - data.points : 0
+  };
+}
+
+function adminAdjustPoints(email, points, reason, isRemove) {
+  email = String(email || '').trim().toLowerCase();
+  if (!email) return { ok: false, error: 'invalid_email' };
+  points = parseInt(points) || 0;
+  if (!points) return { ok: false, error: 'invalid_points' };
+  if (isRemove) points = -Math.abs(points);
+
+  addPoints_(email, points, reason || (points > 0 ? 'Admin-Gutschrift' : 'Admin-Abzug'), '');
+
+  try {
+    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var result = shopifyGQL_(q);
+    var nodes = result.data && result.data.customers && result.data.customers.nodes;
+    if (nodes && nodes.length) {
+      var newData = getCustomerData_(email);
+      var newTier = getTier_(newData.points);
+      updateCustomerMetafields_(nodes[0].id, newData.points, newTier.name);
+      try { updateCustomerTierTag_(nodes[0].id, newTier.name); } catch(e) {}
+    }
+  } catch(e) {}
+
+  var updated = getCustomerData_(email);
+  var tier = getTier_(updated.points);
+  return { ok: true, email: email, points: updated.points, tier: tier.name, changed: points };
+}
+
+function adminListCustomers() {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.points.getDataRange().getValues();
+    var customers = [];
+    for (var i = 1; i < data.length; i++) {
+      customers.push({
+        email: String(data[i][0]),
+        points: parseInt(data[i][1]) || 0,
+        tier: String(data[i][2] || 'bronze'),
+        updated: data[i][3] ? new Date(data[i][3]).toISOString() : ''
+      });
+    }
+    customers.sort(function(a, b) { return b.points - a.points; });
+    return { ok: true, customers: customers, total: customers.length };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
    ADMIN: Dashboard HTML
    ═══════════════════════════════════════════════════════ */
 
@@ -643,7 +706,7 @@ function getAdminHtml_() {
 + '.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}'
 + '.card h2{font-size:16px;margin-bottom:16px;color:#1a1a1a}'
 + 'label{display:block;font-size:13px;color:#666;margin-bottom:4px;font-weight:500}'
-+ 'input,select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}'
++ 'input{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none;transition:border .2s}'
 + 'input:focus{border-color:#1a1a1a}'
 + '.row{display:flex;gap:12px}'
 + '.row>div{flex:1}'
@@ -671,13 +734,14 @@ function getAdminHtml_() {
 + 'td{padding:8px 12px;border-bottom:1px solid #f3f3f3}'
 + 'tr:hover td{background:#f9fafb}'
 + '.empty{text-align:center;padding:40px;color:#aaa}'
++ '.loading{opacity:.5;pointer-events:none}'
 + '@media(max-width:600px){.row{flex-direction:column}.actions{flex-direction:column}}'
 + '</style></head><body>'
 + '<div class="container">'
 + '<h1>Karinex Loyalty Admin <span>Punkte verwalten</span></h1>'
 + ''
 + '<div class="card">'
-+ '<h2>🔍 Kunden suchen</h2>'
++ '<h2>&#128269; Kunden suchen</h2>'
 + '<label>E-Mail-Adresse</label>'
 + '<input type="email" id="email" placeholder="kunde@beispiel.de">'
 + '<button class="btn-search" onclick="searchCustomer()">Kunden suchen</button>'
@@ -685,89 +749,89 @@ function getAdminHtml_() {
 + '</div>'
 + ''
 + '<div class="card" id="pointsCard" style="display:none">'
-+ '<h2>📊 Punkte anpassen</h2>'
++ '<h2>&#128202; Punkte anpassen</h2>'
 + '<div class="customer-info" id="customerInfo"></div>'
 + '<div class="row">'
 + '<div><label>Punkte</label><input type="number" id="points" placeholder="z.B. 500" min="1"></div>'
 + '<div><label>Grund</label><input type="text" id="reason" placeholder="z.B. Gutschrift, Support-Bonus"></div>'
 + '</div>'
 + '<div class="actions">'
-+ '<button class="btn-add" onclick="adjustPoints(\'add\')">＋ Punkte hinzufügen</button>'
-+ '<button class="btn-remove" onclick="adjustPoints(\'remove\')">－ Punkte abziehen</button>'
++ '<button class="btn-add" onclick="doAdjust(false)">+ Punkte hinzufuegen</button>'
++ '<button class="btn-remove" onclick="doAdjust(true)">- Punkte abziehen</button>'
 + '</div>'
 + '<div id="adjustResult" class="result"></div>'
 + '</div>'
 + ''
 + '<div class="card">'
-+ '<h2>👥 Alle Kunden <span id="totalCount"></span></h2>'
++ '<h2>&#128101; Alle Kunden <span id="totalCount"></span></h2>'
 + '<button class="btn-primary" onclick="loadAll()" style="margin-bottom:16px">Liste laden</button>'
 + '<div id="customerList"><div class="empty">Klicke auf "Liste laden"</div></div>'
 + '</div>'
 + '</div>'
 + ''
 + '<script>'
-+ 'var BASE=location.href.split("?")[0];'
-+ 'var KEY=new URLSearchParams(location.search).get("key")||"";'
-+ ''
-+ 'function api(action,params){'
-+ '  var u=BASE+"?action="+action+"&key="+encodeURIComponent(KEY);'
-+ '  for(var k in params)u+="&"+k+"="+encodeURIComponent(params[k]);'
-+ '  return fetch(u).then(function(r){return r.json()});'
-+ '}'
++ 'function show(id,cls,msg){var el=document.getElementById(id);el.className="result "+cls;el.textContent=msg;el.style.display="block"}'
 + ''
 + 'function searchCustomer(){'
 + '  var em=document.getElementById("email").value.trim();'
 + '  if(!em){show("searchResult","err","Bitte E-Mail eingeben");return}'
 + '  show("searchResult","ok","Suche...");'
-+ '  api("admin_get",{email:em}).then(function(d){'
-+ '    if(!d.ok){show("searchResult","err","Fehler: "+(d.error||"unbekannt"));document.getElementById("pointsCard").style.display="none";return}'
-+ '    show("searchResult","ok","✅ "+d.email+" — "+d.points+" Punkte — Tier: "+d.tier);'
++ '  google.script.run.withSuccessHandler(function(d){'
++ '    if(!d||!d.ok){show("searchResult","err","Fehler: "+((d&&d.error)||"unbekannt"));document.getElementById("pointsCard").style.display="none";return}'
++ '    show("searchResult","ok","OK: "+d.email+" - "+d.points+" Punkte - Tier: "+d.tier);'
 + '    showPointsCard(d);'
-+ '  }).catch(function(e){show("searchResult","err","Netzwerkfehler: "+e.message)});'
++ '  }).withFailureHandler(function(e){'
++ '    show("searchResult","err","Fehler: "+e.message);'
++ '  }).adminGetCustomer(em);'
 + '}'
 + ''
 + 'function showPointsCard(d){'
 + '  document.getElementById("pointsCard").style.display="block";'
-+ '  document.getElementById("customerInfo").innerHTML='
-+ '    \'<div><div class="pts">\'+d.points+\'</div><div class="label">Punkte</div></div>\'+'
-+ '    \'<div class="badge \'+d.tier+\'">\'+d.tier+\'</div>\'+'
-+ '    (d.next_tier?\'<div><div class="label">Nächstes Tier: \'+d.next_tier+\' (noch \'+d.points_to_next+\' Punkte)</div></div>\':\'<div class="label">Höchstes Tier ✨</div>\');'
++ '  var h="<div><div class=\\"pts\\">"+d.points+"</div><div class=\\"label\\">Punkte</div></div>";'
++ '  h+="<div class=\\"badge "+d.tier+"\\">"+d.tier+"</div>";'
++ '  if(d.next_tier){h+="<div><div class=\\"label\\">Naechstes Tier: "+d.next_tier+" (noch "+d.points_to_next+" Punkte)</div></div>"}'
++ '  else{h+="<div class=\\"label\\">Hoechstes Tier</div>"}'
++ '  document.getElementById("customerInfo").innerHTML=h;'
 + '}'
 + ''
-+ 'function adjustPoints(type){'
++ 'function doAdjust(isRemove){'
 + '  var em=document.getElementById("email").value.trim();'
 + '  var pts=parseInt(document.getElementById("points").value)||0;'
-+ '  var reason=document.getElementById("reason").value.trim()||""+'
-+ '    (type==="add"?"Admin-Gutschrift":"Admin-Abzug");'
++ '  var reason=document.getElementById("reason").value.trim();'
 + '  if(!em||!pts){show("adjustResult","err","E-Mail und Punkte eingeben");return}'
 + '  show("adjustResult","ok","Wird gespeichert...");'
-+ '  var action=type==="add"?"admin_add":"admin_remove";'
-+ '  api(action,{email:em,points:pts,reason:reason}).then(function(d){'
-+ '    if(!d.ok){show("adjustResult","err","Fehler: "+(d.error||"unbekannt"));return}'
++ '  google.script.run.withSuccessHandler(function(d){'
++ '    if(!d||!d.ok){show("adjustResult","err","Fehler: "+((d&&d.error)||"unbekannt"));return}'
 + '    var sign=d.changed>0?"+":"";'
-+ '    show("adjustResult","ok","✅ "+sign+d.changed+" Punkte — Neuer Stand: "+d.points+" ("+d.tier+")");'
-+ '    showPointsCard({points:d.points,tier:d.tier,next_tier:null,points_to_next:0});'
++ '    show("adjustResult","ok","OK: "+sign+d.changed+" Punkte - Neuer Stand: "+d.points+" ("+d.tier+")");'
 + '    searchCustomer();'
-+ '  }).catch(function(e){show("adjustResult","err","Netzwerkfehler: "+e.message)});'
++ '  }).withFailureHandler(function(e){'
++ '    show("adjustResult","err","Fehler: "+e.message);'
++ '  }).adminAdjustPoints(em,pts,reason,isRemove);'
 + '}'
 + ''
 + 'function loadAll(){'
-+ '  document.getElementById("customerList").innerHTML=\'<div class="empty">Lädt...</div>\';'
-+ '  api("admin_list",{}).then(function(d){'
-+ '    if(!d.ok||!d.customers){document.getElementById("customerList").innerHTML=\'<div class="empty">Fehler</div>\';return}'
++ '  document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Laedt...</div>";'
++ '  google.script.run.withSuccessHandler(function(d){'
++ '    if(!d||!d.ok||!d.customers){document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Fehler</div>";return}'
 + '    document.getElementById("totalCount").textContent="("+d.total+")";'
-+ '    if(!d.customers.length){document.getElementById("customerList").innerHTML=\'<div class="empty">Noch keine Kunden</div>\';return}'
-+ '    var h=\'<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Letzte Änderung</th></tr></thead><tbody>\';'
-+ '    d.customers.forEach(function(c){'
++ '    if(!d.customers.length){document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Noch keine Kunden</div>";return}'
++ '    var h="<table><thead><tr><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Letzte Aenderung</th></tr></thead><tbody>";'
++ '    for(var i=0;i<d.customers.length;i++){'
++ '      var c=d.customers[i];'
 + '      var dt=c.updated?new Date(c.updated).toLocaleDateString("de-DE"):"-";'
-+ '      h+=\'<tr style="cursor:pointer" onclick="document.getElementById(\\\'email\\\').value=\\\'\'+c.email+\'\\\';searchCustomer()"><td>\'+c.email+\'</td><td><strong>\'+c.points+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+dt+\'</td></tr>\';'
-+ '    });'
++ '      h+="<tr style=\\"cursor:pointer\\" data-email=\\""+c.email+"\\"><td>"+c.email+"</td><td><strong>"+c.points+"</strong></td><td><span class=\\"badge "+c.tier+"\\">"+c.tier+"</span></td><td>"+dt+"</td></tr>";'
++ '    }'
 + '    h+="</tbody></table>";'
 + '    document.getElementById("customerList").innerHTML=h;'
-+ '  }).catch(function(e){document.getElementById("customerList").innerHTML=\'<div class="empty">Fehler: \'+e.message+\'</div>\'});'
++ '    var rows=document.querySelectorAll("tr[data-email]");'
++ '    for(var j=0;j<rows.length;j++){'
++ '      rows[j].addEventListener("click",function(){document.getElementById("email").value=this.getAttribute("data-email");searchCustomer()});'
++ '    }'
++ '  }).withFailureHandler(function(e){'
++ '    document.getElementById("customerList").innerHTML="<div class=\\"empty\\">Fehler: "+e.message+"</div>";'
++ '  }).adminListCustomers();'
 + '}'
-+ ''
-+ 'function show(id,cls,msg){var el=document.getElementById(id);el.className="result "+cls;el.textContent=msg;el.style.display="block"}'
 + ''
 + 'document.getElementById("email").addEventListener("keydown",function(e){if(e.key==="Enter")searchCustomer()});'
 + '</script></body></html>';
