@@ -30,9 +30,9 @@ var POINTS_PER_EURO   = 100;  // 100 points = €1
 
 /* Tier definitions — ordered from highest to lowest */
 var TIERS = [
-  { name: 'gold',   min: 3000, cashback: 10 },
-  { name: 'silber', min: 1000, cashback: 7  },
-  { name: 'bronze', min: 0,    cashback: 5  }
+  { name: 'gold',   min: 20000, cashback: 10 },
+  { name: 'silber', min: 8000,  cashback: 7  },
+  { name: 'bronze', min: 0,     cashback: 5  }
 ];
 
 /* Token from Script Properties (never hardcode in repo) */

@@ -8,28 +8,28 @@
     assign kx_pts = customer.metafields.karinex.loyalty_points.value | default: 0 | plus: 0
     assign kx_tier_raw = customer.metafields.karinex.loyalty_tier.value | default: 'bronze'
 
-    if kx_pts >= 3000
+    if kx_pts >= 20000
       assign kx_tier = 'gold'
       assign kx_tier_label = 'Gold'
       assign kx_cashback = 10
       assign kx_progress = 100
       assign kx_next_tier = ''
       assign kx_pts_to_next = 0
-    elsif kx_pts >= 1000
+    elsif kx_pts >= 8000
       assign kx_tier = 'silber'
       assign kx_tier_label = 'Silber'
       assign kx_cashback = 7
-      assign kx_pts_in = kx_pts | minus: 1000
-      assign kx_progress = kx_pts_in | times: 100 | divided_by: 2000
+      assign kx_pts_in = kx_pts | minus: 8000
+      assign kx_progress = kx_pts_in | times: 100 | divided_by: 12000
       assign kx_next_tier = 'Gold'
-      assign kx_pts_to_next = 3000 | minus: kx_pts
+      assign kx_pts_to_next = 20000 | minus: kx_pts
     else
       assign kx_tier = 'bronze'
       assign kx_tier_label = 'Bronze'
       assign kx_cashback = 5
-      assign kx_progress = kx_pts | times: 100 | divided_by: 1000
+      assign kx_progress = kx_pts | times: 100 | divided_by: 8000
       assign kx_next_tier = 'Silber'
-      assign kx_pts_to_next = 1000 | minus: kx_pts
+      assign kx_pts_to_next = 8000 | minus: kx_pts
     endif
   endif
 -%}
@@ -280,7 +280,7 @@
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
           </div>
           <h3>Silber</h3>
-          <p class="kx-ly-tiers__req">Ab 1.000 Punkte</p>
+          <p class="kx-ly-tiers__req">Ab 8.000 Punkte</p>
           <ul class="kx-ly-tiers__perks">
             <li>7% Cashback in Punkten</li>
             <li>Früher Zugang zu Sales</li>
@@ -295,7 +295,7 @@
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
           </div>
           <h3>Gold</h3>
-          <p class="kx-ly-tiers__req">Ab 3.000 Punkte</p>
+          <p class="kx-ly-tiers__req">Ab 20.000 Punkte</p>
           <ul class="kx-ly-tiers__perks">
             <li>10% Cashback in Punkten</li>
             <li>VIP-Support (Priorität)</li>
