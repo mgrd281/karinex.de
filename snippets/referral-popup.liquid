@@ -122,7 +122,7 @@
   } catch(e){}
 
   /* ── GAS Web App URL ── */
-  var REFERRAL_API = '{{ settings.referral_api_url | default: "" }}';
+  var REFERRAL_API = '{{ settings.referral_api_url | default: "https://script.google.com/macros/s/AKfycbwmFYc5pvbD2nqWoHIXBbJfyrypMI5r6QJVA0sHZwb70gZS8UyDq15FPdRY-_8736zQgQ/exec" }}';
 
   /* Show popup after short delay */
   setTimeout(function(){ overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }, 800);
