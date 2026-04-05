@@ -1182,17 +1182,21 @@
   else if (p.indexOf('/plcollections/') === 0) {
     target = '/collections/' + p.substring('/plcollections/'.length) + q;
   }
-  /* /en/products/... → /products/... */
+  /* Specific product redirects (deleted/renamed products) */
+  else if (p === '/products/windows-11-pro' || p === '/en/products/windows-11-pro' || p === '/pl/products/windows-11-pro') {
+    target = '/products/windows-11-pro-key-kaufen-download' + q;
+  }
+  /* /collections/herren-uhren → /collections/uhren */
+  else if (p === '/collections/herren-uhren') {
+    target = '/collections/uhren' + q;
+  }
+  /* /en/... → strip locale prefix */
   else if (p.indexOf('/en/') === 0) {
     target = p.substring(3) + q;
   }
-  /* /pl/products/... → /products/... */
+  /* /pl/... → strip locale prefix */
   else if (p.indexOf('/pl/') === 0) {
     target = p.substring(3) + q;
-  }
-  /* /collections/herren-uhren → /collections/herrenuhren */
-  else if (p === '/collections/herren-uhren') {
-    target = '/collections/herrenuhren' + q;
   }
 
   if (target && target !== p + q) {
