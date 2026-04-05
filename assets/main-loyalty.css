@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════════════════
+   KARINEX LOYALTY & REWARDS — Enterprise CSS
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --kx-ly-gold: #c9a84c;
+  --kx-ly-gold-light: #f5e6b8;
+  --kx-ly-dark: #1a1a1a;
+  --kx-ly-bg: #fafafa;
+  --kx-ly-card: #fff;
+  --kx-ly-radius: 16px;
+  --kx-ly-shadow: 0 2px 20px rgba(0,0,0,.06);
+}
+
+.kx-loyalty { font-family: var(--font-body, -apple-system, BlinkMacSystemFont, sans-serif); color: var(--kx-ly-dark); }
+.kx-ly-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* ─── HERO ─── */
+.kx-ly-hero { position: relative; overflow: hidden; padding: 100px 20px 80px; text-align: center; background: var(--kx-ly-dark); color: #fff; }
+.kx-ly-hero__bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(201,168,76,.1) 0%, transparent 50%); }
+.kx-ly-hero__inner { position: relative; max-width: 700px; margin: 0 auto; }
+.kx-ly-hero__badge { display: inline-block; padding: 6px 18px; border-radius: 100px; background: var(--kx-ly-gold); color: var(--kx-ly-dark); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+.kx-ly-hero__title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; margin: 0 0 16px; }
+.kx-ly-hero__sub { font-size: 1.1rem; opacity: .8; max-width: 500px; margin: 0 auto 32px; line-height: 1.6; }
+.kx-ly-hero__ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+.kx-ly-hero__stats { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.1); }
+.kx-ly-hero__stat { text-align: center; }
+.kx-ly-hero__stat-num { display: block; font-size: 2rem; font-weight: 800; color: var(--kx-ly-gold); }
+.kx-ly-hero__stat-label { font-size: .8rem; opacity: .6; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── BUTTONS ─── */
+.kx-ly-btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; border-radius: 100px; font-size: .9rem; font-weight: 600; text-decoration: none; transition: all .25s ease; cursor: pointer; border: none; }
+.kx-ly-btn--primary { background: var(--kx-ly-gold); color: var(--kx-ly-dark); }
+.kx-ly-btn--primary:hover { background: #b8953f; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,.3); }
+.kx-ly-btn--ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.3); }
+.kx-ly-btn--ghost:hover { border-color: #fff; background: rgba(255,255,255,.05); }
+.kx-ly-btn--large { padding: 18px 48px; font-size: 1rem; }
+
+/* ─── SECTION TITLES ─── */
+.kx-ly-section-title { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; text-align: center; margin: 0 0 8px; letter-spacing: -.01em; }
+.kx-ly-section-sub { text-align: center; color: #666; margin: 0 0 48px; font-size: 1rem; }
+
+/* ─── HOW IT WORKS ─── */
+.kx-ly-how { padding: 80px 20px; background: var(--kx-ly-bg); }
+.kx-ly-how__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 900px; margin: 0 auto; }
+.kx-ly-how__step { text-align: center; padding: 40px 24px; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); box-shadow: var(--kx-ly-shadow); position: relative; }
+.kx-ly-how__icon { width: 56px; height: 56px; margin: 0 auto 16px; color: var(--kx-ly-gold); }
+.kx-ly-how__icon svg { width: 100%; height: 100%; }
+.kx-ly-how__num { position: absolute; top: 16px; right: 20px; font-size: .75rem; font-weight: 800; color: var(--kx-ly-gold); opacity: .4; }
+.kx-ly-how__step h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 8px; }
+.kx-ly-how__step p { font-size: .9rem; color: #666; margin: 0; line-height: 1.5; }
+
+/* ─── EARN POINTS ─── */
+.kx-ly-earn { padding: 80px 20px; }
+.kx-ly-earn__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.kx-ly-earn__card { padding: 32px 24px; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); box-shadow: var(--kx-ly-shadow); border: 1px solid #f0f0f0; transition: all .25s ease; position: relative; }
+.kx-ly-earn__card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.08); }
+.kx-ly-earn__card--highlight { border: 2px solid var(--kx-ly-gold); background: linear-gradient(135deg, #fffdf5 0%, #fff 100%); }
+.kx-ly-earn__card-icon { width: 40px; height: 40px; color: var(--kx-ly-gold); margin-bottom: 16px; }
+.kx-ly-earn__card-icon svg { width: 100%; height: 100%; }
+.kx-ly-earn__card-points { font-size: 2rem; font-weight: 800; color: var(--kx-ly-gold); margin-bottom: 4px; }
+.kx-ly-earn__card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 8px; }
+.kx-ly-earn__card p { font-size: .85rem; color: #666; margin: 0; line-height: 1.5; }
+.kx-ly-earn__card-tag { position: absolute; top: 16px; right: 16px; background: var(--kx-ly-gold); color: var(--kx-ly-dark); font-size: .65rem; font-weight: 700; padding: 4px 10px; border-radius: 100px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ─── REDEEM ─── */
+.kx-ly-redeem { padding: 80px 20px; background: var(--kx-ly-bg); }
+.kx-ly-redeem__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.kx-ly-redeem__card { text-align: center; padding: 32px 20px; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); box-shadow: var(--kx-ly-shadow); position: relative; border: 1px solid #f0f0f0; }
+.kx-ly-redeem__card--popular { border: 2px solid var(--kx-ly-gold); }
+.kx-ly-redeem__badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--kx-ly-gold); color: var(--kx-ly-dark); font-size: .65rem; font-weight: 700; padding: 4px 14px; border-radius: 100px; text-transform: uppercase; letter-spacing: 1px; }
+.kx-ly-redeem__value { font-size: 2.5rem; font-weight: 800; color: var(--kx-ly-dark); }
+.kx-ly-redeem__pts { font-size: .85rem; color: #999; margin: 8px 0 16px; }
+.kx-ly-redeem__bar { height: 4px; background: #eee; border-radius: 4px; overflow: hidden; }
+.kx-ly-redeem__fill { height: 100%; background: var(--kx-ly-gold); border-radius: 4px; }
+
+/* ─── VIP TIERS ─── */
+.kx-ly-tiers { padding: 80px 20px; }
+.kx-ly-tiers__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.kx-ly-tiers__card { padding: 40px 28px; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); box-shadow: var(--kx-ly-shadow); border: 1px solid #f0f0f0; text-align: center; position: relative; }
+.kx-ly-tiers__card--silver { border-color: #c0c0c0; }
+.kx-ly-tiers__card--gold { border: 2px solid var(--kx-ly-gold); background: linear-gradient(180deg, #fffdf5 0%, #fff 40%); }
+.kx-ly-tiers__badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--kx-ly-gold); color: var(--kx-ly-dark); font-size: .65rem; font-weight: 700; padding: 4px 14px; border-radius: 100px; text-transform: uppercase; letter-spacing: 1px; }
+.kx-ly-tiers__icon { width: 48px; height: 48px; margin: 0 auto 16px; }
+.kx-ly-tiers__icon svg { width: 100%; height: 100%; }
+.kx-ly-tiers__icon--bronze { color: #cd7f32; }
+.kx-ly-tiers__icon--silver { color: #a8a8a8; }
+.kx-ly-tiers__icon--gold { color: var(--kx-ly-gold); }
+.kx-ly-tiers__card h3 { font-size: 1.3rem; font-weight: 800; margin: 0 0 4px; }
+.kx-ly-tiers__req { font-size: .8rem; color: #999; margin: 0 0 20px; }
+.kx-ly-tiers__perks { list-style: none; padding: 0; margin: 0; text-align: left; }
+.kx-ly-tiers__perks li { padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: .9rem; color: #444; }
+.kx-ly-tiers__perks li:last-child { border-bottom: none; }
+.kx-ly-tiers__perks li::before { content: '✓'; color: var(--kx-ly-gold); font-weight: 700; margin-right: 10px; }
+
+/* ─── REFERRAL ─── */
+.kx-ly-referral { padding: 80px 20px; background: var(--kx-ly-bg); }
+.kx-ly-referral__box { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; background: var(--kx-ly-card); border-radius: var(--kx-ly-radius); padding: 48px; box-shadow: var(--kx-ly-shadow); }
+.kx-ly-referral__content h2 { font-size: 1.5rem; font-weight: 800; margin: 0 0 12px; }
+.kx-ly-referral__content p { color: #666; line-height: 1.6; margin: 0 0 24px; }
+.kx-ly-referral__link-box { display: flex; gap: 8px; margin-bottom: 16px; }
+.kx-ly-referral__input { flex: 1; padding: 12px 16px; border: 1px solid #ddd; border-radius: 100px; font-size: .85rem; background: #f9f9f9; color: var(--kx-ly-dark); }
+.kx-ly-referral__share { display: flex; align-items: center; gap: 12px; }
+.kx-ly-referral__share span { font-size: .85rem; color: #999; }
+.kx-ly-referral__social { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f0f0f0; color: #555; transition: all .2s; }
+.kx-ly-referral__social:hover { background: var(--kx-ly-gold); color: var(--kx-ly-dark); }
+.kx-ly-referral__social svg { width: 20px; height: 20px; }
+.kx-ly-referral__visual { display: flex; justify-content: center; }
+.kx-ly-referral__gift { display: flex; align-items: center; gap: 24px; }
+.kx-ly-referral__avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--kx-ly-gold); color: var(--kx-ly-dark); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .75rem; letter-spacing: 1px; }
+.kx-ly-referral__you, .kx-ly-referral__friend { text-align: center; }
+.kx-ly-referral__you span, .kx-ly-referral__friend span { display: block; margin-top: 8px; font-weight: 700; font-size: .85rem; color: var(--kx-ly-gold); }
+.kx-ly-referral__arrow { width: 60px; color: #ccc; }
+.kx-ly-referral__arrow svg { width: 100%; }
+
+/* ─── FAQ ─── */
+.kx-ly-faq { padding: 80px 20px; }
+.kx-ly-faq__list { max-width: 700px; margin: 0 auto; }
+.kx-ly-faq__item { border-bottom: 1px solid #eee; }
+.kx-ly-faq__item summary { padding: 20px 0; font-weight: 600; font-size: 1rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.kx-ly-faq__item summary::-webkit-details-marker { display: none; }
+.kx-ly-faq__item summary::after { content: '+'; font-size: 1.5rem; color: var(--kx-ly-gold); font-weight: 300; transition: transform .2s; }
+.kx-ly-faq__item[open] summary::after { transform: rotate(45deg); }
+.kx-ly-faq__item p { padding: 0 0 20px; color: #666; line-height: 1.6; margin: 0; }
+
+/* ─── CTA BOTTOM ─── */
+.kx-ly-cta { padding: 80px 20px; background: var(--kx-ly-dark); color: #fff; text-align: center; }
+.kx-ly-cta h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin: 0 0 12px; }
+.kx-ly-cta p { opacity: .7; margin: 0 0 32px; }
+
+/* ═══ MOBILE ═══ */
+@media (max-width: 768px) {
+  .kx-ly-hero { padding: 60px 20px 50px; }
+  .kx-ly-hero__stats { gap: 24px; }
+  .kx-ly-hero__stat-num { font-size: 1.5rem; }
+  .kx-ly-how__grid { grid-template-columns: 1fr; gap: 16px; }
+  .kx-ly-how__step { padding: 28px 20px; }
+  .kx-ly-earn__grid { grid-template-columns: 1fr; gap: 12px; }
+  .kx-ly-earn__card { padding: 24px 20px; }
+  .kx-ly-redeem__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .kx-ly-tiers__grid { grid-template-columns: 1fr; gap: 16px; }
+  .kx-ly-referral__box { grid-template-columns: 1fr; padding: 28px 20px; gap: 32px; }
+  .kx-ly-referral__link-box { flex-direction: column; }
+  .kx-ly-referral__gift { flex-direction: column; gap: 16px; }
+  .kx-ly-referral__arrow { transform: rotate(90deg); width: 48px; }
+  .kx-ly-cta { padding: 50px 20px; }
+}

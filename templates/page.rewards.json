@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-loyalty",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

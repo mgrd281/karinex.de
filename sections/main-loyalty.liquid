@@ -1,0 +1,364 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+{% comment %} ═══════════════════════════════════════════════════════
+  KARINEX LOYALTY & REFERRAL PROGRAM – Enterprise Grade
+  Like: About You, Douglas, Zalando
+═══════════════════════════════════════════════════════ {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}"></noscript>
+
+<div class="kx-loyalty" id="kx-loyalty">
+
+  {%- comment -%} ═══ 1. HERO ═══ {%- endcomment -%}
+  <section class="kx-ly-hero">
+    <div class="kx-ly-hero__bg"></div>
+    <div class="kx-ly-hero__inner">
+      <span class="kx-ly-hero__badge">NEU</span>
+      <h1 class="kx-ly-hero__title">KARINEX Rewards</h1>
+      <p class="kx-ly-hero__sub">Sammle Punkte bei jedem Einkauf. Löse sie ein für exklusive Rabatte. Empfehle Freunde und werde belohnt.</p>
+      <div class="kx-ly-hero__ctas">
+        {%- if customer -%}
+          <a href="/account" class="kx-ly-btn kx-ly-btn--primary">Mein Punktestand</a>
+        {%- else -%}
+          <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary">Kostenlos registrieren</a>
+          <a href="/account/login" class="kx-ly-btn kx-ly-btn--ghost">Einloggen</a>
+        {%- endif -%}
+      </div>
+      <div class="kx-ly-hero__stats">
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="12850">0</span>
+          <span class="kx-ly-hero__stat-label">Mitglieder</span>
+        </div>
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="285000">0</span>
+          <span class="kx-ly-hero__stat-label">Punkte eingelöst</span>
+        </div>
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="48500">0</span>
+          <span class="kx-ly-hero__stat-label">€ gespart</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 2. HOW IT WORKS ═══ {%- endcomment -%}
+  <section class="kx-ly-how" id="kx-ly-how">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">So funktioniert's</h2>
+      <p class="kx-ly-section-sub">In 3 einfachen Schritten zu deinen Rewards</p>
+      <div class="kx-ly-how__grid">
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="20"/><path d="M24 14v10l7 7"/></svg>
+          </div>
+          <div class="kx-ly-how__num">01</div>
+          <h3>Registrieren</h3>
+          <p>Erstelle ein kostenloses Konto und werde automatisch Mitglied.</p>
+        </div>
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 24h36M24 6v36"/><circle cx="24" cy="24" r="20"/></svg>
+          </div>
+          <div class="kx-ly-how__num">02</div>
+          <h3>Punkte sammeln</h3>
+          <p>Verdiene Punkte bei jedem Einkauf, für Bewertungen und Empfehlungen.</p>
+        </div>
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 24l8 8 16-16"/><circle cx="24" cy="24" r="20"/></svg>
+          </div>
+          <div class="kx-ly-how__num">03</div>
+          <h3>Einlösen</h3>
+          <p>Tausche deine Punkte gegen Rabatte, Gratisversand oder exklusive Prämien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 3. EARN POINTS ═══ {%- endcomment -%}
+  <section class="kx-ly-earn" id="kx-ly-earn">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Punkte verdienen</h2>
+      <p class="kx-ly-section-sub">Viele Wege führen zu deinem Rabatt</p>
+      <div class="kx-ly-earn__grid">
+
+        <div class="kx-ly-earn__card kx-ly-earn__card--highlight">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">5%</div>
+          <h3>Cashback auf jeden Einkauf</h3>
+          <p>Erhalte 5% des Bestellwerts zurück als Punkte. Automatisch bei jeder Bestellung.</p>
+          <span class="kx-ly-earn__card-tag">Automatisch</span>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">500</div>
+          <h3>Freunde werben</h3>
+          <p>Teile deinen persönlichen Link. Dein Freund bekommt 10% Rabatt, du 500 Punkte.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">100</div>
+          <h3>Newsletter-Anmeldung</h3>
+          <p>Melde dich für unseren Newsletter an und erhalte sofort 100 Punkte.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">75</div>
+          <h3>Produkt bewerten</h3>
+          <p>Schreibe eine ehrliche Bewertung und erhalte 75 Punkte pro Review.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">200</div>
+          <h3>Geburtstagsbonus</h3>
+          <p>An deinem Geburtstag schenken wir dir 200 Punkte. Happy Birthday!</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">50</div>
+          <h3>Social Media folgen</h3>
+          <p>Folge uns auf Instagram oder TikTok und erhalte je 50 Punkte.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 4. REDEEM / TIERS ═══ {%- endcomment -%}
+  <section class="kx-ly-redeem" id="kx-ly-redeem">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Punkte einlösen</h2>
+      <p class="kx-ly-section-sub">Je mehr Punkte, desto mehr sparst du</p>
+      <div class="kx-ly-redeem__grid">
+        <div class="kx-ly-redeem__card">
+          <div class="kx-ly-redeem__value">€2</div>
+          <div class="kx-ly-redeem__pts">200 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:20%"></div></div>
+        </div>
+        <div class="kx-ly-redeem__card">
+          <div class="kx-ly-redeem__value">€5</div>
+          <div class="kx-ly-redeem__pts">500 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:50%"></div></div>
+        </div>
+        <div class="kx-ly-redeem__card kx-ly-redeem__card--popular">
+          <span class="kx-ly-redeem__badge">Beliebt</span>
+          <div class="kx-ly-redeem__value">€10</div>
+          <div class="kx-ly-redeem__pts">1.000 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:70%"></div></div>
+        </div>
+        <div class="kx-ly-redeem__card">
+          <div class="kx-ly-redeem__value">€25</div>
+          <div class="kx-ly-redeem__pts">2.000 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 5. VIP TIERS ═══ {%- endcomment -%}
+  <section class="kx-ly-tiers" id="kx-ly-tiers">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">VIP-Stufen</h2>
+      <p class="kx-ly-section-sub">Steige auf und erhalte exklusive Vorteile</p>
+      <div class="kx-ly-tiers__grid">
+
+        <div class="kx-ly-tiers__card">
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--bronze">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Bronze</h3>
+          <p class="kx-ly-tiers__req">Ab 0 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>5% Cashback in Punkten</li>
+            <li>Geburtstagsbonus</li>
+            <li>Newsletter-Angebote</li>
+          </ul>
+        </div>
+
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--silver">
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--silver">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Silber</h3>
+          <p class="kx-ly-tiers__req">Ab 1.000 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>7% Cashback in Punkten</li>
+            <li>Früher Zugang zu Sales</li>
+            <li>Doppelte Geburtstagspunkte</li>
+            <li>Kostenloser Versand ab €20</li>
+          </ul>
+        </div>
+
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--gold">
+          <span class="kx-ly-tiers__badge">Exklusiv</span>
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--gold">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Gold</h3>
+          <p class="kx-ly-tiers__req">Ab 3.000 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>10% Cashback in Punkten</li>
+            <li>VIP-Support (Priorität)</li>
+            <li>Exklusive Produkte</li>
+            <li>Immer kostenloser Versand</li>
+            <li>3x Geburtstagspunkte</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 6. REFERRAL SECTION ═══ {%- endcomment -%}
+  <section class="kx-ly-referral" id="kx-ly-referral">
+    <div class="kx-ly-container">
+      <div class="kx-ly-referral__box">
+        <div class="kx-ly-referral__content">
+          <h2>Freunde einladen, gemeinsam profitieren</h2>
+          <p>Teile deinen persönlichen Link. Dein Freund erhält <strong>10% Rabatt</strong> auf die erste Bestellung. Du erhältst <strong>500 Punkte</strong> (= €5).</p>
+          {%- if customer -%}
+            <div class="kx-ly-referral__link-box">
+              <input type="text" id="kx-ref-link" value="https://www.karinex.de/?ref={{ customer.id | base64_encode | truncate: 8, '' }}" readonly class="kx-ly-referral__input">
+              <button type="button" class="kx-ly-btn kx-ly-btn--primary kx-ly-referral__copy" onclick="navigator.clipboard.writeText(document.getElementById('kx-ref-link').value);this.textContent='Kopiert ✓';setTimeout(()=>{this.textContent='Link kopieren'},2000)">Link kopieren</button>
+            </div>
+            <div class="kx-ly-referral__share">
+              <span>Teilen via:</span>
+              <a href="https://wa.me/?text=Schau%20mal%20bei%20karinex.de%20vorbei!%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id | base64_encode | truncate: 8, '' }}" target="_blank" rel="noopener nofollow" class="kx-ly-referral__social" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.463A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-2.17 0-4.18-.58-5.924-1.592l-.424-.252-2.744.868.831-2.675-.277-.44A9.798 9.798 0 012.182 12c0-5.424 4.394-9.818 9.818-9.818S21.818 6.576 21.818 12s-4.394 9.818-9.818 9.818z"/></svg>
+              </a>
+              <a href="mailto:?subject=10%25%20Rabatt%20bei%20karinex.de&body=Hey!%20Schau%20mal%20bei%20karinex.de%20vorbei.%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id | base64_encode | truncate: 8, '' }}" class="kx-ly-referral__social" aria-label="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              </a>
+            </div>
+          {%- else -%}
+            <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary">Jetzt registrieren & Link erhalten</a>
+          {%- endif -%}
+        </div>
+        <div class="kx-ly-referral__visual">
+          <div class="kx-ly-referral__gift">
+            <div class="kx-ly-referral__you">
+              <div class="kx-ly-referral__avatar">DU</div>
+              <span>500 Punkte</span>
+            </div>
+            <div class="kx-ly-referral__arrow">
+              <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 12h44m-8-8l8 8-8 8"/></svg>
+            </div>
+            <div class="kx-ly-referral__friend">
+              <div class="kx-ly-referral__avatar">FREUND</div>
+              <span>10% Rabatt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 7. FAQ ═══ {%- endcomment -%}
+  <section class="kx-ly-faq" id="kx-ly-faq">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Häufige Fragen</h2>
+      <div class="kx-ly-faq__list">
+        <details class="kx-ly-faq__item">
+          <summary>Wie melde ich mich an?</summary>
+          <p>Erstelle einfach ein kostenloses Konto bei karinex.de. Du wirst automatisch Mitglied im Rewards-Programm und beginnst sofort, Punkte zu sammeln.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie verdiene ich Punkte?</summary>
+          <p>Du erhältst 5% Cashback in Punkten bei jeder Bestellung, 500 Punkte für jede erfolgreiche Empfehlung, 100 Punkte für die Newsletter-Anmeldung, 75 Punkte pro Produktbewertung und 200 Punkte als Geburtstagsbonus.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wann werden meine Punkte gutgeschrieben?</summary>
+          <p>Punkte für Einkäufe werden 14 Tage nach Lieferung gutgeschrieben (nach Ablauf der Widerrufsfrist). Alle anderen Punkte sofort.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie löse ich Punkte ein?</summary>
+          <p>Gehe in deinen Account auf „Punkte einlösen" und wähle deinen gewünschten Rabattbetrag. Du erhältst sofort einen Gutscheincode, den du im Warenkorb einlösen kannst.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Verfallen meine Punkte?</summary>
+          <p>Punkte sind 12 Monate gültig ab dem Datum der Gutschrift. Solange du aktiv einkaufst, verlierst du keine Punkte.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie funktioniert das Freunde-werben-Programm?</summary>
+          <p>Teile deinen persönlichen Empfehlungslink. Wenn dein Freund damit bestellt, erhält er 10% Rabatt auf seine erste Bestellung und du bekommst 500 Punkte gutgeschrieben.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 8. CTA ═══ {%- endcomment -%}
+  <section class="kx-ly-cta">
+    <div class="kx-ly-container">
+      <h2>Bereit, Punkte zu sammeln?</h2>
+      <p>Werde jetzt Mitglied — kostenlos, unverbindlich und sofort aktiv.</p>
+      {%- if customer -%}
+        <a href="/collections/all" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--large">Jetzt einkaufen & Punkte sammeln</a>
+      {%- else -%}
+        <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--large">Kostenlos Mitglied werden</a>
+      {%- endif -%}
+    </div>
+  </section>
+
+</div>
+
+{%- comment -%} ═══ COUNTER ANIMATION ═══ {%- endcomment -%}
+<script>
+(function(){
+  var counted = false;
+  function animateCounters(){
+    if(counted) return;
+    var els = document.querySelectorAll('[data-count]');
+    if(!els.length) return;
+    var rect = els[0].getBoundingClientRect();
+    if(rect.top > window.innerHeight) return;
+    counted = true;
+    els.forEach(function(el){
+      var target = parseInt(el.dataset.count, 10);
+      var duration = 2000;
+      var start = 0;
+      var startTime = null;
+      function step(ts){
+        if(!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.floor(eased * target);
+        el.textContent = current.toLocaleString('de-DE');
+        if(progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  window.addEventListener('scroll', animateCounters, {passive: true});
+  animateCounters();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Loyalty & Rewards",
+  "class": "section-loyalty",
+  "tag": "section"
+}
+{% endschema %}
