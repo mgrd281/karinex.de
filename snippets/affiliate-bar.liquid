@@ -1,0 +1,110 @@
+{%- comment -%}
+  ═══════════════════════════════════════════════════════
+  KARINEX AFFILIATE BAR (SiteStripe)
+  ─────────────────────────────────────────────────────
+  • Appears for logged-in customers on product pages
+  • Shows their unique affiliate link with ?ref= parameter
+  • Copy link, share via WhatsApp/Email, track earnings
+  ═══════════════════════════════════════════════════════
+{%- endcomment -%}
+
+{%- if customer and request.page_type == 'product' -%}
+  {%- assign kx_aff_code = customer.id -%}
+  {%- assign kx_aff_link = shop.url | append: '/products/' | append: product.handle | append: '?ref=' | append: kx_aff_code -%}
+  {%- assign kx_tier = customer.metafields.karinex.loyalty_tier.value | default: 'Bronze' -%}
+
+  <div class="kx-aff-bar" id="kx-aff-bar">
+    <div class="kx-aff-bar__inner">
+      {%- comment -%} Left: Brand + Commission {%- endcomment -%}
+      <div class="kx-aff-bar__left">
+        <span class="kx-aff-bar__logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          Karinex Partner
+        </span>
+        <span class="kx-aff-bar__commission">
+          Provision: <strong>{%- if kx_tier == 'Gold' -%}10%{%- elsif kx_tier == 'Silber' -%}7%{%- else -%}5%{%- endif -%}</strong>
+        </span>
+      </div>
+
+      {%- comment -%} Center: Link + Copy {%- endcomment -%}
+      <div class="kx-aff-bar__center">
+        <div class="kx-aff-bar__link-box">
+          <input type="text" id="kx-aff-link" value="{{ kx_aff_link }}" readonly class="kx-aff-bar__input" aria-label="Dein Affiliate-Link">
+          <button type="button" class="kx-aff-bar__copy" id="kx-aff-copy" aria-label="Link kopieren">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <span id="kx-aff-copy-text">Kopieren</span>
+          </button>
+        </div>
+      </div>
+
+      {%- comment -%} Right: Share + Close {%- endcomment -%}
+      <div class="kx-aff-bar__right">
+        <a href="https://wa.me/?text={{ product.title | url_encode }}%20%E2%80%93%20{{ kx_aff_link | url_encode }}" target="_blank" rel="noopener nofollow" class="kx-aff-bar__share" aria-label="WhatsApp teilen" title="WhatsApp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.627-1.475A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.171 0-4.178-.7-5.813-1.888l-.417-.311-2.746.876.841-2.658-.329-.438A9.715 9.715 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
+        </a>
+        <a href="mailto:?subject={{ product.title | url_encode }}%20%E2%80%93%20Empfehlung&body=Schau%20dir%20das%20an%3A%20{{ kx_aff_link | url_encode }}" class="kx-aff-bar__share" aria-label="Per E-Mail teilen" title="E-Mail">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+        </a>
+        <button type="button" class="kx-aff-bar__close" id="kx-aff-close" aria-label="Schließen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .kx-aff-bar{position:sticky;top:0;z-index:999;background:linear-gradient(90deg,#1a1a1a 0%,#2a2a2a 100%);color:#fff;font-size:13px;border-bottom:2px solid #c9a84c;transition:transform .3s}
+    .kx-aff-bar.hidden{transform:translateY(-100%)}
+    .kx-aff-bar__inner{display:flex;align-items:center;gap:12px;max-width:1400px;margin:0 auto;padding:8px 16px}
+    .kx-aff-bar__left{display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .kx-aff-bar__logo{display:flex;align-items:center;gap:5px;color:#c9a84c;font-weight:700;font-size:13px;white-space:nowrap}
+    .kx-aff-bar__commission{color:#aaa;font-size:12px;white-space:nowrap}
+    .kx-aff-bar__commission strong{color:#c9a84c}
+    .kx-aff-bar__center{flex:1;min-width:0}
+    .kx-aff-bar__link-box{display:flex;align-items:center;gap:0;background:#111;border:1px solid #444;border-radius:6px;overflow:hidden}
+    .kx-aff-bar__input{flex:1;min-width:0;padding:6px 10px;background:transparent;border:none;color:#ddd;font-size:12px;font-family:monospace;outline:none}
+    .kx-aff-bar__copy{display:flex;align-items:center;gap:5px;padding:6px 12px;background:#c9a84c;color:#1a1a1a;border:none;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s}
+    .kx-aff-bar__copy:hover{background:#dbb65c}
+    .kx-aff-bar__right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .kx-aff-bar__share{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#333;color:#fff;transition:background .2s;text-decoration:none}
+    .kx-aff-bar__share:hover{background:#c9a84c}
+    .kx-aff-bar__close{display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:transparent;border:none;color:#777;cursor:pointer;transition:color .2s}
+    .kx-aff-bar__close:hover{color:#fff}
+    @media(max-width:768px){
+      .kx-aff-bar__inner{flex-wrap:wrap;gap:8px;padding:8px 12px}
+      .kx-aff-bar__left{width:100%;justify-content:space-between}
+      .kx-aff-bar__center{order:3;width:100%}
+      .kx-aff-bar__right{margin-left:auto}
+      .kx-aff-bar__commission{font-size:11px}
+    }
+  </style>
+
+  <script>
+  (function(){
+    var copyBtn = document.getElementById('kx-aff-copy');
+    var copyText = document.getElementById('kx-aff-copy-text');
+    var input = document.getElementById('kx-aff-link');
+    var closeBtn = document.getElementById('kx-aff-close');
+    var bar = document.getElementById('kx-aff-bar');
+
+    if(copyBtn && input){
+      copyBtn.addEventListener('click', function(){
+        navigator.clipboard.writeText(input.value).then(function(){
+          copyText.textContent = 'Kopiert ✓';
+          copyBtn.style.background = '#22c55e';
+          setTimeout(function(){ copyText.textContent = 'Kopieren'; copyBtn.style.background = ''; }, 2000);
+        });
+      });
+      input.addEventListener('focus', function(){ input.select(); });
+    }
+
+    if(closeBtn && bar){
+      closeBtn.addEventListener('click', function(){
+        bar.classList.add('hidden');
+        sessionStorage.setItem('kx_aff_bar_closed', '1');
+      });
+      if(sessionStorage.getItem('kx_aff_bar_closed') === '1') bar.classList.add('hidden');
+    }
+  })();
+  </script>
+{%- endif -%}

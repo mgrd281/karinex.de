@@ -294,6 +294,7 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
   <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">
     
     {% section 'global-sale-bar' %}
+    {%- render 'affiliate-bar' -%}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     {% render 'screen-reader-announcements' %}
     <div id="header-group">
