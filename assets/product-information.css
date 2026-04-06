@@ -431,6 +431,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
         }
 
         .main-image {
@@ -442,8 +443,7 @@
         }
 
         .main-image:hover {
-            transform: scale(1.05);
-            filter: brightness(1.05);
+            /* Zoom handled by premium-image-zoom.js on desktop */
         }
 
         /* Direct video/iframe display rules */
