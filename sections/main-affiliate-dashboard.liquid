@@ -1,0 +1,526 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+
+  if customer
+    assign kx_tier_raw = customer.metafields.karinex.loyalty_tier.value | default: 'bronze'
+    if customer.metafields.karinex.loyalty_points.value >= 20000
+      assign kx_tier = 'Gold'
+      assign kx_commission = 10
+    elsif customer.metafields.karinex.loyalty_points.value >= 8000
+      assign kx_tier = 'Silber'
+      assign kx_commission = 7
+    else
+      assign kx_tier = 'Bronze'
+      assign kx_commission = 5
+    endif
+    assign kx_ref_code = customer.id
+    assign kx_ref_link = shop.url | append: '/?ref=' | append: kx_ref_code
+  endif
+-%}
+{% comment %} ═══════════════════════════════════════════════════════
+  KARINEX AFFILIATE DASHBOARD
+  Customer-facing partner panel — Amazon Associates style
+═══════════════════════════════════════════════════════ {% endcomment %}
+
+{%- unless customer -%}
+  <section class="kx-afd-login">
+    <div class="kx-afd-login__inner">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <h1>Karinex Partner-Dashboard</h1>
+      <p>Melde dich an, um dein Affiliate-Dashboard zu sehen.</p>
+      <a href="/account/login?return_url={{ request.path }}" class="kx-afd-btn kx-afd-btn--primary">Einloggen</a>
+      <a href="/account/register" class="kx-afd-btn kx-afd-btn--ghost">Kostenlos registrieren</a>
+    </div>
+  </section>
+{%- else -%}
+
+<div class="kx-afd" id="kx-afd">
+
+  {%- comment -%} ═══ HERO ═══ {%- endcomment -%}
+  <section class="kx-afd-hero">
+    <div class="kx-afd-hero__inner">
+      <div class="kx-afd-hero__text">
+        <span class="kx-afd-hero__badge">Partner-Bereich</span>
+        <h1 class="kx-afd-hero__title">Dein Affiliate-Dashboard</h1>
+        <p class="kx-afd-hero__sub">Teile deinen Link, verdiene Provisionen und verfolge alles in Echtzeit.</p>
+      </div>
+      <div class="kx-afd-hero__tier">
+        <span class="kx-afd-hero__tier-badge kx-afd-hero__tier-badge--{{ kx_tier | downcase }}">{{ kx_tier }}</span>
+        <span class="kx-afd-hero__rate">{{ kx_commission }}% Provision</span>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ LINK BOX ═══ {%- endcomment -%}
+  <section class="kx-afd-link">
+    <div class="kx-afd-container">
+      <div class="kx-afd-link__box">
+        <div class="kx-afd-link__label">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Dein persönlicher Affiliate-Link
+        </div>
+        <div class="kx-afd-link__row">
+          <input type="text" id="kx-afd-link-input" value="{{ kx_ref_link }}" readonly class="kx-afd-link__input" aria-label="Affiliate-Link">
+          <button type="button" id="kx-afd-copy" class="kx-afd-btn kx-afd-btn--primary kx-afd-btn--sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+        <div class="kx-afd-link__share">
+          <span class="kx-afd-link__share-label">Teilen:</span>
+          <a href="https://wa.me/?text=Schau%20dir%20Karinex%20an%20%E2%80%93%20{{ kx_ref_link | url_encode }}" target="_blank" rel="noopener nofollow" class="kx-afd-link__share-btn kx-afd-link__share-btn--wa" aria-label="WhatsApp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.627-1.475A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.171 0-4.178-.7-5.813-1.888l-.417-.311-2.746.876.841-2.658-.329-.438A9.715 9.715 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:?subject=Karinex%20Empfehlung&body=Hey%2C%20schau%20dir%20Karinex%20an%3A%20{{ kx_ref_link | url_encode }}" class="kx-afd-link__share-btn kx-afd-link__share-btn--email" aria-label="E-Mail">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+            E-Mail
+          </a>
+          <button type="button" class="kx-afd-link__share-btn kx-afd-link__share-btn--tg" id="kx-afd-share-tg" aria-label="Telegram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            Telegram
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ STATS CARDS ═══ {%- endcomment -%}
+  <section class="kx-afd-stats" id="kx-afd-stats">
+    <div class="kx-afd-container">
+      <div class="kx-afd-stats__grid">
+        <div class="kx-afd-stats__card">
+          <div class="kx-afd-stats__icon kx-afd-stats__icon--clicks">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+          </div>
+          <div class="kx-afd-stats__val" id="kx-st-clicks">–</div>
+          <div class="kx-afd-stats__label">Klicks gesamt</div>
+          <div class="kx-afd-stats__sub" id="kx-st-clicks-today">heute: –</div>
+        </div>
+        <div class="kx-afd-stats__card">
+          <div class="kx-afd-stats__icon kx-afd-stats__icon--referrals">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kx-afd-stats__val" id="kx-st-referrals">–</div>
+          <div class="kx-afd-stats__label">Empfehlungen</div>
+          <div class="kx-afd-stats__sub" id="kx-st-conversion">Conversion: –</div>
+        </div>
+        <div class="kx-afd-stats__card">
+          <div class="kx-afd-stats__icon kx-afd-stats__icon--purchases">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="kx-afd-stats__val" id="kx-st-purchases">–</div>
+          <div class="kx-afd-stats__label">Käufe</div>
+          <div class="kx-afd-stats__sub" id="kx-st-purchases-sub">durch deine Links</div>
+        </div>
+        <div class="kx-afd-stats__card">
+          <div class="kx-afd-stats__icon kx-afd-stats__icon--earnings">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kx-afd-stats__val" id="kx-st-earnings">–</div>
+          <div class="kx-afd-stats__label">Verdiente Punkte</div>
+          <div class="kx-afd-stats__sub" id="kx-st-pending">ausstehend: –</div>
+        </div>
+      </div>
+
+      {%- comment -%} Loading state {%- endcomment -%}
+      <div class="kx-afd-loading" id="kx-afd-loading">
+        <div class="kx-afd-spinner"></div>
+        <span>Dashboard wird geladen…</span>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ CLICK CHART ═══ {%- endcomment -%}
+  <section class="kx-afd-chart-section">
+    <div class="kx-afd-container">
+      <div class="kx-afd-panel">
+        <div class="kx-afd-panel__head">
+          <h2 class="kx-afd-panel__title">Klicks – Letzte 30 Tage</h2>
+          <div class="kx-afd-panel__range">
+            <span id="kx-ch-7d" class="kx-afd-chip" data-days="7">7T</span>
+            <span id="kx-ch-30d" class="kx-afd-chip kx-afd-chip--active" data-days="30">30T</span>
+          </div>
+        </div>
+        <div class="kx-afd-chart" id="kx-afd-chart">
+          <div class="kx-afd-chart__empty" id="kx-afd-chart-empty">Noch keine Klickdaten vorhanden</div>
+          <canvas id="kx-afd-canvas" width="800" height="200" style="display:none"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ REFERRAL TABLE ═══ {%- endcomment -%}
+  <section class="kx-afd-table-section">
+    <div class="kx-afd-container">
+      <div class="kx-afd-panel">
+        <div class="kx-afd-panel__head">
+          <h2 class="kx-afd-panel__title">Deine Empfehlungen</h2>
+        </div>
+        <div class="kx-afd-table-wrap" id="kx-afd-table-wrap">
+          <div class="kx-afd-table-empty" id="kx-afd-table-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <p>Noch keine Empfehlungen. Teile deinen Link und verdiene Provisionen!</p>
+          </div>
+          <table class="kx-afd-table" id="kx-afd-table" style="display:none">
+            <thead>
+              <tr>
+                <th>Person</th>
+                <th>Code</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th>Punkte</th>
+              </tr>
+            </thead>
+            <tbody id="kx-afd-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ HOW IT WORKS ═══ {%- endcomment -%}
+  <section class="kx-afd-how">
+    <div class="kx-afd-container">
+      <h2 class="kx-afd-how__title">So funktioniert's</h2>
+      <div class="kx-afd-how__grid">
+        <div class="kx-afd-how__step">
+          <div class="kx-afd-how__num">1</div>
+          <h3>Link teilen</h3>
+          <p>Kopiere deinen persönlichen Link und teile ihn mit Freunden, Familie oder deiner Community.</p>
+        </div>
+        <div class="kx-afd-how__step">
+          <div class="kx-afd-how__num">2</div>
+          <h3>Freund kauft ein</h3>
+          <p>Dein Freund klickt auf deinen Link und bestellt bei Karinex. Er bekommt ebenfalls einen Rabatt!</p>
+        </div>
+        <div class="kx-afd-how__step">
+          <div class="kx-afd-how__num">3</div>
+          <h3>Punkte verdienen</h3>
+          <p>Du erhältst <strong>500 Punkte</strong> für jede erfolgreiche Empfehlung. Bei Gold-Status sogar 10% Provision!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+{%- endunless -%}
+
+{%- comment -%} ═══ STYLES ═══ {%- endcomment -%}
+<style>
+  /* ── Reset & Base ── */
+  .kx-afd{--kx-gold:#c9a84c;--kx-dark:#1a1a1a;--kx-bg:#fafafa;--kx-card:#fff;--kx-border:#e8e8e8;--kx-radius:12px;--kx-shadow:0 2px 12px rgba(0,0,0,.06);font-family:var(--font-body-family,system-ui,-apple-system,sans-serif);color:var(--kx-dark);background:var(--kx-bg)}
+  .kx-afd *,.kx-afd *::before,.kx-afd *::after{box-sizing:border-box}
+  .kx-afd-container{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ── Login Gate ── */
+  .kx-afd-login{display:flex;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:40px 20px}
+  .kx-afd-login__inner{max-width:400px}
+  .kx-afd-login h1{font-size:1.5rem;margin:20px 0 8px;font-weight:700}
+  .kx-afd-login p{color:#666;margin-bottom:24px;font-size:.95rem}
+
+  /* ── Buttons ── */
+  .kx-afd-btn{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;border-radius:8px;font-size:.9rem;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:all .2s}
+  .kx-afd-btn--primary{background:var(--kx-gold);color:#fff}
+  .kx-afd-btn--primary:hover{background:#b8943f;color:#fff}
+  .kx-afd-btn--ghost{background:transparent;color:var(--kx-dark);border:1.5px solid var(--kx-border)}
+  .kx-afd-btn--ghost:hover{border-color:var(--kx-dark)}
+  .kx-afd-btn--sm{padding:8px 16px;font-size:.85rem}
+
+  /* ── Hero ── */
+  .kx-afd-hero{background:linear-gradient(135deg,var(--kx-dark) 0%,#2a2a2a 100%);color:#fff;padding:48px 20px}
+  .kx-afd-hero__inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .kx-afd-hero__badge{display:inline-block;background:rgba(201,168,76,.15);color:var(--kx-gold);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+  .kx-afd-hero__title{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;margin:0 0 8px;line-height:1.2}
+  .kx-afd-hero__sub{color:rgba(255,255,255,.7);font-size:.95rem;margin:0;max-width:500px}
+  .kx-afd-hero__tier{text-align:center}
+  .kx-afd-hero__tier-badge{display:block;font-size:1.1rem;font-weight:700;padding:8px 20px;border-radius:8px;margin-bottom:6px}
+  .kx-afd-hero__tier-badge--bronze{background:linear-gradient(135deg,#cd7f32,#e6a656);color:#fff}
+  .kx-afd-hero__tier-badge--silber{background:linear-gradient(135deg,#8e8e8e,#c0c0c0);color:#fff}
+  .kx-afd-hero__tier-badge--gold{background:linear-gradient(135deg,#c9a84c,#e6c770);color:#fff}
+  .kx-afd-hero__rate{font-size:.85rem;color:rgba(255,255,255,.6)}
+
+  /* ── Link Box ── */
+  .kx-afd-link{padding:32px 0 0}
+  .kx-afd-link__box{background:var(--kx-card);border:1px solid var(--kx-border);border-radius:var(--kx-radius);padding:24px;box-shadow:var(--kx-shadow)}
+  .kx-afd-link__label{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:#666;margin-bottom:12px}
+  .kx-afd-link__row{display:flex;gap:8px}
+  .kx-afd-link__input{flex:1;padding:10px 14px;border:1.5px solid var(--kx-border);border-radius:8px;font-size:.9rem;color:var(--kx-dark);background:#f8f8f8;outline:none}
+  .kx-afd-link__input:focus{border-color:var(--kx-gold)}
+  .kx-afd-link__share{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .kx-afd-link__share-label{font-size:.8rem;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .kx-afd-link__share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;border:1.5px solid var(--kx-border);color:var(--kx-dark);background:transparent;cursor:pointer;transition:all .2s}
+  .kx-afd-link__share-btn:hover{border-color:var(--kx-gold);color:var(--kx-gold)}
+  .kx-afd-link__share-btn--wa:hover{border-color:#25d366;color:#25d366}
+  .kx-afd-link__share-btn--tg:hover{border-color:#0088cc;color:#0088cc}
+
+  /* ── Stats Cards ── */
+  .kx-afd-stats{padding:32px 0}
+  .kx-afd-stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kx-afd-stats__card{background:var(--kx-card);border:1px solid var(--kx-border);border-radius:var(--kx-radius);padding:24px 20px;box-shadow:var(--kx-shadow);text-align:center;transition:transform .2s,box-shadow .2s}
+  .kx-afd-stats__card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+  .kx-afd-stats__icon{width:48px;height:48px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .kx-afd-stats__icon--clicks{background:rgba(59,130,246,.1);color:#3b82f6}
+  .kx-afd-stats__icon--referrals{background:rgba(168,85,247,.1);color:#a855f7}
+  .kx-afd-stats__icon--purchases{background:rgba(34,197,94,.1);color:#22c55e}
+  .kx-afd-stats__icon--earnings{background:rgba(201,168,76,.1);color:var(--kx-gold)}
+  .kx-afd-stats__val{font-size:2rem;font-weight:800;line-height:1.1;margin-bottom:4px}
+  .kx-afd-stats__label{font-size:.85rem;color:#666;font-weight:500}
+  .kx-afd-stats__sub{font-size:.75rem;color:#999;margin-top:6px}
+  .kx-afd-loading{text-align:center;padding:20px;color:#999;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:10px}
+  .kx-afd-spinner{width:20px;height:20px;border:2px solid var(--kx-border);border-top-color:var(--kx-gold);border-radius:50%;animation:kx-spin .7s linear infinite}
+  @keyframes kx-spin{to{transform:rotate(360deg)}}
+
+  /* ── Chart Panel ── */
+  .kx-afd-chart-section{padding:0 0 32px}
+  .kx-afd-panel{background:var(--kx-card);border:1px solid var(--kx-border);border-radius:var(--kx-radius);padding:24px;box-shadow:var(--kx-shadow)}
+  .kx-afd-panel__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+  .kx-afd-panel__title{font-size:1.1rem;font-weight:700;margin:0}
+  .kx-afd-panel__range{display:flex;gap:6px}
+  .kx-afd-chip{padding:6px 14px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid var(--kx-border);color:#666;background:transparent;transition:all .2s}
+  .kx-afd-chip--active,.kx-afd-chip:hover{background:var(--kx-dark);color:#fff;border-color:var(--kx-dark)}
+  .kx-afd-chart{position:relative;min-height:200px}
+  .kx-afd-chart__empty{display:flex;align-items:center;justify-content:center;min-height:200px;color:#bbb;font-size:.9rem}
+  #kx-afd-canvas{width:100%;height:200px}
+
+  /* ── Referral Table ── */
+  .kx-afd-table-section{padding:0 0 32px}
+  .kx-afd-table-empty{text-align:center;padding:40px 20px;color:#999}
+  .kx-afd-table-empty p{margin:12px 0 0;font-size:.9rem}
+  .kx-afd-table{width:100%;border-collapse:collapse;font-size:.9rem}
+  .kx-afd-table th{text-align:left;padding:12px 16px;border-bottom:2px solid var(--kx-border);font-size:.8rem;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.04em}
+  .kx-afd-table td{padding:14px 16px;border-bottom:1px solid #f0f0f0}
+  .kx-afd-table tr:last-child td{border-bottom:none}
+  .kx-afd-table tr:hover td{background:#fafafa}
+  .kx-afd-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.78rem;font-weight:600}
+  .kx-afd-status--purchased{background:rgba(34,197,94,.1);color:#16a34a}
+  .kx-afd-status--pending{background:rgba(234,179,8,.1);color:#ca8a04}
+
+  /* ── How It Works ── */
+  .kx-afd-how{padding:48px 0 56px}
+  .kx-afd-how__title{text-align:center;font-size:1.3rem;font-weight:700;margin:0 0 32px}
+  .kx-afd-how__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .kx-afd-how__step{text-align:center;padding:24px 16px}
+  .kx-afd-how__num{width:40px;height:40px;border-radius:50%;background:var(--kx-dark);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;margin-bottom:16px}
+  .kx-afd-how__step h3{font-size:1rem;font-weight:700;margin:0 0 8px}
+  .kx-afd-how__step p{font-size:.88rem;color:#666;margin:0;line-height:1.5}
+
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .kx-afd-hero__inner{flex-direction:column;text-align:center}
+    .kx-afd-hero__sub{max-width:100%}
+    .kx-afd-stats__grid{grid-template-columns:repeat(2,1fr)}
+    .kx-afd-how__grid{grid-template-columns:1fr}
+    .kx-afd-link__row{flex-direction:column}
+    .kx-afd-table{font-size:.8rem}
+    .kx-afd-table th,.kx-afd-table td{padding:10px 10px}
+  }
+  @media(max-width:480px){
+    .kx-afd-stats__grid{grid-template-columns:1fr 1fr}
+    .kx-afd-stats__val{font-size:1.5rem}
+    .kx-afd-hero{padding:32px 16px}
+  }
+</style>
+
+{%- comment -%} ═══ JAVASCRIPT ═══ {%- endcomment -%}
+{%- if customer -%}
+<script>
+(function(){
+  'use strict';
+  var GAS = 'https://script.google.com/macros/s/AKfycbz0KQ6sRNj7ZPV8ivb53EPM3kK9Ms5RcUDzaiXkz_Vq8W8DZXaFwBM7oo84U2IY37Wd/exec';
+  var CID = '{{ customer.id }}';
+  var EMAIL = '{{ customer.email }}';
+
+  /* ── Copy Link ── */
+  var copyBtn = document.getElementById('kx-afd-copy');
+  if(copyBtn){
+    copyBtn.addEventListener('click', function(){
+      var inp = document.getElementById('kx-afd-link-input');
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(inp.value).then(function(){
+          copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Kopiert!';
+          setTimeout(function(){ copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Kopieren'; }, 2500);
+        });
+      } else {
+        inp.select(); document.execCommand('copy');
+      }
+    });
+  }
+
+  /* ── Telegram Share ── */
+  var tgBtn = document.getElementById('kx-afd-share-tg');
+  if(tgBtn){
+    tgBtn.addEventListener('click', function(){
+      var link = document.getElementById('kx-afd-link-input').value;
+      window.open('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent('Schau dir Karinex an!'), '_blank');
+    });
+  }
+
+  /* ── Load Dashboard Data ── */
+  var loadEl = document.getElementById('kx-afd-loading');
+  function loadDashboard(){
+    fetch(GAS + '?action=affiliate_dashboard&customer_id=' + CID + '&email=' + encodeURIComponent(EMAIL))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(loadEl) loadEl.style.display = 'none';
+        if(!d.ok) return;
+        renderStats(d);
+        renderChart(d.clicks ? d.clicks.daily || [] : []);
+        renderTable(d.referrals || []);
+      })
+      .catch(function(){
+        if(loadEl) loadEl.innerHTML = '<span style="color:#e74c3c">Fehler beim Laden. Bitte Seite neu laden.</span>';
+      });
+  }
+
+  /* ── Render Stats ── */
+  function renderStats(d){
+    setText('kx-st-clicks', fmt(d.clicks ? d.clicks.total : 0));
+    setText('kx-st-clicks-today', 'heute: ' + fmt(d.clicks ? d.clicks.today : 0));
+    setText('kx-st-referrals', fmt(d.total_referrals || 0));
+    setText('kx-st-conversion', 'Conversion: ' + (d.conversion_rate || 0) + '%');
+    setText('kx-st-purchases', fmt(d.total_purchases || 0));
+    setText('kx-st-earnings', fmt(d.total_earned || 0));
+    setText('kx-st-pending', 'ausstehend: ' + fmt(d.pending_points || 0));
+  }
+
+  /* ── Render Chart (Canvas bar chart) ── */
+  var chartData = [];
+  var chartDays = 30;
+
+  function renderChart(daily){
+    chartData = daily || [];
+    var emptyEl = document.getElementById('kx-afd-chart-empty');
+    var canvas = document.getElementById('kx-afd-canvas');
+    if(!chartData.length || !canvas){
+      if(emptyEl) emptyEl.style.display = 'flex';
+      return;
+    }
+    if(emptyEl) emptyEl.style.display = 'none';
+    canvas.style.display = 'block';
+    drawChart(chartDays);
+  }
+
+  function drawChart(days){
+    var canvas = document.getElementById('kx-afd-canvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 200 * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '200px';
+    ctx.scale(dpr, dpr);
+
+    var W = rect.width, H = 200;
+    var pad = {top:20, right:10, bottom:30, left:40};
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    var data = chartData.slice(-days);
+    if(!data.length) return;
+    var max = Math.max.apply(null, data.map(function(d){ return d.count; }));
+    if(max === 0) max = 1;
+    var barW = Math.max(2, (cW / data.length) - 2);
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* Grid lines */
+    ctx.strokeStyle = '#f0f0f0';
+    ctx.lineWidth = 1;
+    for(var i = 0; i <= 4; i++){
+      var y = pad.top + (cH / 4) * i;
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    }
+
+    /* Bars */
+    for(var j = 0; j < data.length; j++){
+      var bH = (data[j].count / max) * cH;
+      var x = pad.left + (cW / data.length) * j + 1;
+      var y2 = pad.top + cH - bH;
+      ctx.fillStyle = '#c9a84c';
+      ctx.beginPath();
+      ctx.roundRect(x, y2, barW, bH, [3, 3, 0, 0]);
+      ctx.fill();
+
+      /* X labels (every 5th) */
+      if(j % Math.ceil(data.length / 6) === 0 || j === data.length - 1){
+        ctx.fillStyle = '#999';
+        ctx.font = '11px system-ui';
+        ctx.textAlign = 'center';
+        var label = data[j].date ? data[j].date.slice(5) : '';
+        ctx.fillText(label, x + barW / 2, H - 8);
+      }
+    }
+
+    /* Y axis labels */
+    ctx.fillStyle = '#999';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'right';
+    for(var k = 0; k <= 4; k++){
+      var val = Math.round(max - (max / 4) * k);
+      ctx.fillText(val, pad.left - 6, pad.top + (cH / 4) * k + 4);
+    }
+  }
+
+  /* Chart range toggle */
+  document.querySelectorAll('.kx-afd-chip[data-days]').forEach(function(el){
+    el.addEventListener('click', function(){
+      document.querySelectorAll('.kx-afd-chip[data-days]').forEach(function(c){ c.classList.remove('kx-afd-chip--active'); });
+      el.classList.add('kx-afd-chip--active');
+      chartDays = parseInt(el.dataset.days, 10);
+      drawChart(chartDays);
+    });
+  });
+
+  /* ── Render Table ── */
+  function renderTable(refs){
+    var emptyEl = document.getElementById('kx-afd-table-empty');
+    var tableEl = document.getElementById('kx-afd-table');
+    var tbody = document.getElementById('kx-afd-tbody');
+    if(!refs.length){
+      if(emptyEl) emptyEl.style.display = 'block';
+      return;
+    }
+    if(emptyEl) emptyEl.style.display = 'none';
+    if(tableEl) tableEl.style.display = 'table';
+    var html = '';
+    for(var i = 0; i < refs.length; i++){
+      var r = refs[i];
+      var statusClass = r.purchased ? 'purchased' : 'pending';
+      var statusText = r.purchased ? '✓ Gekauft' : '⏳ Ausstehend';
+      html += '<tr>'
+        + '<td>' + esc(r.email_masked || '–') + '</td>'
+        + '<td><code style="background:#f5f5f5;padding:2px 8px;border-radius:4px;font-size:.8rem">' + esc(r.code || '–') + '</code></td>'
+        + '<td>' + esc(r.date || '–') + '</td>'
+        + '<td><span class="kx-afd-status kx-afd-status--' + statusClass + '">' + statusText + '</span></td>'
+        + '<td><strong>' + (r.earned_points || 0) + '</strong></td>'
+        + '</tr>';
+    }
+    if(tbody) tbody.innerHTML = html;
+  }
+
+  /* ── Helpers ── */
+  function setText(id, val){ var el = document.getElementById(id); if(el) el.textContent = val; }
+  function fmt(n){ return n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'') + 'k' : String(n); }
+  function esc(s){ var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  /* ── Init ── */
+  loadDashboard();
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Affiliate Dashboard",
+  "tag": "section",
+  "class": "section-affiliate-dashboard",
+  "settings": []
+}
+{% endschema %}
