@@ -82,7 +82,7 @@ function doGet(e) {
         return handleAdminList_();
 
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.5' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.6' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -743,6 +743,95 @@ function adminGetHistory(email) {
   } catch(e) { return { ok: false, error: e.message }; }
 }
 
+function adminGetCustomerProfile(email) {
+  email = String(email || '').trim().toLowerCase();
+  if (!email) return { ok: false, error: 'missing_email' };
+
+  var profile = { ok: true, email: email, shopify: null, orders: [], referralCode: null, referredBy: null, pointsHistory: [] };
+
+  /* 1. Loyalty data */
+  var data = getCustomerData_(email);
+  var tier = getTier_(data.points);
+  var next = getNextTier_(data.points);
+  profile.points = data.points;
+  profile.tier = tier.name;
+  profile.cashback = tier.cashback;
+  profile.next_tier = next ? next.name : null;
+  profile.points_to_next = next ? next.min - data.points : 0;
+
+  /* 2. Shopify customer data */
+  try {
+    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id firstName lastName phone createdAt tags numberOfOrders amountSpent { amount currencyCode } } } }';
+    var result = shopifyGQL_(q);
+    var nodes = result.data && result.data.customers && result.data.customers.nodes;
+    if (nodes && nodes.length) {
+      var c = nodes[0];
+      profile.shopify = {
+        id: c.id,
+        name: ((c.firstName || '') + ' ' + (c.lastName || '')).trim() || '-',
+        phone: c.phone || '-',
+        createdAt: c.createdAt || '',
+        tags: c.tags || [],
+        orderCount: parseInt(c.numberOfOrders) || 0,
+        totalSpent: c.amountSpent ? (parseFloat(c.amountSpent.amount) || 0) : 0,
+        currency: c.amountSpent ? (c.amountSpent.currencyCode || 'EUR') : 'EUR'
+      };
+
+      /* 3. Recent orders from Shopify */
+      var gid = c.id;
+      var oq = '{ customer(id: "' + gid + '") { orders(first:20, sortKey:CREATED_AT, reverse:true) { nodes { id name createdAt totalPriceSet { shopMoney { amount currencyCode } } displayFinancialStatus displayFulfillmentStatus lineItems(first:10) { nodes { title quantity originalUnitPriceSet { shopMoney { amount } } } } } } } }';
+      var oResult = shopifyGQL_(oq);
+      if (oResult.data && oResult.data.customer && oResult.data.customer.orders) {
+        var oNodes = oResult.data.customer.orders.nodes || [];
+        for (var i = 0; i < oNodes.length; i++) {
+          var o = oNodes[i];
+          var items = [];
+          var li = (o.lineItems && o.lineItems.nodes) || [];
+          for (var j = 0; j < li.length; j++) {
+            items.push({ title: li[j].title, qty: li[j].quantity, price: li[j].originalUnitPriceSet ? li[j].originalUnitPriceSet.shopMoney.amount : '0' });
+          }
+          profile.orders.push({
+            name: o.name,
+            date: o.createdAt,
+            total: o.totalPriceSet ? o.totalPriceSet.shopMoney.amount : '0',
+            currency: o.totalPriceSet ? o.totalPriceSet.shopMoney.currencyCode : 'EUR',
+            financial: o.displayFinancialStatus || '',
+            fulfillment: o.displayFulfillmentStatus || '',
+            items: items
+          });
+        }
+      }
+    }
+  } catch(e) { Logger.log('profile shopify error: ' + e.message); }
+
+  /* 4. Referral code */
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var refCode = props.getProperty('ref_' + email);
+    if (refCode) profile.referralCode = refCode;
+  } catch(e) {}
+
+  /* 5. Points history for this customer */
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var hData = sheets.history.getDataRange().getValues();
+    for (var i = 1; i < hData.length; i++) {
+      if (String(hData[i][1] || '').toLowerCase() === email) {
+        profile.pointsHistory.push({
+          date: hData[i][0] ? new Date(hData[i][0]).toISOString() : '',
+          points: String(hData[i][2] || ''),
+          reason: String(hData[i][3] || ''),
+          balance: parseInt(hData[i][4]) || 0
+        });
+      }
+    }
+    profile.pointsHistory.reverse();
+    profile.pointsHistory = profile.pointsHistory.slice(0, 50);
+  } catch(e) {}
+
+  return profile;
+}
+
 /* ═══════════════════════════════════════════════════════
    ADMIN: Dashboard HTML
    ═══════════════════════════════════════════════════════ */
@@ -811,8 +900,9 @@ function getAdminHtml_() {
 + '<a onclick="go(\'cust\')" data-p="cust"><span class="ic">&#128269;</span> Kunden</a>'
 + '<a onclick="go(\'neu\')" data-p="neu"><span class="ic">&#10133;</span> Neuer Kunde</a>'
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
++ '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.5</div>'
++ '<div class="sb-f">Karinex Loyalty v2.6</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -856,6 +946,17 @@ function getAdminHtml_() {
 + '<button class="bt" onclick="doHist()">Laden</button><button class="bo" onclick="document.getElementById(\'hEm\').value=\'\';doHist()">Alle</button></div>'
 + '<div id="hTbl"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
++ '<div class="pg" id="pg-prof">'
++ '<div class="pt">Kundenprofil <span>Detailansicht eines Kunden</span></div>'
++ '<div class="cd"><h2>&#128269; Kunde suchen</h2>'
++ '<div style="display:flex;gap:8px"><input type="email" id="pEm" placeholder="E-Mail eingeben..." style="margin-bottom:0"><button class="bt" onclick="loadProfile()" style="white-space:nowrap">Profil laden</button></div>'
++ '<div id="pMsg" class="msg"></div></div>'
++ '<div id="pDet" style="display:none">'
++ '<div class="cd" id="pInfo"></div>'
++ '<div class="cd" id="pOrders"></div>'
++ '<div class="cd" id="pHist"></div>'
++ '</div>'
++ '</div>'
 + '</div>'
 + '<div class="toast" id="tst"></div>'
 + '<script>'
@@ -865,15 +966,19 @@ function getAdminHtml_() {
 + 'function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,\'.\')}'
 + 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber);document.getElementById(\'sB\').textContent=fmt(s.bronze)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
 + 'function doSearch(){var em=document.getElementById(\'sEm\').value.trim();if(!em){sm(\'sMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'sMsg\',\'ok\',\'Suche...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'sMsg\',\'err\',\'Kunde nicht gefunden\');document.getElementById(\'cDet\').style.display=\'none\';return}document.getElementById(\'sMsg\').style.display=\'none\';showCust(d)}).withFailureHandler(function(e){sm(\'sMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomer(em)}'
-+ 'function showCust(d){document.getElementById(\'cDet\').style.display=\'block\';var h=\'<div style="flex:1"><div class="em">\'+d.email+\'</div><div class="mt"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div></div>\';h+=\'<div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div></div>\';if(d.next_tier)h+=\'<div style="text-align:right"><div class="mt">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div></div>\';document.getElementById(\'cCard\').innerHTML=h}'
++ 'function showCust(d){document.getElementById(\'cDet\').style.display=\'block\';var h=\'<div style="flex:1"><div class="em">\'+d.email+\'</div><div class="mt"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div></div>\';h+=\'<div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';h+=\'<button class="bt" style="margin-top:8px;padding:6px 14px;font-size:13px" onclick="openProf(\\\'\'+d.email+\'\\\')">&#128100; Profil oeffnen</button>\';h+=\'</div>\';if(d.next_tier)h+=\'<div style="text-align:right"><div class="mt">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div></div>\';document.getElementById(\'cCard\').innerHTML=h}'
 + 'function doAdj(rm){var em=document.getElementById(\'sEm\').value.trim();var pts=parseInt(document.getElementById(\'aP\').value)||0;var re=document.getElementById(\'aR\').value.trim();if(!em||!pts){sm(\'aMsg\',\'err\',\'E-Mail und Punkte eingeben\');return}sm(\'aMsg\',\'ok\',\'Wird gespeichert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'aMsg\',\'err\',(d&&d.error)||\'Fehler\');return}var si=d.changed>0?\'+\':\'\';tst(si+d.changed+\' Punkte \u2014 Neuer Stand: \'+fmt(d.points)+\' (\'+d.tier+\')\',\'ok\');document.getElementById(\'aMsg\').style.display=\'none\';document.getElementById(\'aP\').value=\'\';document.getElementById(\'aR\').value=\'\';doSearch()}).withFailureHandler(function(e){sm(\'aMsg\',\'err\',e.message)}).adminAdjustPoints(em,pts,re,rm)}'
-+ 'function doList(){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}document.getElementById(\'cCnt\').textContent=\'(\'+d.total+\')\';if(!d.customers.length){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Noch keine Kunden</div>\';return}var h=\'<table><thead><tr><th>#</th><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Cashback</th><th>Aktualisiert</th></tr></thead><tbody>\';for(var i=0;i<d.customers.length;i++){var c=d.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';var cb=c.tier===\'gold\'?10:c.tier===\'silber\'?7:5;h+=\'<tr class="ck" data-em="\'+c.email+\'" onclick="selC(this.dataset.em)"><td style="color:#94a3b8;font-weight:600">\'+String(i+1)+\'</td><td>\'+c.email+\'</td><td><strong>\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+cb+\'%</td><td>\'+dt+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'cTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminListCustomers()}'
++ 'function doList(){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}document.getElementById(\'cCnt\').textContent=\'(\'+d.total+\')\';if(!d.customers.length){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Noch keine Kunden</div>\';return}var h=\'<table><thead><tr><th>#</th><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Cashback</th><th>Aktualisiert</th><th></th></tr></thead><tbody>\';for(var i=0;i<d.customers.length;i++){var c=d.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';var cb=c.tier===\'gold\'?10:c.tier===\'silber\'?7:5;h+=\'<tr class="ck" data-em="\'+c.email+\'"><td style="color:#94a3b8;font-weight:600">\'+String(i+1)+\'</td><td onclick="selC(\\\'\'+c.email+\'\\\')\">\'+c.email+\'</td><td><strong>\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+cb+\'%</td><td>\'+dt+\'</td><td><button class="bt" style="padding:4px 10px;font-size:12px" onclick="openProf(\\\'\'+c.email+\'\\\')">Profil</button></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'cTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'cTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminListCustomers()}'
 + 'function selC(em){document.getElementById(\'sEm\').value=em;doSearch();window.scrollTo(0,0)}'
++ 'function openProf(em){go(\'prof\');document.getElementById(\'pEm\').value=em;loadProfile()}'
 + 'function doReg(){var em=document.getElementById(\'nEm\').value.trim();var pts=parseInt(document.getElementById(\'nPt\').value)||0;var re=document.getElementById(\'nRe\').value.trim();if(!em){sm(\'nMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'nMsg\',\'ok\',\'Wird registriert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'nMsg\',\'err\',(d&&d.error)||\'Fehler\');return}sm(\'nMsg\',\'ok\',\'Kunde registriert: \'+d.email+\' \u2014 \'+fmt(d.points)+\' Punkte (\'+d.tier+\')\');tst(\'Neuer Kunde: \'+d.email,\'ok\');document.getElementById(\'nEm\').value=\'\';document.getElementById(\'nPt\').value=\'\';document.getElementById(\'nRe\').value=\'\'}).withFailureHandler(function(e){sm(\'nMsg\',\'err\',e.message)}).adminAddNewCustomer(em,pts,re)}'
 + 'function doHist(){var em=document.getElementById(\'hEm\').value.trim();document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}if(!d.history.length){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Keine Eintraege</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var i=0;i<d.history.length;i++){var r=d.history[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td style="white-space:nowrap">\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';if(d.total>200)h+=\'<div class="emp" style="padding:12px">Zeige 200 von \'+d.total+\'</div>\';document.getElementById(\'hTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'hTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetHistory(em)}'
 + 'document.getElementById(\'sEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doSearch()});'
 + 'document.getElementById(\'nEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doReg()});'
 + 'document.getElementById(\'hEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doHist()});'
++ 'document.getElementById(\'pEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')loadProfile()});'
++ 'function loadProfile(){var em=document.getElementById(\'pEm\').value.trim();if(!em){sm(\'pMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'pMsg\',\'ok\',\'Profil wird geladen...\');document.getElementById(\'pDet\').style.display=\'none\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'pMsg\',\'err\',(d&&d.error)||\' Kunde nicht gefunden\');return}document.getElementById(\'pMsg\').style.display=\'none\';document.getElementById(\'pDet\').style.display=\'block\';renderProfile(d)}).withFailureHandler(function(e){sm(\'pMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomerProfile(em)}'
++ 'function renderProfile(d){var s=d.shopify||{};var h=\'<h2>&#128100; Kundendaten</h2>\';h+=\'<div class="cc"><div style="flex:1"><div class="em" style="font-size:16px;font-weight:700">\'+d.email+\'</div>\';h+=\'<div class="mt" style="margin-top:6px"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div>\';if(s.name&&s.name!==\'-\')h+=\'<div class="mt" style="margin-top:4px">Name: \'+s.name+\'</div>\';if(s.phone&&s.phone!==\'-\')h+=\'<div class="mt">Telefon: \'+s.phone+\'</div>\';if(s.createdAt)h+=\'<div class="mt">Kunde seit: \'+new Date(s.createdAt).toLocaleDateString(\'de-DE\')+\'</div>\';if(d.referralCode)h+=\'<div class="mt" style="margin-top:6px">Empfehlungscode: <strong>\'+d.referralCode+\'</strong></div>\';h+=\'</div><div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';if(d.next_tier)h+=\'<div class="mt" style="margin-top:4px">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div>\';h+=\'</div></div>\';h+=\'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:8px">\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent)">\'+fmt(s.orderCount||0)+\'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Bestellungen</div></div>\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--green)">\'+(s.totalSpent?Number(s.totalSpent).toFixed(2):\'0.00\')+\' &euro;</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Gesamtumsatz</div></div>\';if(s.tags&&s.tags.length){h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px"><div style="font-size:11px;color:var(--txt2);margin-bottom:6px">Tags</div>\';for(var t=0;t<s.tags.length;t++)h+=\'<span style="display:inline-block;background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">\'+s.tags[t]+\'</span>\';h+=\'</div>\'}h+=\'</div>\';document.getElementById(\'pInfo\').innerHTML=h;var oh=\'<h2>&#128722; Bestellungen (\'+d.orders.length+\')</h2>\';if(!d.orders.length){oh+=\'<div class="emp">Keine Bestellungen</div>\'}else{oh+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Artikel</th></tr></thead><tbody>\';for(var i=0;i<d.orders.length;i++){var o=d.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var its=[];for(var j=0;j<o.items.length;j++){its.push(o.items[j].qty+\'x \'+o.items[j].title)}oh+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td>\'+Number(o.total).toFixed(2)+\' &euro;</td><td>\'+o.financial+\'</td><td>\'+o.fulfillment+\'</td><td style="font-size:12px">\'+its.join(\', \')+\'</td></tr>\'}oh+=\'</tbody></table>\'}document.getElementById(\'pOrders\').innerHTML=oh;var ph=\'<h2>&#128203; Punkteverlauf</h2>\';if(!d.pointsHistory.length){ph+=\'<div class="emp">Keine Eintraege</div>\'}else{ph+=\'<table><thead><tr><th>Datum</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var k=0;k<d.pointsHistory.length;k++){var r=d.pointsHistory[k];var rdt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var rcl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';ph+=\'<tr><td>\'+rdt+\'</td><td style="font-weight:700;\'+rcl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}ph+=\'</tbody></table>\'}document.getElementById(\'pHist\').innerHTML=ph}'
 + 'loadDash();doList();doHist();'
 + '</script></body></html>';
 }
