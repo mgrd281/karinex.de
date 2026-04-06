@@ -1228,29 +1228,39 @@ function setupRepricingSystem() {
  * Call with your actual credentials
  */
 function setupCredentials() {
-  // ⚠️ REPLACE these with your actual values, then run ONCE, then DELETE the values from code
-  var SHOP_ID       = 'YOUR_SHOP_ID';        // from idealo Business Center
-  var CLIENT_ID     = 'YOUR_CLIENT_ID';       // from idealo API access
-  var CLIENT_SECRET = 'YOUR_CLIENT_SECRET';   // from idealo API access
-
-  if (SHOP_ID === 'YOUR_SHOP_ID') {
-    Logger.log('⚠️ Please edit setupCredentials() with your actual idealo credentials first!');
-    Logger.log('');
-    Logger.log('You need:');
-    Logger.log('1. Shop ID — from idealo Business Center > Shop Settings');
-    Logger.log('2. Client ID — from idealo Business Center > API Access');
-    Logger.log('3. Client Secret — from idealo Business Center > API Access');
-    Logger.log('');
-    Logger.log('Or configure via Dashboard > Settings page.');
-    return;
-  }
+  // Pre-configured with your provided idealo credentials.
+  var SHOP_ID       = '335018';
+  var CLIENT_ID     = '61ff5250-04f6-4c19-963b-f932cc427b27';
+  var CLIENT_SECRET = '/FQYKJK^mzaLfdh,gZ2+^=80N%P=5m';
 
   setProp_(CONFIG.PROP_SHOP_ID, SHOP_ID);
   setProp_(CONFIG.PROP_CLIENT_ID, CLIENT_ID);
   setProp_(CONFIG.PROP_CLIENT_SECRET, CLIENT_SECRET);
+  setProp_(CONFIG.PROP_ACCESS_TOKEN, '');
+  setProp_(CONFIG.PROP_TOKEN_EXPIRY, '0');
 
   Logger.log('✅ Credentials saved to Script Properties (secure storage).');
-  Logger.log('⚠️ NOW DELETE the credentials from the code above!');
+  Logger.log('🔄 Access token cache cleared.');
+}
+
+/**
+ * One-click setup for non-technical usage.
+ * Run this function once from Apps Script editor.
+ */
+function setupKarinexRepricingNow() {
+  setupRepricingSystem();
+  setupCredentials();
+
+  var test = testIdealoConnection_();
+  if (!test.ok) {
+    Logger.log('❌ Setup finished, but API test failed: ' + test.error);
+    Logger.log('Please verify idealo permissions (PWS/offer update access).');
+    return;
+  }
+
+  Logger.log('✅ Setup completed successfully.');
+  Logger.log('Shop ID: ' + test.shopId);
+  Logger.log('Next: Deploy as Web App, then open dashboard with ?action=dashboard&key=ADMIN_KEY');
 }
 
 /**
