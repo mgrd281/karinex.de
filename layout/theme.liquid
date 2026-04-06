@@ -169,7 +169,7 @@
 
     <!-- Performance Optimization - Resource Hints -->
     <link rel="dns-prefetch" href="https://web.cmp.usercentrics.eu">
-    <link rel="dns-prefetch" href="https://www.trustami.com">
+    {%- comment -%} Trustami dns-prefetch removed — no script loaded from this domain {%- endcomment -%}
     <link rel="dns-prefetch" href="https://widgets.trustedshops.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
@@ -357,7 +357,8 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       {% render 'quick-add-modal' %}
     {% endif %}
 
-    <!-- Tidio Chat - Deferred to idle for page speed -->
+    <!-- Tidio Chat - Load only on product/cart/contact pages -->
+    {%- if template == 'product' or template.name == 'product' or template == 'cart' or request.page_type == 'cart' or page.handle == 'kontakt' or page.handle == 'contact' -%}
     <script>
       (function() {
         function loadTidio() {
@@ -370,12 +371,14 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
         else { setTimeout(loadTidio, 6000); }
       })();
     </script>
+    {%- endif -%}
 
     {% section 'custom-mobile-menu' %}
 
     <!-- 🟢 SMART DEVICE TRACKING FOR ABANDONED CARTS -->
 
-    <!-- ⭐ Review Widget Script (Rechnung Profi Reviews App) — Deferred to idle -->
+    <!-- ⭐ Review Widget Script — Only on product pages -->
+    {%- if template == 'product' or template.name == 'product' -%}
     <script>
       (function() {
         function loadReviewWidget() {
@@ -388,7 +391,9 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
         else { setTimeout(loadReviewWidget, 5000); }
       })();
     </script>
+    {%- endif -%}
 
+    {%- if template == 'product' or template.name == 'product' -%}
     <script>
       // Global Review Form Toggle
       window.toggleReviewForm = function(btn) {
@@ -411,6 +416,7 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
           const target = container.querySelector('#' + targetId); if (target) target.classList.add('active');
       };
     </script>
+    {%- endif -%}
 
     {%- render 'referral-popup' -%}
   </body>

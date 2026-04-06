@@ -93,11 +93,13 @@
   type="module"
   fetchpriority="low"
 ></script>
+{% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
 <script
   src="{{ 'fly-to-cart.js' | asset_url }}"
   type="module"
   fetchpriority="low"
 ></script>
+{% endif %}
 <script src="{{ 'utilities.js' | asset_url }}" defer></script>
 <script src="{{ 'section-hydration.js' | asset_url }}" type="module" defer></script>
 <script src="{{ 'wishlist-heart.js' | asset_url }}" type="module" defer></script>
@@ -195,6 +197,8 @@
   type="module"
   fetchpriority="low"
 ></script>
+{% comment %} PERF: Product-only scripts — guard behind template check {% endcomment %}
+{% if template == 'product' or template.name == 'product' or request.page_type == 'product' %}
 <script
   src="{{ 'media-gallery.js' | asset_url }}"
   type="module"
@@ -220,6 +224,7 @@
   type="module"
   fetchpriority="low"
 ></script>
+{% endif %}
 
 {% if localization.available_countries.size > 1 or localization.available_languages.size > 1 %}
   <script

@@ -1,38 +1,8 @@
 {% # theme-check-disable %}
-{%- unless settings.type_body_font.system? -%}
-  <link
-    rel="preload"
-    as="font"
-    href="{{ settings.type_body_font | font_url }}"
-    type="font/woff2"
-    crossorigin
-  >
-{%- endunless -%}
-{%- unless settings.type_subheading_font.system? -%}
-  <link
-    rel="preload"
-    as="font"
-    href="{{ settings.type_subheading_font | font_url }}"
-    type="font/woff2"
-    crossorigin
-  >
-{%- endunless -%}
-{%- unless settings.type_heading_font.system? -%}
-  <link
-    rel="preload"
-    as="font"
-    href="{{ settings.type_heading_font | font_url }}"
-    type="font/woff2"
-    crossorigin
-  >
-{%- endunless -%}
-{%- unless settings.type_accent_font.system? -%}
-  <link
-    rel="preload"
-    as="font"
-    href="{{ settings.type_accent_font | font_url }}"
-    type="font/woff2"
-    crossorigin
-  >
-{%- endunless -%}
+{%- comment -%}
+  PERF: Shopify theme fonts (Newsreader, Red Hat Display) are NOT used.
+  Site uses self-hosted Outfit + Roboto via local-fonts.liquid.
+  Preloading unused fonts wastes ~80-120KB of high-priority bandwidth.
+  Removed preloads; font-face declarations remain in base.css for fallback.
+{%- endcomment -%}
 {% # theme-check-enable %}

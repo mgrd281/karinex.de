@@ -37,10 +37,13 @@ requestAnimationFrame(function(){
   var affiliateCode = getCookie(COOKIE_NAME);
   if(!affiliateCode) return;
 
+  // Only sync affiliate to cart once per session (not every page load)
+  if(sessionStorage.getItem('kx_aff_synced')) return;
+
   fetch('/cart/update.js', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ attributes: { 'Affiliate': affiliateCode } })
-  }).catch(function(){});
+  }).then(function(){ sessionStorage.setItem('kx_aff_synced','1'); }).catch(function(){});
 });
 </script>
