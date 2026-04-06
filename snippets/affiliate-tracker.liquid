@@ -32,9 +32,10 @@ requestAnimationFrame(function(){
   var refParam = getParam('ref');
   if(refParam && refParam.length > 1){
     setCookie(COOKIE_NAME, refParam, COOKIE_DAYS);
-    /* Track click for affiliate dashboard */
+    /* Track click for affiliate dashboard — uses Image pixel (reliable cross-origin, follows GAS redirects) */
     if(!sessionStorage.getItem('kx_click_tracked')){
-      fetch('https://script.google.com/macros/s/AKfycbz0KQ6sRNj7ZPV8ivb53EPM3kK9Ms5RcUDzaiXkz_Vq8W8DZXaFwBM7oo84U2IY37Wd/exec?action=track_click&ref=' + encodeURIComponent(refParam) + '&page=' + encodeURIComponent(window.location.pathname), {mode:'no-cors'}).catch(function(){});
+      var trackUrl = 'https://script.google.com/macros/s/AKfycbz0KQ6sRNj7ZPV8ivb53EPM3kK9Ms5RcUDzaiXkz_Vq8W8DZXaFwBM7oo84U2IY37Wd/exec?action=track_click&ref=' + encodeURIComponent(refParam) + '&page=' + encodeURIComponent(window.location.pathname);
+      new Image().src = trackUrl;
       sessionStorage.setItem('kx_click_tracked','1');
     }
   }
