@@ -82,7 +82,7 @@ function doGet(e) {
         return handleAdminList_();
 
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.6' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.7' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -159,6 +159,8 @@ function processOrder_(order) {
 
   if (earned > 0) {
     addPoints_(email, earned, 'Bestellung ' + orderName + ' (' + tier.cashback + '% Cashback)', customerId);
+    /* Track for cancellation reversal */
+    try { PropertiesService.getScriptProperties().setProperty('earned_' + String(order.id || order.order_number), JSON.stringify({email: email, points: earned, orderName: orderName})); } catch(e) {}
   }
 
   /* 2. Check for referral discount code → credit referrer */
@@ -166,7 +168,7 @@ function processOrder_(order) {
   for (var i = 0; i < codes.length; i++) {
     var code = String(codes[i].code || '').toUpperCase();
     if (code.indexOf('KX-') === 0) {
-      creditReferrer_(code, email, orderName);
+      creditReferrer_(code, email, orderName, String(order.id || ''));
       break;
     }
   }
@@ -221,7 +223,7 @@ function handleCreateCode_(data) {
    REFERRAL: Credit Referrer
    ═══════════════════════════════════════════════════════ */
 
-function creditReferrer_(discountCode, buyerEmail, orderName) {
+function creditReferrer_(discountCode, buyerEmail, orderName, orderId) {
   var props = PropertiesService.getScriptProperties();
 
   /* Already credited? */
@@ -244,16 +246,12 @@ function creditReferrer_(discountCode, buyerEmail, orderName) {
     }
     if (!referrerEmail) return;
 
-    /* Credit bonus points */
+    /* Credit bonus points — held pending for 30 days */
     props.setProperty('credited_' + discountCode, '1');
-    addPoints_(referrerEmail, REFERRAL_BONUS, 'Empfehlung: ' + buyerEmail + ' (' + orderName + ')', referrerId);
+    addPendingPoints_(referrerEmail, REFERRAL_BONUS, 'Empfehlung: ' + buyerEmail + ' (' + orderName + ')', orderId || '');
 
-    /* Update referrer's metafields */
-    var newData = getCustomerData_(referrerEmail);
-    var newTier = getTier_(newData.points);
-    updateCustomerMetafields_(referrerId, newData.points, newTier.name);
-
-    Logger.log('Credited ' + REFERRAL_BONUS + ' pts to referrer ' + referrerEmail);
+    /* Metafields updated when pending points are released */
+    Logger.log('Pending ' + REFERRAL_BONUS + ' pts for referrer ' + referrerEmail + ' (30 days hold)');
   } catch(e) {
     Logger.log('creditReferrer_ error: ' + e.message);
   }
@@ -445,7 +443,9 @@ function getOrCreateLoyaltySheet_() {
       var ss = SpreadsheetApp.openById(sid);
       var pts = ss.getSheetByName('Points') || ss.insertSheet('Points');
       var hist = ss.getSheetByName('History') || ss.insertSheet('History');
-      return { points: pts, history: hist };
+      var pend = ss.getSheetByName('Pending');
+      if (!pend) { pend = ss.insertSheet('Pending'); pend.getRange(1,1,1,7).setValues([['Datum','Email','Punkte','Grund','Freigabe','OrderID','Status']]); pend.getRange(1,1,1,7).setFontWeight('bold'); pend.setFrozenRows(1); }
+      return { points: pts, history: hist, pending: pend };
     } catch(e) {}
   }
 
@@ -463,7 +463,12 @@ function getOrCreateLoyaltySheet_() {
   hist.getRange(1, 1, 1, 5).setFontWeight('bold');
   hist.setFrozenRows(1);
 
-  return { points: pts, history: hist };
+  var pend = ss.insertSheet('Pending');
+  pend.getRange(1, 1, 1, 7).setValues([['Datum', 'Email', 'Punkte', 'Grund', 'Freigabe', 'OrderID', 'Status']]);
+  pend.getRange(1, 1, 1, 7).setFontWeight('bold');
+  pend.setFrozenRows(1);
+
+  return { points: pts, history: hist, pending: pend };
 }
 
 function getCustomerData_(email) {
@@ -512,6 +517,180 @@ function addPoints_(email, points, reason, customerId) {
   } catch(e) {
     Logger.log('addPoints_ error: ' + e.message);
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PENDING POINTS: 30-day hold for referral bonuses
+   ═══════════════════════════════════════════════════════ */
+
+function addPendingPoints_(email, points, reason, orderId) {
+  email = String(email).trim().toLowerCase();
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var releaseDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    sheets.pending.appendRow([new Date(), email, points, reason, releaseDate, orderId || '', 'pending']);
+  } catch(e) {
+    Logger.log('addPendingPoints_ error: ' + e.message);
+  }
+}
+
+function getPendingPoints_(email) {
+  email = String(email).trim().toLowerCase();
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.pending.getDataRange().getValues();
+    var total = 0;
+    var items = [];
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][1]).toLowerCase() === email && String(data[i][6]) === 'pending') {
+        var pts = parseInt(data[i][2]) || 0;
+        total += pts;
+        var rel = data[i][4] ? new Date(data[i][4]) : new Date();
+        items.push({
+          points: pts,
+          reason: String(data[i][3]),
+          releaseDate: rel.toISOString(),
+          daysLeft: Math.max(0, Math.ceil((rel.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
+        });
+      }
+    }
+    return { total: total, items: items };
+  } catch(e) {
+    return { total: 0, items: [] };
+  }
+}
+
+/** Releases pending points that have matured (30 days passed). Run daily. */
+function releasePendingPoints() {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.pending.getDataRange().getValues();
+    var now = new Date();
+    var released = 0;
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][6]) === 'pending' && new Date(data[i][4]) <= now) {
+        var email = String(data[i][1]).toLowerCase();
+        var points = parseInt(data[i][2]) || 0;
+        var reason = String(data[i][3]) + ' (freigegeben)';
+
+        addPoints_(email, points, reason, '');
+        sheets.pending.getRange(i + 1, 7).setValue('released');
+        released++;
+
+        /* Update Shopify metafields */
+        try {
+          var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+          var result = shopifyGQL_(q);
+          var nodes = result.data && result.data.customers && result.data.customers.nodes;
+          if (nodes && nodes.length) {
+            var nd = getCustomerData_(email);
+            var nt = getTier_(nd.points);
+            updateCustomerMetafields_(nodes[0].id, nd.points, nt.name);
+            try { updateCustomerTierTag_(nodes[0].id, nt.name); } catch(e) {}
+          }
+        } catch(e) {}
+      }
+    }
+
+    Logger.log('releasePendingPoints: ' + released + ' released');
+  } catch(e) {
+    Logger.log('releasePendingPoints error: ' + e.message);
+  }
+}
+
+function cancelPendingByOrder_(orderId) {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var data = sheets.pending.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][5]) === String(orderId) && String(data[i][6]) === 'pending') {
+        sheets.pending.getRange(i + 1, 7).setValue('cancelled');
+      }
+    }
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════════
+   ORDER CANCELLATION: Reverse points on cancel/refund
+   ═══════════════════════════════════════════════════════ */
+
+function checkCancelledOrders() {
+  var props = PropertiesService.getScriptProperties();
+  var lastCheck = props.getProperty('LAST_CANCEL_CHECK');
+  if (!lastCheck) lastCheck = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+  try {
+    /* Fetch cancelled orders */
+    var url1 = 'https://' + SHOP_DOMAIN + '/admin/api/' + API_VERSION + '/orders.json'
+      + '?status=cancelled&updated_at_min=' + encodeURIComponent(lastCheck)
+      + '&limit=250&fields=id,name,order_number,email,cancelled_at';
+
+    /* Fetch refunded orders */
+    var url2 = 'https://' + SHOP_DOMAIN + '/admin/api/' + API_VERSION + '/orders.json'
+      + '?financial_status=refunded&updated_at_min=' + encodeURIComponent(lastCheck)
+      + '&limit=250&fields=id,name,order_number,email';
+
+    var headers = { 'X-Shopify-Access-Token': getToken_() };
+    var allOrders = [];
+
+    var resp1 = UrlFetchApp.fetch(url1, { headers: headers, muteHttpExceptions: true });
+    allOrders = allOrders.concat(JSON.parse(resp1.getContentText()).orders || []);
+
+    var resp2 = UrlFetchApp.fetch(url2, { headers: headers, muteHttpExceptions: true });
+    allOrders = allOrders.concat(JSON.parse(resp2.getContentText()).orders || []);
+
+    var seen = {};
+    var reversed = 0;
+
+    for (var i = 0; i < allOrders.length; i++) {
+      var oid = String(allOrders[i].id);
+      if (seen[oid]) continue;
+      seen[oid] = true;
+
+      if (props.getProperty('reversed_' + oid)) continue;
+
+      var earnedData = props.getProperty('earned_' + oid);
+      if (!earnedData) continue;
+
+      try {
+        var ed = JSON.parse(earnedData);
+        addPoints_(ed.email, -ed.points, 'Storniert: ' + ed.orderName, '');
+        props.setProperty('reversed_' + oid, '1');
+        reversed++;
+
+        /* Also cancel any pending referral points for this order */
+        cancelPendingByOrder_(oid);
+
+        /* Update Shopify metafields */
+        try {
+          var q = '{ customers(first:1, query:"email:' + ed.email + '") { nodes { id } } }';
+          var result = shopifyGQL_(q);
+          var nodes = result.data && result.data.customers && result.data.customers.nodes;
+          if (nodes && nodes.length) {
+            var nd = getCustomerData_(ed.email);
+            var nt = getTier_(nd.points);
+            updateCustomerMetafields_(nodes[0].id, nd.points, nt.name);
+          }
+        } catch(e) {}
+
+        Logger.log('Reversed ' + ed.points + ' pts for cancelled order ' + ed.orderName);
+      } catch(e) {}
+    }
+
+    Logger.log('checkCancelledOrders: ' + reversed + ' reversed');
+  } catch(err) {
+    Logger.log('checkCancelledOrders error: ' + err.message);
+  }
+
+  props.setProperty('LAST_CANCEL_CHECK', new Date().toISOString());
+}
+
+/** Daily maintenance: release pending points + check cancellations */
+function dailyMaintenance() {
+  releasePendingPoints();
+  checkCancelledOrders();
+  Logger.log('dailyMaintenance completed: ' + new Date().toISOString());
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -690,13 +869,20 @@ function adminGetStats() {
   try {
     var sheets = getOrCreateLoyaltySheet_();
     var data = sheets.points.getDataRange().getValues();
-    var s = { total: 0, gold: 0, silber: 0, bronze: 0, totalPoints: 0 };
+    var s = { total: 0, gold: 0, silber: 0, bronze: 0, totalPoints: 0, totalPending: 0 };
     for (var i = 1; i < data.length; i++) {
       s.total++;
       s.totalPoints += parseInt(data[i][1]) || 0;
       var t = String(data[i][2] || 'bronze').toLowerCase();
       if (t === 'gold') s.gold++; else if (t === 'silber') s.silber++; else s.bronze++;
     }
+    /* Count total pending points */
+    try {
+      var pendData = sheets.pending.getDataRange().getValues();
+      for (var j = 1; j < pendData.length; j++) {
+        if (String(pendData[j][6]) === 'pending') s.totalPending += parseInt(pendData[j][2]) || 0;
+      }
+    } catch(e) {}
     return { ok: true, stats: s };
   } catch(e) { return { ok: false, error: e.message }; }
 }
@@ -777,14 +963,16 @@ function adminGetCustomerProfile(email) {
         currency: c.amountSpent ? (c.amountSpent.currencyCode || 'EUR') : 'EUR'
       };
 
-      /* 3. Recent orders from Shopify */
+      /* 3. Orders from last 6 months */
       var gid = c.id;
-      var oq = '{ customer(id: "' + gid + '") { orders(first:20, sortKey:CREATED_AT, reverse:true) { nodes { id name createdAt totalPriceSet { shopMoney { amount currencyCode } } displayFinancialStatus displayFulfillmentStatus lineItems(first:10) { nodes { title quantity originalUnitPriceSet { shopMoney { amount } } } } } } } }';
+      var sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
+      var oq = '{ customer(id: "' + gid + '") { orders(first:50, sortKey:CREATED_AT, reverse:true) { nodes { id name createdAt totalPriceSet { shopMoney { amount currencyCode } } displayFinancialStatus displayFulfillmentStatus lineItems(first:10) { nodes { title quantity originalUnitPriceSet { shopMoney { amount } } } } } } } }';
       var oResult = shopifyGQL_(oq);
       if (oResult.data && oResult.data.customer && oResult.data.customer.orders) {
         var oNodes = oResult.data.customer.orders.nodes || [];
         for (var i = 0; i < oNodes.length; i++) {
           var o = oNodes[i];
+          if (new Date(o.createdAt) < sixMonthsAgo) continue;
           var items = [];
           var li = (o.lineItems && o.lineItems.nodes) || [];
           for (var j = 0; j < li.length; j++) {
@@ -828,6 +1016,9 @@ function adminGetCustomerProfile(email) {
     profile.pointsHistory.reverse();
     profile.pointsHistory = profile.pointsHistory.slice(0, 50);
   } catch(e) {}
+
+  /* 6. Pending (reserved) points */
+  profile.pendingPoints = getPendingPoints_(email);
 
   return profile;
 }
@@ -902,7 +1093,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.6</div>'
++ '<div class="sb-f">Karinex Loyalty v2.7</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -913,6 +1104,7 @@ function getAdminHtml_() {
 + '<div class="sc go"><div class="lb">Gold Kunden</div><div class="vl" id="sG">&#8212;</div></div>'
 + '<div class="sc si"><div class="lb">Silber Kunden</div><div class="vl" id="sS">&#8212;</div></div>'
 + '<div class="sc" style="border-left:3px solid var(--bronze)"><div class="lb">Bronze Kunden</div><div class="vl" id="sB" style="color:var(--bronze)">&#8212;</div></div>'
++ '<div class="sc" style="border-left:3px solid var(--gold)"><div class="lb">Reservierte Punkte</div><div class="vl" id="sPend" style="color:var(--gold)">&#8212;</div></div>'
 + '</div>'
 + '<div class="cd"><h2>&#128203; Letzte Aktivitaeten</h2><div id="rAct"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
@@ -954,6 +1146,7 @@ function getAdminHtml_() {
 + '<div id="pDet" style="display:none">'
 + '<div class="cd" id="pInfo"></div>'
 + '<div class="cd" id="pOrders"></div>'
++ '<div class="cd" id="pPending"></div>'
 + '<div class="cd" id="pHist"></div>'
 + '</div>'
 + '</div>'
@@ -964,7 +1157,7 @@ function getAdminHtml_() {
 + 'function tst(m,t){var e=document.getElementById(\'tst\');e.textContent=m;e.className=\'toast \'+(t||\'ok\')+\' show\';setTimeout(function(){e.classList.remove(\'show\')},3500)}'
 + 'function sm(id,t,m){var e=document.getElementById(id);e.className=\'msg \'+t;e.textContent=m;e.style.display=\'block\'}'
 + 'function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,\'.\')}'
-+ 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber);document.getElementById(\'sB\').textContent=fmt(s.bronze)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
++ 'function loadDash(){google.script.run.withSuccessHandler(function(d){if(!d||!d.ok)return;var s=d.stats;document.getElementById(\'sT\').textContent=fmt(s.total);document.getElementById(\'sP\').textContent=fmt(s.totalPoints);document.getElementById(\'sG\').textContent=fmt(s.gold);document.getElementById(\'sS\').textContent=fmt(s.silber);document.getElementById(\'sB\').textContent=fmt(s.bronze);document.getElementById(\'sPend\').textContent=fmt(s.totalPending||0)}).adminGetStats();google.script.run.withSuccessHandler(function(d){if(!d||!d.ok||!d.history||!d.history.length){document.getElementById(\'rAct\').innerHTML=\'<div class="emp">Noch keine Aktivitaeten</div>\';return}var h=\'<table><thead><tr><th>Datum</th><th>E-Mail</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';var it=d.history.slice(0,10);for(var i=0;i<it.length;i++){var r=it[i];var dt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var cl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';h+=\'<tr><td>\'+dt+\'</td><td>\'+r.email+\'</td><td style="font-weight:700;\'+cl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rAct\').innerHTML=h}).adminGetHistory(\'\')}'
 + 'function doSearch(){var em=document.getElementById(\'sEm\').value.trim();if(!em){sm(\'sMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'sMsg\',\'ok\',\'Suche...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'sMsg\',\'err\',\'Kunde nicht gefunden\');document.getElementById(\'cDet\').style.display=\'none\';return}document.getElementById(\'sMsg\').style.display=\'none\';showCust(d)}).withFailureHandler(function(e){sm(\'sMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomer(em)}'
 + 'function showCust(d){document.getElementById(\'cDet\').style.display=\'block\';var h=\'<div style="flex:1"><div class="em">\'+d.email+\'</div><div class="mt"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div></div>\';h+=\'<div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';h+=\'<button class="bt" style="margin-top:8px;padding:6px 14px;font-size:13px" onclick="openProf(\\\'\'+d.email+\'\\\')">&#128100; Profil oeffnen</button>\';h+=\'</div>\';if(d.next_tier)h+=\'<div style="text-align:right"><div class="mt">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div></div>\';document.getElementById(\'cCard\').innerHTML=h}'
 + 'function doAdj(rm){var em=document.getElementById(\'sEm\').value.trim();var pts=parseInt(document.getElementById(\'aP\').value)||0;var re=document.getElementById(\'aR\').value.trim();if(!em||!pts){sm(\'aMsg\',\'err\',\'E-Mail und Punkte eingeben\');return}sm(\'aMsg\',\'ok\',\'Wird gespeichert...\');google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'aMsg\',\'err\',(d&&d.error)||\'Fehler\');return}var si=d.changed>0?\'+\':\'\';tst(si+d.changed+\' Punkte \u2014 Neuer Stand: \'+fmt(d.points)+\' (\'+d.tier+\')\',\'ok\');document.getElementById(\'aMsg\').style.display=\'none\';document.getElementById(\'aP\').value=\'\';document.getElementById(\'aR\').value=\'\';doSearch()}).withFailureHandler(function(e){sm(\'aMsg\',\'err\',e.message)}).adminAdjustPoints(em,pts,re,rm)}'
@@ -978,7 +1171,7 @@ function getAdminHtml_() {
 + 'document.getElementById(\'hEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')doHist()});'
 + 'document.getElementById(\'pEm\').addEventListener(\'keydown\',function(e){if(e.key===\'Enter\')loadProfile()});'
 + 'function loadProfile(){var em=document.getElementById(\'pEm\').value.trim();if(!em){sm(\'pMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'pMsg\',\'ok\',\'Profil wird geladen...\');document.getElementById(\'pDet\').style.display=\'none\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'pMsg\',\'err\',(d&&d.error)||\' Kunde nicht gefunden\');return}document.getElementById(\'pMsg\').style.display=\'none\';document.getElementById(\'pDet\').style.display=\'block\';renderProfile(d)}).withFailureHandler(function(e){sm(\'pMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomerProfile(em)}'
-+ 'function renderProfile(d){var s=d.shopify||{};var h=\'<h2>&#128100; Kundendaten</h2>\';h+=\'<div class="cc"><div style="flex:1"><div class="em" style="font-size:16px;font-weight:700">\'+d.email+\'</div>\';h+=\'<div class="mt" style="margin-top:6px"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div>\';if(s.name&&s.name!==\'-\')h+=\'<div class="mt" style="margin-top:4px">Name: \'+s.name+\'</div>\';if(s.phone&&s.phone!==\'-\')h+=\'<div class="mt">Telefon: \'+s.phone+\'</div>\';if(s.createdAt)h+=\'<div class="mt">Kunde seit: \'+new Date(s.createdAt).toLocaleDateString(\'de-DE\')+\'</div>\';if(d.referralCode)h+=\'<div class="mt" style="margin-top:6px">Empfehlungscode: <strong>\'+d.referralCode+\'</strong></div>\';h+=\'</div><div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';if(d.next_tier)h+=\'<div class="mt" style="margin-top:4px">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div>\';h+=\'</div></div>\';h+=\'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:8px">\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent)">\'+fmt(s.orderCount||0)+\'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Bestellungen</div></div>\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--green)">\'+(s.totalSpent?Number(s.totalSpent).toFixed(2):\'0.00\')+\' &euro;</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Gesamtumsatz</div></div>\';if(s.tags&&s.tags.length){h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px"><div style="font-size:11px;color:var(--txt2);margin-bottom:6px">Tags</div>\';for(var t=0;t<s.tags.length;t++)h+=\'<span style="display:inline-block;background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">\'+s.tags[t]+\'</span>\';h+=\'</div>\'}h+=\'</div>\';document.getElementById(\'pInfo\').innerHTML=h;var oh=\'<h2>&#128722; Bestellungen (\'+d.orders.length+\')</h2>\';if(!d.orders.length){oh+=\'<div class="emp">Keine Bestellungen</div>\'}else{oh+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Artikel</th></tr></thead><tbody>\';for(var i=0;i<d.orders.length;i++){var o=d.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var its=[];for(var j=0;j<o.items.length;j++){its.push(o.items[j].qty+\'x \'+o.items[j].title)}oh+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td>\'+Number(o.total).toFixed(2)+\' &euro;</td><td>\'+o.financial+\'</td><td>\'+o.fulfillment+\'</td><td style="font-size:12px">\'+its.join(\', \')+\'</td></tr>\'}oh+=\'</tbody></table>\'}document.getElementById(\'pOrders\').innerHTML=oh;var ph=\'<h2>&#128203; Punkteverlauf</h2>\';if(!d.pointsHistory.length){ph+=\'<div class="emp">Keine Eintraege</div>\'}else{ph+=\'<table><thead><tr><th>Datum</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var k=0;k<d.pointsHistory.length;k++){var r=d.pointsHistory[k];var rdt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var rcl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';ph+=\'<tr><td>\'+rdt+\'</td><td style="font-weight:700;\'+rcl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}ph+=\'</tbody></table>\'}document.getElementById(\'pHist\').innerHTML=ph}'
++ 'function renderProfile(d){var s=d.shopify||{};var h=\'<h2>&#128100; Kundendaten</h2>\';h+=\'<div class="cc"><div style="flex:1"><div class="em" style="font-size:16px;font-weight:700">\'+d.email+\'</div>\';h+=\'<div class="mt" style="margin-top:6px"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div>\';if(s.name&&s.name!==\'-\')h+=\'<div class="mt" style="margin-top:4px">Name: \'+s.name+\'</div>\';if(s.phone&&s.phone!==\'-\')h+=\'<div class="mt">Telefon: \'+s.phone+\'</div>\';if(s.createdAt)h+=\'<div class="mt">Kunde seit: \'+new Date(s.createdAt).toLocaleDateString(\'de-DE\')+\'</div>\';if(d.referralCode)h+=\'<div class="mt" style="margin-top:6px">Empfehlungscode: <strong>\'+d.referralCode+\'</strong></div>\';h+=\'</div><div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';var _pe=d.pendingPoints||{total:0};if(_pe.total>0)h+=\'<div class="mt" style="margin-top:6px;color:var(--gold);font-weight:600">+ \'+fmt(_pe.total)+\' reserviert</div>\';if(d.next_tier)h+=\'<div class="mt" style="margin-top:4px">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div>\';h+=\'</div></div>\';h+=\'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:8px">\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent)">\'+fmt(s.orderCount||0)+\'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Bestellungen</div></div>\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--green)">\'+(s.totalSpent?Number(s.totalSpent).toFixed(2):\'0.00\')+\' &euro;</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Gesamtumsatz</div></div>\';if(s.tags&&s.tags.length){h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px"><div style="font-size:11px;color:var(--txt2);margin-bottom:6px">Tags</div>\';for(var t=0;t<s.tags.length;t++)h+=\'<span style="display:inline-block;background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">\'+s.tags[t]+\'</span>\';h+=\'</div>\'}h+=\'</div>\';document.getElementById(\'pInfo\').innerHTML=h;var oh=\'<h2>&#128722; Bestellungen \u2014 letzte 6 Monate (\'+d.orders.length+\')</h2>\';if(!d.orders.length){oh+=\'<div class="emp">Keine Bestellungen</div>\'}else{oh+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Artikel</th></tr></thead><tbody>\';for(var i=0;i<d.orders.length;i++){var o=d.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var its=[];for(var j=0;j<o.items.length;j++){its.push(o.items[j].qty+\'x \'+o.items[j].title)}oh+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td>\'+Number(o.total).toFixed(2)+\' &euro;</td><td>\'+o.financial+\'</td><td>\'+o.fulfillment+\'</td><td style="font-size:12px">\'+its.join(\', \')+\'</td></tr>\'}oh+=\'</tbody></table>\'}document.getElementById(\'pOrders\').innerHTML=oh;var pe=d.pendingPoints||{total:0,items:[]};var peh=\'<h2>&#9200; Reservierte Punkte (\'+fmt(pe.total)+\')</h2>\';if(!pe.items.length){peh+=\'<div class="emp">Keine reservierten Punkte</div>\'}else{peh+=\'<div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:8px;padding:16px;margin-bottom:12px"><div style="font-size:24px;font-weight:800;color:var(--gold)">\'+fmt(pe.total)+\' Punkte</div><div style="font-size:12px;color:#92400e;margin-top:4px">Werden nach 30 Tagen freigegeben</div></div>\';peh+=\'<table><thead><tr><th>Punkte</th><th>Grund</th><th>Freigabe am</th><th>Verbleibend</th></tr></thead><tbody>\';for(var pi=0;pi<pe.items.length;pi++){var pp=pe.items[pi];var pdt=pp.releaseDate?new Date(pp.releaseDate).toLocaleDateString(\'de-DE\'):\'-\';peh+=\'<tr><td style="font-weight:700;color:var(--gold)">\'+fmt(pp.points)+\'</td><td>\'+pp.reason+\'</td><td>\'+pdt+\'</td><td><strong>\'+pp.daysLeft+\' Tage</strong></td></tr>\'}peh+=\'</tbody></table>\'}document.getElementById(\'pPending\').innerHTML=peh;var ph=\'<h2>&#128203; Punkteverlauf</h2>\';if(!d.pointsHistory.length){ph+=\'<div class="emp">Keine Eintraege</div>\'}else{ph+=\'<table><thead><tr><th>Datum</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var k=0;k<d.pointsHistory.length;k++){var r=d.pointsHistory[k];var rdt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var rcl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';ph+=\'<tr><td>\'+rdt+\'</td><td style="font-weight:700;\'+rcl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}ph+=\'</tbody></table>\'}document.getElementById(\'pHist\').innerHTML=ph}'
 + 'loadDash();doList();doHist();'
 + '</script></body></html>';
 }
@@ -1010,9 +1203,10 @@ function setupAdminKey() {
 
 /** Creates a 15-minute trigger that polls Shopify for new paid orders */
 function setupTrigger() {
-  /* Remove old triggers for this function */
+  /* Remove old triggers */
   ScriptApp.getProjectTriggers().forEach(function(t) {
-    if (t.getHandlerFunction() === 'checkNewOrders') ScriptApp.deleteTrigger(t);
+    var fn = t.getHandlerFunction();
+    if (fn === 'checkNewOrders' || fn === 'dailyMaintenance') ScriptApp.deleteTrigger(t);
   });
 
   ScriptApp.newTrigger('checkNewOrders')
@@ -1020,7 +1214,12 @@ function setupTrigger() {
     .everyMinutes(15)
     .create();
 
-  Logger.log('✅ Trigger erstellt: checkNewOrders alle 15 Minuten');
+  ScriptApp.newTrigger('dailyMaintenance')
+    .timeBased()
+    .everyHours(24)
+    .create();
+
+  Logger.log('✅ Trigger erstellt: checkNewOrders alle 15 Min, dailyMaintenance taeglich');
 }
 
 /** Creates customer metafield definitions so they're visible in Liquid/Storefront */
