@@ -1,5 +1,5 @@
 /* ================================================================
-   KARINEX — Loyalty & Referral System v2.11.0 (Complete)
+   KARINEX — Loyalty & Referral System v2.11.1 (Complete)
    Google Apps Script Web App
 
    Features:
@@ -53,6 +53,16 @@ var REDEEM_TIERS = [
 /* Token from Script Properties — NEVER hardcode */
 function getToken_() {
   return PropertiesService.getScriptProperties().getProperty('SHOPIFY_ADMIN_TOKEN') || '';
+}
+
+/* Sanitize strings for GraphQL interpolation — prevent query breakage */
+function gqlSafe_(str) {
+  return String(str || '').replace(/[\\"/\n\r]/g, '');
+}
+
+/* HTML-escape for admin dashboard output */
+function htmlEsc_(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 
@@ -116,7 +126,7 @@ function doGet(e) {
 
       /* ── Default ── */
       default:
-        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.0' });
+        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.1' });
     }
   } catch (err) {
     return json_({ ok: false, error: err.message });
@@ -265,6 +275,12 @@ function creditReferrer_(discountCode, buyerEmail, orderName, orderId) {
     if (/^\d+$/.test(referrerId)) referrerEmail = getCustomerEmailById_(referrerId);
     if (!referrerEmail) return;
 
+    /* Prevent self-referral */
+    if (referrerEmail.toLowerCase() === buyerEmail.toLowerCase()) {
+      Logger.log('Self-referral blocked: ' + buyerEmail);
+      return;
+    }
+
     props.setProperty('credited_' + discountCode, '1');
     addPendingPoints_(referrerEmail, REFERRAL_BONUS, 'Empfehlung: ' + buyerEmail + ' (' + orderName + ')', orderId || '');
 
@@ -353,7 +369,7 @@ function handleRedeemPoints_(email, pointsToRedeem) {
   addPoints_(email, -redeemTier.points, 'Eingelöst: ' + code + ' (€' + redeemTier.euro + ')', '');
 
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -414,7 +430,7 @@ function handleAffiliateDashboard_(customerId, email) {
   /* Resolve Shopify customer ID (used as ref in links) */
   var refId = '';
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id legacyResourceId } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id legacyResourceId } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -633,7 +649,7 @@ function createShopifyFixedDiscount_(code, amountEuro, usageLimit) {
    ═══════════════════════════════════════════════════════ */
 
 function tagCustomer_(email, refCode, discountCode) {
-  var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id tags } } }';
+  var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id tags } } }';
   var result = gql_(q);
   var nodes = result.data && result.data.customers && result.data.customers.nodes;
   if (!nodes || !nodes.length) return;
@@ -785,7 +801,7 @@ function getCustomerData_(email) {
 
 function getShopifyMetafieldPoints_(email) {
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { metafields(first:10, namespace:"karinex") { nodes { key value } } } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { metafields(first:10, namespace:"karinex") { nodes { key value } } } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -890,7 +906,7 @@ function releasePendingPoints() {
         released++;
 
         try {
-          var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+          var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id } } }';
           var result = gql_(q);
           var nodes = result.data && result.data.customers && result.data.customers.nodes;
           if (nodes && nodes.length) {
@@ -969,7 +985,7 @@ function checkCancelledOrders() {
         cancelPendingByOrder_(oid);
 
         try {
-          var q = '{ customers(first:1, query:"email:' + ed.email + '") { nodes { id } } }';
+          var q = '{ customers(first:1, query:"email:' + gqlSafe_(ed.email) + '") { nodes { id } } }';
           var result = gql_(q);
           var nodes = result.data && result.data.customers && result.data.customers.nodes;
           if (nodes && nodes.length) {
@@ -1069,7 +1085,7 @@ function handleAdminPoints_(email, points, reason) {
   addPoints_(email, points, reason, '');
 
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -1133,7 +1149,7 @@ function adminAdjustPoints(email, points, reason, isRemove) {
   addPoints_(email, points, reason || (points > 0 ? 'Admin-Gutschrift' : 'Admin-Abzug'), '');
 
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -1206,7 +1222,7 @@ function adminAddNewCustomer(email, initialPoints, reason) {
     } catch (e) { return { ok: false, error: e.message }; }
   }
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -1256,7 +1272,7 @@ function adminGetCustomerProfile(email) {
 
   /* Shopify customer data */
   try {
-    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { id firstName lastName phone createdAt tags numberOfOrders amountSpent { amount currencyCode } } } }';
+    var q = '{ customers(first:1, query:"email:' + gqlSafe_(email) + '") { nodes { id firstName lastName phone createdAt tags numberOfOrders amountSpent { amount currencyCode } } } }';
     var result = gql_(q);
     var nodes = result.data && result.data.customers && result.data.customers.nodes;
     if (nodes && nodes.length) {
@@ -1400,7 +1416,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.11.0</div>'
++ '<div class="sb-f">Karinex Loyalty v2.11.1</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
