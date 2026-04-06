@@ -1253,6 +1253,28 @@ function setupCredentials() {
   Logger.log('⚠️ NOW DELETE the credentials from the code above!');
 }
 
+/**
+ * Secure credential setup without hardcoding secrets in code.
+ * Usage example from Apps Script editor:
+ *   setIdealoCredentials_('335018', 'client-id', 'client-secret');
+ */
+function setIdealoCredentials_(shopId, clientId, clientSecret) {
+  if (!shopId || !clientId || !clientSecret) {
+    throw new Error('shopId, clientId and clientSecret are required');
+  }
+
+  setProp_(CONFIG.PROP_SHOP_ID, String(shopId).trim());
+  setProp_(CONFIG.PROP_CLIENT_ID, String(clientId).trim());
+  setProp_(CONFIG.PROP_CLIENT_SECRET, String(clientSecret).trim());
+
+  // Clear cached token so next request re-authenticates with new credentials.
+  setProp_(CONFIG.PROP_ACCESS_TOKEN, '');
+  setProp_(CONFIG.PROP_TOKEN_EXPIRY, '0');
+
+  Logger.log('✅ idealo credentials saved securely in Script Properties.');
+  Logger.log('🔄 Access token cache cleared. Run testIdealoConnection_() next.');
+}
+
 
 // ═══════════════════════════════════════════════════════════════
 // 11. UTILITY FUNCTIONS
