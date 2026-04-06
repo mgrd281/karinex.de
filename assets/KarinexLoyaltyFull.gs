@@ -1,5 +1,5 @@
 /* ================================================================
-   KARINEX — Loyalty & Referral System v2.11.5 (Complete)
+   KARINEX — Loyalty & Referral System v2.11.6 (Complete)
    Google Apps Script Web App
 
    Features:
@@ -129,7 +129,7 @@ function doGet(e) {
 
       /* ── Default ── */
       default:
-        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.5' });
+        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.6' });
     }
   } catch (err) {
     return json_({ ok: false, error: err.message });
@@ -1546,14 +1546,27 @@ function adminGetCustomerProfile(email) {
    ═══════════════════════════════════════════════════════ */
 
 function serveAdminDashboard_() {
-  var html = HtmlService.createHtmlOutput(getAdminHtml_())
-    .setTitle('Karinex Admin — Loyalty Points')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-  return html;
+  try {
+    var html = HtmlService.createHtmlOutput(getAdminHtml_())
+      .setTitle('Karinex Admin - Loyalty Points')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    return html;
+  } catch (e) {
+    var fallback = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Karinex Admin Error</title>'
+      + '<style>body{font-family:sans-serif;padding:40px;background:#f0f2f5;color:#1e293b}'
+      + '.box{max-width:600px;margin:0 auto;background:#fff;padding:32px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1)}'
+      + 'h1{color:#ef4444;margin-bottom:16px}pre{background:#f8fafc;padding:16px;border-radius:8px;overflow-x:auto;font-size:13px;white-space:pre-wrap}</style></head>'
+      + '<body><div class="box"><h1>Dashboard-Fehler</h1>'
+      + '<p>Das Admin-Dashboard konnte nicht geladen werden.</p>'
+      + '<pre>' + htmlEsc_(e.message) + '</pre>'
+      + '<p style="margin-top:16px;color:#64748b;font-size:13px">Version 2.11.6 — Bitte Code in GAS aktualisieren und neu bereitstellen.</p>'
+      + '</div></body></html>';
+    return HtmlService.createHtmlOutput(fallback).setTitle('Karinex Admin Error');
+  }
 }
 
 function getAdminHtml_() {
-  return '<!DOCTYPE html>'
+  var h = '<!DOCTYPE html>'
 + '<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
 + '<title>Karinex Admin</title>'
 + '<style>'
@@ -1613,7 +1626,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'best\')" data-p="best"><span class="ic">&#128722;</span> Bestellungen</a>'
 + '<a onclick="go(\'rewards\')" data-p="rewards"><span class="ic">&#127873;</span> Rewards-Kunden</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.11.5</div>'
++ '<div class="sb-f">Karinex Loyalty v2.11.6</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -1702,7 +1715,7 @@ function getAdminHtml_() {
 + '<div class="pt">Rewards-Kunden <span>Kunden mit Treuepunkten</span></div>'
 + '<div class="cd"><div style="display:flex;gap:8px;margin-bottom:16px">'
 + '<button class="bd" onclick="doRewards()">&#8635; Aktualisieren</button>'
-+ '<button class="bg" onclick="go(\"neu\")">&#10133; Neuen Kunden hinzufuegen</button>'
++ '<button class="bg" onclick="go(\'neu\')">&#10133; Neuen Kunden hinzufuegen</button>'
 + '</div>'
 + '<div id="rwSt" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">'
 + '<div class="sc a"><div class="lb">Rewards-Kunden</div><div class="vl" id="rwT">&#8212;</div></div>'
@@ -1741,6 +1754,15 @@ function getAdminHtml_() {
 + 'function doOrders(d){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(r){if(!r||!r.ok){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Fehler beim Laden</div>\';return}if(!r.orders.length){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Keine Bestellungen in diesem Zeitraum</div>\';return}var h=\'<div style="font-size:13px;color:var(--txt2);margin-bottom:12px">\'+(r.total)+\' Bestellungen gefunden</div>\';h+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Kunde</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Tier</th><th>+ Punkte</th></tr></thead><tbody>\';for(var i=0;i<r.orders.length;i++){var o=r.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var fc=o.financial===\'paid\'?\'color:#22c55e\':\'color:#f59e0b\';var fv=o.fulfillment===\'fulfilled\'?\'&#10003; Versendet\':\'&#9899; Ausstehend\';h+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td style="font-size:12px">\'+o.email+\'</td><td><strong>\'+(o.total.toFixed(2))+\' &euro;</strong></td><td style="font-weight:600;\'+fc+\'">\'+o.financial+\'</td><td style="font-size:12px">\'+fv+\'</td><td><span class="badge \'+o.tier+\'">\'+o.tier+\'</span></td><td style="font-weight:700;color:var(--accent)">\'+fmt(o.points_earned)+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'bTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetRecentOrders(d||30)}'
 + 'function doRewards(){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(r){if(!r||!r.ok){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}var gold=0,silber=0,bronze=0;for(var k=0;k<r.customers.length;k++){var t=r.customers[k].tier;if(t===\'gold\')gold++;else if(t===\'silber\')silber++;else bronze++}document.getElementById(\'rwT\').textContent=fmt(r.total);document.getElementById(\'rwG\').textContent=fmt(gold);document.getElementById(\'rwS\').textContent=fmt(silber);document.getElementById(\'rwB\').textContent=fmt(bronze);if(!r.customers.length){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Noch keine Rewards-Kunden — Import ausfuehren</div>\';return}var h=\'<table><thead><tr><th>#</th><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Cashback</th><th>Zuletzt aktiv</th><th></th></tr></thead><tbody>\';for(var i=0;i<r.customers.length;i++){var c=r.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';var cb=c.tier===\'gold\'?10:c.tier===\'silber\'?7:5;h+=\'<tr><td style="color:#94a3b8;font-weight:600">\'+(i+1)+\'</td><td onclick="selC(\\\'\'+c.email+\'\\\')\" style="cursor:pointer;color:var(--accent)">\'  +c.email+\'</td><td><strong style="font-size:16px;color:var(--accent)">\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+cb+\'%</td><td>\'+dt+\'</td><td><button class="bt" style="padding:4px 10px;font-size:12px" onclick="openProf(\\\'\'+c.email+\'\\\')">Profil</button></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rwTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetRewardsCustomers()}'
 + '</script></body></html>';
+
+  /* Fix: GAS HtmlService interprets < inside <script> as HTML tags.
+     Replace JS comparison < with \x3c escape (browser JS reads it as <). */
+  var si = h.indexOf('<script>') + 8;
+  var se = h.indexOf('</script>');
+  var js = h.substring(si, se).replace(/(\w)<(\w)/g, function(m, a, b) {
+    return a + String.fromCharCode(92) + 'x3c' + b;
+  });
+  return h.substring(0, si) + js + h.substring(se);
 }
 
 
