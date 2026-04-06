@@ -1,0 +1,893 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+
+  if customer
+    assign kx_pts = customer.metafields.karinex.loyalty_points.value | default: 0 | plus: 0
+    assign kx_tier_raw = customer.metafields.karinex.loyalty_tier.value | default: 'bronze'
+
+    if kx_pts >= 20000
+      assign kx_tier = 'gold'
+      assign kx_tier_label = 'Gold'
+      assign kx_cashback = 10
+      assign kx_progress = 100
+      assign kx_next_tier = ''
+      assign kx_pts_to_next = 0
+    elsif kx_pts >= 8000
+      assign kx_tier = 'silber'
+      assign kx_tier_label = 'Silber'
+      assign kx_cashback = 7
+      assign kx_pts_in = kx_pts | minus: 8000
+      assign kx_progress = kx_pts_in | times: 100 | divided_by: 12000
+      assign kx_next_tier = 'Gold'
+      assign kx_pts_to_next = 20000 | minus: kx_pts
+    else
+      assign kx_tier = 'bronze'
+      assign kx_tier_label = 'Bronze'
+      assign kx_cashback = 5
+      assign kx_progress = kx_pts | times: 100 | divided_by: 8000
+      assign kx_next_tier = 'Silber'
+      assign kx_pts_to_next = 8000 | minus: kx_pts
+    endif
+  endif
+-%}
+{% comment %} ═══════════════════════════════════════════════════════
+  KARINEX LOYALTY & REFERRAL PROGRAM – Enterprise Grade
+  Like: About You, Douglas, Zalando
+═══════════════════════════════════════════════════════ {% endcomment %}
+
+<link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}"></noscript>
+
+{%- comment -%} ── Affiliate Dashboard (integrated) styles ── {%- endcomment -%}
+<style>
+  /* ── Affiliate Link Box ── */
+  .kx-ly-aff-link{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:24px;margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+  .kx-ly-aff-link__label{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:.03em}
+  .kx-ly-aff-link__row{display:flex;gap:8px}
+  .kx-ly-aff-link__input{flex:1;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:.88rem;color:#1a1a1a;background:#f9f9f9;outline:none;font-family:monospace;transition:border-color .2s}
+  .kx-ly-aff-link__input:focus{border-color:#c9a84c}
+  .kx-ly-aff-link__hint{display:flex;align-items:flex-start;gap:6px;margin-top:14px;font-size:.8rem;color:#999;line-height:1.5}
+  .kx-ly-aff-link__hint code{background:#f3f3f3;padding:1px 6px;border-radius:4px;font-size:.78rem;color:#c9a84c;white-space:nowrap}
+  .kx-ly-aff-link__hint strong{color:#666}
+  .kx-ly-aff-link__share{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .kx-ly-aff-link__share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;border:1.5px solid #e0e0e0;color:#1a1a1a;background:#fff;cursor:pointer;transition:all .2s}
+  .kx-ly-aff-link__share-btn:hover{border-color:#c9a84c;color:#c9a84c}
+  /* ── Stats Cards ── */
+  .kx-ly-aff-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+  .kx-ly-aff-stats__card{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:22px 18px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+  .kx-ly-aff-stats__card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.07)}
+  .kx-ly-aff-stats__icon{width:44px;height:44px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .kx-ly-aff-stats__icon--clicks{background:rgba(201,168,76,.12);color:#c9a84c}
+  .kx-ly-aff-stats__icon--referrals{background:rgba(26,26,26,.08);color:#1a1a1a}
+  .kx-ly-aff-stats__icon--purchases{background:rgba(34,197,94,.1);color:#22c55e}
+  .kx-ly-aff-stats__icon--earnings{background:rgba(201,168,76,.12);color:#c9a84c}
+  .kx-ly-aff-stats__val{font-size:1.8rem;font-weight:800;line-height:1.1;margin-bottom:3px;color:#1a1a1a}
+  .kx-ly-aff-stats__label{font-size:.82rem;color:#888;font-weight:500}
+  .kx-ly-aff-stats__sub{font-size:.72rem;color:#aaa;margin-top:5px}
+  .kx-ly-aff-loading{text-align:center;padding:20px;color:#999;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:10px}
+  .kx-ly-aff-spinner{width:18px;height:18px;border:2px solid #e8e8e8;border-top-color:#c9a84c;border-radius:50%;animation:kxAfSpin .7s linear infinite}
+  @keyframes kxAfSpin{to{transform:rotate(360deg)}}
+  /* ── Chart Panel ── */
+  .kx-ly-aff-chart-panel,.kx-ly-aff-pages-panel,.kx-ly-aff-table-panel{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:22px 24px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:16px}
+  .kx-ly-aff-chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .kx-ly-aff-chart-title{font-size:1rem;font-weight:700;margin:0;color:#1a1a1a}
+  .kx-ly-aff-chart-range{display:flex;gap:5px}
+  .kx-ly-aff-chip{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid #e0e0e0;color:#888;background:transparent;transition:all .2s}
+  .kx-ly-aff-chip--active,.kx-ly-aff-chip:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .kx-ly-aff-chart{position:relative;min-height:180px}
+  .kx-ly-aff-chart-empty{display:flex;align-items:center;justify-content:center;min-height:180px;color:#ccc;font-size:.88rem}
+  /* ── Top Pages ── */
+  .kx-ly-aff-pages{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .kx-ly-aff-page-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fafafa;border-radius:8px;font-size:.85rem}
+  .kx-ly-aff-page-row__url{flex:1;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;font-size:.8rem}
+  .kx-ly-aff-page-row__count{font-weight:700;color:#c9a84c;min-width:50px;text-align:right}
+  .kx-ly-aff-page-row__bar{flex:0 0 100px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+  .kx-ly-aff-page-row__fill{height:100%;background:linear-gradient(90deg,#c9a84c,#e6c770);border-radius:3px}
+  /* ── Referral Table ── */
+  .kx-ly-aff-table-empty{text-align:center;padding:32px 16px;color:#bbb}
+  .kx-ly-aff-table-empty p{margin:10px 0 0;font-size:.88rem}
+  .kx-ly-aff-table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .kx-ly-aff-table th{text-align:left;padding:11px 14px;border-bottom:2px solid #f0f0f0;font-size:.75rem;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.04em}
+  .kx-ly-aff-table td{padding:13px 14px;border-bottom:1px solid #f5f5f5}
+  .kx-ly-aff-table tr:last-child td{border-bottom:none}
+  .kx-ly-aff-table tr:hover td{background:#fafafa}
+  .kx-ly-aff-status{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:600}
+  .kx-ly-aff-status--purchased{background:rgba(34,197,94,.1);color:#16a34a}
+  .kx-ly-aff-status--pending{background:rgba(201,168,76,.12);color:#b8943f}
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .kx-ly-aff-stats{grid-template-columns:repeat(2,1fr)}
+    .kx-ly-aff-link__row{flex-direction:column}
+    .kx-ly-aff-table{font-size:.78rem}
+    .kx-ly-aff-table th,.kx-ly-aff-table td{padding:9px 8px}
+    .kx-ly-aff-page-row__bar{display:none}
+  }
+  @media(max-width:480px){
+    .kx-ly-aff-stats__val{font-size:1.4rem}
+  }
+</style>
+
+<div class="kx-loyalty" id="kx-loyalty">
+
+  {%- comment -%} ═══ 1. HERO ═══ {%- endcomment -%}
+  <section class="kx-ly-hero">
+    <div class="kx-ly-hero__bg"></div>
+    <div class="kx-ly-hero__inner">
+      <span class="kx-ly-hero__badge">NEU</span>
+      <h1 class="kx-ly-hero__title">KARINEX Rewards</h1>
+      <p class="kx-ly-hero__sub">Sammle Punkte bei jedem Einkauf. Löse sie ein für exklusive Rabatte. Empfehle Freunde und werde belohnt.</p>
+      <div class="kx-ly-hero__ctas">
+        {%- if customer -%}
+          <a href="/account" class="kx-ly-btn kx-ly-btn--primary">Mein Punktestand</a>
+        {%- else -%}
+          <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary">Kostenlos registrieren</a>
+          <a href="/account/login" class="kx-ly-btn kx-ly-btn--ghost">Einloggen</a>
+        {%- endif -%}
+      </div>
+      <div class="kx-ly-hero__stats">
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="12850">0</span>
+          <span class="kx-ly-hero__stat-label">Mitglieder</span>
+        </div>
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="285000">0</span>
+          <span class="kx-ly-hero__stat-label">Punkte eingelöst</span>
+        </div>
+        <div class="kx-ly-hero__stat">
+          <span class="kx-ly-hero__stat-num" data-count="48500">0</span>
+          <span class="kx-ly-hero__stat-label">€ gespart</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 1b. PERSONAL DASHBOARD (logged-in only) ═══ {%- endcomment -%}
+  {%- if customer -%}
+  <section class="kx-ly-dash">
+    <div class="kx-ly-container">
+      <div class="kx-ly-dash__box">
+        <div class="kx-ly-dash__greeting">
+          <div>
+            <h2 class="kx-ly-dash__name">Hallo, {{ customer.first_name | default: customer.email | split: '@' | first }}!</h2>
+            <span class="kx-ly-dash__tier-badge kx-ly-dash__tier-badge--{{ kx_tier }}">{{ kx_tier_label }}-Mitglied</span>
+          </div>
+        </div>
+
+        <div class="kx-ly-dash__stats">
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_pts }}</span>
+            <span class="kx-ly-dash__stat-label">Punkte</span>
+          </div>
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_tier_label }}</span>
+            <span class="kx-ly-dash__stat-label">Status</span>
+          </div>
+          <div class="kx-ly-dash__stat">
+            <span class="kx-ly-dash__stat-num">{{ kx_cashback }}%</span>
+            <span class="kx-ly-dash__stat-label">Cashback</span>
+          </div>
+        </div>
+
+        <div class="kx-ly-dash__progress">
+          <div class="kx-ly-dash__bar">
+            <div class="kx-ly-dash__fill" style="width: {{ kx_progress }}%"></div>
+          </div>
+          {%- if kx_next_tier != '' -%}
+            <p class="kx-ly-dash__next">Noch <strong>{{ kx_pts_to_next }}</strong> Punkte bis {{ kx_next_tier }}</p>
+          {%- else -%}
+            <p class="kx-ly-dash__next">Höchste Stufe erreicht — du genießt alle Vorteile!</p>
+          {%- endif -%}
+        </div>
+
+        <div class="kx-ly-dash__actions">
+          <a href="#kx-ly-redeem" class="kx-ly-btn kx-ly-btn--primary">Punkte einlösen</a>
+          <a href="#kx-ly-affiliate" class="kx-ly-btn kx-ly-btn--outline">Partner-Dashboard</a>
+          <a href="#kx-ly-referral" class="kx-ly-btn kx-ly-btn--outline">Freunde einladen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ═══ 2. HOW IT WORKS ═══ {%- endcomment -%}
+  <section class="kx-ly-how" id="kx-ly-how">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">So funktioniert's</h2>
+      <p class="kx-ly-section-sub">In 3 einfachen Schritten zu deinen Rewards</p>
+      <div class="kx-ly-how__grid">
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="24" cy="24" r="20"/><path d="M24 14v10l7 7"/></svg>
+          </div>
+          <div class="kx-ly-how__num">01</div>
+          <h3>Registrieren</h3>
+          <p>Erstelle ein kostenloses Konto und werde automatisch Mitglied.</p>
+        </div>
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 24h36M24 6v36"/><circle cx="24" cy="24" r="20"/></svg>
+          </div>
+          <div class="kx-ly-how__num">02</div>
+          <h3>Punkte sammeln</h3>
+          <p>Verdiene Punkte bei jedem Einkauf, für Bewertungen und Empfehlungen.</p>
+        </div>
+        <div class="kx-ly-how__step">
+          <div class="kx-ly-how__icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 24l8 8 16-16"/><circle cx="24" cy="24" r="20"/></svg>
+          </div>
+          <div class="kx-ly-how__num">03</div>
+          <h3>Einlösen</h3>
+          <p>Tausche deine Punkte gegen Rabatte, Gratisversand oder exklusive Prämien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 3. EARN POINTS ═══ {%- endcomment -%}
+  <section class="kx-ly-earn" id="kx-ly-earn">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Punkte verdienen</h2>
+      <p class="kx-ly-section-sub">Viele Wege führen zu deinem Rabatt</p>
+      <div class="kx-ly-earn__grid">
+
+        <div class="kx-ly-earn__card kx-ly-earn__card--highlight">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">5%</div>
+          <h3>Cashback auf jeden Einkauf</h3>
+          <p>Erhalte 5% des Bestellwerts zurück als Punkte. Automatisch bei jeder Bestellung.</p>
+          <span class="kx-ly-earn__card-tag">Automatisch</span>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">500</div>
+          <h3>Freunde werben</h3>
+          <p>Teile deinen persönlichen Link. Dein Freund bekommt 10% Rabatt, du 500 Punkte.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">100</div>
+          <h3>Newsletter-Anmeldung</h3>
+          <p>Melde dich für unseren Newsletter an und erhalte sofort 100 Punkte.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">75</div>
+          <h3>Produkt bewerten</h3>
+          <p>Schreibe eine ehrliche Bewertung und erhalte 75 Punkte pro Review.</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">200</div>
+          <h3>Geburtstagsbonus</h3>
+          <p>An deinem Geburtstag schenken wir dir 200 Punkte. Happy Birthday!</p>
+        </div>
+
+        <div class="kx-ly-earn__card">
+          <div class="kx-ly-earn__card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="kx-ly-earn__card-points">50</div>
+          <h3>Social Media folgen</h3>
+          <p>Folge uns auf Instagram oder TikTok und erhalte je 50 Punkte.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 4. REDEEM / TIERS ═══ {%- endcomment -%}
+  <section class="kx-ly-redeem" id="kx-ly-redeem">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Punkte einlösen</h2>
+      <p class="kx-ly-section-sub">Je mehr Punkte, desto mehr sparst du</p>
+
+      {%- if customer -%}
+        <div class="kx-ly-redeem__balance">
+          <span class="kx-ly-redeem__balance-label">Dein Guthaben:</span>
+          <span class="kx-ly-redeem__balance-pts" id="kx-redeem-balance">{{ kx_pts }}</span>
+          <span class="kx-ly-redeem__balance-label">Punkte</span>
+        </div>
+      {%- endif -%}
+
+      <div class="kx-ly-redeem__grid">
+        <div class="kx-ly-redeem__card" data-redeem-pts="200" data-redeem-euro="2">
+          <div class="kx-ly-redeem__value">€2</div>
+          <div class="kx-ly-redeem__pts">200 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 200 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 200 }}{% endif %}{% else %}20{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 200 %} kx-ly-btn--disabled{% endif %}" data-redeem="200" {% if kx_pts < 200 %}disabled{% endif %}>
+              {%- if kx_pts >= 200 -%}Jetzt einlösen{%- else -%}Noch {{ 200 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
+        </div>
+        <div class="kx-ly-redeem__card" data-redeem-pts="500" data-redeem-euro="5">
+          <div class="kx-ly-redeem__value">€5</div>
+          <div class="kx-ly-redeem__pts">500 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 500 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 500 }}{% endif %}{% else %}50{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 500 %} kx-ly-btn--disabled{% endif %}" data-redeem="500" {% if kx_pts < 500 %}disabled{% endif %}>
+              {%- if kx_pts >= 500 -%}Jetzt einlösen{%- else -%}Noch {{ 500 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
+        </div>
+        <div class="kx-ly-redeem__card kx-ly-redeem__card--popular" data-redeem-pts="1000" data-redeem-euro="10">
+          <span class="kx-ly-redeem__badge">Beliebt</span>
+          <div class="kx-ly-redeem__value">€10</div>
+          <div class="kx-ly-redeem__pts">1.000 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 1000 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 1000 }}{% endif %}{% else %}70{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 1000 %} kx-ly-btn--disabled{% endif %}" data-redeem="1000" {% if kx_pts < 1000 %}disabled{% endif %}>
+              {%- if kx_pts >= 1000 -%}Jetzt einlösen{%- else -%}Noch {{ 1000 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
+        </div>
+        <div class="kx-ly-redeem__card" data-redeem-pts="2000" data-redeem-euro="25">
+          <div class="kx-ly-redeem__value">€25</div>
+          <div class="kx-ly-redeem__pts">2.000 Punkte</div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 2000 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 2000 }}{% endif %}{% else %}100{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 2000 %} kx-ly-btn--disabled{% endif %}" data-redeem="2000" {% if kx_pts < 2000 %}disabled{% endif %}>
+              {%- if kx_pts >= 2000 -%}Jetzt einlösen{%- else -%}Noch {{ 2000 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Redeem result overlay {%- endcomment -%}
+      <div class="kx-ly-redeem__overlay" id="kx-redeem-overlay" style="display:none">
+        <div class="kx-ly-redeem__modal">
+          <div class="kx-ly-redeem__modal-icon">✓</div>
+          <h3 class="kx-ly-redeem__modal-title">Gutschein erstellt!</h3>
+          <p class="kx-ly-redeem__modal-sub">Dein Rabattcode:</p>
+          <div class="kx-ly-redeem__modal-code" id="kx-redeem-code"></div>
+          <p class="kx-ly-redeem__modal-info" id="kx-redeem-info"></p>
+          <div class="kx-ly-redeem__modal-actions">
+            <button type="button" class="kx-ly-btn kx-ly-btn--primary" id="kx-redeem-copy">Code kopieren</button>
+            <button type="button" class="kx-ly-btn kx-ly-btn--outline" id="kx-redeem-close">Schließen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 5. VIP TIERS ═══ {%- endcomment -%}
+  <section class="kx-ly-tiers" id="kx-ly-tiers">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">VIP-Stufen</h2>
+      <p class="kx-ly-section-sub">Steige auf und erhalte exklusive Vorteile</p>
+      <div class="kx-ly-tiers__grid">
+
+        <div class="kx-ly-tiers__card{% if customer and kx_tier == 'bronze' %} kx-ly-tiers__card--active{% endif %}">
+          {%- if customer and kx_tier == 'bronze' -%}<span class="kx-ly-tiers__badge">Dein Status</span>{%- endif -%}
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--bronze">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Bronze</h3>
+          <p class="kx-ly-tiers__req">Ab 0 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>5% Cashback in Punkten</li>
+            <li>Geburtstagsbonus</li>
+            <li>Newsletter-Angebote</li>
+          </ul>
+        </div>
+
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--silver{% if customer and kx_tier == 'silber' %} kx-ly-tiers__card--active{% endif %}">
+          {%- if customer and kx_tier == 'silber' -%}<span class="kx-ly-tiers__badge">Dein Status</span>{%- endif -%}
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--silver">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Silber</h3>
+          <p class="kx-ly-tiers__req">Ab 8.000 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>7% Cashback in Punkten</li>
+            <li>Früher Zugang zu Sales</li>
+            <li>Doppelte Geburtstagspunkte</li>
+            <li>Kostenloser Versand ab €20</li>
+          </ul>
+        </div>
+
+        <div class="kx-ly-tiers__card kx-ly-tiers__card--gold{% if customer and kx_tier == 'gold' %} kx-ly-tiers__card--active{% endif %}">
+          <span class="kx-ly-tiers__badge">{%- if customer and kx_tier == 'gold' -%}Dein Status{%- else -%}Exklusiv{%- endif -%}</span>
+          <div class="kx-ly-tiers__icon kx-ly-tiers__icon--gold">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          </div>
+          <h3>Gold</h3>
+          <p class="kx-ly-tiers__req">Ab 20.000 Punkte</p>
+          <ul class="kx-ly-tiers__perks">
+            <li>10% Cashback in Punkten</li>
+            <li>VIP-Support (Priorität)</li>
+            <li>Exklusive Produkte</li>
+            <li>Immer kostenloser Versand</li>
+            <li>3x Geburtstagspunkte</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 6. REFERRAL SECTION ═══ {%- endcomment -%}
+  <section class="kx-ly-referral" id="kx-ly-referral">
+    <div class="kx-ly-container">
+      <div class="kx-ly-referral__box">
+        <div class="kx-ly-referral__content">
+          <h2>Freunde einladen, gemeinsam profitieren</h2>
+          <p>Teile deinen persönlichen Link. Dein Freund erhält <strong>10% Rabatt</strong> auf die erste Bestellung. Du erhältst <strong>500 Punkte</strong> (= €5).</p>
+          {%- if customer -%}
+            <div class="kx-ly-referral__link-box">
+              <input type="text" id="kx-ref-link" value="https://www.karinex.de/?ref={{ customer.id }}" readonly class="kx-ly-referral__input">
+              <button type="button" class="kx-ly-btn kx-ly-btn--primary kx-ly-referral__copy" onclick="navigator.clipboard.writeText(document.getElementById('kx-ref-link').value);this.textContent='Kopiert ✓';setTimeout(()=>{this.textContent='Link kopieren'},2000)">Link kopieren</button>
+            </div>
+            <div class="kx-ly-referral__share">
+              <span>Teilen via:</span>
+              <a href="https://wa.me/?text=Schau%20mal%20bei%20karinex.de%20vorbei!%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" target="_blank" rel="noopener nofollow" class="kx-ly-referral__social" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.625-1.463A11.96 11.96 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-2.17 0-4.18-.58-5.924-1.592l-.424-.252-2.744.868.831-2.675-.277-.44A9.798 9.798 0 012.182 12c0-5.424 4.394-9.818 9.818-9.818S21.818 6.576 21.818 12s-4.394 9.818-9.818 9.818z"/></svg>
+              </a>
+              <a href="mailto:?subject=10%25%20Rabatt%20bei%20karinex.de&body=Hey!%20Schau%20mal%20bei%20karinex.de%20vorbei.%20Mit%20meinem%20Link%20bekommst%20du%2010%25%20Rabatt%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" class="kx-ly-referral__social" aria-label="Email">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+              </a>
+            </div>
+          {%- else -%}
+            <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary">Jetzt registrieren & Link erhalten</a>
+          {%- endif -%}
+        </div>
+        <div class="kx-ly-referral__visual">
+          <div class="kx-ly-referral__gift">
+            <div class="kx-ly-referral__you">
+              <div class="kx-ly-referral__avatar">DU</div>
+              <span>500 Punkte</span>
+            </div>
+            <div class="kx-ly-referral__arrow">
+              <svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M0 12h44m-8-8l8 8-8 8"/></svg>
+            </div>
+            <div class="kx-ly-referral__friend">
+              <div class="kx-ly-referral__avatar">FREUND</div>
+              <span>10% Rabatt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 6b. AFFILIATE DASHBOARD (logged-in only) ═══ {%- endcomment -%}
+  {%- if customer -%}
+  <section class="kx-ly-affiliate" id="kx-ly-affiliate">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Dein Partner-Dashboard</h2>
+      <p class="kx-ly-section-sub">Verfolge deine Empfehlungen, Klicks und Verdienste in Echtzeit</p>
+
+      {%- comment -%} ── Affiliate Link Box ── {%- endcomment -%}
+      <div class="kx-ly-aff-link">
+        <div class="kx-ly-aff-link__label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Dein persönlicher Affiliate-Link
+        </div>
+        <div class="kx-ly-aff-link__row">
+          <input type="text" id="kx-aff-dash-link" value="https://www.karinex.de/?ref={{ customer.id }}" readonly class="kx-ly-aff-link__input">
+          <button type="button" id="kx-aff-dash-copy" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--sm">Kopieren</button>
+        </div>
+        <p class="kx-ly-aff-link__hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Tipp: Du kannst auch <strong>?ref={{ customer.id }}</strong> an jeden Produktlink anhängen — z.B. <code>karinex.de/products/iphone-15?ref={{ customer.id }}</code>. Alle Klicks werden gezählt!
+        </p>
+        <div class="kx-ly-aff-link__share">
+          <a href="https://wa.me/?text=Schau%20dir%20Karinex%20an%20%E2%80%93%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" target="_blank" rel="noopener nofollow" class="kx-ly-aff-link__share-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.627-1.475A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.171 0-4.178-.7-5.813-1.888l-.417-.311-2.746.876.841-2.658-.329-.438A9.715 9.715 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:?subject=Karinex%20Empfehlung&body=Hey%2C%20schau%20dir%20Karinex%20an%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" class="kx-ly-aff-link__share-btn" aria-label="E-Mail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+            E-Mail
+          </a>
+        </div>
+      </div>
+
+      {%- comment -%} ── Stats Cards ── {%- endcomment -%}
+      <div class="kx-ly-aff-stats" id="kx-ly-aff-stats">
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--clicks">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-clicks">–</div>
+          <div class="kx-ly-aff-stats__label">Klicks gesamt</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-clicks-today">heute: –</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--referrals">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-referrals">–</div>
+          <div class="kx-ly-aff-stats__label">Empfehlungen</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-conversion">Conversion: –</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--purchases">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-purchases">–</div>
+          <div class="kx-ly-aff-stats__label">Käufe</div>
+          <div class="kx-ly-aff-stats__sub">durch deine Links</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--earnings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-earnings">–</div>
+          <div class="kx-ly-aff-stats__label">Verdiente Punkte</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-pending">ausstehend: –</div>
+        </div>
+      </div>
+
+      {%- comment -%} ── Loading ── {%- endcomment -%}
+      <div class="kx-ly-aff-loading" id="kx-aff-loading">
+        <div class="kx-ly-aff-spinner"></div>
+        <span>Dashboard wird geladen…</span>
+      </div>
+
+      {%- comment -%} ── Click Chart ── {%- endcomment -%}
+      <div class="kx-ly-aff-chart-panel" id="kx-aff-chart-panel">
+        <div class="kx-ly-aff-chart-head">
+          <h3 class="kx-ly-aff-chart-title">Klick-Verlauf</h3>
+          <div class="kx-ly-aff-chart-range">
+            <button type="button" class="kx-ly-aff-chip" data-aff-days="7">7T</button>
+            <button type="button" class="kx-ly-aff-chip kx-ly-aff-chip--active" data-aff-days="30">30T</button>
+          </div>
+        </div>
+        <div class="kx-ly-aff-chart" id="kx-aff-chart">
+          <div class="kx-ly-aff-chart-empty" id="kx-aff-chart-empty">Noch keine Klickdaten vorhanden</div>
+          <canvas id="kx-aff-canvas" style="display:none;width:100%;height:180px"></canvas>
+        </div>
+      </div>
+
+      {%- comment -%} ── Top Pages ── {%- endcomment -%}
+      <div class="kx-ly-aff-pages-panel" id="kx-aff-pages-panel" style="display:none">
+        <h3 class="kx-ly-aff-chart-title">Top-Seiten nach Klicks</h3>
+        <div class="kx-ly-aff-pages" id="kx-aff-pages"></div>
+      </div>
+
+      {%- comment -%} ── Referral Table ── {%- endcomment -%}
+      <div class="kx-ly-aff-table-panel">
+        <h3 class="kx-ly-aff-chart-title">Deine Empfehlungen</h3>
+        <div id="kx-aff-table-wrap">
+          <div class="kx-ly-aff-table-empty" id="kx-aff-table-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <p>Noch keine Empfehlungen. Teile deinen Link!</p>
+          </div>
+          <table class="kx-ly-aff-table" id="kx-aff-table" style="display:none">
+            <thead><tr><th>Person</th><th>Code</th><th>Datum</th><th>Status</th><th>Punkte</th></tr></thead>
+            <tbody id="kx-aff-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ═══ 7. FAQ ═══ {%- endcomment -%}
+  <section class="kx-ly-faq" id="kx-ly-faq">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Häufige Fragen</h2>
+      <div class="kx-ly-faq__list">
+        <details class="kx-ly-faq__item">
+          <summary>Wie melde ich mich an?</summary>
+          <p>Erstelle einfach ein kostenloses Konto bei karinex.de. Du wirst automatisch Mitglied im Rewards-Programm und beginnst sofort, Punkte zu sammeln.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie verdiene ich Punkte?</summary>
+          <p>Du erhältst 5% Cashback in Punkten bei jeder Bestellung, 500 Punkte für jede erfolgreiche Empfehlung, 100 Punkte für die Newsletter-Anmeldung, 75 Punkte pro Produktbewertung und 200 Punkte als Geburtstagsbonus.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wann werden meine Punkte gutgeschrieben?</summary>
+          <p>Punkte für Einkäufe werden 14 Tage nach Lieferung gutgeschrieben (nach Ablauf der Widerrufsfrist). Alle anderen Punkte sofort.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie löse ich Punkte ein?</summary>
+          <p>Gehe in deinen Account auf „Punkte einlösen" und wähle deinen gewünschten Rabattbetrag. Du erhältst sofort einen Gutscheincode, den du im Warenkorb einlösen kannst.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Verfallen meine Punkte?</summary>
+          <p>Punkte sind 12 Monate gültig ab dem Datum der Gutschrift. Solange du aktiv einkaufst, verlierst du keine Punkte.</p>
+        </details>
+        <details class="kx-ly-faq__item">
+          <summary>Wie funktioniert das Freunde-werben-Programm?</summary>
+          <p>Teile deinen persönlichen Empfehlungslink. Wenn dein Freund damit bestellt, erhält er 10% Rabatt auf seine erste Bestellung und du bekommst 500 Punkte gutgeschrieben.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ═══ 8. CTA ═══ {%- endcomment -%}
+  <section class="kx-ly-cta">
+    <div class="kx-ly-container">
+      <h2>Bereit, Punkte zu sammeln?</h2>
+      <p>Werde jetzt Mitglied — kostenlos, unverbindlich und sofort aktiv.</p>
+      {%- if customer -%}
+        <a href="/collections/all" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--large">Jetzt einkaufen & Punkte sammeln</a>
+      {%- else -%}
+        <a href="/account/register" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--large">Kostenlos Mitglied werden</a>
+      {%- endif -%}
+    </div>
+  </section>
+
+</div>
+
+{%- comment -%} ═══ COUNTER ANIMATION + REDEEM LOGIC ═══ {%- endcomment -%}
+<script>
+(function(){
+  /* ─── Counter Animation ─── */
+  var counted = false;
+  function animateCounters(){
+    if(counted) return;
+    var els = document.querySelectorAll('[data-count]');
+    if(!els.length) return;
+    var rect = els[0].getBoundingClientRect();
+    if(rect.top > window.innerHeight) return;
+    counted = true;
+    els.forEach(function(el){
+      var target = parseInt(el.dataset.count, 10);
+      var duration = 2000;
+      var startTime = null;
+      function step(ts){
+        if(!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.floor(eased * target);
+        el.textContent = current.toLocaleString('de-DE');
+        if(progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+  window.addEventListener('scroll', animateCounters, {passive: true});
+  animateCounters();
+
+  /* ─── Redeem Logic ─── */
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbz0KQ6sRNj7ZPV8ivb53EPM3kK9Ms5RcUDzaiXkz_Vq8W8DZXaFwBM7oo84U2IY37Wd/exec';
+  var redeemBtns = document.querySelectorAll('[data-redeem]');
+  var overlay = document.getElementById('kx-redeem-overlay');
+  var codeEl = document.getElementById('kx-redeem-code');
+  var infoEl = document.getElementById('kx-redeem-info');
+  var copyBtn = document.getElementById('kx-redeem-copy');
+  var closeBtn = document.getElementById('kx-redeem-close');
+  var balanceEl = document.getElementById('kx-redeem-balance');
+
+  redeemBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(btn.disabled) return;
+      var pts = parseInt(btn.dataset.redeem);
+      var card = btn.closest('.kx-ly-redeem__card');
+      var euro = card ? card.dataset.redeemEuro : '';
+      btn.disabled = true;
+      btn.textContent = 'Wird erstellt...';
+      btn.classList.add('kx-ly-btn--loading');
+
+      var email = '{{ customer.email | default: "" }}';
+      if(!email){ btn.textContent = 'Bitte einloggen'; return; }
+
+      var url = GAS_URL + '?action=redeem_points&email=' + encodeURIComponent(email) + '&points=' + pts;
+      fetch(url)
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          btn.classList.remove('kx-ly-btn--loading');
+          if(d.ok){
+            codeEl.textContent = d.code;
+            infoEl.textContent = '€' + d.discount_euro + ' Rabatt — Restguthaben: ' + d.points_remaining.toLocaleString('de-DE') + ' Punkte';
+            overlay.style.display = 'flex';
+            if(balanceEl) balanceEl.textContent = d.points_remaining.toLocaleString('de-DE');
+            /* Update all buttons */
+            redeemBtns.forEach(function(b){
+              var reqPts = parseInt(b.dataset.redeem);
+              if(d.points_remaining < reqPts){
+                b.disabled = true;
+                b.textContent = 'Noch ' + (reqPts - d.points_remaining).toLocaleString('de-DE') + ' Punkte';
+                b.classList.add('kx-ly-btn--disabled');
+              } else {
+                b.disabled = false;
+                b.textContent = 'Jetzt einlösen';
+                b.classList.remove('kx-ly-btn--disabled');
+              }
+            });
+          } else {
+            var msg = d.error === 'insufficient_points' ? 'Nicht genug Punkte' :
+                      d.error === 'too_fast' ? 'Bitte kurz warten...' : 'Fehler: ' + d.error;
+            btn.textContent = msg;
+            setTimeout(function(){ btn.textContent = 'Jetzt einlösen'; btn.disabled = false; }, 3000);
+          }
+        })
+        .catch(function(){
+          btn.classList.remove('kx-ly-btn--loading');
+          btn.textContent = 'Fehler — erneut versuchen';
+          btn.disabled = false;
+        });
+    });
+  });
+
+  if(copyBtn) copyBtn.addEventListener('click', function(){
+    navigator.clipboard.writeText(codeEl.textContent);
+    copyBtn.textContent = 'Kopiert ✓';
+    setTimeout(function(){ copyBtn.textContent = 'Code kopieren'; }, 2000);
+  });
+  if(closeBtn) closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; });
+  if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.style.display = 'none'; });
+
+  /* ═══ AFFILIATE DASHBOARD ═══ */
+  var affSection = document.getElementById('kx-ly-aff-stats');
+  if(affSection){
+    var CID = '{{ customer.id | default: "" }}';
+    var AFF_EMAIL = '{{ customer.email | default: "" }}';
+    var affLoadEl = document.getElementById('kx-aff-loading');
+    var affChartData = [];
+    var affChartDays = 30;
+
+    /* Copy link */
+    var affCopy = document.getElementById('kx-aff-dash-copy');
+    var affInput = document.getElementById('kx-aff-dash-link');
+    if(affCopy && affInput){
+      affCopy.addEventListener('click', function(){
+        navigator.clipboard.writeText(affInput.value).then(function(){
+          affCopy.textContent = 'Kopiert ✓';
+          affCopy.style.background = '#22c55e';
+          setTimeout(function(){ affCopy.textContent = 'Kopieren'; affCopy.style.background = ''; }, 2200);
+        });
+      });
+    }
+
+    /* Load dashboard */
+    fetch(GAS_URL + '?action=affiliate_dashboard&customer_id=' + CID + '&email=' + encodeURIComponent(AFF_EMAIL))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(affLoadEl) affLoadEl.style.display = 'none';
+        if(!d.ok) return;
+        /* Stats */
+        affTxt('kx-aff-clicks', affFmt(d.clicks ? d.clicks.total : 0));
+        affTxt('kx-aff-clicks-today', 'heute: ' + affFmt(d.clicks ? d.clicks.today : 0) + '  ·  7T: ' + affFmt(d.clicks ? d.clicks.days7 : 0));
+        affTxt('kx-aff-referrals', affFmt(d.total_referrals || 0));
+        affTxt('kx-aff-conversion', 'Conversion: ' + (d.conversion_rate || 0) + '%');
+        affTxt('kx-aff-purchases', affFmt(d.total_purchases || 0));
+        affTxt('kx-aff-earnings', affFmt(d.total_earned || 0));
+        affTxt('kx-aff-pending', 'ausstehend: ' + affFmt(d.pending_points || 0));
+        /* Chart */
+        affChartData = d.clicks ? d.clicks.daily || [] : [];
+        affRenderChart(30);
+        /* Top pages */
+        affRenderPages(d.clicks ? d.clicks.top_pages || [] : []);
+        /* Referral table */
+        affRenderTable(d.referrals || []);
+      })
+      .catch(function(){
+        if(affLoadEl) affLoadEl.innerHTML = '<span style="color:#e74c3c">Fehler beim Laden</span>';
+      });
+
+    /* Chart render */
+    function affRenderChart(days){
+      var emptyEl = document.getElementById('kx-aff-chart-empty');
+      var canvas = document.getElementById('kx-aff-canvas');
+      if(!affChartData.length || !canvas){ if(emptyEl) emptyEl.style.display='flex'; return; }
+      if(emptyEl) emptyEl.style.display='none';
+      canvas.style.display='block';
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio||1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width*dpr; canvas.height = 180*dpr;
+      canvas.style.width = rect.width+'px'; canvas.style.height = '180px';
+      ctx.scale(dpr,dpr);
+      var W=rect.width, H=180, pad={top:16,right:8,bottom:26,left:36};
+      var cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+      var data = affChartData.slice(-days);
+      if(!data.length) return;
+      var max = Math.max.apply(null, data.map(function(d){return d.clicks||0}));
+      if(max===0) max=1;
+      var barW = Math.max(2,(cW/data.length)-2);
+      ctx.clearRect(0,0,W,H);
+      /* Grid */
+      ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=1;
+      for(var g=0;g<=4;g++){var gy=pad.top+(cH/4)*g; ctx.beginPath(); ctx.moveTo(pad.left,gy); ctx.lineTo(W-pad.right,gy); ctx.stroke();}
+      /* Bars */
+      for(var j=0;j<data.length;j++){
+        var bH=(data[j].clicks/max)*cH;
+        var bx=pad.left+(cW/data.length)*j+1;
+        var by=pad.top+cH-bH;
+        var grad=ctx.createLinearGradient(0,by,0,by+bH);
+        grad.addColorStop(0,'#c9a84c'); grad.addColorStop(1,'#e6c770');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.roundRect(bx,by,barW,bH,[3,3,0,0]); ctx.fill();
+        if(j%Math.ceil(data.length/6)===0||j===data.length-1){
+          ctx.fillStyle='#aaa'; ctx.font='10px system-ui'; ctx.textAlign='center';
+          ctx.fillText(data[j].date?data[j].date.slice(5):'',bx+barW/2,H-6);
+        }
+      }
+      /* Y labels */
+      ctx.fillStyle='#aaa'; ctx.font='10px system-ui'; ctx.textAlign='right';
+      for(var k=0;k<=4;k++){ ctx.fillText(Math.round(max-(max/4)*k),pad.left-5,pad.top+(cH/4)*k+4); }
+    }
+
+    /* Range toggle */
+    document.querySelectorAll('.kx-ly-aff-chip[data-aff-days]').forEach(function(el){
+      el.addEventListener('click', function(){
+        document.querySelectorAll('.kx-ly-aff-chip[data-aff-days]').forEach(function(c){c.classList.remove('kx-ly-aff-chip--active');});
+        el.classList.add('kx-ly-aff-chip--active');
+        affRenderChart(parseInt(el.dataset.affDays,10));
+      });
+    });
+
+    /* Top pages render */
+    function affRenderPages(pages){
+      var panel = document.getElementById('kx-aff-pages-panel');
+      var container = document.getElementById('kx-aff-pages');
+      if(!pages.length || !panel || !container) return;
+      panel.style.display = 'block';
+      var maxC = pages[0].clicks || 1;
+      var html = '';
+      for(var i=0; i<pages.length && i<8; i++){
+        var pct = Math.round((pages[i].clicks/maxC)*100);
+        var label = pages[i].page || '/';
+        if(label.indexOf('/products/') === 0) label = label.replace('/products/','📦 ');
+        html += '<div class="kx-ly-aff-page-row">'
+          + '<span class="kx-ly-aff-page-row__url">' + affEsc(label) + '</span>'
+          + '<div class="kx-ly-aff-page-row__bar"><div class="kx-ly-aff-page-row__fill" style="width:'+pct+'%"></div></div>'
+          + '<span class="kx-ly-aff-page-row__count">' + pages[i].clicks + '</span>'
+          + '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    /* Table render */
+    function affRenderTable(refs){
+      var emptyEl = document.getElementById('kx-aff-table-empty');
+      var tbl = document.getElementById('kx-aff-table');
+      var tbody = document.getElementById('kx-aff-tbody');
+      if(!refs.length){ if(emptyEl) emptyEl.style.display='block'; return; }
+      if(emptyEl) emptyEl.style.display='none';
+      if(tbl) tbl.style.display='table';
+      var html='';
+      for(var i=0;i<refs.length;i++){
+        var r=refs[i];
+        var sc=r.purchased?'purchased':'pending';
+        var st=r.purchased?'✓ Gekauft':'⏳ Ausstehend';
+        var dt=r.date?r.date.slice(0,10):'–';
+        html+='<tr><td>'+affEsc(r.email_masked||'–')+'</td><td><code style="background:#f5f5f5;padding:2px 7px;border-radius:4px;font-size:.78rem">'+affEsc(r.code||'–')+'</code></td><td>'+dt+'</td><td><span class="kx-ly-aff-status kx-ly-aff-status--'+sc+'">'+st+'</span></td><td><strong>'+(r.points_earned||0)+'</strong></td></tr>';
+      }
+      if(tbody) tbody.innerHTML=html;
+    }
+
+    function affTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+    function affFmt(n){return n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':String(n);}
+    function affEsc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Loyalty & Rewards",
+  "class": "section-loyalty",
+  "tag": "section"
+}
+{% endschema %}
