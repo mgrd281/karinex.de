@@ -1,0 +1,129 @@
+{%- comment -%}
+  Cart Loyalty Points Redemption Widget
+  Shows customer's points balance and quick-redeem buttons in cart
+{%- endcomment -%}
+
+{%- if customer -%}
+  {%- assign kx_pts = customer.metafields.karinex.loyalty_points.value | default: 0 | plus: 0 -%}
+
+  <div class="cart-loyalty" id="cart-loyalty-widget">
+    <div class="cart-loyalty__header">
+      <span class="cart-loyalty__icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+      </span>
+      <span class="cart-loyalty__title">Punkte einlösen</span>
+      <span class="cart-loyalty__balance" id="cart-loyalty-pts">{{ kx_pts }} Pkt.</span>
+    </div>
+
+    {%- if kx_pts >= 200 -%}
+      <div class="cart-loyalty__options" id="cart-loyalty-options">
+        {%- if kx_pts >= 200 -%}
+          <button type="button" class="cart-loyalty__btn" data-cart-redeem="200" data-cart-euro="2">€2 <small>200 Pkt.</small></button>
+        {%- endif -%}
+        {%- if kx_pts >= 500 -%}
+          <button type="button" class="cart-loyalty__btn" data-cart-redeem="500" data-cart-euro="5">€5 <small>500 Pkt.</small></button>
+        {%- endif -%}
+        {%- if kx_pts >= 1000 -%}
+          <button type="button" class="cart-loyalty__btn" data-cart-redeem="1000" data-cart-euro="10">€10 <small>1.000 Pkt.</small></button>
+        {%- endif -%}
+        {%- if kx_pts >= 2000 -%}
+          <button type="button" class="cart-loyalty__btn" data-cart-redeem="2000" data-cart-euro="25">€25 <small>2.000 Pkt.</small></button>
+        {%- endif -%}
+      </div>
+      <div class="cart-loyalty__result" id="cart-loyalty-result" style="display:none">
+        <div class="cart-loyalty__code-row">
+          <span class="cart-loyalty__code" id="cart-loyalty-code"></span>
+          <button type="button" class="cart-loyalty__apply-btn" id="cart-loyalty-apply">Einlösen</button>
+        </div>
+        <small class="cart-loyalty__info" id="cart-loyalty-info"></small>
+      </div>
+    {%- else -%}
+      <div class="cart-loyalty__info-msg">
+        Noch {{ 200 | minus: kx_pts }} Punkte bis zum ersten Rabatt.
+        <a href="/pages/rewards">Mehr erfahren</a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <style>
+    .cart-loyalty { background: #faf8f2; border: 1px solid #e8e2d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+    .cart-loyalty__header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .cart-loyalty__icon { color: #c9a84c; display: flex; }
+    .cart-loyalty__title { font-size: 13px; font-weight: 700; flex: 1; }
+    .cart-loyalty__balance { font-size: 13px; font-weight: 700; color: #c9a84c; }
+    .cart-loyalty__options { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cart-loyalty__btn { padding: 8px 14px; border: 1.5px solid #c9a84c; border-radius: 100px; background: transparent; color: #1a1a1a; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 4px; }
+    .cart-loyalty__btn small { font-weight: 400; color: #999; font-size: 11px; }
+    .cart-loyalty__btn:hover { background: #c9a84c; color: #fff; }
+    .cart-loyalty__btn:hover small { color: rgba(255,255,255,.8); }
+    .cart-loyalty__btn:disabled { opacity: .5; cursor: wait; }
+    .cart-loyalty__result { margin-top: 10px; }
+    .cart-loyalty__code-row { display: flex; align-items: center; gap: 8px; }
+    .cart-loyalty__code { flex: 1; padding: 8px 12px; background: #fff; border: 1.5px dashed #c9a84c; border-radius: 8px; font-family: monospace; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-align: center; }
+    .cart-loyalty__apply-btn { padding: 8px 16px; background: #c9a84c; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background .2s; }
+    .cart-loyalty__apply-btn:hover { background: #b8953f; }
+    .cart-loyalty__info { display: block; margin-top: 6px; color: #666; font-size: 12px; }
+    .cart-loyalty__info-msg { font-size: 12px; color: #666; }
+    .cart-loyalty__info-msg a { color: #c9a84c; font-weight: 600; }
+  </style>
+
+  <script>
+  (function(){
+    var GAS = 'https://script.google.com/macros/s/AKfycbzroJTEhfgzi0vfFhmbFAKR5Sgy8T8ZmvuzBeSAxeAlS8JLK5zOYRtAbzv9m0r7JQ1D/exec';
+    var email = '{{ customer.email }}';
+    var btns = document.querySelectorAll('[data-cart-redeem]');
+    var resultEl = document.getElementById('cart-loyalty-result');
+    var codeEl = document.getElementById('cart-loyalty-code');
+    var infoEl = document.getElementById('cart-loyalty-info');
+    var applyBtn = document.getElementById('cart-loyalty-apply');
+    var optionsEl = document.getElementById('cart-loyalty-options');
+    var ptsEl = document.getElementById('cart-loyalty-pts');
+    var generatedCode = '';
+
+    btns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var pts = btn.dataset.cartRedeem;
+        btns.forEach(function(b){ b.disabled = true; });
+        btn.textContent = '...';
+
+        fetch(GAS + '?action=redeem_points&email=' + encodeURIComponent(email) + '&points=' + pts)
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if(d.ok){
+              generatedCode = d.code;
+              codeEl.textContent = d.code;
+              infoEl.textContent = '€' + d.discount_euro + ' Rabatt — ' + d.points_remaining + ' Punkte übrig. Gültig 90 Tage.';
+              if(optionsEl) optionsEl.style.display = 'none';
+              resultEl.style.display = 'block';
+              if(ptsEl) ptsEl.textContent = d.points_remaining + ' Pkt.';
+            } else {
+              btn.textContent = d.error === 'insufficient_points' ? 'Nicht genug' : 'Fehler';
+              setTimeout(function(){
+                btns.forEach(function(b){ b.disabled = false; b.innerHTML = '€' + b.dataset.cartEuro + ' <small>' + parseInt(b.dataset.cartRedeem).toLocaleString('de-DE') + ' Pkt.</small>'; });
+              }, 2500);
+            }
+          })
+          .catch(function(){
+            btns.forEach(function(b){ b.disabled = false; b.innerHTML = '€' + b.dataset.cartEuro + ' <small>' + parseInt(b.dataset.cartRedeem).toLocaleString('de-DE') + ' Pkt.</small>'; });
+          });
+      });
+    });
+
+    if(applyBtn) applyBtn.addEventListener('click', function(){
+      if(!generatedCode) return;
+      /* Apply discount code via Shopify cart API */
+      applyBtn.textContent = '...';
+      fetch('/discount/' + encodeURIComponent(generatedCode))
+        .then(function(){
+          /* Reload to apply */
+          applyBtn.textContent = 'Angewendet ✓';
+          applyBtn.style.background = '#22c55e';
+          setTimeout(function(){ window.location.reload(); }, 800);
+        })
+        .catch(function(){
+          applyBtn.textContent = 'Fehler';
+        });
+    });
+  })();
+  </script>
+{%- endif -%}

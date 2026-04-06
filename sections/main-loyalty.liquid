@@ -227,27 +227,79 @@
     <div class="kx-ly-container">
       <h2 class="kx-ly-section-title">Punkte einlösen</h2>
       <p class="kx-ly-section-sub">Je mehr Punkte, desto mehr sparst du</p>
+
+      {%- if customer -%}
+        <div class="kx-ly-redeem__balance">
+          <span class="kx-ly-redeem__balance-label">Dein Guthaben:</span>
+          <span class="kx-ly-redeem__balance-pts" id="kx-redeem-balance">{{ kx_pts }}</span>
+          <span class="kx-ly-redeem__balance-label">Punkte</span>
+        </div>
+      {%- endif -%}
+
       <div class="kx-ly-redeem__grid">
-        <div class="kx-ly-redeem__card">
+        <div class="kx-ly-redeem__card" data-redeem-pts="200" data-redeem-euro="2">
           <div class="kx-ly-redeem__value">€2</div>
           <div class="kx-ly-redeem__pts">200 Punkte</div>
-          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:20%"></div></div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 200 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 200 }}{% endif %}{% else %}20{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 200 %} kx-ly-btn--disabled{% endif %}" data-redeem="200" {% if kx_pts < 200 %}disabled{% endif %}>
+              {%- if kx_pts >= 200 -%}Jetzt einlösen{%- else -%}Noch {{ 200 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
         </div>
-        <div class="kx-ly-redeem__card">
+        <div class="kx-ly-redeem__card" data-redeem-pts="500" data-redeem-euro="5">
           <div class="kx-ly-redeem__value">€5</div>
           <div class="kx-ly-redeem__pts">500 Punkte</div>
-          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:50%"></div></div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 500 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 500 }}{% endif %}{% else %}50{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 500 %} kx-ly-btn--disabled{% endif %}" data-redeem="500" {% if kx_pts < 500 %}disabled{% endif %}>
+              {%- if kx_pts >= 500 -%}Jetzt einlösen{%- else -%}Noch {{ 500 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
         </div>
-        <div class="kx-ly-redeem__card kx-ly-redeem__card--popular">
+        <div class="kx-ly-redeem__card kx-ly-redeem__card--popular" data-redeem-pts="1000" data-redeem-euro="10">
           <span class="kx-ly-redeem__badge">Beliebt</span>
           <div class="kx-ly-redeem__value">€10</div>
           <div class="kx-ly-redeem__pts">1.000 Punkte</div>
-          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:70%"></div></div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 1000 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 1000 }}{% endif %}{% else %}70{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 1000 %} kx-ly-btn--disabled{% endif %}" data-redeem="1000" {% if kx_pts < 1000 %}disabled{% endif %}>
+              {%- if kx_pts >= 1000 -%}Jetzt einlösen{%- else -%}Noch {{ 1000 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
         </div>
-        <div class="kx-ly-redeem__card">
+        <div class="kx-ly-redeem__card" data-redeem-pts="2000" data-redeem-euro="25">
           <div class="kx-ly-redeem__value">€25</div>
           <div class="kx-ly-redeem__pts">2.000 Punkte</div>
-          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:100%"></div></div>
+          <div class="kx-ly-redeem__bar"><div class="kx-ly-redeem__fill" style="width:{% if customer %}{% if kx_pts >= 2000 %}100{% else %}{{ kx_pts | times: 100 | divided_by: 2000 }}{% endif %}{% else %}100{% endif %}%"></div></div>
+          {%- if customer -%}
+            <button type="button" class="kx-ly-btn kx-ly-btn--redeem{% if kx_pts < 2000 %} kx-ly-btn--disabled{% endif %}" data-redeem="2000" {% if kx_pts < 2000 %}disabled{% endif %}>
+              {%- if kx_pts >= 2000 -%}Jetzt einlösen{%- else -%}Noch {{ 2000 | minus: kx_pts }} Punkte{%- endif -%}
+            </button>
+          {%- else -%}
+            <a href="/account/login" class="kx-ly-btn kx-ly-btn--redeem kx-ly-btn--ghost-sm">Einloggen</a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Redeem result overlay {%- endcomment -%}
+      <div class="kx-ly-redeem__overlay" id="kx-redeem-overlay" style="display:none">
+        <div class="kx-ly-redeem__modal">
+          <div class="kx-ly-redeem__modal-icon">✓</div>
+          <h3 class="kx-ly-redeem__modal-title">Gutschein erstellt!</h3>
+          <p class="kx-ly-redeem__modal-sub">Dein Rabattcode:</p>
+          <div class="kx-ly-redeem__modal-code" id="kx-redeem-code"></div>
+          <p class="kx-ly-redeem__modal-info" id="kx-redeem-info"></p>
+          <div class="kx-ly-redeem__modal-actions">
+            <button type="button" class="kx-ly-btn kx-ly-btn--primary" id="kx-redeem-copy">Code kopieren</button>
+            <button type="button" class="kx-ly-btn kx-ly-btn--outline" id="kx-redeem-close">Schließen</button>
+          </div>
         </div>
       </div>
     </div>
@@ -401,9 +453,10 @@
 
 </div>
 
-{%- comment -%} ═══ COUNTER ANIMATION ═══ {%- endcomment -%}
+{%- comment -%} ═══ COUNTER ANIMATION + REDEEM LOGIC ═══ {%- endcomment -%}
 <script>
 (function(){
+  /* ─── Counter Animation ─── */
   var counted = false;
   function animateCounters(){
     if(counted) return;
@@ -415,7 +468,6 @@
     els.forEach(function(el){
       var target = parseInt(el.dataset.count, 10);
       var duration = 2000;
-      var start = 0;
       var startTime = null;
       function step(ts){
         if(!startTime) startTime = ts;
@@ -430,6 +482,75 @@
   }
   window.addEventListener('scroll', animateCounters, {passive: true});
   animateCounters();
+
+  /* ─── Redeem Logic ─── */
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbzroJTEhfgzi0vfFhmbFAKR5Sgy8T8ZmvuzBeSAxeAlS8JLK5zOYRtAbzv9m0r7JQ1D/exec';
+  var redeemBtns = document.querySelectorAll('[data-redeem]');
+  var overlay = document.getElementById('kx-redeem-overlay');
+  var codeEl = document.getElementById('kx-redeem-code');
+  var infoEl = document.getElementById('kx-redeem-info');
+  var copyBtn = document.getElementById('kx-redeem-copy');
+  var closeBtn = document.getElementById('kx-redeem-close');
+  var balanceEl = document.getElementById('kx-redeem-balance');
+
+  redeemBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(btn.disabled) return;
+      var pts = parseInt(btn.dataset.redeem);
+      var card = btn.closest('.kx-ly-redeem__card');
+      var euro = card ? card.dataset.redeemEuro : '';
+      btn.disabled = true;
+      btn.textContent = 'Wird erstellt...';
+      btn.classList.add('kx-ly-btn--loading');
+
+      var email = '{{ customer.email | default: "" }}';
+      if(!email){ btn.textContent = 'Bitte einloggen'; return; }
+
+      var url = GAS_URL + '?action=redeem_points&email=' + encodeURIComponent(email) + '&points=' + pts;
+      fetch(url)
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          btn.classList.remove('kx-ly-btn--loading');
+          if(d.ok){
+            codeEl.textContent = d.code;
+            infoEl.textContent = '€' + d.discount_euro + ' Rabatt — Restguthaben: ' + d.points_remaining.toLocaleString('de-DE') + ' Punkte';
+            overlay.style.display = 'flex';
+            if(balanceEl) balanceEl.textContent = d.points_remaining.toLocaleString('de-DE');
+            /* Update all buttons */
+            redeemBtns.forEach(function(b){
+              var reqPts = parseInt(b.dataset.redeem);
+              if(d.points_remaining < reqPts){
+                b.disabled = true;
+                b.textContent = 'Noch ' + (reqPts - d.points_remaining).toLocaleString('de-DE') + ' Punkte';
+                b.classList.add('kx-ly-btn--disabled');
+              } else {
+                b.disabled = false;
+                b.textContent = 'Jetzt einlösen';
+                b.classList.remove('kx-ly-btn--disabled');
+              }
+            });
+          } else {
+            var msg = d.error === 'insufficient_points' ? 'Nicht genug Punkte' :
+                      d.error === 'too_fast' ? 'Bitte kurz warten...' : 'Fehler: ' + d.error;
+            btn.textContent = msg;
+            setTimeout(function(){ btn.textContent = 'Jetzt einlösen'; btn.disabled = false; }, 3000);
+          }
+        })
+        .catch(function(){
+          btn.classList.remove('kx-ly-btn--loading');
+          btn.textContent = 'Fehler — erneut versuchen';
+          btn.disabled = false;
+        });
+    });
+  });
+
+  if(copyBtn) copyBtn.addEventListener('click', function(){
+    navigator.clipboard.writeText(codeEl.textContent);
+    copyBtn.textContent = 'Kopiert ✓';
+    setTimeout(function(){ copyBtn.textContent = 'Code kopieren'; }, 2000);
+  });
+  if(closeBtn) closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; });
+  if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.style.display = 'none'; });
 })();
 </script>
 
