@@ -41,6 +41,75 @@
 <link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="{{ 'main-loyalty.css' | asset_url }}"></noscript>
 
+{%- comment -%} ── Affiliate Dashboard (integrated) styles ── {%- endcomment -%}
+<style>
+  /* ── Affiliate Link Box ── */
+  .kx-ly-aff-link{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:24px;margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+  .kx-ly-aff-link__label{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;color:#888;margin-bottom:12px;text-transform:uppercase;letter-spacing:.03em}
+  .kx-ly-aff-link__row{display:flex;gap:8px}
+  .kx-ly-aff-link__input{flex:1;padding:11px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:.88rem;color:#1a1a1a;background:#f9f9f9;outline:none;font-family:monospace;transition:border-color .2s}
+  .kx-ly-aff-link__input:focus{border-color:#c9a84c}
+  .kx-ly-aff-link__hint{display:flex;align-items:flex-start;gap:6px;margin-top:14px;font-size:.8rem;color:#999;line-height:1.5}
+  .kx-ly-aff-link__hint code{background:#f3f3f3;padding:1px 6px;border-radius:4px;font-size:.78rem;color:#c9a84c;white-space:nowrap}
+  .kx-ly-aff-link__hint strong{color:#666}
+  .kx-ly-aff-link__share{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .kx-ly-aff-link__share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;border:1.5px solid #e0e0e0;color:#1a1a1a;background:#fff;cursor:pointer;transition:all .2s}
+  .kx-ly-aff-link__share-btn:hover{border-color:#c9a84c;color:#c9a84c}
+  /* ── Stats Cards ── */
+  .kx-ly-aff-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+  .kx-ly-aff-stats__card{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:22px 18px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+  .kx-ly-aff-stats__card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.07)}
+  .kx-ly-aff-stats__icon{width:44px;height:44px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px}
+  .kx-ly-aff-stats__icon--clicks{background:rgba(201,168,76,.12);color:#c9a84c}
+  .kx-ly-aff-stats__icon--referrals{background:rgba(26,26,26,.08);color:#1a1a1a}
+  .kx-ly-aff-stats__icon--purchases{background:rgba(34,197,94,.1);color:#22c55e}
+  .kx-ly-aff-stats__icon--earnings{background:rgba(201,168,76,.12);color:#c9a84c}
+  .kx-ly-aff-stats__val{font-size:1.8rem;font-weight:800;line-height:1.1;margin-bottom:3px;color:#1a1a1a}
+  .kx-ly-aff-stats__label{font-size:.82rem;color:#888;font-weight:500}
+  .kx-ly-aff-stats__sub{font-size:.72rem;color:#aaa;margin-top:5px}
+  .kx-ly-aff-loading{text-align:center;padding:20px;color:#999;font-size:.85rem;display:flex;align-items:center;justify-content:center;gap:10px}
+  .kx-ly-aff-spinner{width:18px;height:18px;border:2px solid #e8e8e8;border-top-color:#c9a84c;border-radius:50%;animation:kxAfSpin .7s linear infinite}
+  @keyframes kxAfSpin{to{transform:rotate(360deg)}}
+  /* ── Chart Panel ── */
+  .kx-ly-aff-chart-panel,.kx-ly-aff-pages-panel,.kx-ly-aff-table-panel{background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:22px 24px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:16px}
+  .kx-ly-aff-chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .kx-ly-aff-chart-title{font-size:1rem;font-weight:700;margin:0;color:#1a1a1a}
+  .kx-ly-aff-chart-range{display:flex;gap:5px}
+  .kx-ly-aff-chip{padding:5px 14px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid #e0e0e0;color:#888;background:transparent;transition:all .2s}
+  .kx-ly-aff-chip--active,.kx-ly-aff-chip:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .kx-ly-aff-chart{position:relative;min-height:180px}
+  .kx-ly-aff-chart-empty{display:flex;align-items:center;justify-content:center;min-height:180px;color:#ccc;font-size:.88rem}
+  /* ── Top Pages ── */
+  .kx-ly-aff-pages{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .kx-ly-aff-page-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fafafa;border-radius:8px;font-size:.85rem}
+  .kx-ly-aff-page-row__url{flex:1;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;font-size:.8rem}
+  .kx-ly-aff-page-row__count{font-weight:700;color:#c9a84c;min-width:50px;text-align:right}
+  .kx-ly-aff-page-row__bar{flex:0 0 100px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+  .kx-ly-aff-page-row__fill{height:100%;background:linear-gradient(90deg,#c9a84c,#e6c770);border-radius:3px}
+  /* ── Referral Table ── */
+  .kx-ly-aff-table-empty{text-align:center;padding:32px 16px;color:#bbb}
+  .kx-ly-aff-table-empty p{margin:10px 0 0;font-size:.88rem}
+  .kx-ly-aff-table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .kx-ly-aff-table th{text-align:left;padding:11px 14px;border-bottom:2px solid #f0f0f0;font-size:.75rem;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.04em}
+  .kx-ly-aff-table td{padding:13px 14px;border-bottom:1px solid #f5f5f5}
+  .kx-ly-aff-table tr:last-child td{border-bottom:none}
+  .kx-ly-aff-table tr:hover td{background:#fafafa}
+  .kx-ly-aff-status{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:600}
+  .kx-ly-aff-status--purchased{background:rgba(34,197,94,.1);color:#16a34a}
+  .kx-ly-aff-status--pending{background:rgba(201,168,76,.12);color:#b8943f}
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .kx-ly-aff-stats{grid-template-columns:repeat(2,1fr)}
+    .kx-ly-aff-link__row{flex-direction:column}
+    .kx-ly-aff-table{font-size:.78rem}
+    .kx-ly-aff-table th,.kx-ly-aff-table td{padding:9px 8px}
+    .kx-ly-aff-page-row__bar{display:none}
+  }
+  @media(max-width:480px){
+    .kx-ly-aff-stats__val{font-size:1.4rem}
+  }
+</style>
+
 <div class="kx-loyalty" id="kx-loyalty">
 
   {%- comment -%} ═══ 1. HERO ═══ {%- endcomment -%}
@@ -115,6 +184,7 @@
 
         <div class="kx-ly-dash__actions">
           <a href="#kx-ly-redeem" class="kx-ly-btn kx-ly-btn--primary">Punkte einlösen</a>
+          <a href="#kx-ly-affiliate" class="kx-ly-btn kx-ly-btn--outline">Partner-Dashboard</a>
           <a href="#kx-ly-referral" class="kx-ly-btn kx-ly-btn--outline">Freunde einladen</a>
         </div>
       </div>
@@ -405,6 +475,121 @@
     </div>
   </section>
 
+  {%- comment -%} ═══ 6b. AFFILIATE DASHBOARD (logged-in only) ═══ {%- endcomment -%}
+  {%- if customer -%}
+  <section class="kx-ly-affiliate" id="kx-ly-affiliate">
+    <div class="kx-ly-container">
+      <h2 class="kx-ly-section-title">Dein Partner-Dashboard</h2>
+      <p class="kx-ly-section-sub">Verfolge deine Empfehlungen, Klicks und Verdienste in Echtzeit</p>
+
+      {%- comment -%} ── Affiliate Link Box ── {%- endcomment -%}
+      <div class="kx-ly-aff-link">
+        <div class="kx-ly-aff-link__label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Dein persönlicher Affiliate-Link
+        </div>
+        <div class="kx-ly-aff-link__row">
+          <input type="text" id="kx-aff-dash-link" value="https://www.karinex.de/?ref={{ customer.id }}" readonly class="kx-ly-aff-link__input">
+          <button type="button" id="kx-aff-dash-copy" class="kx-ly-btn kx-ly-btn--primary kx-ly-btn--sm">Kopieren</button>
+        </div>
+        <p class="kx-ly-aff-link__hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          Tipp: Du kannst auch <strong>?ref={{ customer.id }}</strong> an jeden Produktlink anhängen — z.B. <code>karinex.de/products/iphone-15?ref={{ customer.id }}</code>. Alle Klicks werden gezählt!
+        </p>
+        <div class="kx-ly-aff-link__share">
+          <a href="https://wa.me/?text=Schau%20dir%20Karinex%20an%20%E2%80%93%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" target="_blank" rel="noopener nofollow" class="kx-ly-aff-link__share-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.627-1.475A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.171 0-4.178-.7-5.813-1.888l-.417-.311-2.746.876.841-2.658-.329-.438A9.715 9.715 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:?subject=Karinex%20Empfehlung&body=Hey%2C%20schau%20dir%20Karinex%20an%3A%20https%3A%2F%2Fwww.karinex.de%2F%3Fref%3D{{ customer.id }}" class="kx-ly-aff-link__share-btn" aria-label="E-Mail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+            E-Mail
+          </a>
+        </div>
+      </div>
+
+      {%- comment -%} ── Stats Cards ── {%- endcomment -%}
+      <div class="kx-ly-aff-stats" id="kx-ly-aff-stats">
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--clicks">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-clicks">–</div>
+          <div class="kx-ly-aff-stats__label">Klicks gesamt</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-clicks-today">heute: –</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--referrals">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-referrals">–</div>
+          <div class="kx-ly-aff-stats__label">Empfehlungen</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-conversion">Conversion: –</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--purchases">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-purchases">–</div>
+          <div class="kx-ly-aff-stats__label">Käufe</div>
+          <div class="kx-ly-aff-stats__sub">durch deine Links</div>
+        </div>
+        <div class="kx-ly-aff-stats__card">
+          <div class="kx-ly-aff-stats__icon kx-ly-aff-stats__icon--earnings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="kx-ly-aff-stats__val" id="kx-aff-earnings">–</div>
+          <div class="kx-ly-aff-stats__label">Verdiente Punkte</div>
+          <div class="kx-ly-aff-stats__sub" id="kx-aff-pending">ausstehend: –</div>
+        </div>
+      </div>
+
+      {%- comment -%} ── Loading ── {%- endcomment -%}
+      <div class="kx-ly-aff-loading" id="kx-aff-loading">
+        <div class="kx-ly-aff-spinner"></div>
+        <span>Dashboard wird geladen…</span>
+      </div>
+
+      {%- comment -%} ── Click Chart ── {%- endcomment -%}
+      <div class="kx-ly-aff-chart-panel" id="kx-aff-chart-panel">
+        <div class="kx-ly-aff-chart-head">
+          <h3 class="kx-ly-aff-chart-title">Klick-Verlauf</h3>
+          <div class="kx-ly-aff-chart-range">
+            <button type="button" class="kx-ly-aff-chip" data-aff-days="7">7T</button>
+            <button type="button" class="kx-ly-aff-chip kx-ly-aff-chip--active" data-aff-days="30">30T</button>
+          </div>
+        </div>
+        <div class="kx-ly-aff-chart" id="kx-aff-chart">
+          <div class="kx-ly-aff-chart-empty" id="kx-aff-chart-empty">Noch keine Klickdaten vorhanden</div>
+          <canvas id="kx-aff-canvas" style="display:none;width:100%;height:180px"></canvas>
+        </div>
+      </div>
+
+      {%- comment -%} ── Top Pages ── {%- endcomment -%}
+      <div class="kx-ly-aff-pages-panel" id="kx-aff-pages-panel" style="display:none">
+        <h3 class="kx-ly-aff-chart-title">Top-Seiten nach Klicks</h3>
+        <div class="kx-ly-aff-pages" id="kx-aff-pages"></div>
+      </div>
+
+      {%- comment -%} ── Referral Table ── {%- endcomment -%}
+      <div class="kx-ly-aff-table-panel">
+        <h3 class="kx-ly-aff-chart-title">Deine Empfehlungen</h3>
+        <div id="kx-aff-table-wrap">
+          <div class="kx-ly-aff-table-empty" id="kx-aff-table-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <p>Noch keine Empfehlungen. Teile deinen Link!</p>
+          </div>
+          <table class="kx-ly-aff-table" id="kx-aff-table" style="display:none">
+            <thead><tr><th>Person</th><th>Code</th><th>Datum</th><th>Status</th><th>Punkte</th></tr></thead>
+            <tbody id="kx-aff-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  {%- endif -%}
+
   {%- comment -%} ═══ 7. FAQ ═══ {%- endcomment -%}
   <section class="kx-ly-faq" id="kx-ly-faq">
     <div class="kx-ly-container">
@@ -551,6 +736,151 @@
   });
   if(closeBtn) closeBtn.addEventListener('click', function(){ overlay.style.display = 'none'; });
   if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.style.display = 'none'; });
+
+  /* ═══ AFFILIATE DASHBOARD ═══ */
+  var affSection = document.getElementById('kx-ly-aff-stats');
+  if(affSection){
+    var CID = '{{ customer.id | default: "" }}';
+    var AFF_EMAIL = '{{ customer.email | default: "" }}';
+    var affLoadEl = document.getElementById('kx-aff-loading');
+    var affChartData = [];
+    var affChartDays = 30;
+
+    /* Copy link */
+    var affCopy = document.getElementById('kx-aff-dash-copy');
+    var affInput = document.getElementById('kx-aff-dash-link');
+    if(affCopy && affInput){
+      affCopy.addEventListener('click', function(){
+        navigator.clipboard.writeText(affInput.value).then(function(){
+          affCopy.textContent = 'Kopiert ✓';
+          affCopy.style.background = '#22c55e';
+          setTimeout(function(){ affCopy.textContent = 'Kopieren'; affCopy.style.background = ''; }, 2200);
+        });
+      });
+    }
+
+    /* Load dashboard */
+    fetch(GAS_URL + '?action=affiliate_dashboard&customer_id=' + CID + '&email=' + encodeURIComponent(AFF_EMAIL))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(affLoadEl) affLoadEl.style.display = 'none';
+        if(!d.ok) return;
+        /* Stats */
+        affTxt('kx-aff-clicks', affFmt(d.clicks ? d.clicks.total : 0));
+        affTxt('kx-aff-clicks-today', 'heute: ' + affFmt(d.clicks ? d.clicks.today : 0) + '  ·  7T: ' + affFmt(d.clicks ? d.clicks.days7 : 0));
+        affTxt('kx-aff-referrals', affFmt(d.total_referrals || 0));
+        affTxt('kx-aff-conversion', 'Conversion: ' + (d.conversion_rate || 0) + '%');
+        affTxt('kx-aff-purchases', affFmt(d.total_purchases || 0));
+        affTxt('kx-aff-earnings', affFmt(d.total_earned || 0));
+        affTxt('kx-aff-pending', 'ausstehend: ' + affFmt(d.pending_points || 0));
+        /* Chart */
+        affChartData = d.clicks ? d.clicks.daily || [] : [];
+        affRenderChart(30);
+        /* Top pages */
+        affRenderPages(d.clicks ? d.clicks.top_pages || [] : []);
+        /* Referral table */
+        affRenderTable(d.referrals || []);
+      })
+      .catch(function(){
+        if(affLoadEl) affLoadEl.innerHTML = '<span style="color:#e74c3c">Fehler beim Laden</span>';
+      });
+
+    /* Chart render */
+    function affRenderChart(days){
+      var emptyEl = document.getElementById('kx-aff-chart-empty');
+      var canvas = document.getElementById('kx-aff-canvas');
+      if(!affChartData.length || !canvas){ if(emptyEl) emptyEl.style.display='flex'; return; }
+      if(emptyEl) emptyEl.style.display='none';
+      canvas.style.display='block';
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio||1;
+      var rect = canvas.parentElement.getBoundingClientRect();
+      canvas.width = rect.width*dpr; canvas.height = 180*dpr;
+      canvas.style.width = rect.width+'px'; canvas.style.height = '180px';
+      ctx.scale(dpr,dpr);
+      var W=rect.width, H=180, pad={top:16,right:8,bottom:26,left:36};
+      var cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
+      var data = affChartData.slice(-days);
+      if(!data.length) return;
+      var max = Math.max.apply(null, data.map(function(d){return d.clicks||0}));
+      if(max===0) max=1;
+      var barW = Math.max(2,(cW/data.length)-2);
+      ctx.clearRect(0,0,W,H);
+      /* Grid */
+      ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=1;
+      for(var g=0;g<=4;g++){var gy=pad.top+(cH/4)*g; ctx.beginPath(); ctx.moveTo(pad.left,gy); ctx.lineTo(W-pad.right,gy); ctx.stroke();}
+      /* Bars */
+      for(var j=0;j<data.length;j++){
+        var bH=(data[j].clicks/max)*cH;
+        var bx=pad.left+(cW/data.length)*j+1;
+        var by=pad.top+cH-bH;
+        var grad=ctx.createLinearGradient(0,by,0,by+bH);
+        grad.addColorStop(0,'#c9a84c'); grad.addColorStop(1,'#e6c770');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.roundRect(bx,by,barW,bH,[3,3,0,0]); ctx.fill();
+        if(j%Math.ceil(data.length/6)===0||j===data.length-1){
+          ctx.fillStyle='#aaa'; ctx.font='10px system-ui'; ctx.textAlign='center';
+          ctx.fillText(data[j].date?data[j].date.slice(5):'',bx+barW/2,H-6);
+        }
+      }
+      /* Y labels */
+      ctx.fillStyle='#aaa'; ctx.font='10px system-ui'; ctx.textAlign='right';
+      for(var k=0;k<=4;k++){ ctx.fillText(Math.round(max-(max/4)*k),pad.left-5,pad.top+(cH/4)*k+4); }
+    }
+
+    /* Range toggle */
+    document.querySelectorAll('.kx-ly-aff-chip[data-aff-days]').forEach(function(el){
+      el.addEventListener('click', function(){
+        document.querySelectorAll('.kx-ly-aff-chip[data-aff-days]').forEach(function(c){c.classList.remove('kx-ly-aff-chip--active');});
+        el.classList.add('kx-ly-aff-chip--active');
+        affRenderChart(parseInt(el.dataset.affDays,10));
+      });
+    });
+
+    /* Top pages render */
+    function affRenderPages(pages){
+      var panel = document.getElementById('kx-aff-pages-panel');
+      var container = document.getElementById('kx-aff-pages');
+      if(!pages.length || !panel || !container) return;
+      panel.style.display = 'block';
+      var maxC = pages[0].clicks || 1;
+      var html = '';
+      for(var i=0; i<pages.length && i<8; i++){
+        var pct = Math.round((pages[i].clicks/maxC)*100);
+        var label = pages[i].page || '/';
+        if(label.indexOf('/products/') === 0) label = label.replace('/products/','📦 ');
+        html += '<div class="kx-ly-aff-page-row">'
+          + '<span class="kx-ly-aff-page-row__url">' + affEsc(label) + '</span>'
+          + '<div class="kx-ly-aff-page-row__bar"><div class="kx-ly-aff-page-row__fill" style="width:'+pct+'%"></div></div>'
+          + '<span class="kx-ly-aff-page-row__count">' + pages[i].clicks + '</span>'
+          + '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    /* Table render */
+    function affRenderTable(refs){
+      var emptyEl = document.getElementById('kx-aff-table-empty');
+      var tbl = document.getElementById('kx-aff-table');
+      var tbody = document.getElementById('kx-aff-tbody');
+      if(!refs.length){ if(emptyEl) emptyEl.style.display='block'; return; }
+      if(emptyEl) emptyEl.style.display='none';
+      if(tbl) tbl.style.display='table';
+      var html='';
+      for(var i=0;i<refs.length;i++){
+        var r=refs[i];
+        var sc=r.purchased?'purchased':'pending';
+        var st=r.purchased?'✓ Gekauft':'⏳ Ausstehend';
+        var dt=r.date?r.date.slice(0,10):'–';
+        html+='<tr><td>'+affEsc(r.email_masked||'–')+'</td><td><code style="background:#f5f5f5;padding:2px 7px;border-radius:4px;font-size:.78rem">'+affEsc(r.code||'–')+'</code></td><td>'+dt+'</td><td><span class="kx-ly-aff-status kx-ly-aff-status--'+sc+'">'+st+'</span></td><td><strong>'+(r.points_earned||0)+'</strong></td></tr>';
+      }
+      if(tbody) tbody.innerHTML=html;
+    }
+
+    function affTxt(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+    function affFmt(n){return n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':String(n);}
+    function affEsc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  }
 })();
 </script>
 
