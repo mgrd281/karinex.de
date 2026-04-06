@@ -1962,8 +1962,8 @@ function getRepricingDashboardHtml_() {
   h += 'function testConnection(){';
   h += 'document.getElementById("connResult").innerHTML="Testing...";';
   h += 'api("testConnection").then(function(r){';
-  h += 'if(r.ok)document.getElementById("connResult").innerHTML=\'<span style="color:var(--green)">✓ \'+r.message+\' (Shop: \'+r.shopId+\')</span>\';';
-  h += 'else document.getElementById("connResult").innerHTML=\'<span style="color:var(--red)">✕ \'+r.error+\'</span>\';');
+  h += 'if(r.ok)document.getElementById("connResult").innerHTML=\'<span style="color:var(--green)">✓ \'+r.message+\'</span>\';';
+  h += 'else document.getElementById("connResult").innerHTML=\'<span style="color:var(--red)">✕ \'+r.error+\'</span>\';';
   h += '});';
   h += '}';
 
