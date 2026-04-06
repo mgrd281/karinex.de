@@ -313,7 +313,7 @@
           <span class="ay-breadcrumb__sep">&gt;</span>
         {%- endif -%}
         {%- if product.vendor != blank -%}
-          <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+          <a href="{{ _root }}collections/vendors?q={{ product.vendor | url_encode }}">{{ product.vendor }}</a>
         {%- else -%}
           <span>{{ ay_market_title | truncate: 40 }}</span>
         {%- endif -%}
@@ -347,11 +347,11 @@
         {%- endcase -%}
         <div class="ay-brand">
           {%- if _brand_logo_url -%}
-            <a href="{{ product.vendor | url_for_vendor }}" aria-label="{{ product.vendor | escape }} Produkte" style="text-decoration:none;display:inline-block;">
+            <a href="{{ _root }}collections/vendors?q={{ product.vendor | url_encode }}" aria-label="{{ product.vendor | escape }} Produkte" style="text-decoration:none;display:inline-block;">
               <img class="ay-brand__logo{% if _vendor_down == 'emporio armani' or _vendor_down == 'casio' %} ay-brand__logo--half{% endif %}{% if _vendor_down == 'michael kors' %} ay-brand__logo--mk{% endif %}{% if _vendor_down == 'tag heuer' %} ay-brand__logo--tag{% endif %}{% if _vendor_down == 'lego' or _vendor_down == 'lego®' %} ay-brand__logo--lego{% endif %}" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}" width="120" height="40" loading="lazy">
             </a>
           {%- else -%}
-            <a href="{{ product.vendor | url_for_vendor }}" class="ay-brand__text" style="text-decoration:none;">{{ product.vendor }}</a>
+            <a href="{{ _root }}collections/vendors?q={{ product.vendor | url_encode }}" class="ay-brand__text" style="text-decoration:none;">{{ product.vendor }}</a>
           {%- endif -%}
         </div>
       {%- endif -%}
