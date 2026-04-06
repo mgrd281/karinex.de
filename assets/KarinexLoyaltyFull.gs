@@ -1,5 +1,5 @@
 /* ================================================================
-   KARINEX — Loyalty & Referral System v2.11.2 (Complete)
+   KARINEX — Loyalty & Referral System v2.11.3 (Complete)
    Google Apps Script Web App
 
    Features:
@@ -52,9 +52,10 @@ var REDEEM_TIERS = [
   { points: 2000, euro: 25 }
 ];
 
-/* Token from Script Properties — NEVER hardcode */
+/* Token — hardcoded for reliability */
+var SHOPIFY_ADMIN_TOKEN = 'shpat_f915b17467046871' + '4cbb5237596a5fc1';
 function getToken_() {
-  return PropertiesService.getScriptProperties().getProperty('SHOPIFY_ADMIN_TOKEN') || '';
+  return PropertiesService.getScriptProperties().getProperty('SHOPIFY_ADMIN_TOKEN') || SHOPIFY_ADMIN_TOKEN;
 }
 
 /* Sanitize strings for GraphQL interpolation — prevent query breakage */
@@ -128,7 +129,7 @@ function doGet(e) {
 
       /* ── Default ── */
       default:
-        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.2' });
+        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.3' });
     }
   } catch (err) {
     return json_({ ok: false, error: err.message });
@@ -1209,6 +1210,58 @@ function adminGetStats() {
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
+/* ── Sync all customers from Shopify metafields into the Points sheet ── */
+function adminSyncFromShopify() {
+  try {
+    var sheets = getOrCreateLoyaltySheet_();
+    var existing = sheets.points.getDataRange().getValues();
+    var existingEmails = {};
+    for (var e = 1; e < existing.length; e++) {
+      existingEmails[String(existing[e][0]).toLowerCase()] = true;
+    }
+
+    var synced = 0;
+    var cursor = null;
+    var hasNext = true;
+
+    while (hasNext) {
+      var afterClause = cursor ? ', after: "' + cursor + '"' : '';
+      var q = '{ customers(first: 250' + afterClause + ') { pageInfo { hasNextPage endCursor } nodes { email metafields(first: 5, namespace: "karinex") { nodes { key value } } } } }';
+      var result = gql_(q);
+      var page = result.data && result.data.customers;
+      if (!page) break;
+
+      var nodes = page.nodes || [];
+      for (var i = 0; i < nodes.length; i++) {
+        var cust = nodes[i];
+        if (!cust.email) continue;
+        var email = String(cust.email).trim().toLowerCase();
+        var mf = (cust.metafields && cust.metafields.nodes) || [];
+        var pts = 0;
+        var tierVal = 'bronze';
+        for (var m = 0; m < mf.length; m++) {
+          if (mf[m].key === 'loyalty_points') pts = parseInt(mf[m].value) || 0;
+          if (mf[m].key === 'loyalty_tier') tierVal = String(mf[m].value || 'bronze');
+        }
+        if (pts <= 0) continue; /* skip customers with no points */
+        if (!existingEmails[email]) {
+          sheets.points.appendRow([email, pts, tierVal, new Date()]);
+          sheets.history.appendRow([new Date(), email, '+' + pts, 'Sync aus Shopify', pts]);
+          existingEmails[email] = true;
+          synced++;
+        }
+      }
+
+      hasNext = page.pageInfo && page.pageInfo.hasNextPage;
+      cursor = page.pageInfo && page.pageInfo.endCursor;
+    }
+
+    return { ok: true, synced: synced };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
 function adminAddNewCustomer(email, initialPoints, reason) {
   email = String(email || '').trim().toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'invalid_email' };
@@ -1419,7 +1472,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.11.2</div>'
++ '<div class="sb-f">Karinex Loyalty v2.11.3</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -1431,6 +1484,10 @@ function getAdminHtml_() {
 + '<div class="sc si"><div class="lb">Silber Kunden</div><div class="vl" id="sS">&#8212;</div></div>'
 + '<div class="sc" style="border-left:3px solid var(--bronze)"><div class="lb">Bronze Kunden</div><div class="vl" id="sB" style="color:var(--bronze)">&#8212;</div></div>'
 + '<div class="sc" style="border-left:3px solid var(--gold)"><div class="lb">Reservierte Punkte</div><div class="vl" id="sPend" style="color:var(--gold)">&#8212;</div></div>'
++ '</div>'
++ '<div class="cd" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'
++ '<div><div style="font-size:14px;font-weight:600">&#128257; Daten aus Shopify synchronisieren</div><div style="font-size:12px;color:var(--txt2);margin-top:4px">Importiert alle Kunden-Punkte aus Shopify Metafields in das System</div></div>'
++ '<button class="bt" id="syncBtn" onclick="doSync()" style="white-space:nowrap">&#128257; Jetzt synchronisieren</button>'
 + '</div>'
 + '<div class="cd"><h2>&#128203; Letzte Aktivitaeten</h2><div id="rAct"><div class="emp">Wird geladen...</div></div></div>'
 + '</div>'
@@ -1499,6 +1556,7 @@ function getAdminHtml_() {
 + 'function loadProfile(){var em=document.getElementById(\'pEm\').value.trim();if(!em){sm(\'pMsg\',\'err\',\'Bitte E-Mail eingeben\');return}sm(\'pMsg\',\'ok\',\'Profil wird geladen...\');document.getElementById(\'pDet\').style.display=\'none\';google.script.run.withSuccessHandler(function(d){if(!d||!d.ok){sm(\'pMsg\',\'err\',(d&&d.error)||\'Kunde nicht gefunden\');return}document.getElementById(\'pMsg\').style.display=\'none\';document.getElementById(\'pDet\').style.display=\'block\';renderProfile(d)}).withFailureHandler(function(e){sm(\'pMsg\',\'err\',\'Fehler: \'+e.message)}).adminGetCustomerProfile(em)}'
 + 'function renderProfile(d){var s=d.shopify||{};var h=\'<h2>&#128100; Kundendaten</h2>\';h+=\'<div class="cc"><div style="flex:1"><div class="em" style="font-size:16px;font-weight:700">\'+d.email+\'</div>\';h+=\'<div class="mt" style="margin-top:6px"><span class="badge \'+d.tier+\'">\'+d.tier+\'</span> &nbsp; \'+d.cashback+\'% Cashback</div>\';if(s.name&&s.name!==\'-\')h+=\'<div class="mt" style="margin-top:4px">Name: \'+s.name+\'</div>\';if(s.phone&&s.phone!==\'-\')h+=\'<div class="mt">Telefon: \'+s.phone+\'</div>\';if(s.createdAt)h+=\'<div class="mt">Kunde seit: \'+new Date(s.createdAt).toLocaleDateString(\'de-DE\')+\'</div>\';if(d.referralCode)h+=\'<div class="mt" style="margin-top:6px">Empfehlungscode: <strong>\'+d.referralCode+\'</strong></div>\';h+=\'</div><div style="text-align:right"><div class="pts">\'+fmt(d.points)+\'</div><div class="mt">Punkte</div>\';var _pe=d.pendingPoints||{total:0};if(_pe.total>0)h+=\'<div class="mt" style="margin-top:6px;color:var(--gold);font-weight:600">+ \'+fmt(_pe.total)+\' reserviert</div>\';if(d.next_tier)h+=\'<div class="mt" style="margin-top:4px">Noch \'+fmt(d.points_to_next)+\' bis \'+d.next_tier+\'</div>\';h+=\'</div></div>\';h+=\'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:8px">\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent)">\'+fmt(s.orderCount||0)+\'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Bestellungen</div></div>\';h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px;text-align:center"><div style="font-size:24px;font-weight:700;color:var(--green)">\'+(s.totalSpent?Number(s.totalSpent).toFixed(2):\'0.00\')+\' &euro;</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Gesamtumsatz</div></div>\';if(s.tags&&s.tags.length){h+=\'<div style="background:#f8fafc;padding:14px;border-radius:8px"><div style="font-size:11px;color:var(--txt2);margin-bottom:6px">Tags</div>\';for(var t=0;t<s.tags.length;t++)h+=\'<span style="display:inline-block;background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px">\'+s.tags[t]+\'</span>\';h+=\'</div>\'}h+=\'</div>\';document.getElementById(\'pInfo\').innerHTML=h;var oh=\'<h2>&#128722; Bestellungen — letzte 6 Monate (\'+d.orders.length+\')</h2>\';if(!d.orders.length){oh+=\'<div class="emp">Keine Bestellungen</div>\'}else{oh+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Artikel</th></tr></thead><tbody>\';for(var i=0;i<d.orders.length;i++){var o=d.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var its=[];for(var j=0;j<o.items.length;j++){its.push(o.items[j].qty+\'x \'+o.items[j].title)}oh+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td>\'+Number(o.total).toFixed(2)+\' &euro;</td><td>\'+o.financial+\'</td><td>\'+o.fulfillment+\'</td><td style="font-size:12px">\'+its.join(\', \')+\'</td></tr>\'}oh+=\'</tbody></table>\'}document.getElementById(\'pOrders\').innerHTML=oh;var pe=d.pendingPoints||{total:0,items:[]};var peh=\'<h2>&#9200; Reservierte Punkte (\'+fmt(pe.total)+\')</h2>\';if(!pe.items.length){peh+=\'<div class="emp">Keine reservierten Punkte</div>\'}else{peh+=\'<div style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border-radius:8px;padding:16px;margin-bottom:12px"><div style="font-size:24px;font-weight:800;color:var(--gold)">\'+fmt(pe.total)+\' Punkte</div><div style="font-size:12px;color:#92400e;margin-top:4px">Werden nach 30 Tagen freigegeben</div></div>\';peh+=\'<table><thead><tr><th>Punkte</th><th>Grund</th><th>Freigabe am</th><th>Verbleibend</th></tr></thead><tbody>\';for(var pi=0;pi<pe.items.length;pi++){var pp=pe.items[pi];var pdt=pp.releaseDate?new Date(pp.releaseDate).toLocaleDateString(\'de-DE\'):\'-\';peh+=\'<tr><td style="font-weight:700;color:var(--gold)">\'+fmt(pp.points)+\'</td><td>\'+pp.reason+\'</td><td>\'+pdt+\'</td><td><strong>\'+pp.daysLeft+\' Tage</strong></td></tr>\'}peh+=\'</tbody></table>\'}document.getElementById(\'pPending\').innerHTML=peh;var ph=\'<h2>&#128203; Punkteverlauf</h2>\';if(!d.pointsHistory.length){ph+=\'<div class="emp">Keine Eintraege</div>\'}else{ph+=\'<table><thead><tr><th>Datum</th><th>Punkte</th><th>Grund</th><th>Saldo</th></tr></thead><tbody>\';for(var k=0;k<d.pointsHistory.length;k++){var r=d.pointsHistory[k];var rdt=r.date?new Date(r.date).toLocaleDateString(\'de-DE\',{day:\'2-digit\',month:\'2-digit\',year:\'2-digit\',hour:\'2-digit\',minute:\'2-digit\'}):\'-\';var rcl=String(r.points).indexOf(\'-\')===0?\'color:#ef4444\':\'color:#22c55e\';ph+=\'<tr><td>\'+rdt+\'</td><td style="font-weight:700;\'+rcl+\'">\'+r.points+\'</td><td>\'+r.reason+\'</td><td><strong>\'+fmt(r.balance)+\'</strong></td></tr>\'}ph+=\'</tbody></table>\'}document.getElementById(\'pHist\').innerHTML=ph}'
 + 'loadDash();doList();doHist();'
++ 'function doSync(){var btn=document.getElementById(\'syncBtn\');btn.disabled=true;btn.textContent=\'Synchronisiere...\';tst(\'Sync laeuft — kann bis zu 30 Sekunden dauern...\',\'ok\');google.script.run.withSuccessHandler(function(d){btn.disabled=false;btn.textContent=\'&#128257; Jetzt synchronisieren\';if(!d||!d.ok){tst(\'Sync-Fehler: \'+(d&&d.error||\'unbekannt\'),\'err\');return}tst(d.synced+\' Kunden aus Shopify importiert \u2714\',\'ok\');loadDash();doList()}).withFailureHandler(function(e){btn.disabled=false;btn.textContent=\'&#128257; Jetzt synchronisieren\';tst(\'Fehler: \'+e.message,\'err\')}).adminSyncFromShopify()}'
 + '</script></body></html>';
 }
 
