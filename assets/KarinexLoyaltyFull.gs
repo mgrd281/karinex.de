@@ -1,5 +1,5 @@
 /* ================================================================
-   KARINEX — Loyalty & Referral System v2.11.4 (Complete)
+   KARINEX — Loyalty & Referral System v2.11.5 (Complete)
    Google Apps Script Web App
 
    Features:
@@ -129,7 +129,7 @@ function doGet(e) {
 
       /* ── Default ── */
       default:
-        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.4' });
+        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.5' });
     }
   } catch (err) {
     return json_({ ok: false, error: err.message });
@@ -1189,6 +1189,58 @@ function adminListCustomers() {
   }
 }
 
+function adminGetRecentOrders(daysBack) {
+  daysBack = parseInt(daysBack) || 30;
+  var since = new Date(Date.now() - daysBack * 86400000).toISOString();
+  try {
+    var url = 'https://' + SHOP_DOMAIN + '/admin/api/' + API_VERSION + '/orders.json'
+      + '?status=any&limit=100'
+      + '&created_at_min=' + encodeURIComponent(since)
+      + '&fields=id,name,order_number,email,total_price,subtotal_price,created_at,financial_status,fulfillment_status,customer'
+      + '&order=created_at+DESC';
+
+    var resp = UrlFetchApp.fetch(url, {
+      headers: { 'X-Shopify-Access-Token': getToken_() },
+      muteHttpExceptions: true
+    });
+    var orders = JSON.parse(resp.getContentText()).orders || [];
+    var result = [];
+
+    for (var i = 0; i < orders.length; i++) {
+      var o     = orders[i];
+      var email = String(o.email || '').trim().toLowerCase();
+      var sub   = parseFloat(o.subtotal_price || 0);
+      var cData = email ? getCustomerData_(email) : { points: 0 };
+      var tier  = getTier_(cData.points);
+      var earned = email ? Math.round(sub * POINTS_PER_EURO * (tier.cashback / 100)) : 0;
+
+      result.push({
+        name:            o.name || '#' + o.order_number,
+        date:            o.created_at || '',
+        email:           email,
+        total:           parseFloat(o.total_price || 0),
+        subtotal:        sub,
+        financial:       o.financial_status || '',
+        fulfillment:     o.fulfillment_status || 'unfulfilled',
+        points_earned:   earned,
+        customer_points: cData.points,
+        tier:            tier.name
+      });
+    }
+
+    return { ok: true, orders: result, total: result.length };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+function adminGetRewardsCustomers() {
+  var result = adminListCustomers();
+  if (!result.ok) return result;
+  var rewarded = result.customers.filter(function (c) { return c.points > 0; });
+  return { ok: true, customers: rewarded, total: rewarded.length };
+}
+
 function adminGetStats() {
   try {
     var sheets = getOrCreateLoyaltySheet_();
@@ -1558,8 +1610,10 @@ function getAdminHtml_() {
 + '<a onclick="go(\'neu\')" data-p="neu"><span class="ic">&#10133;</span> Neuer Kunde</a>'
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
++ '<a onclick="go(\'best\')" data-p="best"><span class="ic">&#128722;</span> Bestellungen</a>'
++ '<a onclick="go(\'rewards\')" data-p="rewards"><span class="ic">&#127873;</span> Rewards-Kunden</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.11.4</div>'
++ '<div class="sb-f">Karinex Loyalty v2.11.5</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
@@ -1634,10 +1688,34 @@ function getAdminHtml_() {
 + '<div class="cd" id="pHist"></div>'
 + '</div>'
 + '</div>'
++ '<div class="pg" id="pg-best">'
++ '<div class="pt">Bestellungen <span>Live aus Shopify</span></div>'
++ '<div class="cd"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'
++ '<button class="bt" onclick="doOrders(30)">Letzte 30 Tage</button>'
++ '<button class="bo" onclick="doOrders(7)">7 Tage</button>'
++ '<button class="bo" onclick="doOrders(90)">90 Tage</button>'
++ '<button class="bo" onclick="doOrders(365)">1 Jahr</button>'
++ '</div>'
++ '<div id="bTbl"><div class="emp">Wird geladen...</div></div></div>'
++ '</div>'
++ '<div class="pg" id="pg-rewards">'
++ '<div class="pt">Rewards-Kunden <span>Kunden mit Treuepunkten</span></div>'
++ '<div class="cd"><div style="display:flex;gap:8px;margin-bottom:16px">'
++ '<button class="bd" onclick="doRewards()">&#8635; Aktualisieren</button>'
++ '<button class="bg" onclick="go(\"neu\")">&#10133; Neuen Kunden hinzufuegen</button>'
++ '</div>'
++ '<div id="rwSt" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px">'
++ '<div class="sc a"><div class="lb">Rewards-Kunden</div><div class="vl" id="rwT">&#8212;</div></div>'
++ '<div class="sc go"><div class="lb">Gold</div><div class="vl" id="rwG">&#8212;</div></div>'
++ '<div class="sc si"><div class="lb">Silber</div><div class="vl" id="rwS">&#8212;</div></div>'
++ '<div class="sc" style="border-left:3px solid var(--bronze)"><div class="lb">Bronze</div><div class="vl" id="rwB" style="color:var(--bronze)">&#8212;</div></div>'
++ '</div>'
++ '<div id="rwTbl"><div class="emp">Wird geladen...</div></div></div>'
++ '</div>'
 + '</div>'
 + '<div class="toast" id="tst"></div>'
 + '<script>'
-+ 'function go(p){var pgs=document.querySelectorAll(\'.pg\');for(var i=0;i<pgs.length;i++)pgs[i].classList.remove(\'on\');document.getElementById(\'pg-\'+p).classList.add(\'on\');var lk=document.querySelectorAll(\'.nav a\');for(var j=0;j<lk.length;j++)lk[j].classList.remove(\'on\');var a=document.querySelector(\'[data-p="\'+p+\'"]\');if(a)a.classList.add(\'on\');if(p===\'dash\')loadDash();if(p===\'cust\')doList();if(p===\'hist\')doHist();document.getElementById(\'sb\').classList.remove(\'open\')}'
++ 'function go(p){var pgs=document.querySelectorAll(\'.pg\');for(var i=0;i<pgs.length;i++)pgs[i].classList.remove(\'on\');document.getElementById(\'pg-\'+p).classList.add(\'on\');var lk=document.querySelectorAll(\'.nav a\');for(var j=0;j<lk.length;j++)lk[j].classList.remove(\'on\');var a=document.querySelector(\'[data-p="\'+p+\'"]\');if(a)a.classList.add(\'on\');if(p===\'dash\')loadDash();if(p===\'cust\')doList();if(p===\'hist\')doHist();if(p===\'best\')doOrders(30);if(p===\'rewards\')doRewards();document.getElementById(\'sb\').classList.remove(\'open\')}'
 + 'function tst(m,t){var e=document.getElementById(\'tst\');e.textContent=m;e.className=\'toast \'+(t||\'ok\')+\' show\';setTimeout(function(){e.classList.remove(\'show\')},3500)}'
 + 'function sm(id,t,m){var e=document.getElementById(id);e.className=\'msg \'+t;e.textContent=m;e.style.display=\'block\'}'
 + 'function fmt(n){return String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g,\'.\')}'
@@ -1660,6 +1738,8 @@ function getAdminHtml_() {
 + 'function doSync(){var btn=document.getElementById(\'syncBtn\');btn.disabled=true;btn.textContent=\'Laedt...\';tst(\'Sync laeuft...\',\'ok\');google.script.run.withSuccessHandler(function(d){btn.disabled=false;btn.textContent=\'&#128260; Synchronisieren\';if(!d||!d.ok){tst(\'Fehler: \'+(d&&d.error||\'unbekannt\'),\'err\');return}tst(d.synced+\' Kunden eingelesen \u2714\',\'ok\');loadDash();doList()}).withFailureHandler(function(e){btn.disabled=false;btn.textContent=\'&#128260; Synchronisieren\';tst(\'Fehler: \'+e.message,\'err\')}).adminSyncFromShopify()}'
 + 'function doBackfill(){var btn=document.getElementById(\'backfillBtn\');btn.disabled=true;btn.textContent=\'Importiere...\';tst(\'Bestellungs-Import laeuft — kann 30-120 Sek dauern...\',\'ok\');google.script.run.withSuccessHandler(function(d){btn.disabled=false;btn.textContent=\'&#128229; Jetzt importieren\';if(!d||!d.ok){tst(\'Fehler: \'+(d&&d.error||\'unbekannt\'),\'err\');return}tst(d.processed+\' Bestellungen importiert, \'+(d.skipped||0)+\' bereits vorhanden \u2714\',\'ok\');loadDash();doList()}).withFailureHandler(function(e){btn.disabled=false;btn.textContent=\'&#128229; Jetzt importieren\';tst(\'Fehler: \'+e.message,\'err\')}).backfillHistoricalOrders()}'
 + 'function doPushMeta(){var btn=document.getElementById(\'pushBtn\');btn.disabled=true;btn.textContent=\'Schreibe...\';tst(\'Metafelder werden in Shopify aktualisiert — bitte warten...\',\'ok\');google.script.run.withSuccessHandler(function(d){btn.disabled=false;btn.textContent=\'&#128257; Metafelder aktualisieren\';if(!d||!d.ok){tst(\'Fehler: \'+(d&&d.error||\'unbekannt\'),\'err\');return}tst(d.updated+\' Shopify-Metafelder aktualisiert \u2714\',\'ok\')}).withFailureHandler(function(e){btn.disabled=false;btn.textContent=\'&#128257; Metafelder aktualisieren\';tst(\'Fehler: \'+e.message,\'err\')}).pushMetafieldsToShopify()}'
++ 'function doOrders(d){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(r){if(!r||!r.ok){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Fehler beim Laden</div>\';return}if(!r.orders.length){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Keine Bestellungen in diesem Zeitraum</div>\';return}var h=\'<div style="font-size:13px;color:var(--txt2);margin-bottom:12px">\'+(r.total)+\' Bestellungen gefunden</div>\';h+=\'<table><thead><tr><th>Bestellung</th><th>Datum</th><th>Kunde</th><th>Betrag</th><th>Zahlung</th><th>Versand</th><th>Tier</th><th>+ Punkte</th></tr></thead><tbody>\';for(var i=0;i<r.orders.length;i++){var o=r.orders[i];var dt=o.date?new Date(o.date).toLocaleDateString(\'de-DE\'):\'-\';var fc=o.financial===\'paid\'?\'color:#22c55e\':\'color:#f59e0b\';var fv=o.fulfillment===\'fulfilled\'?\'&#10003; Versendet\':\'&#9899; Ausstehend\';h+=\'<tr><td><strong>\'+o.name+\'</strong></td><td>\'+dt+\'</td><td style="font-size:12px">\'+o.email+\'</td><td><strong>\'+(o.total.toFixed(2))+\' &euro;</strong></td><td style="font-weight:600;\'+fc+\'">\'+o.financial+\'</td><td style="font-size:12px">\'+fv+\'</td><td><span class="badge \'+o.tier+\'">\'+o.tier+\'</span></td><td style="font-weight:700;color:var(--accent)">\'+fmt(o.points_earned)+\'</td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'bTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'bTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetRecentOrders(d||30)}'
++ 'function doRewards(){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Laedt...</div>\';google.script.run.withSuccessHandler(function(r){if(!r||!r.ok){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Fehler</div>\';return}var gold=0,silber=0,bronze=0;for(var k=0;k<r.customers.length;k++){var t=r.customers[k].tier;if(t===\'gold\')gold++;else if(t===\'silber\')silber++;else bronze++}document.getElementById(\'rwT\').textContent=fmt(r.total);document.getElementById(\'rwG\').textContent=fmt(gold);document.getElementById(\'rwS\').textContent=fmt(silber);document.getElementById(\'rwB\').textContent=fmt(bronze);if(!r.customers.length){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Noch keine Rewards-Kunden — Import ausfuehren</div>\';return}var h=\'<table><thead><tr><th>#</th><th>E-Mail</th><th>Punkte</th><th>Tier</th><th>Cashback</th><th>Zuletzt aktiv</th><th></th></tr></thead><tbody>\';for(var i=0;i<r.customers.length;i++){var c=r.customers[i];var dt=c.updated?new Date(c.updated).toLocaleDateString(\'de-DE\'):\'-\';var cb=c.tier===\'gold\'?10:c.tier===\'silber\'?7:5;h+=\'<tr><td style="color:#94a3b8;font-weight:600">\'+(i+1)+\'</td><td onclick="selC(\\\'\'+c.email+\'\\\')\" style="cursor:pointer;color:var(--accent)">\'  +c.email+\'</td><td><strong style="font-size:16px;color:var(--accent)">\'+fmt(c.points)+\'</strong></td><td><span class="badge \'+c.tier+\'">\'+c.tier+\'</span></td><td>\'+cb+\'%</td><td>\'+dt+\'</td><td><button class="bt" style="padding:4px 10px;font-size:12px" onclick="openProf(\\\'\'+c.email+\'\\\')">Profil</button></td></tr>\'}h+=\'</tbody></table>\';document.getElementById(\'rwTbl\').innerHTML=h}).withFailureHandler(function(e){document.getElementById(\'rwTbl\').innerHTML=\'<div class="emp">Fehler: \'+e.message+\'</div>\'}).adminGetRewardsCustomers()}'
 + '</script></body></html>';
 }
 
