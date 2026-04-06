@@ -82,7 +82,7 @@ function doGet(e) {
         return handleAdminList_();
 
       default:
-        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.7' });
+        return asJson_({ ok: true, service: 'karinex-loyalty', version: '2.7.1' });
     }
   } catch (err) {
     return asJson_({ ok: false, error: err.message });
@@ -482,7 +482,37 @@ function getCustomerData_(email) {
       }
     }
   } catch(e) {}
+
+  /* Not in sheet — check Shopify metafields and sync if found */
+  try {
+    var shopifyPoints = getShopifyMetafieldPoints_(email);
+    if (shopifyPoints > 0) {
+      var sheets2 = getOrCreateLoyaltySheet_();
+      var tier = getTier_(shopifyPoints);
+      sheets2.points.appendRow([email, shopifyPoints, tier.name, new Date()]);
+      sheets2.history.appendRow([new Date(), email, '+' + shopifyPoints, 'Sync aus Shopify-Metafields', shopifyPoints]);
+      var newData = sheets2.points.getDataRange().getValues();
+      return { points: shopifyPoints, row: newData.length };
+    }
+  } catch(e) {}
+
   return { points: 0, row: 0 };
+}
+
+/** Read loyalty points from Shopify customer metafields */
+function getShopifyMetafieldPoints_(email) {
+  try {
+    var q = '{ customers(first:1, query:"email:' + email + '") { nodes { metafields(first:10, namespace:"karinex") { nodes { key value } } } } }';
+    var result = shopifyGQL_(q);
+    var nodes = result.data && result.data.customers && result.data.customers.nodes;
+    if (nodes && nodes.length) {
+      var mf = nodes[0].metafields && nodes[0].metafields.nodes || [];
+      for (var i = 0; i < mf.length; i++) {
+        if (mf[i].key === 'loyalty_points') return parseInt(mf[i].value) || 0;
+      }
+    }
+  } catch(e) {}
+  return 0;
 }
 
 function addPoints_(email, points, reason, customerId) {
@@ -1093,7 +1123,7 @@ function getAdminHtml_() {
 + '<a onclick="go(\'hist\')" data-p="hist"><span class="ic">&#128203;</span> Verlauf</a>'
 + '<a onclick="go(\'prof\')" data-p="prof"><span class="ic">&#128100;</span> Kundenprofil</a>'
 + '</div>'
-+ '<div class="sb-f">Karinex Loyalty v2.7</div>'
++ '<div class="sb-f">Karinex Loyalty v2.7.1</div>'
 + '</nav>'
 + '<div class="mn">'
 + '<div class="pg on" id="pg-dash">'
