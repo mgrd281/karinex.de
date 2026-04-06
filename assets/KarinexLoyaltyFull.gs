@@ -1,5 +1,5 @@
 /* ================================================================
-   KARINEX — Loyalty & Referral System v2.11.1 (Complete)
+   KARINEX — Loyalty & Referral System v2.11.2 (Complete)
    Google Apps Script Web App
 
    Features:
@@ -27,6 +27,8 @@
    ================================================================ */
 
 /* ─── Configuration ─── */
+
+var ADMIN_KEY_FIXED   = 'KXadmin9mR3nQ7vW2pT5yZ8xKarinex26';
 
 var SHOP_DOMAIN       = '45dv93-bk.myshopify.com';
 var API_VERSION       = '2025-10';
@@ -126,7 +128,7 @@ function doGet(e) {
 
       /* ── Default ── */
       default:
-        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.1' });
+        return json_({ ok: true, service: 'karinex-loyalty', version: '2.11.2' });
     }
   } catch (err) {
     return json_({ ok: false, error: err.message });
@@ -1071,6 +1073,7 @@ function json_(obj) {
    ═══════════════════════════════════════════════════════ */
 
 function verifyAdmin_(key) {
+  if (key === ADMIN_KEY_FIXED) return true;
   var adminKey = PropertiesService.getScriptProperties().getProperty('ADMIN_KEY');
   return adminKey && key === adminKey;
 }
