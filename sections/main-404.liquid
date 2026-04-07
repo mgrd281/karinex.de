@@ -779,12 +779,12 @@
           'windows-11-enterprise': '/collections/software',
           
           // Windows 10
-          'windows-10': '/collections/windows-10',
-          'win-10': '/collections/windows-10',
-          'windows-10-pro': '/collections/windows-10',
-          'windows-10-professional': '/collections/windows-10',
-          'windows-10-home': '/collections/windows-10',
-          'windows-10-enterprise': '/collections/windows-10',
+          'windows-10': '/collections/software',
+          'win-10': '/collections/software',
+          'windows-10-pro': '/collections/software',
+          'windows-10-professional': '/collections/software',
+          'windows-10-home': '/collections/software',
+          'windows-10-enterprise': '/collections/software',
           
           // Windows Server
           'windows-server': '/collections/software',
@@ -975,7 +975,7 @@
             
             // Windows products (any format)
             { pattern: /win(dows)?[-_\s]?11/i, redirect: () => '/collections/software' },
-            { pattern: /win(dows)?[-_\s]?10/i, redirect: () => '/collections/windows-10' },
+            { pattern: /win(dows)?[-_\s]?10/i, redirect: () => '/collections/software' },
             
             // Office products (any format)
             { pattern: /office[-_\s]?2024/i, redirect: () => '/collections/microsoft-office-2024' },
