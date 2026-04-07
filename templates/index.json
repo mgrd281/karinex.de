@@ -1560,6 +1560,10 @@
         "gap": 16,
         "show_arrows": true
       }
+    },
+    "trusted_shops_reviews": {
+      "type": "trusted-shops-reviews",
+      "settings": {}
     }
   },
   "order": [
@@ -1578,6 +1582,7 @@
     "popular_categories_KBD7Rj",
     "lookbook_carousel_HApFi4",
     "comparison_table_RPUUC7",
+    "trusted_shops_reviews",
     "hero_product_slider_GNaDeb",
     "brands_carousel_jrhRJC"
   ]
