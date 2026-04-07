@@ -31,9 +31,9 @@
 {%- if localization.country.iso_code == 'CH' -%}
   {%- assign is_ch_market = true -%}
 {%- endif -%}
-{%- assign market_description = product.description -%}
+{%- assign market_description = product.description | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 ' -%}
 {%- if is_ch_market and product.metafields.custom.description_ch != blank -%}
-  {%- assign market_description = product.metafields.custom.description_ch | newline_to_br -%}
+  {%- assign market_description = product.metafields.custom.description_ch | newline_to_br | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 ' -%}
 {%- endif -%}
 {%- assign market_title = product.title -%}
 {%- if is_ch_market and product.metafields.custom.title_ch != blank -%}

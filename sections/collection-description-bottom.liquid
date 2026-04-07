@@ -5,7 +5,7 @@
   Includes a placeholder logic if description is empty.
 {%- endcomment -%}
 
-{%- assign description_content = collection.description -%}
+{%- assign description_content = collection.description | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 ' -%}
 {%- if description_content == blank -%}
   {%- capture description_content -%}
     <h2>Über {{ collection.title | default: 'die Kollektion' }} bei Karinex</h2>

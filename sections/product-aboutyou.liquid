@@ -11,9 +11,9 @@
   if localization.country.iso_code == 'CH'
     assign ay_is_ch_market = true
   endif
-  assign ay_market_description = product.description
+  assign ay_market_description = product.description | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 '
   if ay_is_ch_market and product.metafields.custom.description_ch != blank
-    assign ay_market_description = product.metafields.custom.description_ch | newline_to_br
+    assign ay_market_description = product.metafields.custom.description_ch | newline_to_br | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 '
   endif
   assign ay_market_title = product.title
   if ay_is_ch_market and product.metafields.custom.title_ch != blank

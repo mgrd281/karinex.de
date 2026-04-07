@@ -2,6 +2,7 @@
 
 <rte-formatter>
   {%- capture _pc -%}{{ page.content }}{%- endcapture -%}
+  {%- assign _pc = _pc | replace: '<h1>', '<h2>' | replace: '</h1>', '</h2>' | replace: '<h1 ', '<h2 ' -%}
   {%- if _pc contains '<title>' -%}
     {%- assign _segments = _pc | split: '<title>' -%}
     {%- for _seg in _segments -%}
