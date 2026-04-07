@@ -79,7 +79,7 @@ function doGet(e) {
     if (!verifyAdmin_(key)) {
       return jsonOut_({ ok: false, error: 'Unauthorized' });
     }
-    return serveDashboard_();
+    return serveDashboard_(key);
   }
 
   return jsonOut_({ ok: false, error: 'Unknown action' });
@@ -1333,8 +1333,8 @@ function setupRepricingSystem() {
 function setupCredentials() {
   // Pre-configured with your provided idealo credentials.
   var SHOP_ID       = '335018';
-  var CLIENT_ID     = '61ff5250-04f6-4c19-963b-f932cc427b27';
-  var CLIENT_SECRET = '/FQYKJK^mzaLfdh,gZ2+^=80N%P=5m';
+  var CLIENT_ID     = '8b53ff3c-c722-45e2-945f-88b72819e3e0';
+  var CLIENT_SECRET = 'JTXOD&XE4lOh-xBUqn/8Ed*gFv:g-';
 
   setProp_(CONFIG.PROP_SHOP_ID, SHOP_ID);
   setProp_(CONFIG.PROP_CLIENT_ID, CLIENT_ID);
@@ -1417,8 +1417,9 @@ function formatPrice_(val) {
 // 12. DASHBOARD — HTML SERVING
 // ═══════════════════════════════════════════════════════════════
 
-function serveDashboard_() {
+function serveDashboard_(adminKey) {
   var html = getRepricingDashboardHtml_();
+  var apiUrl = ScriptApp.getService().getUrl();
 
   // Split HTML/JS for GAS template (avoids HTML validator issues with JS < operators)
   var scriptStart = html.indexOf('<script>');
@@ -1434,9 +1435,15 @@ function serveDashboard_() {
   var jsCode       = html.substring(scriptStart + 8, scriptEnd);
   var afterScript  = html.substring(scriptEnd + 9);
 
-  var templateHtml = beforeScript + '<script><?!= jsCode ?></script>' + afterScript;
+  var templateHtml = beforeScript
+    + '<script>var __API_URL__ = <?!= apiUrlJson ?>;</script>'
+    + '<script>var __API_KEY__ = <?!= apiKeyJson ?>;</script>'
+    + '<script><?!= jsCode ?></script>'
+    + afterScript;
   var tmpl = HtmlService.createTemplate(templateHtml);
   tmpl.jsCode = jsCode;
+  tmpl.apiUrlJson = JSON.stringify(apiUrl || '');
+  tmpl.apiKeyJson = JSON.stringify(adminKey || '');
 
   return tmpl.evaluate()
     .setTitle('Karinex Repricing Dashboard')
@@ -1613,6 +1620,16 @@ function getRepricingDashboardHtml_() {
 
   h += '<div id="statsGrid" class="stats-grid"></div>';
 
+  h += '<div class="panel" style="margin-bottom:24px">';
+  h += '<div class="panel-header"><span class="panel-title">⚡ Produkte &amp; Repricing</span>';
+  h += '<div style="display:flex;gap:8px">';
+  h += '<button class="btn btn-sm btn-outline" onclick="bulkToggle(true)">✓ Alle An</button>';
+  h += '<button class="btn btn-sm btn-outline" onclick="bulkToggle(false)">✗ Alle Aus</button>';
+  h += '<button class="btn btn-sm btn-primary" onclick="openAddProduct()">+ Hinzufügen</button>';
+  h += '</div></div>';
+  h += '<div id="dashProductsList" style="overflow-x:auto"><div class="loading"><div class="spinner"></div>Loading...</div></div>';
+  h += '</div>';
+
   h += '<div class="panel"><div class="panel-header"><span class="panel-title">Recent Price Changes</span></div>';
   h += '<div class="panel-body" style="padding:0"><div id="recentLogsTable" class="loading"><div class="spinner"></div>Loading...</div></div></div>';
   h += '</div>';
@@ -1704,8 +1721,8 @@ function getRepricingDashboardHtml_() {
 
   // === JAVASCRIPT ===
   h += '<script>';
-  h += 'var API_URL=window.location.href.split("?")[0];';
-  h += 'var API_KEY=new URLSearchParams(window.location.search).get("key")||"";';
+  h += 'var API_URL=(typeof __API_URL__==="string"&&__API_URL__)?__API_URL__:window.location.href.split("?")[0];';
+  h += 'var API_KEY=(typeof __API_KEY__==="string"&&__API_KEY__)?__API_KEY__:(new URLSearchParams(window.location.search).get("key")||"");';
   h += 'var D={};'; // dashboard data cache
 
   // API helper
@@ -1769,7 +1786,7 @@ function getRepricingDashboardHtml_() {
   // Recent logs table
   h += 'var logs=D.recentLogs||[];';
   h += 'var lt=document.getElementById("recentLogsTable");';
-  h += 'if(logs.length===0){lt.innerHTML="<p style=\\"padding:20px;color:var(--text3)\\">No recent price changes</p>";return}';
+  h += 'if(logs.length===0){lt.innerHTML="<p style=\\"padding:20px;color:var(--text3)\\">No recent price changes</p>";renderDashboardProducts();return}';
   h += 'var html="<table><thead><tr><th>Time</th><th>SKU</th><th>Old</th><th>New</th><th>Competitor</th><th>Status</th></tr></thead><tbody>";';
   h += 'for(var i=0;i<logs.length;i++){var l=logs[i];';
   h += 'var sc=l.status==="Success"?"badge-green":l.status==="Failed"?"badge-red":"badge-orange";';
@@ -1778,6 +1795,7 @@ function getRepricingDashboardHtml_() {
   h += 'html+="<td>€"+fmtP(l.competitorPrice)+" <span style=\\"color:var(--text3);font-size:11px\\">"+esc(l.competitorName)+"</span></td>";';
   h += 'html+="<td><span class=\\"badge "+sc+"\\">"+esc(l.status)+"</span></td></tr>";}';
   h += 'html+="</tbody></table>";lt.innerHTML=html;';
+  h += 'renderDashboardProducts();';
   h += '}';
 
   // Render products table
@@ -1806,6 +1824,31 @@ function getRepricingDashboardHtml_() {
   h += 'html+="<button class=\\"btn-icon\\" onclick=\\"deleteProduct("+p.row+")\\" title=\\"Delete\\" style=\\"color:var(--red)\\">✕</button></td>";';
   h += 'html+="</tr>";}';
   h += 'html+="</tbody></table>";pt.innerHTML=html;';
+  h += '}';
+
+  // Dashboard Products List with Toggle
+  h += 'function trunc(s,n){return s&&s.length>n?s.substring(0,n)+"...":s||"-"}';
+  h += 'function renderDashboardProducts(){';
+  h += 'var prods=D.products||[];';
+  h += 'var el=document.getElementById("dashProductsList");if(!el)return;';
+  h += 'if(prods.length===0){el.innerHTML="<p style=\\"padding:30px;color:var(--text3);text-align:center\\">Keine Produkte. Klicke + Hinzuf\u00fcgen um zu starten.</p>";return;}';
+  h += 'var html="<table><thead><tr><th style=\\"text-align:center;width:58px\\">An/Aus</th><th>Produkt</th><th>Preis</th><th>Min / Max</th><th>Mitbewerber</th><th>Status</th><th></th></tr></thead><tbody>";';
+  h += 'for(var i=0;i<prods.length;i++){var p=prods[i];';
+  h += 'var status=p.lastStatus||"-";var sc="badge-gray";';
+  h += 'if(status.indexOf("Updated")>-1)sc="badge-green";';
+  h += 'else if(status.indexOf("Failed")>-1||status.indexOf("Error")>-1)sc="badge-red";';
+  h += 'else if(status.indexOf("cheapest")>-1||status.indexOf("Unchanged")>-1)sc="badge-blue";';
+  h += 'html+="<tr>";';
+  h += 'html+="<td style=\\"text-align:center\\"><label class=\\"toggle\\"><input type=\\"checkbox\\" "+(p.active?"checked":"")+" onchange=\\"toggleProd("+p.row+",this.checked)\\"><span class=\\"toggle-slider\\"></span></label></td>";';
+  h += 'html+="<td><div style=\\"font-weight:600;font-size:13px\\">"+esc(trunc(p.title,45))+"</div><div style=\\"font-family:monospace;font-size:11px;color:var(--text3);margin-top:2px\\">"+esc(p.sku)+"</div></td>";';
+  h += 'html+="<td style=\\"font-weight:700;font-size:14px\\">€"+fmtP(p.currentPrice)+"</td>";';
+  h += 'html+="<td style=\\"font-size:12px;color:var(--text2)\\">€"+fmtP(p.minPrice)+(p.maxPrice?" / €"+fmtP(p.maxPrice):"")+"</td>";';
+  h += 'html+="<td>"+(p.lastCompetitorPrice?"€"+fmtP(p.lastCompetitorPrice)+"<br><span style=\\"font-size:11px;color:var(--text3)\\">"+esc(p.lastCompetitorName||"")+"</span>":"-")+"</td>";';
+  h += 'html+="<td><span class=\\"badge "+sc+"\\">"+esc(status)+"</span></td>";';
+  h += 'html+="<td style=\\"white-space:nowrap\\"><button class=\\"btn-icon\\" onclick=\\"repriceSingle(\'"+esc(p.sku)+"\')\\" title=\\"Repricen\\">&#9654;</button> ";';
+  h += 'html+="<button class=\\"btn-icon\\" onclick=\\"editProduct("+i+")\\" title=\\"Bearbeiten\\">&#9998;</button></td>";';
+  h += 'html+="</tr>";}';
+  h += 'html+="</tbody></table>";el.innerHTML=html;';
   h += '}';
 
   // Product CRUD
