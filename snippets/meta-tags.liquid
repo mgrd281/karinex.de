@@ -214,10 +214,13 @@
     assign seo_title = 'Seite nicht gefunden (404)'
   endif
   
-  # Product page titles - use the exact product title without any modifications
+  # Product page titles - use the exact product title, truncated to 70 chars
   if request.page_type == 'product'
-    # Keep the original page_title as-is, no modifications
     assign seo_title = page_title
+    # Truncate long product titles to stay under ~70 chars (Google cuts at ~60-70)
+    if seo_title.size > 70
+      assign seo_title = seo_title | truncate: 70, '…'
+    endif
     # No suffix for product pages
     assign title_suffix = ''
   endif
