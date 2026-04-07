@@ -32,7 +32,7 @@
         "buy_button_text": "JETZT KAUFEN",
         "buy_button_link": "",
         "show_countdown": true,
-        "countdown_end": "2026-04-06T23:59:59",
+        "countdown_end": "2026-04-12T23:59:59",
         "sale_text": "Oster Deals  SALE",
         "days_label": "TAGE",
         "hours_label": "STUNDEN",
@@ -1452,6 +1452,10 @@
         "cta_link": ""
       }
     },
+    "trusted_shops_reviews": {
+      "type": "trusted-shops-reviews",
+      "settings": {}
+    },
     "hero_product_slider_GNaDeb": {
       "type": "hero-product-slider",
       "disabled": true,
@@ -1560,10 +1564,6 @@
         "gap": 16,
         "show_arrows": true
       }
-    },
-    "trusted_shops_reviews": {
-      "type": "trusted-shops-reviews",
-      "settings": {}
     }
   },
   "order": [
