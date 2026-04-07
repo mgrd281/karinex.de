@@ -763,12 +763,12 @@
           'office-2019-professional-plus': '/collections/office-2019',
           
           // Microsoft 365
-          'microsoft-365': '/collections/microsoft-365',
-          'office-365': '/collections/microsoft-365',
-          'm365': '/collections/microsoft-365',
-          '365-family': '/collections/microsoft-365',
-          '365-personal': '/collections/microsoft-365',
-          '365-business': '/collections/microsoft-365',
+          'microsoft-365': '/collections/software',
+          'office-365': '/collections/software',
+          'm365': '/collections/software',
+          '365-family': '/collections/software',
+          '365-personal': '/collections/software',
+          '365-business': '/collections/software',
           
           // Windows 11
           'windows-11': '/collections/software',
@@ -981,7 +981,7 @@
             { pattern: /office[-_\s]?2024/i, redirect: () => '/collections/microsoft-office-2024' },
             { pattern: /office[-_\s]?2021/i, redirect: () => '/collections/office-2021' },
             { pattern: /office[-_\s]?2019/i, redirect: () => '/collections/office-2019' },
-            { pattern: /office[-_\s]?365|microsoft[-_\s]?365|m365/i, redirect: () => '/collections/microsoft-365' },
+            { pattern: /office[-_\s]?365|microsoft[-_\s]?365|m365/i, redirect: () => '/collections/software' },
           ];
           
           for (const rule of redirectRules) {
@@ -1146,7 +1146,7 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53 4.306v15.363q0 .807-.472 1.433-.472.627-1.253.85l-6.888 1.974q-.136.037-.29.055-.156.019-.293.019-.396 0-.72-.105-.321-.106-.656-.292l-4.505-2.544q-.248-.137-.391-.366-.143-.23-.143-.515 0-.434.304-.738.304-.305.739-.305h5.831V4.964l-4.38 1.563q-.533.187-.856.658-.322.472-.322 1.03v8.078q0 .496-.248.912-.25.416-.683.651l-2.072 1.13q-.286.148-.571.148-.497 0-.844-.347-.348-.347-.348-.844V6.563q0-.62.33-1.19.328-.571.874-.881L11.07.285q.248-.136.534-.21.285-.075.57-.075.211 0 .38.019.168.018.35.074l8.006 2.306q.606.18 1.065.665.456.485.456 1.242z"/></svg>
           Office 2024
         </a>
-        <a href="{{ _root }}collections/microsoft-365" class="quick-link">
+        <a href="{{ _root }}collections/software" class="quick-link">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.5 3v8.5H3V3h8.5zm0 18H3v-8.5h8.5V21zm1-18H21v8.5h-8.5V3zm8.5 9.5V21h-8.5v-8.5H21z"/></svg>
           Microsoft 365
         </a>
