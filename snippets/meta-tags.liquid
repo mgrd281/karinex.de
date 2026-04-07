@@ -365,8 +365,16 @@
   if canonical_url contains '?page=' or canonical_url contains '&page='
     assign is_paginated = true
   endif
+  assign is_policy_page = false
+  if request.path contains '/policies/'
+    assign is_policy_page = true
+  endif
+  assign is_collection_all = false
+  if request.page_type == 'collection' and collection.handle == 'all'
+    assign is_collection_all = true
+  endif
 -%}
-{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
+{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
   <meta name="robots" content="noindex, follow">
 {%- elsif is_paginated -%}
   {%- comment -%} Pagination pages: index but don't use for snippets to avoid duplicate content {%- endcomment -%}
