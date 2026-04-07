@@ -23,5 +23,4 @@
   <link rel="preload" href="{{ product.featured_image | image_url: width: 800 }}" as="image" fetchpriority="high">
 {%- endif -%}
 
-<!-- DNS Prefetch for Third-Party Resources -->
-<link rel="dns-prefetch" href="https://widgets.trustedshops.com">
+{%- comment -%} dns-prefetch for TS is already in theme.liquid head {%- endcomment -%}

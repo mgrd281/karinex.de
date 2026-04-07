@@ -1,7 +1,26 @@
 {%- comment -%}
-  Trusted Shops Bewertungs-Karussell (Inline Snippet)
+  Trusted Shops Bewertungs-Karussell (Lazy-loaded)
   Widget-ID: wdg-ae302a93-2542-4539-a12a-1f44a36fd96a
+  Lazy: div injected only when user scrolls into view → prevents
+  TS script from making API calls on initial load / bot crawl.
 {%- endcomment -%}
-<div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
-  <div id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>
+<div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; min-height: 120px;">
+  <div class="ts-widget-placeholder" data-ts-widget-id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>
 </div>
+<script>
+(function() {
+  var el = document.querySelector('.ts-widget-placeholder[data-ts-widget-id]');
+  if (!el) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        io.disconnect();
+        var w = document.createElement('div');
+        w.id = el.getAttribute('data-ts-widget-id');
+        el.parentNode.replaceChild(w, el);
+      }
+    });
+  }, { rootMargin: '200px' });
+  io.observe(el);
+})();
+</script>

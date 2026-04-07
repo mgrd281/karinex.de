@@ -1,12 +1,9 @@
 {%- comment -%}
-  Trusted Shops Bewertungs-Karussell Widget
+  Trusted Shops Bewertungs-Karussell Widget (Lazy-loaded)
   Widget-ID: wdg-ae302a93-2542-4539-a12a-1f44a36fd96a
-  Manuelle Platzierung — div wird von TS-Script automatisch befüllt.
 {%- endcomment -%}
 
-<div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
-  <div id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>
-</div>
+{% render 'trusted-shops-widget' %}
 
 {% schema %}
 {
