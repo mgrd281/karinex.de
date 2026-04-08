@@ -522,7 +522,9 @@
           <h2 class="ay-bis-modal__title">Bei Verfügbarkeit<br>erinnern</h2>
           <div class="ay-bis-modal__product">
             <div class="ay-bis-modal__img-wrap">
-              <img class="ay-bis-modal__img" src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title | escape }}" width="300" height="300">
+              {%- if product.featured_image != blank -%}
+                <img class="ay-bis-modal__img" src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title | escape }}" width="300" height="300">
+              {%- endif -%}
             </div>
             <div class="ay-bis-modal__info">
               {%- if _brand_logo_url -%}
