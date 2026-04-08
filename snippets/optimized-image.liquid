@@ -29,6 +29,13 @@
   assign image_fetchpriority = fetchpriority | default: 'auto'
   assign image_attrs = attrs | default: ''
   
+  # Check if source is already AVIF
+  assign src_url = image | image_url
+  assign is_avif_source = false
+  if src_url contains '.avif'
+    assign is_avif_source = true
+  endif
+  
   # Adaptive widths based on device type (Server-side detection)
   if request.user_agent contains 'Mobile' or request.user_agent contains 'Android' or request.user_agent contains 'iPhone'
     # Smaller, more granular widths for mobile to save data
@@ -51,12 +58,16 @@
 
 {% if image %}
   <picture>
-    {%- # AVIF sources - best compression for high quality images -%}
+    {%- # AVIF sources -%}
     <source
       type="image/avif"
       srcset="
         {%- for width in width_list -%}
-          {{ image | image_url: width: width, format: 'avif' }} {{ width }}w
+          {%- if is_avif_source -%}
+            {{ image | image_url: width: width }} {{ width }}w
+          {%- else -%}
+            {{ image | image_url: width: width, format: 'avif' }} {{ width }}w
+          {%- endif -%}
           {%- unless forloop.last -%}, {%- endunless -%}
         {%- endfor -%}
       "
@@ -80,7 +91,11 @@
       type="image/jpeg"
       srcset="
         {%- for width in width_list -%}
-          {{ image | image_url: width: width, format: 'pjpg' }} {{ width }}w
+          {%- if is_avif_source -%}
+            {{ image | image_url: width: width }} {{ width }}w
+          {%- else -%}
+            {{ image | image_url: width: width, format: 'pjpg' }} {{ width }}w
+          {%- endif -%}
           {%- unless forloop.last -%}, {%- endunless -%}
         {%- endfor -%}
       "
