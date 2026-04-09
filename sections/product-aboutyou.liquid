@@ -80,7 +80,9 @@
 <link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
 <style>
   /* Platform Selector — Apple / SaaS inspired */
-  .ay-platform{display:flex;gap:6px;margin:18px 0 6px;background:#f2f2f7;border-radius:12px;padding:4px;width:fit-content}
+  .ay-platform__legend{margin:0 0 8px;display:inline-flex;align-items:baseline;gap:6px;font-weight:600;font-size:14px;letter-spacing:.01em;color:#1d1d1f}
+  .ay-platform__legend strong{font-weight:600}
+  .ay-platform{display:flex;gap:6px;margin:0 0 6px;background:#f2f2f7;border-radius:12px;padding:4px;width:fit-content}
   .ay-platform__pill{position:relative;display:inline-flex;align-items:center;gap:7px;padding:9px 22px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-size:13.5px;font-weight:600;color:#6e6e73;transition:all .25s cubic-bezier(.4,0,.2,1);letter-spacing:.01em;-webkit-user-select:none;user-select:none;z-index:1}
   .ay-platform__pill:hover{color:#1d1d1f}
   .ay-platform__pill.is-active{background:#fff;color:#1d1d1f;box-shadow:0 1px 4px rgba(0,0,0,.08),0 2px 12px rgba(0,0,0,.06)}
@@ -410,6 +412,7 @@
       {%- for opt in product.options_with_values -%}
         {%- assign _opt_dc = opt.name | downcase | strip -%}
         {%- if _opt_dc == 'betriebssystem' or _opt_dc == 'plattform' or _opt_dc == 'platform' or _opt_dc == 'os' -%}
+          <p class="ay-platform__legend"><span>{{ opt.name }}:</span> <strong>{%- if opt.position == 1 -%}{{ current_variant.option1 }}{%- elsif opt.position == 2 -%}{{ current_variant.option2 }}{%- elsif opt.position == 3 -%}{{ current_variant.option3 }}{%- endif -%}</strong></p>
           <div class="ay-platform" data-option-position="{{ opt.position }}">
             {%- for val in opt.values -%}
               {%- assign _val_dc = val | downcase -%}
