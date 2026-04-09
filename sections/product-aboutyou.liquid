@@ -684,8 +684,30 @@
         </div>
       {%- endif -%}
 
-      {%- comment -%} Shipping Info Card (AboutYou style) {%- endcomment -%}
+      {%- comment -%} Shipping Info Card (AboutYou style) — auto digital/physical {%- endcomment -%}
       <div class="ay-shipping">
+        {%- if _is_digital -%}
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <strong>Sofortiger Download</strong>
+          </span>
+          <span class="ay-shipping__badge ay-shipping__badge--fast">Direkt per E-Mail</span>
+        </div>
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <strong>Lizenzschlüssel per E-Mail</strong>
+          </span>
+          <span class="ay-shipping__badge ay-shipping__badge--free">Kostenlos</span>
+        </div>
+        <div class="ay-shipping__row">
+          <span class="ay-shipping__left">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <strong>Kein Widerrufsrecht bei digitalen Produkten</strong>
+          </span>
+        </div>
+        {%- else -%}
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -706,6 +728,7 @@
             <strong>14 Tage Rückgaberecht</strong>
           </span>
         </div>
+        {%- endif -%}
       </div>
 
       {%- comment -%} Accordions {%- endcomment -%}
@@ -753,25 +776,39 @@
           </summary>
           <div class="ay-accordion__content">
             <ul>
+              {%- if _is_digital -%}
+              <li><strong>Wie erhalte ich mein Produkt?</strong><br>Du erhältst deinen Lizenzschlüssel direkt nach der Bestellung per E-Mail.</li>
+              <li><strong>Kann ich das Produkt zurückgeben?</strong><br>Bei digitalen Produkten (Lizenzschlüssel) ist das Widerrufsrecht nach § 356 Abs. 5 BGB ausgeschlossen, sobald der Key zugestellt wurde.</li>
+              <li><strong>Funktioniert der Key sofort?</strong><br>Ja, du kannst den Lizenzschlüssel direkt nach Erhalt aktivieren.</li>
+              <li><strong>Für welches Betriebssystem ist das Produkt?</strong><br>Die unterstützten Betriebssysteme findest du in der Variantenauswahl oberhalb des Warenkorb-Buttons.</li>
+              {%- else -%}
               <li><strong>Wie schnell ist der Versand?</strong><br>Deine Bestellung wird in der Regel innerhalb von 1–3 Werktagen geliefert.</li>
               <li><strong>Kann ich den Artikel zurückgeben?</strong><br>Ja, du hast ein 14-tägiges Widerrufsrecht mit kostenloser Retoure.</li>
               <li><strong>Ist der Artikel sofort verfügbar?</strong><br>Die Verfügbarkeit siehst du direkt bei Größe und Warenkorb-Button auf dieser Seite.</li>
               <li><strong>Wie finde ich die richtige Größe?</strong><br>Nutze die Größenauswahl auf der Produktseite und orientiere dich an den Produktdetails im Bereich Beschreibung.</li>
+              {%- endif -%}
             </ul>
           </div>
         </details>
 
         <details class="ay-accordion">
           <summary class="ay-accordion__trigger">
-            Versand & Rückgabe
+            {%- if _is_digital -%}Lieferung & Hinweise{%- else -%}Versand & Rückgabe{%- endif -%}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="ay-accordion__content">
             <ul>
+              {%- if _is_digital -%}
+              <li>Digitale Lieferung per E-Mail — sofort nach Zahlungseingang</li>
+              <li>Lizenzschlüssel direkt einsetzbar</li>
+              <li>Kein Widerrufsrecht bei digitalen Produkten gemäß § 356 Abs. 5 BGB</li>
+              <li>Bei Problemen mit der Aktivierung: Kundenservice kontaktieren</li>
+              {%- else -%}
               <li>Kostenloser Versand innerhalb Deutschlands</li>
               <li>Lieferung in 1–3 Werktagen</li>
               <li>14 Tage Widerrufsrecht</li>
               <li>Kostenfreie Retoure</li>
+              {%- endif -%}
             </ul>
           </div>
         </details>
