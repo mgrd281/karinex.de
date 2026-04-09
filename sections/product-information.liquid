@@ -3341,45 +3341,46 @@ nav[aria-label="Breadcrumb"],
       {%- endfor -%}
     {%- endif -%}
 
-    {% if is_digital and product.options.size > 0 %}
-      {% for option in product.options %}
-        {% if option.name == 'Betriebssystem' or option.name == 'Operating System' or option.name == 'OS' %}
-          {% assign os_option_index = forloop.index0 %}
-          {% assign os_values = option.values %}
-          <div class="os-selector-container" id="osSelectorContainer" style="margin-top: 15px;">
-            <p class="os-selector-label">Betriebssystem wählen:</p>
-            <div class="os-pills" role="radiogroup" aria-label="Betriebssystem Auswahl">
-              {% for value in option.values %}
-                {% assign variant_for_os = nil %}
-                {% for v in product.variants %}
-                  {% if v.options[os_option_index] == value %}
-                    {% assign variant_for_os = v %}
-                    {% break %}
-                  {% endif %}
-                {% endfor %}
-                {% if variant_for_os %}
-                  <button type="button"
-                          class="os-pill{% if forloop.first %} is-active{% endif %}"
-                          data-os-value="{{ value | escape }}"
-                          data-variant-id="{{ variant_for_os.id }}"
-                          data-option-index="{{ os_option_index }}"
-                          role="radio"
-                          aria-checked="{% if forloop.first %}true{% else %}false{% endif %}"
-                          {% unless variant_for_os.available %}disabled{% endunless %}>
-                    {% if value contains 'Windows' %}
-                      <i class="fa-brands fa-windows"></i>
-                    {% elsif value contains 'Mac' %}
-                      <i class="fa-brands fa-apple"></i>
-                    {% endif %}
-                    <span>{{ value }}</span>
-                  </button>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
-    {% endif %}
+    {%- comment -%} Platform Selector (OS icon pills) {%- endcomment -%}
+    {%- for opt in product.options_with_values -%}
+      {%- assign _opt_dc = opt.name | downcase | strip -%}
+      {%- if _opt_dc == 'betriebssystem' or _opt_dc == 'plattform' or _opt_dc == 'platform' or _opt_dc == 'os' -%}
+        <div class="ay-platform" data-option-position="{{ opt.position }}" style="margin-top:15px;">
+          {%- for val in opt.values -%}
+            {%- assign _val_dc = val | downcase -%}
+            {%- assign _is_selected = false -%}
+            {%- if opt.position == 1 and product.selected_or_first_available_variant.option1 == val -%}{%- assign _is_selected = true -%}
+            {%- elsif opt.position == 2 and product.selected_or_first_available_variant.option2 == val -%}{%- assign _is_selected = true -%}
+            {%- elsif opt.position == 3 and product.selected_or_first_available_variant.option3 == val -%}{%- assign _is_selected = true -%}
+            {%- endif -%}
+            {%- assign _plat_vid = '' -%}
+            {%- for v in product.variants -%}
+              {%- if opt.position == 1 and v.option1 == val -%}{%- assign _plat_vid = v.id -%}{%- break -%}
+              {%- elsif opt.position == 2 and v.option2 == val -%}{%- assign _plat_vid = v.id -%}{%- break -%}
+              {%- elsif opt.position == 3 and v.option3 == val -%}{%- assign _plat_vid = v.id -%}{%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+            <button type="button"
+              class="ay-platform__pill{% if _is_selected %} is-active{% endif %}"
+              data-variant-id="{{ _plat_vid }}"
+              data-value="{{ val | escape }}"
+              data-option-position="{{ opt.position }}"
+              aria-pressed="{% if _is_selected %}true{% else %}false{% endif %}">
+              <span class="ay-platform__icon">
+                {%- if _val_dc contains 'mac' or _val_dc contains 'apple' or _val_dc contains 'ios' -%}
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                {%- elsif _val_dc contains 'windows' or _val_dc contains 'win' or _val_dc contains 'pc' -%}
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M3 12V6.5l8-1.1V12H3zm0 .5h8v6.6l-8-1.1V12.5zM11.5 5.3l9.5-1.3v8h-9.5V5.3zm0 7.2h9.5v8l-9.5-1.3V12.5z"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                {%- endif -%}
+              </span>
+              <span class="ay-platform__label">{{ val }}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
 
         <div class="kx-back-in-stock-form" id="backInStockForm" style="margin-top: 15px; {% if product.selected_or_first_available_variant.available %}display: none;{% endif %}">
       <div class="kx-bis-title" id="kx-bis-title">Deine Farbe ist ausverkauft</div>
@@ -3577,6 +3578,16 @@ nav[aria-label="Breadcrumb"],
   }
 </style>
 
+<style>
+  .ay-platform{display:flex;gap:10px;margin:16px 0 4px}
+  .ay-platform__pill{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:2px solid #e0e0e0;border-radius:50px;background:#fff;cursor:pointer;font-size:14px;font-weight:600;color:#555;transition:all .2s ease;letter-spacing:.3px}
+  .ay-platform__pill:hover{border-color:#333;color:#222}
+  .ay-platform__pill.is-active{border-color:#1a1a1a;background:#1a1a1a;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .ay-platform__icon{display:flex;align-items:center}
+  .ay-platform__icon svg{width:20px;height:20px}
+  .ay-platform__label{white-space:nowrap}
+</style>
+
 <script>
 (function () {
   function init() {
@@ -3628,6 +3639,24 @@ nav[aria-label="Breadcrumb"],
 {{ 'price-alert-popup.js' | asset_url | script_tag }}
 
 {% render 'product-information-scripts-styles', is_digital: is_digital %}
+
+<script>
+/* Platform Selector */
+(function(){
+  document.querySelectorAll('.ay-platform__pill').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var vid = this.dataset.variantId;
+      if (!vid) return;
+      this.closest('.ay-platform').querySelectorAll('.ay-platform__pill').forEach(function(b){ b.classList.remove('is-active'); b.setAttribute('aria-pressed','false'); });
+      this.classList.add('is-active');
+      this.setAttribute('aria-pressed','true');
+      var url = new URL(window.location.href);
+      url.searchParams.set('variant', vid);
+      window.location.href = url.toString();
+    });
+  });
+})();
+</script>
 
     <script>
     window.PRODUCT_DESCRIPTION_ORIGINAL = {{ market_description | json }};
