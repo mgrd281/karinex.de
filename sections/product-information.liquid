@@ -3251,10 +3251,14 @@ nav[aria-label="Breadcrumb"],
           {%- for sibling in sibling_products -%}
             {%- assign is_current = false -%}
             {%- if sibling.id == product.id -%}{%- assign is_current = true -%}{%- endif -%}
+            {%- assign _sib_var = sibling.selected_or_first_available_variant -%}
             <a href="{{ sibling.url }}"
-               class="kvp-pro__card{% if is_current %} is-active{% endif %}"
+               class="kvp-pro__card{% if is_current %} is-active{% endif %}{% unless _sib_var.available %}is-oos{% endunless %}"
                title="{{ sibling.title | escape }}"
                style="text-decoration: none;">
+              {%- if _sib_var.compare_at_price > _sib_var.price -%}
+                <span class="kvp-pro__badge kvp-pro__badge--sale">Sale</span>
+              {%- endif -%}
               <img class="kvp-pro__thumb"
                    src="{{ sibling.featured_image | image_url: width: 300 }}"
                    width="300" height="300"
