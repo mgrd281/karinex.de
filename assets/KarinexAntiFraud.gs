@@ -60,36 +60,62 @@ function getConfig_() {
 /**
  * Run this function once in the GAS editor to configure secrets.
  * All values are stored encrypted in Script Properties.
+ * 
+ * INSTRUCTIONS:
+ *  1. Fill in SHOP_DOMAIN and SHOPIFY_TOKEN below
+ *  2. Run this function once
+ *  3. Delete the token from the code after running (for safety)
  */
 function setupConfig() {
-  var ui = SpreadsheetApp.getUi();
+  // ─── FILL THESE IN, then run once ───
+  var SHOP_DOMAIN   = '45dv93-bk.myshopify.com';
+  var SHOPIFY_TOKEN = '';  // ← Paste your shpat_... token here, run, then DELETE it
+  // ─────────────────────────────────────
 
-  var domain = ui.prompt('Shop Domain', 'Enter your Shopify domain (e.g. 45dv93-bk.myshopify.com):', ui.ButtonSet.OK_CANCEL);
-  if (domain.getSelectedButton() !== ui.Button.OK) return;
-
-  var token = ui.prompt('Access Token', 'Enter your Shopify Admin API token (shpat_...):', ui.ButtonSet.OK_CANCEL);
-  if (token.getSelectedButton() !== ui.Button.OK) return;
+  if (!SHOPIFY_TOKEN || SHOPIFY_TOKEN === '') {
+    Logger.log('❌ ERROR: Paste your Shopify Admin API token into setupConfig() first!');
+    return;
+  }
 
   var secret = Utilities.getUuid().replace(/-/g, '').substring(0, 24);
 
   var props = PropertiesService.getScriptProperties();
   props.setProperties({
-    'SHOP_DOMAIN': domain.getResponseText().trim(),
-    'SHOPIFY_TOKEN': token.getResponseText().trim(),
-    'WEBHOOK_SECRET': secret,
-    'SHEET_ID': SpreadsheetApp.getActiveSpreadsheet().getId()
+    'SHOP_DOMAIN': SHOP_DOMAIN,
+    'SHOPIFY_TOKEN': SHOPIFY_TOKEN,
+    'WEBHOOK_SECRET': secret
   });
 
-  initSheets_();
+  // Create sheets in bound spreadsheet or log instructions
+  try {
+    initSheets_();
+    Logger.log('✅ Sheets created successfully');
+  } catch (e) {
+    Logger.log('ℹ️ Standalone project — create a Google Sheet manually and run initSheetsById() with its ID');
+  }
 
-  ui.alert(
-    'Setup Complete ✅',
-    'Webhook Secret: ' + secret + '\n\n' +
-    'Register this URL as Shopify webhook (orders/create):\n' +
-    ScriptApp.getService().getUrl() + '?key=' + secret + '\n\n' +
-    'SAVE THIS SECRET — it will not be shown again.',
-    ui.ButtonSet.OK
-  );
+  Logger.log('════════════════════════════════════════════');
+  Logger.log('✅ SETUP COMPLETE');
+  Logger.log('════════════════════════════════════════════');
+  Logger.log('Webhook Secret: ' + secret);
+  Logger.log('');
+  Logger.log('Register this Shopify webhook (Bestellerstellung / Order creation):');
+  Logger.log(ScriptApp.getService().getUrl() + '?key=' + secret);
+  Logger.log('');
+  Logger.log('⚠️  NOW DELETE THE TOKEN FROM THE CODE and save!');
+  Logger.log('════════════════════════════════════════════');
+}
+
+/**
+ * If using a standalone project, run this to create sheets in an existing spreadsheet.
+ * Paste the Google Sheet ID below and run once.
+ */
+function initSheetsById() {
+  var SHEET_ID = ''; // ← Paste Google Sheet ID here
+  if (!SHEET_ID) { Logger.log('❌ Paste your Google Sheet ID into initSheetsById()'); return; }
+  PropertiesService.getScriptProperties().setProperty('SHEET_ID', SHEET_ID);
+  initSheets_();
+  Logger.log('✅ All sheets created in: https://docs.google.com/spreadsheets/d/' + SHEET_ID);
 }
 
 /** Create all required sheets if they don't exist */
@@ -522,7 +548,12 @@ function getSpreadsheet_() {
   if (config.sheetId) {
     return SpreadsheetApp.openById(config.sheetId);
   }
-  return SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    return SpreadsheetApp.getActiveSpreadsheet();
+  } catch (e) {
+    Logger.log('No spreadsheet linked. Run initSheetsById() with your Sheet ID.');
+    return null;
+  }
 }
 
 /** Read all active blacklist entries */
