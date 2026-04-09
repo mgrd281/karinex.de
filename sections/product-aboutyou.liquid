@@ -91,6 +91,18 @@
   .ay-platform__icon svg{width:18px;height:18px}
   .ay-platform__label{white-space:nowrap;line-height:1}
 
+  /* Social Proof — recently sold */
+  .ay-social-proof{display:inline-flex;align-items:center;gap:9px;margin:10px 0 6px;opacity:0;transform:translateY(6px);animation:ay-sp-in .8s cubic-bezier(.25,.46,.45,.94) .1s forwards}
+  .ay-social-proof__icon{display:flex;align-items:center;justify-content:center;color:#1D4739;width:15px;height:15px;flex-shrink:0}
+  .ay-social-proof__icon svg{width:100%;height:100%}
+  .ay-sp-line{stroke-dasharray:40;stroke-dashoffset:40;animation:ay-sp-draw 5s cubic-bezier(.4,0,.2,1) infinite}
+  .ay-sp-arrow{stroke-dasharray:15;stroke-dashoffset:15;opacity:0;animation:ay-sp-arr 5s cubic-bezier(.4,0,.2,1) infinite}
+  .ay-social-proof__text{font-size:13px;line-height:1.2;letter-spacing:.2px;color:#555;font-weight:400}
+  .ay-social-proof__text strong{font-weight:600;color:#111}
+  @keyframes ay-sp-draw{0%{stroke-dashoffset:40}15%,85%{stroke-dashoffset:0}95%,100%{stroke-dashoffset:40}}
+  @keyframes ay-sp-arr{0%,14%{stroke-dashoffset:15;opacity:0}15%{stroke-dashoffset:15;opacity:1}25%,85%{stroke-dashoffset:0;opacity:1}95%,100%{stroke-dashoffset:15;opacity:1}}
+  @keyframes ay-sp-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+
   .ay-gallery__main-img { object-fit: cover !important; }
   /* Zoom hint */
   @media (min-width: 990px) {
@@ -686,6 +698,38 @@
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
           </button>
         </div>
+      {%- endif -%}
+
+      {%- comment -%} Social Proof — recently sold (digital only) {%- endcomment -%}
+      {%- if _is_digital -%}
+        {%- assign _sold_count = product.metafields.custom.recently_sold_count.value | default: product.metafields.custom.recently_sold_count | plus: 0 -%}
+        {%- assign _sold_city  = product.metafields.custom.recently_sold_city.value  | default: product.metafields.custom.recently_sold_city -%}
+        {%- if _sold_count >= 1 -%}
+        <div class="ay-social-proof">
+          <div class="ay-social-proof__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline class="ay-sp-line" points="1 18 8.5 10.5 13.5 15.5 23 6"></polyline>
+              <polyline class="ay-sp-arrow" points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <span class="ay-social-proof__text">
+            <strong>{{ _sold_count }}x</strong> in den letzten 30 Tagen verkauft
+            {%- if _sold_city and _sold_city != blank -%}
+              <span class="ay-social-proof__sep"> · </span>Letzter Kauf aus <strong>{{ _sold_city }}</strong>
+            {%- endif -%}
+          </span>
+        </div>
+        {%- else -%}
+        <div class="ay-social-proof">
+          <div class="ay-social-proof__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline class="ay-sp-line" points="1 18 8.5 10.5 13.5 15.5 23 6"></polyline>
+              <polyline class="ay-sp-arrow" points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <span class="ay-social-proof__text">Beliebtes Modell</span>
+        </div>
+        {%- endif -%}
       {%- endif -%}
 
       {%- comment -%} Shipping Info Card (AboutYou style) — auto digital/physical {%- endcomment -%}
