@@ -79,15 +79,14 @@
 
 <link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
 <style>
-  /* Platform Selector — Apple / SaaS inspired */
-  .ay-platform__legend{margin:0 0 8px;display:inline-flex;align-items:baseline;gap:6px;font-weight:600;font-size:14px;letter-spacing:.01em;color:#1d1d1f}
-  .ay-platform__legend strong{font-weight:600}
-  .ay-platform{display:flex;gap:6px;margin:0 0 6px;background:#f2f2f7;border-radius:12px;padding:4px;width:fit-content}
-  .ay-platform__pill{position:relative;display:inline-flex;align-items:center;gap:7px;padding:9px 22px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-size:13.5px;font-weight:600;color:#6e6e73;transition:all .25s cubic-bezier(.4,0,.2,1);letter-spacing:.01em;-webkit-user-select:none;user-select:none;z-index:1}
-  .ay-platform__pill:hover{color:#1d1d1f}
-  .ay-platform__pill.is-active{background:#fff;color:#1d1d1f;box-shadow:0 1px 4px rgba(0,0,0,.08),0 2px 12px rgba(0,0,0,.06)}
-  .ay-platform__icon{display:flex;align-items:center;transition:transform .2s ease}
-  .ay-platform__pill:active .ay-platform__icon{transform:scale(.92)}
+  /* Platform Selector — AboutYou card style */
+  .ay-platform__legend{margin:0 0 8px;display:inline-flex;align-items:baseline;gap:5px;font-weight:700;font-size:14px;letter-spacing:.01em;color:#1a1a1a}
+  .ay-platform__legend strong{font-weight:400}
+  .ay-platform{display:flex;gap:8px;margin:0 0 6px}
+  .ay-platform__pill{position:relative;display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border:1px solid #ddd;border-radius:2px;background:#fff;cursor:pointer;font-size:14px;font-weight:500;color:#1a1a1a;transition:border-color .15s ease;letter-spacing:.01em;-webkit-user-select:none;user-select:none}
+  .ay-platform__pill:hover{border-color:#999}
+  .ay-platform__pill.is-active{border:2px solid #1a1a1a;padding:11px 21px}
+  .ay-platform__icon{display:flex;align-items:center}
   .ay-platform__icon svg{width:18px;height:18px}
   .ay-platform__label{white-space:nowrap;line-height:1}
 
