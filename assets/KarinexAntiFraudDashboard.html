@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --brand: #1d4739;
+  --brand-light: #e8f5f0;
+  --danger: #d32f2f;
+  --danger-light: #fdecea;
+  --warn: #ef6c00;
+  --warn-light: #fff3e0;
+  --success: #2e7d32;
+  --success-light: #e8f5e9;
+  --bg: #f5f6fa;
+  --card: #fff;
+  --text: #1a1a1a;
+  --muted: #666;
+  --border: #e5e5e5;
+  --radius: 8px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); font-size:14px; }
+
+/* Layout */
+.app { display:flex; min-height:100vh; }
+.sidebar { width:240px; background:var(--brand); color:#fff; padding:24px 0; flex-shrink:0; }
+.sidebar h1 { font-size:16px; font-weight:700; padding:0 20px 20px; border-bottom:1px solid rgba(255,255,255,0.15); margin-bottom:12px; letter-spacing:0.02em; }
+.sidebar h1 span { display:block; font-size:11px; font-weight:400; opacity:0.6; margin-top:4px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:11px 20px; cursor:pointer; font-size:13.5px; transition:background 0.15s; border-left:3px solid transparent; }
+.nav-item:hover { background:rgba(255,255,255,0.08); }
+.nav-item.active { background:rgba(255,255,255,0.12); border-left-color:#fff; font-weight:600; }
+.nav-item svg { width:18px; height:18px; opacity:0.8; }
+.main { flex:1; padding:28px 32px; overflow-y:auto; }
+
+/* Stats */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
+.stat-card { background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border-left:4px solid var(--brand); }
+.stat-card.danger { border-left-color:var(--danger); }
+.stat-card.warn { border-left-color:var(--warn); }
+.stat-value { font-size:28px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.stat-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; }
+
+/* Section */
+.section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+.section-title { font-size:20px; font-weight:700; }
+.search-box { display:flex; gap:8px; align-items:center; }
+.search-box input { padding:8px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; width:260px; outline:none; }
+.search-box input:focus { border-color:var(--brand); }
+
+/* Buttons */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.btn-primary { background:var(--brand); color:#fff; }
+.btn-primary:hover { background:#164032; }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-danger:hover { background:#b71c1c; }
+.btn-sm { padding:5px 12px; font-size:12px; }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+.btn-outline:hover { border-color:var(--brand); color:var(--brand); }
+
+/* Table */
+.table-wrap { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead { background:#fafafa; }
+th { padding:12px 14px; text-align:left; font-weight:600; color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--border); white-space:nowrap; }
+td { padding:10px 14px; border-bottom:1px solid #f0f0f0; vertical-align:middle; }
+tr:hover td { background:#fafbfc; }
+
+/* Badges */
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge-high { background:var(--danger-light); color:var(--danger); }
+.badge-medium { background:var(--warn-light); color:var(--warn); }
+.badge-low { background:var(--success-light); color:var(--success); }
+.badge-active { background:var(--success-light); color:var(--success); }
+.badge-inactive { background:#f5f5f5; color:#999; }
+.badge-cancel { background:var(--danger-light); color:var(--danger); }
+.badge-review { background:var(--warn-light); color:var(--warn); }
+.badge-pass { background:var(--success-light); color:var(--success); }
+
+/* Modal */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; justify-content:center; align-items:flex-start; padding:60px 20px; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:12px; width:100%; max-width:640px; max-height:80vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding:20px 24px; border-bottom:1px solid var(--border); }
+.modal-header h2 { font-size:17px; font-weight:700; }
+.modal-close { background:none; border:none; font-size:22px; cursor:pointer; color:#999; padding:4px; }
+.modal-body { padding:24px; }
+.modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; }
+
+/* Form */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-group { display:flex; flex-direction:column; gap:4px; }
+.form-group.full { grid-column:1/-1; }
+.form-label { font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+.form-input, .form-select, .form-textarea { padding:9px 12px; border:1px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; outline:none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--brand); }
+.form-textarea { min-height:70px; resize:vertical; }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; right:24px; padding:14px 22px; border-radius:8px; color:#fff; font-weight:500; z-index:2000; opacity:0; transform:translateY(12px); transition:all 0.3s; font-size:13px; }
+.toast.show { opacity:1; transform:translateY(0); }
+.toast-success { background:var(--success); }
+.toast-error { background:var(--danger); }
+
+/* Tabs (settings) */
+.settings-section { background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:24px; margin-bottom:20px; }
+.settings-section h3 { font-size:15px; font-weight:700; margin-bottom:16px; }
+.setting-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5; }
+.setting-row:last-child { border-bottom:none; }
+.setting-info { flex:1; }
+.setting-info strong { display:block; font-size:13px; }
+.setting-info span { font-size:12px; color:var(--muted); }
+.toggle { position:relative; width:44px; height:24px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#ccc; border-radius:24px; cursor:pointer; transition:0.2s; }
+.toggle-slider::before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:0.2s; }
+.toggle input:checked + .toggle-slider { background:var(--brand); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(20px); }
+
+/* Page views */
+.page { display:none; }
+.page.active { display:block; }
+
+/* Loading */
+.loading { text-align:center; padding:60px; color:var(--muted); }
+
+/* Action buttons in table */
+.action-btns { display:flex; gap:4px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h1>Anti-Fraud<span>Karinex Blacklist System</span></h1>
+    <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="blacklist" onclick="showPage('blacklist')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      Blacklist
+    </div>
+    <div class="nav-item" data-page="matches" onclick="showPage('matches')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Order Matches
+    </div>
+    <div class="nav-item" data-page="log" onclick="showPage('log')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Activity Log
+    </div>
+    <div class="nav-item" data-page="settings" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-header"><h1 class="section-title">Dashboard</h1></div>
+      <div class="stats">
+        <div class="stat-card"><div class="stat-value" id="stat-blacklisted">—</div><div class="stat-label">Blacklisted</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-checked">—</div><div class="stat-label">Orders Checked</div></div>
+        <div class="stat-card danger"><div class="stat-value" id="stat-canceled">—</div><div class="stat-label">Auto-Canceled</div></div>
+        <div class="stat-card warn"><div class="stat-value" id="stat-matches">—</div><div class="stat-label">Total Matches</div></div>
+      </div>
+      <div class="section-header"><h2 class="section-title" style="font-size:16px">Recent Activity</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Action</th><th>Order</th><th>Customer</th><th>Risk</th><th>Decision</th></tr></thead>
+          <tbody id="recent-log-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== BLACKLIST PAGE ===== -->
+    <div class="page" id="page-blacklist">
+      <div class="section-header">
+        <h1 class="section-title">Blacklist</h1>
+        <div class="search-box">
+          <input type="text" id="bl-search" placeholder="Search name, email, phone..." oninput="filterBlacklist()">
+          <button class="btn btn-primary" onclick="openAddModal()">+ Add Entry</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>IP</th><th>Reason</th><th>Risk</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+          <tbody id="bl-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== MATCHES PAGE ===== -->
+    <div class="page" id="page-matches">
+      <div class="section-header"><h1 class="section-title">Order Matches</h1></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Order</th><th>Customer</th><th>Email</th><th>IP</th><th>Score</th><th>Signals</th><th>Decision</th><th>Action</th></tr></thead>
+          <tbody id="matches-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITY LOG PAGE ===== -->
+    <div class="page" id="page-log">
+      <div class="section-header"><h1 class="section-title">Activity Log</h1></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Timestamp</th><th>Action</th><th>Order</th><th>Customer</th><th>Email</th><th>Risk</th><th>Signals</th><th>Decision</th><th>Details</th></tr></thead>
+          <tbody id="log-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <div class="page" id="page-settings">
+      <div class="section-header"><h1 class="section-title">Settings</h1></div>
+      <div class="settings-section">
+        <h3>Automation</h3>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Auto-Cancel</strong><span>Automatically cancel orders above risk threshold</span></div>
+          <label class="toggle"><input type="checkbox" id="set-auto-cancel" onchange="saveSetting('auto_cancel_enabled',this.checked?'true':'false')"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Manual Review Mode</strong><span>When enabled, all flagged orders require manual review</span></div>
+          <label class="toggle"><input type="checkbox" id="set-manual-review" onchange="saveSetting('manual_review_mode',this.checked?'true':'false')"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Risk Thresholds</h3>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Auto-Cancel Threshold</strong><span>Score at or above this value triggers auto-cancel</span></div>
+          <input type="number" class="form-input" style="width:80px" id="set-threshold-cancel" value="70" onchange="saveSetting('risk_threshold_cancel',this.value)">
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Review Threshold</strong><span>Score at or above this value flags for review</span></div>
+          <input type="number" class="form-input" style="width:80px" id="set-threshold-review" value="40" onchange="saveSetting('risk_threshold_review',this.value)">
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Notifications</h3>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Notification Email</strong><span>Receive alerts for canceled/flagged orders</span></div>
+          <input type="email" class="form-input" style="width:260px" id="set-notify-email" placeholder="admin@karinex.de" onchange="saveSetting('notify_email',this.value)">
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><strong>Cancellation Reason</strong><span>Message sent when auto-canceling</span></div>
+          <input type="text" class="form-input" style="width:360px" id="set-cancel-reason" onchange="saveSetting('cancel_reason',this.value)">
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Risk Weights</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px;">
+          <div><strong>Email match:</strong> 80</div>
+          <div><strong>Phone match:</strong> 70</div>
+          <div><strong>Fingerprint:</strong> 90</div>
+          <div><strong>Name match:</strong> 40</div>
+          <div><strong>Address match:</strong> 50</div>
+          <div><strong>IP match:</strong> 60</div>
+        </div>
+        <p style="margin-top:10px;font-size:12px;color:var(--muted)">2+ signals from same entry: ×1.4 | Matches across multiple entries: ×1.3 | Max score: 100</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Blacklist Entry</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="f-name" placeholder="Max Mustermann"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="f-email" type="email" placeholder="max@example.com"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="f-phone" placeholder="+49 170 1234567"></div>
+        <div class="form-group"><label class="form-label">IP Address</label><input class="form-input" id="f-ip" placeholder="192.168.1.1"></div>
+        <div class="form-group"><label class="form-label">Street</label><input class="form-input" id="f-street" placeholder="Musterstr. 12"></div>
+        <div class="form-group"><label class="form-label">City</label><input class="form-input" id="f-city" placeholder="Berlin"></div>
+        <div class="form-group"><label class="form-label">ZIP</label><input class="form-input" id="f-zip" placeholder="10115"></div>
+        <div class="form-group"><label class="form-label">Country</label><input class="form-input" id="f-country" placeholder="DE"></div>
+        <div class="form-group"><label class="form-label">Device Fingerprint</label><input class="form-input" id="f-fingerprint" placeholder=""></div>
+        <div class="form-group"><label class="form-label">User Agent</label><input class="form-input" id="f-useragent" placeholder=""></div>
+        <div class="form-group"><label class="form-label">Browser</label><input class="form-input" id="f-browser" placeholder="Chrome, Firefox..."></div>
+        <div class="form-group"><label class="form-label">OS</label><input class="form-input" id="f-os" placeholder="Windows 11, macOS..."></div>
+        <div class="form-group"><label class="form-label">VPN/Proxy</label>
+          <select class="form-select" id="f-vpn"><option value="">Unknown</option><option value="Yes">Yes</option><option value="No">No</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Risk Level</label>
+          <select class="form-select" id="f-risk"><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+        </div>
+        <div class="form-group full"><label class="form-label">Reason for Blocking</label><input class="form-input" id="f-reason" placeholder="e.g. Chargebacks, fake orders..."></div>
+        <div class="form-group full"><label class="form-label">Internal Notes</label><textarea class="form-textarea" id="f-notes" placeholder="Additional notes..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+var blacklistData = [];
+var editingId = null;
+
+// ===== NAVIGATION =====
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector('.nav-item[data-page="' + page + '"]').classList.add('active');
+
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'blacklist') loadBlacklist();
+  else if (page === 'matches') loadMatches();
+  else if (page === 'log') loadLog();
+  else if (page === 'settings') loadSettings();
+}
+
+// ===== TOAST =====
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast toast-' + (type || 'success') + ' show';
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+// ===== DASHBOARD =====
+function loadDashboard() {
+  google.script.run.withSuccessHandler(function(stats) {
+    document.getElementById('stat-blacklisted').textContent = stats.activeBlacklisted || 0;
+    document.getElementById('stat-checked').textContent = stats.totalOrdersChecked || 0;
+    document.getElementById('stat-canceled').textContent = stats.totalCanceled || 0;
+    document.getElementById('stat-matches').textContent = stats.totalMatches || 0;
+  }).getDashboardStats();
+
+  google.script.run.withSuccessHandler(function(logs) {
+    var body = document.getElementById('recent-log-body');
+    if (!logs || !logs.length) { body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:30px">No activity yet</td></tr>'; return; }
+    body.innerHTML = logs.slice(0, 15).map(function(l) {
+      return '<tr><td>' + fmtDate(l.timestamp) + '</td><td>' + actionBadge(l.action) + '</td><td>' + esc(l.orderNumber) + '</td><td>' + esc(l.customerName) + '</td><td>' + riskBadge(l.riskScore) + '</td><td>' + decisionBadge(l.decision) + '</td></tr>';
+    }).join('');
+  }).getActivityLog(15);
+}
+
+// ===== BLACKLIST =====
+function loadBlacklist() {
+  google.script.run.withSuccessHandler(function(data) {
+    blacklistData = data || [];
+    renderBlacklist(blacklistData);
+  }).getBlacklistForDashboard();
+}
+
+function renderBlacklist(data) {
+  var body = document.getElementById('bl-body');
+  if (!data.length) { body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#999;padding:30px">No entries</td></tr>'; return; }
+  body.innerHTML = data.map(function(e) {
+    return '<tr>' +
+      '<td style="font-family:monospace;font-size:11px">' + esc(e.id) + '</td>' +
+      '<td><strong>' + esc(e.fullName) + '</strong></td>' +
+      '<td>' + esc(e.email) + '</td>' +
+      '<td>' + esc(e.phone) + '</td>' +
+      '<td style="font-family:monospace;font-size:12px">' + esc(e.ip) + '</td>' +
+      '<td>' + esc(e.reason) + '</td>' +
+      '<td>' + levelBadge(e.riskLevel) + '</td>' +
+      '<td>' + statusBadge(e.status) + '</td>' +
+      '<td style="font-size:12px">' + fmtDate(e.createdAt) + '</td>' +
+      '<td class="action-btns">' +
+        '<button class="btn btn-outline btn-sm" onclick="openEditModal(\'' + e.id + '\')">Edit</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="confirmDelete(\'' + e.id + '\')">Delete</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+function filterBlacklist() {
+  var q = document.getElementById('bl-search').value.toLowerCase();
+  if (!q) { renderBlacklist(blacklistData); return; }
+  var filtered = blacklistData.filter(function(e) {
+    return (e.fullName + ' ' + e.email + ' ' + e.phone + ' ' + e.ip + ' ' + e.reason + ' ' + e.notes).toLowerCase().indexOf(q) >= 0;
+  });
+  renderBlacklist(filtered);
+}
+
+// ===== MATCHES =====
+function loadMatches() {
+  google.script.run.withSuccessHandler(function(data) {
+    var body = document.getElementById('matches-body');
+    if (!data || !data.length) { body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;padding:30px">No matches yet</td></tr>'; return; }
+    body.innerHTML = data.map(function(m) {
+      return '<tr><td>' + fmtDate(m.timestamp) + '</td><td>' + esc(m.orderNumber) + '</td><td>' + esc(m.customerName) + '</td><td>' + esc(m.customerEmail) + '</td><td style="font-family:monospace;font-size:12px">' + esc(m.customerIp) + '</td><td>' + riskBadge(m.riskScore) + '</td><td style="font-size:11px;max-width:200px;word-break:break-all">' + esc(m.matchedSignals) + '</td><td>' + decisionBadge(m.decision) + '</td><td>' + esc(m.actionTaken) + '</td></tr>';
+    }).join('');
+  }).getMatchHistory(200);
+}
+
+// ===== LOG =====
+function loadLog() {
+  google.script.run.withSuccessHandler(function(data) {
+    var body = document.getElementById('log-body');
+    if (!data || !data.length) { body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;padding:30px">No activity</td></tr>'; return; }
+    body.innerHTML = data.map(function(l) {
+      return '<tr><td style="font-size:12px">' + fmtDate(l.timestamp) + '</td><td>' + actionBadge(l.action) + '</td><td>' + esc(l.orderNumber) + '</td><td>' + esc(l.customerName) + '</td><td>' + esc(l.customerEmail) + '</td><td>' + riskBadge(l.riskScore) + '</td><td style="font-size:11px;max-width:180px;word-break:break-all">' + esc(l.signals) + '</td><td>' + decisionBadge(l.decision) + '</td><td style="font-size:12px">' + esc(l.details) + '</td></tr>';
+    }).join('');
+  }).getActivityLog(200);
+}
+
+// ===== SETTINGS =====
+function loadSettings() {
+  google.script.run.withSuccessHandler(function(s) {
+    document.getElementById('set-auto-cancel').checked = s.auto_cancel_enabled === 'true';
+    document.getElementById('set-manual-review').checked = s.manual_review_mode === 'true';
+    document.getElementById('set-threshold-cancel').value = s.risk_threshold_cancel || 70;
+    document.getElementById('set-threshold-review').value = s.risk_threshold_review || 40;
+    document.getElementById('set-notify-email').value = s.notify_email || '';
+    document.getElementById('set-cancel-reason').value = s.cancel_reason || '';
+  }).getDashboardSettings();
+}
+
+function saveSetting(key, value) {
+  google.script.run.withSuccessHandler(function() {
+    toast('Setting saved');
+  }).updateSetting(key, value);
+}
+
+// ===== MODAL =====
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add Blacklist Entry';
+  document.getElementById('modal-save-btn').textContent = 'Save Entry';
+  clearForm();
+  document.getElementById('modal').classList.add('open');
+}
+
+function openEditModal(id) {
+  var entry = blacklistData.find(function(e) { return e.id === id; });
+  if (!entry) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit Entry';
+  document.getElementById('modal-save-btn').textContent = 'Update Entry';
+  document.getElementById('f-name').value = entry.fullName || '';
+  document.getElementById('f-email').value = entry.email || '';
+  document.getElementById('f-phone').value = entry.phone || '';
+  document.getElementById('f-ip').value = entry.ip || '';
+  document.getElementById('f-street').value = entry.street || '';
+  document.getElementById('f-city').value = entry.city || '';
+  document.getElementById('f-zip').value = entry.zip || '';
+  document.getElementById('f-country').value = entry.country || '';
+  document.getElementById('f-fingerprint').value = entry.fingerprint || '';
+  document.getElementById('f-useragent').value = entry.userAgent || '';
+  document.getElementById('f-browser').value = entry.browser || '';
+  document.getElementById('f-os').value = entry.os || '';
+  document.getElementById('f-vpn').value = entry.vpnProxy || '';
+  document.getElementById('f-risk').value = entry.riskLevel || 'High';
+  document.getElementById('f-reason').value = entry.reason || '';
+  document.getElementById('f-notes').value = entry.notes || '';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function clearForm() {
+  ['f-name','f-email','f-phone','f-ip','f-street','f-city','f-zip','f-country','f-fingerprint','f-useragent','f-browser','f-os','f-reason','f-notes'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('f-vpn').value = '';
+  document.getElementById('f-risk').value = 'High';
+}
+
+function saveEntry() {
+  var data = {
+    fullName: document.getElementById('f-name').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    ip: document.getElementById('f-ip').value.trim(),
+    street: document.getElementById('f-street').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    zip: document.getElementById('f-zip').value.trim(),
+    country: document.getElementById('f-country').value.trim(),
+    fingerprint: document.getElementById('f-fingerprint').value.trim(),
+    userAgent: document.getElementById('f-useragent').value.trim(),
+    browser: document.getElementById('f-browser').value.trim(),
+    os: document.getElementById('f-os').value.trim(),
+    vpnProxy: document.getElementById('f-vpn').value,
+    riskLevel: document.getElementById('f-risk').value,
+    reason: document.getElementById('f-reason').value.trim(),
+    notes: document.getElementById('f-notes').value.trim()
+  };
+
+  if (!data.fullName && !data.email && !data.phone && !data.ip) {
+    toast('At least one identifier required (name, email, phone, or IP)', 'error');
+    return;
+  }
+
+  document.getElementById('modal-save-btn').disabled = true;
+  document.getElementById('modal-save-btn').textContent = 'Saving...';
+
+  if (editingId) {
+    data.status = 'Active';
+    google.script.run.withSuccessHandler(function(r) {
+      document.getElementById('modal-save-btn').disabled = false;
+      if (r.success) { toast('Entry updated'); closeModal(); loadBlacklist(); }
+      else toast('Error: ' + (r.error || 'unknown'), 'error');
+    }).updateBlacklistEntry(editingId, data);
+  } else {
+    google.script.run.withSuccessHandler(function(r) {
+      document.getElementById('modal-save-btn').disabled = false;
+      if (r.success) { toast('Entry added: ' + r.id); closeModal(); loadBlacklist(); }
+      else toast('Error', 'error');
+    }).addBlacklistEntry(data);
+  }
+}
+
+function confirmDelete(id) {
+  if (!confirm('Delete this blacklist entry permanently?')) return;
+  google.script.run.withSuccessHandler(function(r) {
+    if (r.success) { toast('Entry deleted'); loadBlacklist(); }
+    else toast('Error', 'error');
+  }).deleteBlacklistEntry(id);
+}
+
+// ===== HELPERS =====
+function esc(s) { if (s == null) return ''; var d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try { var dt = new Date(d); return dt.toLocaleDateString('de-DE') + ' ' + dt.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { return String(d); }
+}
+
+function levelBadge(level) {
+  var cls = level === 'High' ? 'badge-high' : level === 'Medium' ? 'badge-medium' : 'badge-low';
+  return '<span class="badge ' + cls + '">' + esc(level || 'High') + '</span>';
+}
+
+function statusBadge(status) {
+  return '<span class="badge ' + (status === 'Active' ? 'badge-active' : 'badge-inactive') + '">' + esc(status) + '</span>';
+}
+
+function riskBadge(score) {
+  if (score == null || score === '' || score === 0) return '<span style="color:#999">0</span>';
+  var cls = score >= 70 ? 'badge-high' : score >= 40 ? 'badge-medium' : 'badge-low';
+  return '<span class="badge ' + cls + '">' + score + '</span>';
+}
+
+function decisionBadge(decision) {
+  if (!decision) return '—';
+  var map = {
+    'auto_cancel': 'badge-cancel', 'auto_canceled': 'badge-cancel', 'order_canceled': 'badge-cancel',
+    'manual_review': 'badge-review', 'flagged': 'badge-review',
+    'passed': 'badge-pass', 'admin': 'badge-pass',
+    'rejected': 'badge-cancel', 'error': 'badge-cancel'
+  };
+  var cls = map[decision] || '';
+  return '<span class="badge ' + cls + '">' + esc(decision) + '</span>';
+}
+
+function actionBadge(action) {
+  var colors = {
+    'order_checked': '#1976d2', 'order_canceled': '#d32f2f', 'order_flagged': '#ef6c00',
+    'blacklist_added': '#2e7d32', 'blacklist_updated': '#1565c0', 'blacklist_deleted': '#c62828',
+    'setting_changed': '#6a1b9a', 'webhook_error': '#d32f2f', 'webhook_rejected': '#d32f2f'
+  };
+  var color = colors[action] || '#666';
+  return '<span style="color:' + color + ';font-weight:600;font-size:12px">' + esc(action) + '</span>';
+}
+
+// ===== INIT =====
+loadDashboard();
+</script>
+
+</body>
+</html>
