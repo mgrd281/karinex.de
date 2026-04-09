@@ -858,6 +858,23 @@
     transition: border-color 0.15s ease;
     text-decoration: none;
     cursor: pointer;
+    position: relative;
+}
+
+.ay-siblings__badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: #d32f2f;
+    color: #fff;
+    z-index: 2;
+    line-height: 1.2;
+    letter-spacing: .02em;
+    text-transform: uppercase;
 }
 
 .ay-siblings__swatch:hover {

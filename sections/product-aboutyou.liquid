@@ -498,6 +498,10 @@
                  class="ay-siblings__swatch{% if _is_current %} is-active{% endif %}{% if _sib_unavailable or ay_is_sold_out and _is_current %} is-unavailable{% endif %}"
                  title="{{ sibling.title | escape }}"
                  data-color="{{ _sib_color | escape }}">
+                {%- assign _sib_var = sibling.selected_or_first_available_variant -%}
+                {%- if _sib_var.compare_at_price > _sib_var.price -%}
+                  <span class="ay-siblings__badge">Sale</span>
+                {%- endif -%}
                 <img src="{{ sibling.featured_image | image_url: width: 150 }}" alt="{{ sibling.title | escape }}" loading="lazy" width="150" height="150">
                 {%- if _sib_unavailable or ay_is_sold_out and _is_current -%}
                   <span class="ay-siblings__mail-icon" aria-hidden="true">
