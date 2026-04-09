@@ -146,8 +146,14 @@
 
               <div class="ay-gallery__cell">
                 {%- if media.media_type == 'image' -%}
-                  {%- assign _ay_src = media | image_url: width: 800 -%}
-                  {%- assign _ay_full = media | image_url: width: 1600 -%}
+                  {%- assign _media_url = media | image_url -%}
+                  {%- if _media_url contains '.avif' -%}
+                    {%- assign _ay_src = media | image_url -%}
+                    {%- assign _ay_full = media | image_url -%}
+                  {%- else -%}
+                    {%- assign _ay_src = media | image_url: width: 800 -%}
+                    {%- assign _ay_full = media | image_url: width: 1600 -%}
+                  {%- endif -%}
                   <img
                     class="ay-gallery__main-img"
                     src="{{ _ay_src }}"
@@ -275,8 +281,14 @@
         {%- assign ay_media_idx = 0 -%}
         {%- for media in product.media -%}
           {%- if media.media_type == 'image' -%}
-            {%- assign _ayt_src = media | image_url: width: 800 -%}
-            {%- assign _ayt_thumb = media | image_url: width: 200 -%}
+            {%- assign _thumb_url = media | image_url -%}
+            {%- if _thumb_url contains '.avif' -%}
+              {%- assign _ayt_src = media | image_url -%}
+              {%- assign _ayt_thumb = media | image_url -%}
+            {%- else -%}
+              {%- assign _ayt_src = media | image_url: width: 800 -%}
+              {%- assign _ayt_thumb = media | image_url: width: 200 -%}
+            {%- endif -%}
             <div class="thumb-item" data-index="{{ ay_media_idx }}" data-type="image"
                  data-src="{{ _ayt_src }}">
               <img src="{{ _ayt_thumb }}" alt="{{ media.alt | escape }}" loading="lazy" width="200" height="200">
