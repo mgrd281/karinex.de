@@ -10,12 +10,18 @@
     padding: 0 20px;
 }
 
+/* Kill section-level spacing from Shopify wrapper */
+.section-aboutyou-product {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
 .ay-product__wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: start;
-    padding-top: 8px;
+    padding-top: 0;
 }
 
 /* Gallery */
