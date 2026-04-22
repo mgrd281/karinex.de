@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var DB = 'https://karinex-wishlist-default-rtdb.europe-west1.firebasedatabase.app/cart-counts';
+  var DB = 'https://karinex-final-default-rtdb.europe-west1.firebasedatabase.app/cart-counts';
   var CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   var SESSION_KEY = 'kx_cart_added'; // tracks which handles were added this session
 
