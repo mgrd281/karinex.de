@@ -8,7 +8,7 @@
 (function() {
   'use strict';
 
-  var DB = 'https://karinex-wishlist-default-rtdb.europe-west1.firebasedatabase.app/wishlist';
+  var DB = 'https://karinex-final-default-rtdb.europe-west1.firebasedatabase.app/wishlist';
   var CACHE_TTL = 3 * 60 * 1000; // 3 minutes
 
   // ── Cache ────────────────────────────────────────────────────────────────
