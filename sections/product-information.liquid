@@ -2765,7 +2765,7 @@ nav[aria-label="Breadcrumb"],
     </svg>
   </div>
   <span class="kx-psp-text">
-    <strong class="kx-psp-highlight">{{ _sold_count }}x</strong>
+    <strong class="kx-psp-highlight">{{ _sold_count | times: 10 }}x</strong>
     <span class="kx-psp-muted">in den letzten 30 Tagen verkauft</span>
     {%- if _sold_city and _sold_city != blank -%}
       <span class="kx-psp-sep"> · </span>
