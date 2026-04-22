@@ -476,8 +476,8 @@ function addressMatch_(customer, entry) {
   var entryAddr = normalizeAddress_(entry.street);
   var custCity = normalizeAddress_(customer.city);
   var entryCity = normalizeAddress_(entry.city);
-  var custZip = (customer.zip || '').replace(/\s/g, '');
-  var entryZip = (entry.zip || '').replace(/\s/g, '');
+  var custZip = String(customer.zip || '').replace(/\s/g, '');
+  var entryZip = String(entry.zip || '').replace(/\s/g, '');
 
   // ZIP must match if both present
   if (custZip && entryZip && custZip !== entryZip) return false;
