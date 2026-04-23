@@ -1,11 +1,11 @@
 /*
  * ═══════════════════════════════════════════════════════════════════════
- * USERCENTRICS WEB CMP v3 — KARINEX / THALIA-STYLE
+ * USERCENTRICS WEB CMP v3 — KARINEX / PREMIUM LUXURY
  * ═══════════════════════════════════════════════════════════════════════
  * NOTE: UC CMP v3 renders inside a Shadow DOM (<aside id="usercentrics-cmp-ui">)
  *       External CSS CANNOT reach inside the Shadow Root.
  *       Only host-level and overlay rules go here.
- *       All inner UI styles are injected via JS in theme.liquid.
+ *       All inner UI styles are injected via JS in usercentrics-shadow-injector.js
  * ═══════════════════════════════════════════════════════════════════════
  */
 
@@ -16,6 +16,16 @@ aside#usercentrics-cmp-ui {
   inset: 0 !important;
   pointer-events: none !important;
   /* let clicks fall through to the modal */
+}
+
+/* Accessibility: respect user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  aside#usercentrics-cmp-ui,
+  aside#usercentrics-cmp-ui * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* The Shadow DOM renders its own overlay — nothing else needed here */
