@@ -47,6 +47,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://invoice-production-8cd6.up.railway.app" crossorigin>
 
     <style>
       :root {
@@ -56,16 +57,16 @@
         --rating-star-shadow: 0 1px 3px {{ g_rating_shadow }};
       }
     </style>
-    
+
     {%- render 'smart-script-manager' -%}
     {%- render 'local-fonts' -%}
 
     <meta name="color-scheme" content="light">
     {% render 'mobile-detector' %}
     <!-- Sync Trigger: Retry at 18:25 -->
-    
+
     {%- comment -%}
-    Third-party scripts (Usercentrics, GTM, Tidio, etc.) are managed 
+    Third-party scripts (Usercentrics, GTM, Tidio, etc.) are managed
     by smart-script-manager.liquid to optimize TBT.
     {%- endcomment -%}
     <script>
@@ -88,7 +89,7 @@
           uc.async = true;
           document.head.appendChild(uc);
         }
-        
+
         // Load basics after a short idle
         if ('requestIdleCallback' in window) {
            requestIdleCallback(loadThemeBasics, { timeout: 2000 });
@@ -100,7 +101,7 @@
 
     <!-- Usercentrics Shadow DOM style injector (externalized to reduce HTML payload) -->
     <script src="{{ 'usercentrics-shadow-injector.js' | asset_url }}" defer></script>
-    
+
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
     {%- assign favicon = settings.favicon | default: settings.logo -%}
@@ -122,29 +123,29 @@
         const path = window.location.pathname.toLowerCase();
         const search = window.location.search;
         const urlParams = new URLSearchParams(search);
-        
+
         // Handle customer_authentication/login URLs
         if (path.includes('customer_authentication') || path.includes('/account/login')) {
           const returnTo = urlParams.get('return_to');
           if (returnTo) {
             // Decode and clean the return_to URL
             let targetPath = decodeURIComponent(returnTo);
-            
+
             // Remove /en/ prefix if present
             targetPath = targetPath.replace(/^\/en\/?/, '/');
-            
+
             // Remove double /products/products/ if present
             targetPath = targetPath.replace(/\/products\/products-/, '/products/');
             targetPath = targetPath.replace(/\/products\/products\//, '/products/');
-            
+
             // Remove variant and other query params for cleaner URL
             targetPath = targetPath.split('?')[0];
-            
+
             // Handle special paths
             if (targetPath === '/index.html' || targetPath === '/') {
               targetPath = '/';
             }
-            
+
             // Instant redirect
             window.location.replace(targetPath);
             return;
@@ -154,7 +155,7 @@
             return;
           }
         }
-        
+
         // Handle /discount/ URLs
         if (path.includes('/discount/')) {
           const redirect = urlParams.get('redirect');
@@ -173,7 +174,7 @@
 
     {%- render 'meta-tags' -%}
     {%- render 'critical-css' -%}
-    
+
     <!-- Fix: Prevent FOUC (Flash of Unstyled Content) in Header -->
     <style>
       /* Hide header elements until Web Components are defined */
@@ -194,7 +195,7 @@
       .badge--sale{background-color:#000!important;color:#fff!important}
       header-actions .icon-badge,header-actions .wishlist-count-badge{display:none!important}
     </style>
-    
+
     {%- render 'performance-preload' -%}
     {%- render 'stylesheets' -%}
     <style>/* Safari Fix - Inlined to eliminate render-blocking */
@@ -213,7 +214,7 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-schemes' -%}
-    
+
     {%- comment -%} Advanced Schema Markup - Elite SEO {%- endcomment -%}
     {%- render 'schema-website' -%}
     {%- render 'schema-webpage' -%}
@@ -288,9 +289,9 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
 {%- comment -%} Moved to head {%- endcomment -%}
 
-      
+
   <body class="template-{{ template | replace: '.', ' ' }} page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }} vendor-{{ product.vendor | handleize }} collection-{{ collection.title | handleize }}">
-    
+
     {% section 'global-sale-bar' %}
     {%- render 'affiliate-bar' -%}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
@@ -374,7 +375,21 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
     {% section 'custom-mobile-menu' %}
 
-    <!-- 🟢 SMART DEVICE TRACKING FOR ABANDONED CARTS -->
+    <!-- 🟢 KARINEX Cart-Tracker — Browser-Tracking für Tab-Close + Inactivity -->
+    {%- if template == 'cart' or request.page_type == 'cart' or template.name contains 'checkout' or request.path contains '/checkouts' -%}
+    <script>
+      (function() {
+        function loadKarinexCartTracker() {
+          var s = document.createElement('script');
+          s.src = 'https://invoice-production-8cd6.up.railway.app/karinex-cart-tracker.js';
+          s.defer = true;
+          document.body.appendChild(s);
+        }
+        if ('requestIdleCallback' in window) { requestIdleCallback(loadKarinexCartTracker, { timeout: 3000 }); }
+        else { setTimeout(loadKarinexCartTracker, 3000); }
+      })();
+    </script>
+    {%- endif -%}
 
     <!-- ⭐ Review Widget Script — Only on product pages -->
     {%- if template == 'product' or template.name == 'product' -%}
@@ -420,4 +435,3 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- render 'referral-popup' -%}
   </body>
 </html>
-
