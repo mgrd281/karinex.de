@@ -1468,10 +1468,10 @@
         "image_4": "shopify://shop_images/6AE41BEE-1389-44ED-B38F-3470190F5BF2.png",
         "cta_label": "Alle Beiträge ansehen",
         "cta_link": "/blogs/news",
-        "bg_color": "#faf9f6",
+        "bg_color": "#ffffff",
         "card_bg": "#ffffff",
         "text_color": "#111111",
-        "muted_color": "#777777",
+        "muted_color": "#6b6b6b",
         "accent_color": "#8a6f3f",
         "border_color": "#ebe9e3"
       }
