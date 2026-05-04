@@ -15,6 +15,9 @@
   assign post_limit = section.settings.post_limit | default: 3
   assign articles = source_blog.articles | slice: 0, post_limit
   assign article_count = articles.size
+  assign layout_mode = section.settings.layout_mode | default: 'grid'
+  assign cols = section.settings.posts_per_row | default: 3
+  assign desktop_cols = cols | at_most: article_count
   assign heading = section.settings.heading
   assign eyebrow = section.settings.eyebrow
   assign description = section.settings.description
@@ -61,7 +64,24 @@
     </header>
 
     {%- if article_count > 0 -%}
-      <div class="lux-blog__grid" style="--lux-cols: {{ article_count | at_most: 4 }};">
+      <div class="lux-blog__viewport lux-blog__viewport--{{ layout_mode }}">
+        {%- if layout_mode == 'carousel' -%}
+          <button type="button" class="lux-blog__nav lux-blog__nav--prev" aria-label="Vorherige Beiträge" data-lux-blog-prev hidden>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 6 9 12 15 18"/>
+            </svg>
+          </button>
+          <button type="button" class="lux-blog__nav lux-blog__nav--next" aria-label="Nächste Beiträge" data-lux-blog-next hidden>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 6 15 12 9 18"/>
+            </svg>
+          </button>
+        {%- endif -%}
+      <div
+        class="lux-blog__grid lux-blog__grid--{{ layout_mode }}"
+        style="--lux-cols: {{ desktop_cols }};"
+        data-lux-blog-track
+      >
         {%- for article in articles -%}
           {%- liquid
             assign idx = forloop.index
@@ -147,6 +167,7 @@
           </article>
         {%- endfor -%}
       </div>
+      </div>
 
     {%- else -%}
       <p class="lux-blog__empty">Noch keine Artikel verfügbar.</p>
@@ -217,16 +238,75 @@
   font-weight: 300;
   max-width: 560px;
 }
+.lux-blog__viewport { position: relative; }
 .lux-blog__grid {
   display: grid;
   gap: 24px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 600px) {
-  .lux-blog__grid { grid-template-columns: repeat(2, 1fr); }
+  .lux-blog__grid--grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 990px) {
-  .lux-blog__grid { grid-template-columns: repeat(var(--lux-cols, 3), 1fr); }
+  .lux-blog__grid--grid { grid-template-columns: repeat(var(--lux-cols, 3), 1fr); }
+}
+
+/* ===== Carousel mode ===== */
+.lux-blog__grid--carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(82vw, 320px);
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scroll-padding-inline: clamp(16px, 4vw, 56px);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+  margin-inline: calc(-1 * clamp(16px, 4vw, 56px));
+  padding-inline: clamp(16px, 4vw, 56px);
+}
+.lux-blog__grid--carousel::-webkit-scrollbar { display: none; }
+.lux-blog__grid--carousel > .lux-blog__card {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+@media (min-width: 600px) {
+  .lux-blog__grid--carousel { grid-auto-columns: minmax(0, calc((100% - 40px) / 2)); }
+}
+@media (min-width: 990px) {
+  .lux-blog__grid--carousel { grid-auto-columns: minmax(0, calc((100% - 20px * (var(--lux-cols, 3) - 1)) / var(--lux-cols, 3))); }
+}
+
+.lux-blog__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--lux-border, #ebe9e3);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--lux-text, #111);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transform: translateY(-50%);
+  transition: opacity 0.3s ease, background 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 6px 24px -8px rgba(17, 17, 17, 0.18);
+}
+.lux-blog__nav:hover { background: var(--lux-text, #111); color: #fff; border-color: var(--lux-text, #111); }
+.lux-blog__nav[hidden] { opacity: 0; pointer-events: none; visibility: hidden; }
+.lux-blog__nav:not([hidden]) { display: flex; }
+.lux-blog__nav--prev { left: 8px; }
+.lux-blog__nav--next { right: 8px; }
+@media (max-width: 768px) {
+  .lux-blog__nav { display: none !important; }
 }
 .lux-blog__card {
   display: flex;
@@ -411,6 +491,34 @@
 }
 {%- endstylesheet -%}
 
+<script>
+  (function () {
+    var section = document.querySelector('.lux-blog[data-section-id="{{ section.id }}"]');
+    if (!section) return;
+    var track = section.querySelector('[data-lux-blog-track]');
+    var prev = section.querySelector('[data-lux-blog-prev]');
+    var next = section.querySelector('[data-lux-blog-next]');
+    if (!track || !prev || !next) return;
+
+    function update() {
+      var max = track.scrollWidth - track.clientWidth - 4;
+      prev.hidden = track.scrollLeft <= 4;
+      next.hidden = track.scrollLeft >= max;
+    }
+    function step(dir) {
+      var card = track.querySelector('.lux-blog__card');
+      var amount = card ? card.getBoundingClientRect().width + 20 : track.clientWidth * 0.8;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    prev.addEventListener('click', function () { step(-1); });
+    next.addEventListener('click', function () { step(1); });
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+    setTimeout(update, 80);
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Luxury Blog",
@@ -457,7 +565,31 @@
       "id": "post_limit",
       "label": "Anzahl der Artikel",
       "min": 1,
-      "max": 4,
+      "max": 12,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_mode",
+      "label": "Anzeigeart",
+      "options": [
+        { "value": "grid", "label": "Raster (mehrere Reihen)" },
+        { "value": "carousel", "label": "Karussell (eine Reihe, scrollbar)" }
+      ],
+      "default": "grid",
+      "info": "Karussell: Eine Reihe mit Pfeil-Navigation und Wischen auf Mobil."
+    },
+    {
+      "type": "range",
+      "id": "posts_per_row",
+      "label": "Karten pro Reihe (Desktop)",
+      "min": 2,
+      "max": 5,
       "step": 1,
       "default": 3
     },
