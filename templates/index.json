@@ -1452,10 +1452,6 @@
         "cta_link": ""
       }
     },
-    "trusted_shops_reviews": {
-      "type": "trusted-shops-reviews",
-      "settings": {}
-    },
     "luxury_blog_section": {
       "type": "luxury-blog",
       "settings": {
@@ -1601,7 +1597,6 @@
     "popular_categories_KBD7Rj",
     "lookbook_carousel_HApFi4",
     "comparison_table_RPUUC7",
-    "trusted_shops_reviews",
     "luxury_blog_section",
     "hero_product_slider_GNaDeb",
     "brands_carousel_jrhRJC"
