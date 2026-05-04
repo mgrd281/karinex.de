@@ -1460,7 +1460,7 @@
         "description": "Geschichten, Guides und Insider-Wissen rund um Software, Lifestyle und Mode.",
         "blog": "news",
         "post_limit": 6,
-        "layout_mode": "grid",
+        "layout_mode": "carousel",
         "posts_per_row": 5,
         "image_1": "shopify://shop_images/windows-11-updates-pausieren-neue-funktionen-2026.png",
         "image_2": "shopify://shop_images/A59278D9-37EB-4673-89F4-46ACADAB63BF.png",
