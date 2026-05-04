@@ -52,23 +52,38 @@
     {%- if article_count > 0 -%}
       <div class="lux-blog__grid" style="--lux-cols: {{ article_count | at_most: 4 }};">
         {%- for article in articles -%}
+          {%- liquid
+            assign idx = forloop.index
+            assign override_image = nil
+            case idx
+              when 1
+                assign override_image = section.settings.image_1
+              when 2
+                assign override_image = section.settings.image_2
+              when 3
+                assign override_image = section.settings.image_3
+              when 4
+                assign override_image = section.settings.image_4
+            endcase
+            assign card_image = override_image | default: article.image
+          -%}
           <article class="lux-blog__card">
             <a href="{{ article.url }}" class="lux-blog__media-link" aria-label="{{ article.title | escape }}">
               <div class="lux-blog__media">
-                {%- if article.image -%}
+                {%- if card_image -%}
                   <img
-                    src="{{ article.image | image_url: width: 800 }}"
+                    src="{{ card_image | image_url: width: 800 }}"
                     srcset="
-                      {{ article.image | image_url: width: 400 }} 400w,
-                      {{ article.image | image_url: width: 600 }} 600w,
-                      {{ article.image | image_url: width: 800 }} 800w,
-                      {{ article.image | image_url: width: 1200 }} 1200w
+                      {{ card_image | image_url: width: 400 }} 400w,
+                      {{ card_image | image_url: width: 600 }} 600w,
+                      {{ card_image | image_url: width: 800 }} 800w,
+                      {{ card_image | image_url: width: 1200 }} 1200w
                     "
                     sizes="(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw"
-                    alt="{{ article.image.alt | default: article.title | escape }}"
+                    alt="{{ card_image.alt | default: article.title | escape }}"
                     loading="lazy"
-                    width="{{ article.image.width }}"
-                    height="{{ article.image.height }}"
+                    width="{{ card_image.width }}"
+                    height="{{ card_image.height }}"
                     class="lux-blog__img">
                 {%- else -%}
                   <div class="lux-blog__img-placeholder">
@@ -141,20 +156,20 @@
 
 {%- stylesheet -%}
 .lux-blog {
-  background: var(--lux-bg, #faf9f6);
+  background: var(--lux-bg, transparent);
   color: var(--lux-text, #111);
-  padding: 96px 0;
+  padding: 120px 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .lux-blog__container {
-  max-width: 1320px;
+  max-width: 1480px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 40px;
 }
 .lux-blog__header {
   text-align: center;
-  max-width: 720px;
-  margin: 0 auto 64px;
+  max-width: 760px;
+  margin: 0 auto 80px;
 }
 .lux-blog__eyebrow {
   display: inline-block;
@@ -180,23 +195,23 @@
 .lux-blog__eyebrow::after { left: 100%; }
 .lux-blog__heading {
   font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(36px, 5vw, 64px);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  margin: 0 0 16px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin: 0 0 20px;
   color: var(--lux-text, #111);
 }
 .lux-blog__description {
-  font-size: 16px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.7;
   color: var(--lux-muted, #666);
   margin: 0;
   font-weight: 300;
 }
 .lux-blog__grid {
   display: grid;
-  gap: 28px;
+  gap: 40px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 600px) {
@@ -210,13 +225,13 @@
   flex-direction: column;
   background: var(--lux-card-bg, #ffffff);
   border: 1px solid var(--lux-border, #ebe9e3);
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
 }
 .lux-blog__card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 48px -16px rgba(17, 17, 17, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 32px 64px -20px rgba(17, 17, 17, 0.18);
   border-color: var(--lux-text, #111);
 }
 .lux-blog__media-link {
@@ -227,7 +242,7 @@
   position: relative;
   overflow: hidden;
   background: #ebe9e3;
-  aspect-ratio: 16 / 11;
+  aspect-ratio: 4 / 3;
 }
 .lux-blog__img {
   width: 100%;
@@ -250,45 +265,45 @@
 }
 .lux-blog__category {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  font-size: 10px;
+  top: 20px;
+  left: 20px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   background: rgba(255, 255, 255, 0.95);
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 2px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 .lux-blog__body {
-  padding: 24px 22px 26px;
+  padding: 32px 30px 34px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   flex: 1;
 }
 .lux-blog__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 11px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--lux-muted, #888);
   text-transform: uppercase;
 }
 .lux-blog__dot { color: var(--lux-border, #d4d2cc); }
 .lux-blog__title {
   font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.005em;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -302,8 +317,8 @@
   color: var(--lux-accent, #8a6f3f);
 }
 .lux-blog__excerpt {
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--lux-muted, #666);
   margin: 0;
   font-weight: 300;
@@ -316,15 +331,15 @@
 .lux-blog__readmore {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 12px;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
+  font-weight: 600;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   text-decoration: none;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
   align-self: flex-start;
   border-bottom: 1px solid var(--lux-text, #111);
   transition: gap 0.3s ease, color 0.2s ease;
@@ -364,11 +379,12 @@
   font-style: italic;
 }
 @media (max-width: 768px) {
-  .lux-blog { padding: 64px 0; }
+  .lux-blog { padding: 80px 0; }
   .lux-blog__container { padding: 0 20px; }
-  .lux-blog__header { margin-bottom: 40px; }
-  .lux-blog__body { padding: 20px 18px 22px; }
-  .lux-blog__title { font-size: 18px; }
+  .lux-blog__header { margin-bottom: 48px; }
+  .lux-blog__body { padding: 26px 22px 28px; }
+  .lux-blog__title { font-size: 22px; }
+  .lux-blog__grid { gap: 28px; }
 }
 {%- endstylesheet -%}
 
@@ -421,6 +437,31 @@
       "max": 4,
       "step": 1,
       "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Bilder pro Karte (Override)",
+      "info": "Optional: Eigene Bilder für die einzelnen Karten hochladen. Wenn leer, wird das Artikelbild verwendet."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Bild Karte 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Bild Karte 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Bild Karte 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Bild Karte 4"
     },
     {
       "type": "header",
