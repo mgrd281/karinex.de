@@ -1,0 +1,64 @@
+{%- comment -%}
+  Renders a horizontal product card for the "Popular Products" cart upsell.
+  Accepts: product
+{%- endcomment -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+<div class="pp-card" data-product-id="{{ product.id }}">
+  <a href="{{ product.url }}" class="pp-card__img-wrap" aria-label="{{ product.title | escape }}">
+    {%- if product.featured_image -%}
+      <img
+        src="{{ product.featured_image | image_url: width: 200 }}"
+        alt="{{ product.featured_image.alt | default: product.title | escape }}"
+        loading="lazy"
+        width="100"
+        height="100"
+        class="pp-card__img">
+    {%- endif -%}
+  </a>
+  <div class="pp-card__body">
+    <a href="{{ product.url }}" class="pp-card__title">{{ product.title | truncate: 60 }}</a>
+    {%- if product.metafields.reviews.rating.value != blank -%}
+      {%- assign rating = product.metafields.reviews.rating.value.rating | times: 1.0 -%}
+      {%- assign rating_count = product.metafields.reviews.rating_count | default: 0 -%}
+      <div class="pp-card__rating" aria-label="{{ rating }} von 5">
+        <span class="pp-card__stars" aria-hidden="true">
+          {%- for i in (1..5) -%}
+            {%- if i <= rating -%}★{%- else -%}☆{%- endif -%}
+          {%- endfor -%}
+        </span>
+        {%- if rating_count > 0 -%}
+          <span class="pp-card__rating-count">{{ rating_count }} Bewertungen</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="pp-card__price-row">
+      {%- if on_sale -%}
+        <s class="pp-card__compare">{{ product.compare_at_price | money }}</s>
+        <span class="pp-card__price pp-card__price--sale">{{ product.price | money }}</span>
+      {%- else -%}
+        <span class="pp-card__price">{{ product.price | money }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+  <form method="post" action="{{ routes.cart_add_url }}" class="pp-card__form">
+    <input type="hidden" name="id" value="{{ variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <button
+      type="submit"
+      class="pp-card__btn"
+      aria-label="{{ product.title | escape }} zum Warenkorb hinzufügen"
+      {%- unless product.available %} disabled{%- endunless -%}>
+      {%- if product.available -%}
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      {%- else -%}
+        <span class="pp-card__btn-x" aria-hidden="true">×</span>
+      {%- endif -%}
+    </button>
+  </form>
+</div>

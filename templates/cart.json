@@ -71,10 +71,19 @@
         "subheading": "DAS PASST DAZU",
         "products_to_show": 4
       }
+    },
+    "popular-products": {
+      "type": "popular-products",
+      "settings": {
+        "heading": "Aktuell sehr beliebt",
+        "source": "collection",
+        "products_to_show": 4
+      }
     }
   },
   "order": [
     "cart-section",
+    "popular-products",
     "product_list_xQXFMQ"
   ]
 }
