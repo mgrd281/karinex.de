@@ -158,36 +158,38 @@
 .lux-blog {
   background: var(--lux-bg, transparent);
   color: var(--lux-text, #111);
-  padding: 120px 0;
+  padding: 80px 0 88px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .lux-blog__container {
-  max-width: 1480px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 32px;
 }
 .lux-blog__header {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto 80px;
+  max-width: 640px;
+  margin: 0 auto 56px;
+  background: transparent !important;
+  padding: 0;
 }
 .lux-blog__eyebrow {
   display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3.5px;
   text-transform: uppercase;
-  color: var(--lux-muted, #888);
-  margin-bottom: 20px;
+  color: var(--lux-muted, #999);
+  margin-bottom: 14px;
   position: relative;
-  padding: 0 24px;
+  padding: 0 22px;
 }
 .lux-blog__eyebrow::before,
 .lux-blog__eyebrow::after {
   content: "";
   position: absolute;
   top: 50%;
-  width: 16px;
+  width: 14px;
   height: 1px;
   background: var(--lux-border, #d4d2cc);
 }
@@ -195,23 +197,23 @@
 .lux-blog__eyebrow::after { left: 100%; }
 .lux-blog__heading {
   font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: clamp(36px, 5vw, 64px);
+  font-size: clamp(26px, 3.4vw, 40px);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
-  margin: 0 0 20px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
   color: var(--lux-text, #111);
 }
 .lux-blog__description {
-  font-size: 17px;
-  line-height: 1.7;
-  color: var(--lux-muted, #666);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--lux-muted, #777);
   margin: 0;
   font-weight: 300;
 }
 .lux-blog__grid {
   display: grid;
-  gap: 40px;
+  gap: 24px;
   grid-template-columns: 1fr;
 }
 @media (min-width: 600px) {
@@ -225,14 +227,14 @@
   flex-direction: column;
   background: var(--lux-card-bg, #ffffff);
   border: 1px solid var(--lux-border, #ebe9e3);
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
-  transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 .lux-blog__card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 32px 64px -20px rgba(17, 17, 17, 0.18);
-  border-color: var(--lux-text, #111);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -16px rgba(17, 17, 17, 0.14);
+  border-color: #cfcdc6;
 }
 .lux-blog__media-link {
   display: block;
@@ -242,7 +244,7 @@
   position: relative;
   overflow: hidden;
   background: #ebe9e3;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
 }
 .lux-blog__img {
   width: 100%;
@@ -265,45 +267,45 @@
 }
 .lux-blog__category {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 11px;
+  top: 14px;
+  left: 14px;
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   background: rgba(255, 255, 255, 0.95);
-  padding: 8px 14px;
+  padding: 5px 10px;
   border-radius: 2px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 .lux-blog__body {
-  padding: 32px 30px 34px;
+  padding: 22px 22px 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   flex: 1;
 }
 .lux-blog__meta {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
+  gap: 8px;
+  font-size: 10px;
   letter-spacing: 0.8px;
-  color: var(--lux-muted, #888);
+  color: var(--lux-muted, #999);
   text-transform: uppercase;
 }
 .lux-blog__dot { color: var(--lux-border, #d4d2cc); }
 .lux-blog__title {
   font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: 26px;
+  font-size: 19px;
   font-weight: 400;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -317,13 +319,13 @@
   color: var(--lux-accent, #8a6f3f);
 }
 .lux-blog__excerpt {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--lux-muted, #666);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--lux-muted, #777);
   margin: 0;
   font-weight: 300;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
@@ -331,15 +333,15 @@
 .lux-blog__readmore {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  font-size: 11px;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   text-decoration: none;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
   align-self: flex-start;
   border-bottom: 1px solid var(--lux-text, #111);
   transition: gap 0.3s ease, color 0.2s ease;
@@ -348,17 +350,17 @@
 .lux-blog__readmore:hover { gap: 14px; color: var(--lux-accent, #8a6f3f); border-color: var(--lux-accent, #8a6f3f); }
 .lux-blog__readmore:hover svg { transform: translateX(4px); }
 .lux-blog__footer {
-  margin-top: 56px;
+  margin-top: 44px;
   text-align: center;
 }
 .lux-blog__cta {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 36px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 2px;
+  gap: 10px;
+  padding: 13px 30px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   background: transparent;
@@ -379,12 +381,12 @@
   font-style: italic;
 }
 @media (max-width: 768px) {
-  .lux-blog { padding: 80px 0; }
+  .lux-blog { padding: 56px 0 64px; }
   .lux-blog__container { padding: 0 20px; }
-  .lux-blog__header { margin-bottom: 48px; }
-  .lux-blog__body { padding: 26px 22px 28px; }
-  .lux-blog__title { font-size: 22px; }
-  .lux-blog__grid { gap: 28px; }
+  .lux-blog__header { margin-bottom: 36px; }
+  .lux-blog__body { padding: 18px 18px 20px; }
+  .lux-blog__title { font-size: 18px; }
+  .lux-blog__grid { gap: 20px; }
 }
 {%- endstylesheet -%}
 
