@@ -1464,6 +1464,7 @@
         "description": "Geschichten, Guides und Insider-Wissen rund um Software, Lifestyle und Mode.",
         "blog": "news",
         "post_limit": 3,
+        "image_1": "shopify://shop_images/windows-11-updates-pausieren-neue-funktionen-2026.png",
         "cta_label": "Alle Beiträge ansehen",
         "cta_link": "/blogs/news",
         "bg_color": "#faf9f6",
