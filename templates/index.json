@@ -1462,14 +1462,16 @@
         "eyebrow": "Journal",
         "heading": "Aktuelles aus dem Magazin",
         "description": "Geschichten, Guides und Insider-Wissen rund um Software, Lifestyle und Mode.",
+        "blog": "news",
         "post_limit": 3,
         "cta_label": "Alle Beiträge ansehen",
         "cta_link": "/blogs/news",
         "bg_color": "#faf9f6",
+        "card_bg": "#ffffff",
         "text_color": "#111111",
         "muted_color": "#777777",
         "accent_color": "#8a6f3f",
-        "border_color": "#e5e3dc"
+        "border_color": "#ebe9e3"
       }
     },
     "hero_product_slider_GNaDeb": {

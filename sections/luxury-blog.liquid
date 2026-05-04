@@ -1,5 +1,17 @@
 {%- liquid
   assign source_blog = blogs[section.settings.blog]
+  if source_blog == blank or source_blog.articles_count == 0
+    assign source_blog = blogs.news
+  endif
+  if source_blog == blank or source_blog.articles_count == 0
+    for b in blogs
+      if b.articles_count > 0
+        assign source_blog = b
+        break
+      endif
+    endfor
+  endif
+
   assign post_limit = section.settings.post_limit | default: 3
   assign articles = source_blog.articles | slice: 0, post_limit
   assign article_count = articles.size
@@ -8,6 +20,9 @@
   assign description = section.settings.description
   assign cta_label = section.settings.cta_label
   assign cta_link = section.settings.cta_link
+  if cta_link == blank and source_blog
+    assign cta_link = source_blog.url
+  endif
 -%}
 
 <section
@@ -15,6 +30,7 @@
   data-section-id="{{ section.id }}"
   style="
     --lux-bg: {{ section.settings.bg_color }};
+    --lux-card-bg: {{ section.settings.card_bg }};
     --lux-text: {{ section.settings.text_color }};
     --lux-muted: {{ section.settings.muted_color }};
     --lux-accent: {{ section.settings.accent_color }};
@@ -34,51 +50,43 @@
     </header>
 
     {%- if article_count > 0 -%}
-      <div class="lux-blog__grid lux-blog__grid--{{ article_count }}">
+      <div class="lux-blog__grid" style="--lux-cols: {{ article_count | at_most: 4 }};">
         {%- for article in articles -%}
-          {%- assign is_feature = false -%}
-          {%- if forloop.first and article_count >= 3 -%}
-            {%- assign is_feature = true -%}
-          {%- endif -%}
-
-          <article class="lux-blog__card{% if is_feature %} lux-blog__card--feature{% endif %}">
-            <a href="{{ article.url }}" class="lux-blog__media" aria-hidden="true" tabindex="-1">
-              {%- if article.image -%}
-                <img
-                  src="{{ article.image | image_url: width: 1200 }}"
-                  srcset="
-                    {{ article.image | image_url: width: 600 }} 600w,
-                    {{ article.image | image_url: width: 900 }} 900w,
-                    {{ article.image | image_url: width: 1200 }} 1200w,
-                    {{ article.image | image_url: width: 1600 }} 1600w
-                  "
-                  sizes="(min-width: 990px) {% if is_feature %}50vw{% else %}25vw{% endif %}, 100vw"
-                  alt="{{ article.image.alt | default: article.title | escape }}"
-                  loading="lazy"
-                  width="{{ article.image.width }}"
-                  height="{{ article.image.height }}"
-                  class="lux-blog__img">
-              {%- else -%}
-                <div class="lux-blog__img-placeholder"></div>
-              {%- endif -%}
+          <article class="lux-blog__card">
+            <a href="{{ article.url }}" class="lux-blog__media-link" aria-label="{{ article.title | escape }}">
+              <div class="lux-blog__media">
+                {%- if article.image -%}
+                  <img
+                    src="{{ article.image | image_url: width: 800 }}"
+                    srcset="
+                      {{ article.image | image_url: width: 400 }} 400w,
+                      {{ article.image | image_url: width: 600 }} 600w,
+                      {{ article.image | image_url: width: 800 }} 800w,
+                      {{ article.image | image_url: width: 1200 }} 1200w
+                    "
+                    sizes="(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw"
+                    alt="{{ article.image.alt | default: article.title | escape }}"
+                    loading="lazy"
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                    class="lux-blog__img">
+                {%- else -%}
+                  <div class="lux-blog__img-placeholder">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+                {%- assign cat_tag = article.tags | first -%}
+                {%- if cat_tag != blank -%}
+                  <span class="lux-blog__category">{{ cat_tag }}</span>
+                {%- endif -%}
+              </div>
             </a>
 
             <div class="lux-blog__body">
-              {%- assign cat_tag = article.tags | first -%}
-              {%- if cat_tag != blank -%}
-                <span class="lux-blog__category">{{ cat_tag }}</span>
-              {%- endif -%}
-
-              <h3 class="lux-blog__title">
-                <a href="{{ article.url }}">{{ article.title }}</a>
-              </h3>
-
-              {%- if is_feature and article.excerpt_or_content != blank -%}
-                <p class="lux-blog__excerpt">
-                  {{ article.excerpt_or_content | strip_html | truncatewords: 28 }}
-                </p>
-              {%- endif -%}
-
               <div class="lux-blog__meta">
                 <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
                   {{ article.published_at | date: format: 'abbreviated_date' }}
@@ -92,7 +100,17 @@
                 {%- endif -%}
               </div>
 
-              <a href="{{ article.url }}" class="lux-blog__readmore" aria-label="{{ article.title | escape }}">
+              <h3 class="lux-blog__title">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h3>
+
+              {%- if article.excerpt_or_content != blank -%}
+                <p class="lux-blog__excerpt">
+                  {{ article.excerpt_or_content | strip_html | truncatewords: 22 }}
+                </p>
+              {%- endif -%}
+
+              <a href="{{ article.url }}" class="lux-blog__readmore" aria-label="{{ article.title | escape }} weiterlesen">
                 <span>Weiterlesen</span>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <line x1="4" y1="12" x2="20" y2="12"/>
@@ -129,7 +147,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .lux-blog__container {
-  max-width: 1280px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 32px;
 }
@@ -162,11 +180,11 @@
 .lux-blog__eyebrow::after { left: 100%; }
 .lux-blog__heading {
   font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: clamp(32px, 4.5vw, 56px);
+  font-size: clamp(28px, 4vw, 48px);
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.01em;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   color: var(--lux-text, #111);
 }
 .lux-blog__description {
@@ -178,55 +196,40 @@
 }
 .lux-blog__grid {
   display: grid;
-  gap: 32px;
-}
-.lux-blog__grid--3 {
+  gap: 28px;
   grid-template-columns: 1fr;
 }
+@media (min-width: 600px) {
+  .lux-blog__grid { grid-template-columns: repeat(2, 1fr); }
+}
 @media (min-width: 990px) {
-  .lux-blog__grid--3 {
-    grid-template-columns: 1.4fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 40px;
-  }
-  .lux-blog__grid--3 .lux-blog__card--feature {
-    grid-row: 1 / span 2;
-  }
+  .lux-blog__grid { grid-template-columns: repeat(var(--lux-cols, 3), 1fr); }
 }
-.lux-blog__grid--2 { grid-template-columns: 1fr; }
-@media (min-width: 768px) {
-  .lux-blog__grid--2 { grid-template-columns: 1fr 1fr; gap: 40px; }
-}
-.lux-blog__grid--1 { grid-template-columns: 1fr; max-width: 880px; margin: 0 auto; }
 .lux-blog__card {
   display: flex;
   flex-direction: column;
-  background: transparent;
+  background: var(--lux-card-bg, #ffffff);
+  border: 1px solid var(--lux-border, #ebe9e3);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.lux-blog__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -16px rgba(17, 17, 17, 0.12);
+  border-color: var(--lux-text, #111);
+}
+.lux-blog__media-link {
+  display: block;
+  text-decoration: none;
 }
 .lux-blog__media {
-  display: block;
   position: relative;
   overflow: hidden;
   background: #ebe9e3;
-  aspect-ratio: 4 / 3;
-  margin-bottom: 24px;
+  aspect-ratio: 16 / 11;
 }
-.lux-blog__card--feature .lux-blog__media {
-  aspect-ratio: 4 / 5;
-}
-@media (min-width: 990px) {
-  .lux-blog__card--feature {
-    display: grid;
-    grid-template-rows: 1fr auto;
-  }
-  .lux-blog__card--feature .lux-blog__media {
-    aspect-ratio: auto;
-    height: 100%;
-    margin-bottom: 24px;
-  }
-}
-.lux-blog__img,
-.lux-blog__img-placeholder {
+.lux-blog__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -234,91 +237,104 @@
   transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .lux-blog__img-placeholder {
-  background: linear-gradient(135deg, #ebe9e3 0%, #d4d2cc 100%);
-}
-.lux-blog__media:hover .lux-blog__img,
-.lux-blog__media:focus-visible .lux-blog__img {
-  transform: scale(1.04);
-}
-.lux-blog__body {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ebe9e3 0%, #d4d2cc 100%);
+  color: #fff;
+}
+.lux-blog__card:hover .lux-blog__img {
+  transform: scale(1.06);
 }
 .lux-blog__category {
+  position: absolute;
+  top: 16px;
+  left: 16px;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--lux-accent, #8a6f3f);
-  padding: 4px 0;
-}
-.lux-blog__title {
-  font-family: Georgia, "Times New Roman", "Playfair Display", serif;
-  font-size: 22px;
-  font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.005em;
-  margin: 0;
-}
-.lux-blog__card--feature .lux-blog__title {
-  font-size: clamp(26px, 2.6vw, 34px);
-  line-height: 1.2;
-}
-.lux-blog__title a {
   color: var(--lux-text, #111);
-  text-decoration: none;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.4s ease;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 2px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
-.lux-blog__title a:hover,
-.lux-blog__title a:focus-visible {
-  background-size: 100% 1px;
-}
-.lux-blog__excerpt {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--lux-muted, #555);
-  margin: 4px 0 0;
-  font-weight: 300;
+.lux-blog__body {
+  padding: 24px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
 }
 .lux-blog__meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 0.5px;
   color: var(--lux-muted, #888);
-  margin-top: 4px;
+  text-transform: uppercase;
 }
 .lux-blog__dot { color: var(--lux-border, #d4d2cc); }
+.lux-blog__title {
+  font-family: Georgia, "Times New Roman", "Playfair Display", serif;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.lux-blog__title a {
+  color: var(--lux-text, #111);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.lux-blog__title a:hover,
+.lux-blog__title a:focus-visible {
+  color: var(--lux-accent, #8a6f3f);
+}
+.lux-blog__excerpt {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--lux-muted, #666);
+  margin: 0;
+  font-weight: 300;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
 .lux-blog__readmore {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
-  font-size: 12px;
+  margin-top: 4px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--lux-text, #111);
   text-decoration: none;
   padding-bottom: 4px;
+  align-self: flex-start;
   border-bottom: 1px solid var(--lux-text, #111);
-  transition: gap 0.3s ease, opacity 0.2s ease;
+  transition: gap 0.3s ease, color 0.2s ease;
 }
 .lux-blog__readmore svg { transition: transform 0.3s ease; }
-.lux-blog__readmore:hover { gap: 14px; }
+.lux-blog__readmore:hover { gap: 14px; color: var(--lux-accent, #8a6f3f); border-color: var(--lux-accent, #8a6f3f); }
 .lux-blog__readmore:hover svg { transform: translateX(4px); }
 .lux-blog__footer {
-  margin-top: 64px;
+  margin-top: 56px;
   text-align: center;
-  padding-top: 48px;
-  border-top: 1px solid var(--lux-border, #e5e3dc);
 }
 .lux-blog__cta {
   display: inline-flex;
@@ -351,9 +367,8 @@
   .lux-blog { padding: 64px 0; }
   .lux-blog__container { padding: 0 20px; }
   .lux-blog__header { margin-bottom: 40px; }
-  .lux-blog__media { margin-bottom: 16px; }
-  .lux-blog__card--feature .lux-blog__title { font-size: 24px; }
-  .lux-blog__title { font-size: 20px; }
+  .lux-blog__body { padding: 20px 18px 22px; }
+  .lux-blog__title { font-size: 18px; }
 }
 {%- endstylesheet -%}
 
@@ -395,17 +410,17 @@
     {
       "type": "blog",
       "id": "blog",
-      "label": "Blog auswählen"
+      "label": "Blog auswählen",
+      "info": "Wenn leer gelassen, werden automatisch Artikel aus dem 'News'-Blog geladen."
     },
     {
       "type": "range",
       "id": "post_limit",
       "label": "Anzahl der Artikel",
       "min": 1,
-      "max": 6,
+      "max": 4,
       "step": 1,
-      "default": 3,
-      "info": "3 Artikel = 1 großer + 2 kleine (Editorial-Layout)"
+      "default": 3
     },
     {
       "type": "header",
@@ -420,7 +435,8 @@
     {
       "type": "url",
       "id": "cta_link",
-      "label": "Button-Link"
+      "label": "Button-Link",
+      "info": "Wenn leer, wird auf den ausgewählten Blog verlinkt."
     },
     {
       "type": "header",
@@ -429,8 +445,14 @@
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Hintergrund",
+      "label": "Sektion-Hintergrund",
       "default": "#faf9f6"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Karten-Hintergrund",
+      "default": "#ffffff"
     },
     {
       "type": "color",
@@ -447,14 +469,14 @@
     {
       "type": "color",
       "id": "accent_color",
-      "label": "Akzent (Kategorie)",
+      "label": "Akzent (Hover)",
       "default": "#8a6f3f"
     },
     {
       "type": "color",
       "id": "border_color",
-      "label": "Trennlinien",
-      "default": "#e5e3dc"
+      "label": "Rahmen",
+      "default": "#ebe9e3"
     }
   ],
   "presets": [
