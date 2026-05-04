@@ -4,10 +4,17 @@
     article    — Shopify article drop
     card_image — image drop (override) or article.image fallback
   Optional:
-    card_style — framed | editorial | overlay | minimal (default: framed)
+    card_style — framed | editorial | overlay | minimal |
+                 karinex-cream | karinex-forest | karinex-numbered
+                 (default: framed)
+    card_index — number (1-based) used for editorial numbering
 {%- endcomment -%}
 {%- assign style = card_style | default: 'framed' -%}
+{%- assign index_padded = card_index | default: 1 | prepend: '0' | slice: -2, 2 -%}
 <article class="lux-blog__card lux-blog__card--{{ style }}">
+  {%- if style == 'karinex-numbered' -%}
+    <span class="lux-blog__number" aria-hidden="true">{{ index_padded }}</span>
+  {%- endif -%}
   <a href="{{ article.url }}" class="lux-blog__media-link" aria-label="{{ article.title | escape }}">
     <div class="lux-blog__media">
       {%- if card_image -%}
