@@ -1,0 +1,73 @@
+{%- comment -%}
+  Renders one Luxury Blog card.
+  Required:
+    article    — Shopify article drop
+    card_image — image drop (override) or article.image fallback
+{%- endcomment -%}
+<article class="lux-blog__card">
+  <a href="{{ article.url }}" class="lux-blog__media-link" aria-label="{{ article.title | escape }}">
+    <div class="lux-blog__media">
+      {%- if card_image -%}
+        <img
+          src="{{ card_image | image_url: width: 800 }}"
+          srcset="
+            {{ card_image | image_url: width: 400 }} 400w,
+            {{ card_image | image_url: width: 600 }} 600w,
+            {{ card_image | image_url: width: 800 }} 800w,
+            {{ card_image | image_url: width: 1200 }} 1200w
+          "
+          sizes="(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw"
+          alt="{{ card_image.alt | default: article.title | escape }}"
+          loading="lazy"
+          width="{{ card_image.width }}"
+          height="{{ card_image.height }}"
+          class="lux-blog__img">
+      {%- else -%}
+        <div class="lux-blog__img-placeholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      {%- endif -%}
+      {%- assign cat_tag = article.tags | first -%}
+      {%- if cat_tag != blank -%}
+        <span class="lux-blog__category">{{ cat_tag }}</span>
+      {%- endif -%}
+    </div>
+  </a>
+
+  <div class="lux-blog__body">
+    <div class="lux-blog__meta">
+      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+        {{ article.published_at | date: format: 'abbreviated_date' }}
+      </time>
+      {%- if article.content != blank -%}
+        {%- assign words = article.content | strip_html | split: ' ' | size -%}
+        {%- assign minutes = words | divided_by: 220.0 | ceil -%}
+        {%- if minutes < 1 -%}{%- assign minutes = 1 -%}{%- endif -%}
+        <span class="lux-blog__dot" aria-hidden="true">·</span>
+        <span>{{ minutes }} Min. Lesezeit</span>
+      {%- endif -%}
+    </div>
+
+    <h3 class="lux-blog__title">
+      <a href="{{ article.url }}">{{ article.title }}</a>
+    </h3>
+
+    {%- if article.excerpt_or_content != blank -%}
+      <p class="lux-blog__excerpt">
+        {{ article.excerpt_or_content | strip_html | truncatewords: 22 }}
+      </p>
+    {%- endif -%}
+
+    <a href="{{ article.url }}" class="lux-blog__readmore" aria-label="{{ article.title | escape }} weiterlesen">
+      <span>Weiterlesen</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <polyline points="14 6 20 12 14 18"/>
+      </svg>
+    </a>
+  </div>
+</article>
