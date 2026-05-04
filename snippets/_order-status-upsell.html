@@ -1,0 +1,190 @@
+<!--
+  KARINEX — Post-Purchase Upsell ("Aktuell sehr beliebt")
+  Paste into: Shopify Admin → Settings → Checkout → Order status page → Additional scripts
+  This snippet is HTML/CSS/JS only (no Liquid). It fetches 4 products from the
+  "unsere-bestseller" collection and renders them on the Thank You page.
+-->
+<style>
+  #karinex-pp-upsell {
+    max-width: 600px;
+    margin: 32px auto;
+    padding: 24px 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  #karinex-pp-upsell h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: #111;
+  }
+  .karinex-pp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .karinex-pp-card {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .karinex-pp-card:last-child { border-bottom: 0; }
+  .karinex-pp-card__img-wrap {
+    display: block;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background: #f5f5f5;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .karinex-pp-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .karinex-pp-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .karinex-pp-card__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111;
+    text-decoration: none;
+    line-height: 1.3;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .karinex-pp-card__title:hover { text-decoration: underline; }
+  .karinex-pp-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 14px;
+  }
+  .karinex-pp-card__price { font-weight: 600; color: #111; }
+  .karinex-pp-card__price--sale { color: #e10600; }
+  .karinex-pp-card__compare { color: #999; font-size: 13px; text-decoration: line-through; }
+  .karinex-pp-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 6px;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+  .karinex-pp-card__btn:hover { background: #1d4ed8; }
+  @media (max-width: 480px) {
+    .karinex-pp-card { grid-template-columns: 64px 1fr auto; gap: 10px; }
+    .karinex-pp-card__img-wrap { width: 64px; height: 64px; }
+    .karinex-pp-card__btn { width: 40px; height: 40px; }
+  }
+</style>
+
+<div id="karinex-pp-upsell" hidden>
+  <h3>Aktuell sehr beliebt</h3>
+  <div class="karinex-pp-list" id="karinex-pp-list"></div>
+</div>
+
+<script>
+(function () {
+  var COLLECTION_HANDLE = 'unsere-bestseller';
+  var LIMIT = 4;
+  var CURRENCY = 'EUR';
+  var LOCALE = 'de-DE';
+
+  function formatPrice(amountStr) {
+    var n = parseFloat(amountStr);
+    if (isNaN(n)) return '';
+    try {
+      return new Intl.NumberFormat(LOCALE, { style: 'currency', currency: CURRENCY }).format(n);
+    } catch (e) {
+      return n.toFixed(2) + ' €';
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function buildCard(p) {
+    var v = (p.variants && p.variants[0]) || {};
+    var price = formatPrice(v.price);
+    var compare = (v.compare_at_price && parseFloat(v.compare_at_price) > parseFloat(v.price))
+      ? formatPrice(v.compare_at_price)
+      : null;
+    var img = (p.images && p.images[0] && p.images[0].src) ? p.images[0].src : '';
+    var url = '/products/' + p.handle;
+    var priceHtml = compare
+      ? '<s class="karinex-pp-card__compare">' + compare + '</s>'
+        + '<span class="karinex-pp-card__price karinex-pp-card__price--sale">' + price + '</span>'
+      : '<span class="karinex-pp-card__price">' + price + '</span>';
+    return ''
+      + '<div class="karinex-pp-card">'
+      +   '<a href="' + url + '" target="_blank" rel="noopener" class="karinex-pp-card__img-wrap">'
+      +     (img ? '<img src="' + img + '" alt="' + escapeHtml(p.title) + '" class="karinex-pp-card__img" loading="lazy">' : '')
+      +   '</a>'
+      +   '<div class="karinex-pp-card__body">'
+      +     '<a href="' + url + '" target="_blank" rel="noopener" class="karinex-pp-card__title">' + escapeHtml(p.title) + '</a>'
+      +     '<div class="karinex-pp-card__price-row">' + priceHtml + '</div>'
+      +   '</div>'
+      +   '<a href="' + url + '" target="_blank" rel="noopener" class="karinex-pp-card__btn" aria-label="' + escapeHtml(p.title) + ' ansehen">'
+      +     '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+      +   '</a>'
+      + '</div>';
+  }
+
+  function placeUpsell(wrap) {
+    var hosts = [
+      document.querySelector('.os-step__section--actions'),
+      document.querySelector('.os-step__content'),
+      document.querySelector('main'),
+      document.body
+    ];
+    for (var i = 0; i < hosts.length; i++) {
+      if (hosts[i]) { hosts[i].appendChild(wrap); return; }
+    }
+  }
+
+  function render(products) {
+    var list = document.getElementById('karinex-pp-list');
+    var wrap = document.getElementById('karinex-pp-upsell');
+    if (!list || !wrap || !products || !products.length) return;
+    list.innerHTML = products.map(buildCard).join('');
+    wrap.hidden = false;
+    placeUpsell(wrap);
+  }
+
+  function init() {
+    fetch('/collections/' + COLLECTION_HANDLE + '/products.json?limit=' + LIMIT, {
+      credentials: 'same-origin'
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) { if (data && data.products) render(data.products); })
+      .catch(function () { /* silent */ });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
