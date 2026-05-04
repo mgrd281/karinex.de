@@ -3,8 +3,11 @@
   Required:
     article    — Shopify article drop
     card_image — image drop (override) or article.image fallback
+  Optional:
+    card_style — framed | editorial | overlay | minimal (default: framed)
 {%- endcomment -%}
-<article class="lux-blog__card">
+{%- assign style = card_style | default: 'framed' -%}
+<article class="lux-blog__card lux-blog__card--{{ style }}">
   <a href="{{ article.url }}" class="lux-blog__media-link" aria-label="{{ article.title | escape }}">
     <div class="lux-blog__media">
       {%- if card_image -%}

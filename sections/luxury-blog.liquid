@@ -30,6 +30,7 @@
   endif
 
   assign layout_mode = section.settings.layout_mode | default: 'grid'
+  assign card_style = section.settings.card_style | default: 'framed'
   assign cols = section.settings.posts_per_row | default: 3
   assign desktop_cols = cols | at_most: article_count
   if desktop_cols < 1
@@ -104,7 +105,7 @@
             {%- assign block_article = block.settings.article -%}
             {%- if block_article != blank -%}
               {%- assign card_image = block.settings.image | default: block_article.image -%}
-              {% render 'lux-blog-card', article: block_article, card_image: card_image %}
+              {% render 'lux-blog-card', article: block_article, card_image: card_image, card_style: card_style %}
             {%- endif -%}
           {%- endfor -%}
         {%- else -%}
@@ -124,7 +125,7 @@
               endcase
               assign card_image = override_image | default: article.image
             -%}
-            {% render 'lux-blog-card', article: article, card_image: card_image %}
+            {% render 'lux-blog-card', article: article, card_image: card_image, card_style: card_style %}
           {%- endfor -%}
         {%- endif -%}
       </div>
@@ -276,6 +277,7 @@
   border: 1px solid var(--lux-border, #ebe9e3);
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
   transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 .lux-blog__card:hover {
@@ -283,6 +285,115 @@
   box-shadow: 0 20px 40px -16px rgba(17, 17, 17, 0.14);
   border-color: #cfcdc6;
 }
+
+/* ===== Style: editorial (frameless) ===== */
+.lux-blog__card--editorial {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.lux-blog__card--editorial:hover {
+  transform: translateY(-3px);
+  box-shadow: none;
+  border-color: transparent;
+}
+.lux-blog__card--editorial .lux-blog__media {
+  aspect-ratio: 4 / 5;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+.lux-blog__card--editorial .lux-blog__body { padding: 0; }
+.lux-blog__card--editorial .lux-blog__category {
+  background: transparent;
+  color: #fff;
+  padding: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.lux-blog__card--editorial .lux-blog__title {
+  font-size: 22px;
+  -webkit-line-clamp: 3;
+}
+.lux-blog__card--editorial .lux-blog__readmore {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* ===== Style: overlay (text on image) ===== */
+.lux-blog__card--overlay {
+  background: #111;
+  border: 0;
+  border-radius: 4px;
+  min-height: 460px;
+  color: #fff;
+}
+.lux-blog__card--overlay:hover { box-shadow: 0 28px 56px -20px rgba(0, 0, 0, 0.4); }
+.lux-blog__card--overlay .lux-blog__media-link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.lux-blog__card--overlay .lux-blog__media {
+  aspect-ratio: auto;
+  height: 100%;
+  width: 100%;
+}
+.lux-blog__card--overlay .lux-blog__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+}
+.lux-blog__card--overlay .lux-blog__body {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: 28px 26px 28px;
+  color: #fff;
+}
+.lux-blog__card--overlay .lux-blog__category {
+  position: relative;
+  inset: auto;
+  display: inline-block;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  padding: 0;
+  margin-bottom: 8px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.lux-blog__card--overlay .lux-blog__title { color: #fff; -webkit-line-clamp: 3; font-size: 22px; }
+.lux-blog__card--overlay .lux-blog__title a { color: #fff; }
+.lux-blog__card--overlay .lux-blog__title a:hover { color: rgba(255,255,255,0.85); }
+.lux-blog__card--overlay .lux-blog__meta { color: rgba(255,255,255,0.75); }
+.lux-blog__card--overlay .lux-blog__excerpt { color: rgba(255,255,255,0.85); -webkit-line-clamp: 2; }
+.lux-blog__card--overlay .lux-blog__readmore {
+  color: #fff;
+  border-color: #fff;
+}
+.lux-blog__card--overlay .lux-blog__readmore:hover { color: #fff; border-color: #fff; opacity: 0.8; }
+
+/* ===== Style: minimal (image + title + date only) ===== */
+.lux-blog__card--minimal {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.lux-blog__card--minimal:hover { transform: translateY(-2px); box-shadow: none; border-color: transparent; }
+.lux-blog__card--minimal .lux-blog__media {
+  aspect-ratio: 1 / 1;
+  border-radius: 0;
+  margin-bottom: 16px;
+}
+.lux-blog__card--minimal .lux-blog__body { padding: 0; gap: 6px; }
+.lux-blog__card--minimal .lux-blog__category,
+.lux-blog__card--minimal .lux-blog__excerpt,
+.lux-blog__card--minimal .lux-blog__readmore { display: none; }
+.lux-blog__card--minimal .lux-blog__title { font-size: 17px; -webkit-line-clamp: 2; }
 .lux-blog__media-link {
   display: block;
   text-decoration: none;
@@ -544,6 +655,19 @@
     {
       "type": "header",
       "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Kartenstil",
+      "options": [
+        { "value": "framed", "label": "Rahmen (Standard, weißer Hintergrund)" },
+        { "value": "editorial", "label": "Editorial (rahmenlos, Hochformat)" },
+        { "value": "overlay", "label": "Overlay (Text auf Bild)" },
+        { "value": "minimal", "label": "Minimal (nur Bild + Titel)" }
+      ],
+      "default": "framed",
+      "info": "Wähle einen Designstil und wechsle jederzeit zwischen ihnen."
     },
     {
       "type": "select",
