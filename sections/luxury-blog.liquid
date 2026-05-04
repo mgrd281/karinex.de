@@ -162,9 +162,9 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 .lux-blog__container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 32px;
+  max-width: none;
+  margin: 0;
+  padding: 0 clamp(16px, 4vw, 56px);
 }
 .lux-blog__header {
   display: flex;
@@ -379,7 +379,7 @@
 }
 @media (max-width: 768px) {
   .lux-blog { padding: 56px 0 64px; }
-  .lux-blog__container { padding: 0 20px; }
+  .lux-blog__container { padding: 0 16px; }
   .lux-blog__header {
     flex-direction: column;
     align-items: flex-start;
