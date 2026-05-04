@@ -1456,6 +1456,22 @@
       "type": "trusted-shops-reviews",
       "settings": {}
     },
+    "luxury_blog_section": {
+      "type": "luxury-blog",
+      "settings": {
+        "eyebrow": "Journal",
+        "heading": "Aktuelles aus dem Magazin",
+        "description": "Geschichten, Guides und Insider-Wissen rund um Software, Lifestyle und Mode.",
+        "post_limit": 3,
+        "cta_label": "Alle Beiträge ansehen",
+        "cta_link": "/blogs/news",
+        "bg_color": "#faf9f6",
+        "text_color": "#111111",
+        "muted_color": "#777777",
+        "accent_color": "#8a6f3f",
+        "border_color": "#e5e3dc"
+      }
+    },
     "hero_product_slider_GNaDeb": {
       "type": "hero-product-slider",
       "disabled": true,
@@ -1583,6 +1599,7 @@
     "lookbook_carousel_HApFi4",
     "comparison_table_RPUUC7",
     "trusted_shops_reviews",
+    "luxury_blog_section",
     "hero_product_slider_GNaDeb",
     "brands_carousel_jrhRJC"
   ]
