@@ -236,7 +236,7 @@
 
 .kx-menu-backdrop {
   --kx-bg: #FAFAFA;
-  --kx-card: #F4F4F4;
+  --kx-card: #F2EFE9;
   --kx-forest: #1D4739;
   --kx-gold: #C9B486;
   --kx-black: #0A0A0A;
@@ -262,7 +262,7 @@
 
 .kx-menu {
   --kx-bg: #FAFAFA;
-  --kx-card: #F4F4F4;
+  --kx-card: #F2EFE9;
   --kx-forest: #1D4739;
   --kx-gold: #C9B486;
   --kx-black: #0A0A0A;
@@ -363,15 +363,26 @@
 .kx-menu.is-open .kx-menu__close { opacity: 1; }
 .kx-menu__close:hover { color: var(--kx-forest); }
 
-/* ---------- Scroll body ---------- */
+/* ---------- Scroll body — invisible scrollbar ---------- */
 .kx-menu__scroll {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE / legacy Edge */
 }
-.kx-menu__scroll::-webkit-scrollbar { width: 0; }
+.kx-menu__scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+  background: transparent;
+}
+.kx-menu__scroll::-webkit-scrollbar-track,
+.kx-menu__scroll::-webkit-scrollbar-thumb { background: transparent; }
+.kx-menu, .kx-menu * { scrollbar-width: none; -ms-overflow-style: none; }
+.kx-menu *::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
 /* ---------- Staged reveal ---------- */
 .kx-menu__stage {
@@ -409,7 +420,7 @@
   align-items: center;
   justify-content: center;
   padding: 14px;
-  background: #ffffff;
+  background: var(--kx-card);
   border-radius: 6px 6px 0 0;
 }
 .kx-menu__bs-img {
