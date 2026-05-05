@@ -1455,9 +1455,9 @@
     "luxury_blog_section": {
       "type": "luxury-blog",
       "settings": {
-        "eyebrow": "Journal",
-        "heading": "Aktuelles aus dem Magazin",
-        "description": "Geschichten, Guides und Insider-Wissen rund um Software, Lifestyle und Mode.",
+        "eyebrow": "",
+        "heading": "",
+        "description": "",
         "source_mode": "automatic",
         "blog": "news",
         "post_limit": 8,
