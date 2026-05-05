@@ -1276,7 +1276,7 @@
       "name": "BF Slider",
       "settings": {
         "heading": "Aktuelle Deals für dich",
-        "collection": "software",
+        "collection": "sale",
         "show_subheading": true,
         "subheading": "Unsere besten Preise für Sie",
         "heading_color": "#000000",
