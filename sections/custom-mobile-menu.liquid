@@ -51,32 +51,104 @@
     { "type": "text", "id": "fallback_handle_5", "label": "Fallback Handle 5", "default": "windows-11-home-key" },
     { "type": "text", "id": "fallback_handle_6", "label": "Fallback Handle 6", "default": "office-2024-standard-mac-key-download" },
 
-    { "type": "header", "content": "Primäre Navigation" },
-    { "type": "url", "id": "link_office", "label": "Microsoft Office Link" },
-    { "type": "url", "id": "link_windows", "label": "Microsoft Windows Link" },
-    { "type": "url", "id": "link_all", "label": "Alle Produkte Link" },
-    { "type": "url", "id": "link_offers", "label": "Angebote Link" },
+    { "type": "header", "content": "Microsoft Office (Drill-down)" },
+    { "type": "text", "id": "office_label", "label": "Label", "default": "Microsoft Office" },
+    { "type": "text", "id": "office_mark",  "label": "Decorative Letter", "default": "O" },
+    { "type": "url",  "id": "office_link",  "label": "Direkt-Link (Fallback wenn keine Produkte)" },
+    { "type": "text", "id": "office_product_1", "label": "Produkt 1 Handle", "default": "office-2024-professional-plus-key" },
+    { "type": "text", "id": "office_product_2", "label": "Produkt 2 Handle", "default": "microsoft-office-2024-standard-vollversion-fur-windows" },
+    { "type": "text", "id": "office_product_3", "label": "Produkt 3 Handle", "default": "office-2024-home-windows" },
+    { "type": "text", "id": "office_product_4", "label": "Produkt 4 Handle", "default": "office-2024-home-and-business-mac" },
+    { "type": "text", "id": "office_product_5", "label": "Produkt 5 Handle", "default": "office-2021-professional-plus-1pc" },
+    { "type": "text", "id": "office_product_6", "label": "Produkt 6 Handle", "default": "microsoft-office-2021-home-business-key-download" },
+    { "type": "text", "id": "office_product_7", "label": "Produkt 7 Handle", "default": "microsoft-office-2019-professional-plus-windows" },
+    { "type": "text", "id": "office_product_8", "label": "Produkt 8 Handle", "default": "microsoft-office-2019-standard-windows" },
+
+    { "type": "header", "content": "Microsoft Windows (Drill-down)" },
+    { "type": "text", "id": "windows_label", "label": "Label", "default": "Microsoft Windows" },
+    { "type": "text", "id": "windows_mark",  "label": "Decorative Letter", "default": "W" },
+    { "type": "url",  "id": "windows_link",  "label": "Direkt-Link (Fallback)" },
+    { "type": "text", "id": "windows_product_1", "label": "Produkt 1 Handle", "default": "windows-11-pro-key-kaufen-download" },
+    { "type": "text", "id": "windows_product_2", "label": "Produkt 2 Handle", "default": "windows-11-home-key" },
+    { "type": "text", "id": "windows_product_3", "label": "Produkt 3 Handle", "default": "windows-11-pro-64-bit-oem-lizenz-dvd-produktschluessel" },
+    { "type": "text", "id": "windows_product_4", "label": "Produkt 4 Handle", "default": "windows-11-enterprise" },
+    { "type": "text", "id": "windows_product_5", "label": "Produkt 5 Handle", "default": "windows-10-professional-lizenz" },
+    { "type": "text", "id": "windows_product_6", "label": "Produkt 6 Handle", "default": "windows-10-home-oem" },
+    { "type": "text", "id": "windows_product_7", "label": "Produkt 7 Handle", "default": "windows-10-enterprise" },
+    { "type": "text", "id": "windows_product_8", "label": "Produkt 8 Handle", "default": "windows-7-ultimate-32-64-bit-key" },
+
+    { "type": "header", "content": "Microsoft Server (Drill-down)" },
+    { "type": "text", "id": "server_label", "label": "Label", "default": "Microsoft Server" },
+    { "type": "text", "id": "server_mark",  "label": "Decorative Letter", "default": "S" },
+    { "type": "url",  "id": "server_link",  "label": "Direkt-Link (Fallback)" },
+    { "type": "text", "id": "server_product_1", "label": "Produkt 1 Handle", "default": "microsoft-windows-server-2025-standard" },
+    { "type": "text", "id": "server_product_2", "label": "Produkt 2 Handle", "default": "microsoft-sql-server-2022-standard" },
+    { "type": "text", "id": "server_product_3", "label": "Produkt 3 Handle", "default": "microsoft-windows-server-2008-r2-standard" },
+    { "type": "text", "id": "server_product_4", "label": "Produkt 4 Handle" },
+    { "type": "text", "id": "server_product_5", "label": "Produkt 5 Handle" },
+    { "type": "text", "id": "server_product_6", "label": "Produkt 6 Handle" },
+
+    { "type": "header", "content": "Microsoft Project (Drill-down)" },
+    { "type": "text", "id": "project_label", "label": "Label", "default": "Microsoft Project" },
+    { "type": "text", "id": "project_mark",  "label": "Decorative Letter", "default": "P" },
+    { "type": "url",  "id": "project_link",  "label": "Direkt-Link (Fallback)" },
+    { "type": "text", "id": "project_product_1", "label": "Produkt 1 Handle", "default": "microsoft-project-2021-professional" },
+    { "type": "text", "id": "project_product_2", "label": "Produkt 2 Handle", "default": "microsoft-project-2016-professional" },
+    { "type": "text", "id": "project_product_3", "label": "Produkt 3 Handle" },
+    { "type": "text", "id": "project_product_4", "label": "Produkt 4 Handle" },
+    { "type": "text", "id": "project_product_5", "label": "Produkt 5 Handle" },
+    { "type": "text", "id": "project_product_6", "label": "Produkt 6 Handle" },
+
+    { "type": "header", "content": "Microsoft Visio (Drill-down)" },
+    { "type": "text", "id": "visio_label", "label": "Label", "default": "Microsoft Visio" },
+    { "type": "text", "id": "visio_mark",  "label": "Decorative Letter", "default": "V" },
+    { "type": "url",  "id": "visio_link",  "label": "Direkt-Link (Fallback)" },
+    { "type": "text", "id": "visio_product_1", "label": "Produkt 1 Handle", "default": "microsoft-visio-2021-professional" },
+    { "type": "text", "id": "visio_product_2", "label": "Produkt 2 Handle" },
+    { "type": "text", "id": "visio_product_3", "label": "Produkt 3 Handle" },
+    { "type": "text", "id": "visio_product_4", "label": "Produkt 4 Handle" },
+    { "type": "text", "id": "visio_product_5", "label": "Produkt 5 Handle" },
+    { "type": "text", "id": "visio_product_6", "label": "Produkt 6 Handle" },
+
+    { "type": "header", "content": "Microsoft 365 (Drill-down)" },
+    { "type": "text", "id": "m365_label", "label": "Label", "default": "Microsoft 365" },
+    { "type": "text", "id": "m365_mark",  "label": "Decorative Letter", "default": "³⁶⁵" },
+    { "type": "url",  "id": "m365_link",  "label": "Direkt-Link (Fallback)" },
+    { "type": "text", "id": "m365_product_1", "label": "Produkt 1 Handle", "default": "office-365-personal" },
+    { "type": "text", "id": "m365_product_2", "label": "Produkt 2 Handle" },
+    { "type": "text", "id": "m365_product_3", "label": "Produkt 3 Handle" },
+    { "type": "text", "id": "m365_product_4", "label": "Produkt 4 Handle" },
+    { "type": "text", "id": "m365_product_5", "label": "Produkt 5 Handle" },
+    { "type": "text", "id": "m365_product_6", "label": "Produkt 6 Handle" },
+
+    { "type": "header", "content": "Direkte Links" },
+    { "type": "text", "id": "all_label",   "label": "Alle Produkte — Label",  "default": "Alle Produkte" },
+    { "type": "url",  "id": "all_link",    "label": "Alle Produkte — Link" },
+    { "type": "text", "id": "offers_label","label": "Angebote — Label",       "default": "Angebote" },
+    { "type": "url",  "id": "offers_link", "label": "Angebote — Link" },
 
     { "type": "header", "content": "Service" },
-    { "type": "url", "id": "link_account", "label": "Mein Konto" },
-    { "type": "url", "id": "link_orders", "label": "Bestellungen" },
+    { "type": "url", "id": "link_account",  "label": "Mein Konto" },
+    { "type": "url", "id": "link_orders",   "label": "Bestellungen" },
     { "type": "url", "id": "link_wishlist", "label": "Merkliste" },
-    { "type": "url", "id": "link_support", "label": "Kundensupport" },
+    { "type": "url", "id": "link_support",  "label": "Kundensupport" },
     { "type": "url", "id": "link_shipping", "label": "Versand & Lieferung" },
 
     { "type": "header", "content": "Editorial Feature Block" },
-    { "type": "text", "id": "feature_overline", "label": "Overline", "default": "EMPFEHLUNG" },
-    { "type": "text", "id": "feature_headline", "label": "Headline", "default": "Office, neu gedacht." },
-    { "type": "textarea", "id": "feature_body", "label": "Body", "default": "Microsoft Office 2024 — die Werkzeuge, die seit Jahrzehnten den Standard definieren." },
-    { "type": "text", "id": "feature_link_label", "label": "Link Label", "default": "ENTDECKEN" },
-    { "type": "url", "id": "feature_link", "label": "Link" },
+    { "type": "text",     "id": "feature_overline",   "label": "Overline",   "default": "EMPFEHLUNG" },
+    { "type": "text",     "id": "feature_headline",   "label": "Headline",   "default": "Office, neu gedacht." },
+    { "type": "textarea", "id": "feature_body",       "label": "Body",       "default": "Microsoft Office 2024 — die Werkzeuge, die seit Jahrzehnten den Standard definieren." },
+    { "type": "text",     "id": "feature_link_label", "label": "Link Label", "default": "ENTDECKEN" },
+    { "type": "url",      "id": "feature_link",       "label": "Link" },
 
     { "type": "header", "content": "Footer" },
     { "type": "text", "id": "footer_tagline", "label": "Tagline", "default": "Software, sorgfältig kuratiert." },
-    { "type": "text", "id": "footer_legal", "label": "Legal links (separated by · )", "default": "Impressum · AGB · Datenschutz · Widerruf" }
+    { "type": "text", "id": "footer_legal",   "label": "Legal links (separated by · )", "default": "Impressum · AGB · Datenschutz · Widerruf" }
   ]
 }
 {% endschema %}
+
+{%- assign drill_keys = 'office,windows,server,project,visio,m365' | split: ',' -%}
 
 <div class="kx-menu-backdrop" id="cmm-backdrop" aria-hidden="true"></div>
 
@@ -88,12 +160,22 @@
   aria-label="Hauptmenü"
   tabindex="-1"
 >
-  {%- comment -%} ============== HEADER ============== {%- endcomment -%}
+  {%- comment -%} ============== HEADER (dual-state) ============== {%- endcomment -%}
   <header class="kx-menu__header">
-    <a href="{{ _root }}" class="kx-menu__wordmark" aria-label="KARINEX Startseite">
-      <span class="kx-menu__wordmark-text">KARINEX</span>
-      <span class="kx-menu__wordmark-dot" aria-hidden="true"></span>
-    </a>
+    <div class="kx-menu__header-state kx-menu__header-state--l1" data-state="l1">
+      <a href="{{ _root }}" class="kx-menu__wordmark" aria-label="KARINEX Startseite">
+        <span class="kx-menu__wordmark-text">KARINEX</span>
+        <span class="kx-menu__wordmark-dot" aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="kx-menu__header-state kx-menu__header-state--l2" data-state="l2" aria-hidden="true">
+      <button type="button" class="kx-menu__back" id="cmm-back" aria-label="Zurück">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 6 9 12 15 18"/>
+        </svg>
+        <span class="kx-menu__back-label" id="cmm-back-label">Zurück</span>
+      </button>
+    </div>
     <button type="button" class="kx-menu__close" id="cmm-close" aria-label="Menü schließen">
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -102,132 +184,187 @@
     </button>
   </header>
 
-  {%- comment -%} ============== SCROLL BODY (staged reveal) ============== {%- endcomment -%}
-  <div class="kx-menu__scroll">
+  {%- comment -%} ============== VIEWPORT — horizontal slide track ============== {%- endcomment -%}
+  <div class="kx-menu__viewport">
+    <div class="kx-menu__track">
 
-    {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage" data-stage="1">
-      <div class="kx-menu__bestseller-grid">
-        {%- if use_collection -%}
-          {%- for product in source_collection.products limit: 6 -%}
-            {% render 'kx-bs-card', product: product %}
-          {%- endfor -%}
-        {%- else -%}
-          {%- assign rendered = 0 -%}
-          {%- for h in handle_array -%}
-            {%- if rendered >= 6 -%}{%- break -%}{%- endif -%}
-            {%- assign t = h | strip -%}
-            {%- if t != blank -%}
-              {%- assign product = all_products[t] -%}
-              {%- if product != blank and product.handle != blank -%}
+      {%- comment -%} ====== LEVEL 1 ====== {%- endcomment -%}
+      <section class="kx-menu__panel kx-menu__panel--l1" data-level="1">
+
+        {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
+        <div class="kx-menu__stage" data-stage="1">
+          <div class="kx-menu__bestseller-grid">
+            {%- if use_collection -%}
+              {%- for product in source_collection.products limit: 6 -%}
                 {% render 'kx-bs-card', product: product %}
-                {%- assign rendered = rendered | plus: 1 -%}
-              {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign rendered = 0 -%}
+              {%- for h in handle_array -%}
+                {%- if rendered >= 6 -%}{%- break -%}{%- endif -%}
+                {%- assign t = h | strip -%}
+                {%- if t != blank -%}
+                  {%- assign product = all_products[t] -%}
+                  {%- if product != blank and product.handle != blank -%}
+                    {% render 'kx-bs-card', product: product %}
+                    {%- assign rendered = rendered | plus: 1 -%}
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
             {%- endif -%}
-          {%- endfor -%}
+          </div>
+        </div>
+
+        {%- comment -%} ----- Categories grid (drillable) ----- {%- endcomment -%}
+        <div class="kx-menu__stage kx-menu__cat-block" data-stage="2">
+          <div class="kx-menu__cat-grid">
+            {%- for key in drill_keys -%}
+              {%- assign label  = section.settings[ key | append: '_label' ] -%}
+              {%- assign mark   = section.settings[ key | append: '_mark'  ] -%}
+              {%- assign direct = section.settings[ key | append: '_link'  ] -%}
+              {%- assign has_products = false -%}
+              {%- for i in (1..8) -%}
+                {%- assign ph = section.settings[ key | append: '_product_' | append: i ] -%}
+                {%- if ph != blank -%}
+                  {%- assign p = all_products[ph] -%}
+                  {%- if p != blank and p.handle != blank -%}
+                    {%- assign has_products = true -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if has_products -%}
+                <button type="button" class="kx-menu__cat-card" data-drill="{{ key }}" data-parent-label="{{ label | escape }}">
+                  <span class="kx-menu__cat-name">{{ label }}</span>
+                  <span class="kx-menu__cat-mark" aria-hidden="true">{{ mark }}</span>
+                </button>
+              {%- elsif direct != blank -%}
+                <a href="{{ direct }}" class="kx-menu__cat-card" data-haptic>
+                  <span class="kx-menu__cat-name">{{ label }}</span>
+                  <span class="kx-menu__cat-mark" aria-hidden="true">{{ mark }}</span>
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if section.settings.all_link != blank -%}
+              <a href="{{ section.settings.all_link }}" class="kx-menu__cat-card" data-haptic>
+                <span class="kx-menu__cat-name">{{ section.settings.all_label | default: 'Alle Produkte' }}</span>
+                <span class="kx-menu__cat-mark" aria-hidden="true">&amp;</span>
+              </a>
+            {%- endif -%}
+
+            {%- if section.settings.offers_link != blank -%}
+              <a href="{{ section.settings.offers_link }}" class="kx-menu__cat-card kx-menu__cat-card--accent" data-haptic>
+                <span class="kx-menu__cat-name kx-menu__cat-name--italic">{{ section.settings.offers_label | default: 'Angebote' }}</span>
+                <span class="kx-menu__cat-mark kx-menu__cat-mark--accent" aria-hidden="true">%</span>
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- comment -%} ----- Service list (no overline) ----- {%- endcomment -%}
+        <div class="kx-menu__stage kx-menu__service-block" data-stage="3">
+          <ul class="kx-menu__service-list" role="list">
+            <li class="kx-menu__service-item">
+              <a href="{{ section.settings.link_account | default: routes.account_url }}">
+                <span>Mein Konto</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </a>
+            </li>
+            <li class="kx-menu__service-item">
+              <a href="{{ section.settings.link_orders | default: routes.account_url }}">
+                <span>Bestellungen</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </a>
+            </li>
+            <li class="kx-menu__service-item">
+              <a href="{{ section.settings.link_wishlist | default: '/pages/wishlist' }}">
+                <span>Merkliste</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </a>
+            </li>
+            <li class="kx-menu__service-item">
+              <a href="{{ section.settings.link_support | default: '/pages/contact' }}">
+                <span>Kundensupport</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </a>
+            </li>
+            <li class="kx-menu__service-item">
+              <a href="{{ section.settings.link_shipping | default: '/pages/versand' }}">
+                <span>Versand &amp; Lieferung</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
+        {%- if section.settings.feature_headline != blank -%}
+          <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="4">
+            {%- if section.settings.feature_overline != blank -%}
+              <div class="kx-menu__feature-overline">{{ section.settings.feature_overline }}</div>
+            {%- endif -%}
+            <h3 class="kx-menu__feature-headline">{{ section.settings.feature_headline }}</h3>
+            {%- if section.settings.feature_body != blank -%}
+              <p class="kx-menu__feature-body">{{ section.settings.feature_body }}</p>
+            {%- endif -%}
+            {%- if section.settings.feature_link_label != blank -%}
+              <span class="kx-menu__feature-link">
+                <span>{{ section.settings.feature_link_label }}</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="4" y1="12" x2="20" y2="12"/>
+                  <polyline points="14 6 20 12 14 18"/>
+                </svg>
+              </span>
+            {%- endif -%}
+          </a>
         {%- endif -%}
-      </div>
+
+        {%- comment -%} ----- Footer ----- {%- endcomment -%}
+        <footer class="kx-menu__footer kx-menu__stage" data-stage="5">
+          <div class="kx-menu__locale">Deutsch <span aria-hidden="true">⌄</span></div>
+          {%- if section.settings.footer_tagline != blank -%}
+            <p class="kx-menu__tagline">{{ section.settings.footer_tagline }}</p>
+          {%- endif -%}
+          {%- if section.settings.footer_legal != blank -%}
+            <p class="kx-menu__legal">{{ section.settings.footer_legal }}</p>
+          {%- endif -%}
+        </footer>
+
+      </section>
+
+      {%- comment -%} ====== LEVEL 2 — product name lists per category ====== {%- endcomment -%}
+      <section class="kx-menu__panel kx-menu__panel--l2" data-level="2" aria-hidden="true">
+        {%- for key in drill_keys -%}
+          {%- assign label = section.settings[ key | append: '_label' ] -%}
+          {%- assign visible_count = 0 -%}
+          {%- capture rows -%}
+            {%- for i in (1..8) -%}
+              {%- assign ph = section.settings[ key | append: '_product_' | append: i ] -%}
+              {%- if ph != blank -%}
+                {%- assign p = all_products[ph] -%}
+                {%- if p != blank and p.handle != blank -%}
+                  {%- assign visible_count = visible_count | plus: 1 -%}
+                  <a href="{{ p.url }}" class="kx-menu__l2-row" data-haptic>
+                    <span class="kx-menu__l2-name">{{ p.title }}</span>
+                    <svg class="kx-menu__l2-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                  </a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if visible_count > 0 -%}
+            <nav class="kx-menu__sub" data-sub="{{ key }}" hidden aria-label="{{ label | escape }}">
+              <div class="kx-menu__sub-overline">{{ label | upcase }}</div>
+              <div class="kx-menu__sub-rule" aria-hidden="true"></div>
+              {{ rows }}
+            </nav>
+          {%- endif -%}
+        {%- endfor -%}
+      </section>
+
     </div>
-
-    {%- comment -%} ----- Categories 2x2 (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage kx-menu__cat-block" data-stage="2">
-      <div class="kx-menu__cat-grid">
-        {%- if section.settings.link_office != blank -%}
-          <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card" data-haptic>
-            <span class="kx-menu__cat-name">Microsoft Office</span>
-            <span class="kx-menu__cat-mark" aria-hidden="true">O</span>
-          </a>
-        {%- endif -%}
-        {%- if section.settings.link_windows != blank -%}
-          <a href="{{ section.settings.link_windows }}" class="kx-menu__cat-card" data-haptic>
-            <span class="kx-menu__cat-name">Microsoft Windows</span>
-            <span class="kx-menu__cat-mark" aria-hidden="true">W</span>
-          </a>
-        {%- endif -%}
-        {%- if section.settings.link_all != blank -%}
-          <a href="{{ section.settings.link_all }}" class="kx-menu__cat-card" data-haptic>
-            <span class="kx-menu__cat-name">Alle Produkte</span>
-            <span class="kx-menu__cat-mark" aria-hidden="true">&amp;</span>
-          </a>
-        {%- endif -%}
-        {%- if section.settings.link_offers != blank -%}
-          <a href="{{ section.settings.link_offers }}" class="kx-menu__cat-card kx-menu__cat-card--accent" data-haptic>
-            <span class="kx-menu__cat-name kx-menu__cat-name--italic">Angebote</span>
-            <span class="kx-menu__cat-mark kx-menu__cat-mark--accent" aria-hidden="true">%</span>
-          </a>
-        {%- endif -%}
-      </div>
-    </div>
-
-    {%- comment -%} ----- Service list (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage kx-menu__service-block" data-stage="3">
-      <ul class="kx-menu__service-list" role="list">
-        <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_account | default: routes.account_url }}">
-            <span>Mein Konto</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-          </a>
-        </li>
-        <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_orders | default: routes.account_url }}">
-            <span>Bestellungen</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-          </a>
-        </li>
-        <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_wishlist | default: '/pages/wishlist' }}">
-            <span>Merkliste</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-          </a>
-        </li>
-        <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_support | default: '/pages/contact' }}">
-            <span>Kundensupport</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-          </a>
-        </li>
-        <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_shipping | default: '/pages/versand' }}">
-            <span>Versand &amp; Lieferung</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
-    {%- if section.settings.feature_headline != blank -%}
-      <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="4">
-        {%- if section.settings.feature_overline != blank -%}
-          <div class="kx-menu__feature-overline">{{ section.settings.feature_overline }}</div>
-        {%- endif -%}
-        <h3 class="kx-menu__feature-headline">{{ section.settings.feature_headline }}</h3>
-        {%- if section.settings.feature_body != blank -%}
-          <p class="kx-menu__feature-body">{{ section.settings.feature_body }}</p>
-        {%- endif -%}
-        {%- if section.settings.feature_link_label != blank -%}
-          <span class="kx-menu__feature-link">
-            <span>{{ section.settings.feature_link_label }}</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="4" y1="12" x2="20" y2="12"/>
-              <polyline points="14 6 20 12 14 18"/>
-            </svg>
-          </span>
-        {%- endif -%}
-      </a>
-    {%- endif -%}
-
-    {%- comment -%} ----- Footer ----- {%- endcomment -%}
-    <footer class="kx-menu__footer kx-menu__stage" data-stage="5">
-      <div class="kx-menu__locale">Deutsch <span aria-hidden="true">⌄</span></div>
-      {%- if section.settings.footer_tagline != blank -%}
-        <p class="kx-menu__tagline">{{ section.settings.footer_tagline }}</p>
-      {%- endif -%}
-      {%- if section.settings.footer_legal != blank -%}
-        <p class="kx-menu__legal">{{ section.settings.footer_legal }}</p>
-      {%- endif -%}
-    </footer>
-
   </div>
 </aside>
 
@@ -246,6 +383,7 @@
   --kx-beige: #D4CDB8;
   --kx-muted-green: #8FA39A;
   --kx-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --kx-slide:  cubic-bezier(0.22, 0.61, 0.36, 1);
   position: fixed;
   inset: 0;
   background: rgba(10, 10, 10, 0.4);
@@ -272,6 +410,7 @@
   --kx-beige: #D4CDB8;
   --kx-muted-green: #8FA39A;
   --kx-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --kx-slide:  cubic-bezier(0.22, 0.61, 0.36, 1);
   position: fixed;
   top: 0;
   left: 0;
@@ -302,13 +441,12 @@
 }
 .kx-menu *, .kx-menu *::before, .kx-menu *::after { box-sizing: border-box; }
 .kx-menu a { color: inherit; text-decoration: none; }
+.kx-menu button { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; cursor: pointer; }
 
 /* ---------- Header ---------- */
 .kx-menu__header {
   flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  position: relative;
   height: 64px;
   display: flex;
   align-items: center;
@@ -316,8 +454,23 @@
   padding: 0 24px;
   background: var(--kx-bg);
   border-bottom: 1px solid var(--kx-hairline);
-  box-shadow: none;
+  z-index: 5;
 }
+.kx-menu__header-state {
+  position: absolute;
+  left: 24px;
+  right: 64px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  transition: opacity 220ms ease, transform 280ms var(--kx-slide);
+}
+.kx-menu__header-state--l1 { opacity: 1; transform: translateX(0); }
+.kx-menu__header-state--l2 { opacity: 0; transform: translateX(12px); pointer-events: none; }
+.kx-menu.is-l2 .kx-menu__header-state--l1 { opacity: 0; transform: translateX(-12px); pointer-events: none; }
+.kx-menu.is-l2 .kx-menu__header-state--l2 { opacity: 1; transform: translateX(0); pointer-events: auto; }
+
 .kx-menu__wordmark {
   display: inline-flex;
   align-items: center;
@@ -344,6 +497,23 @@
   transform: translateY(-1px);
 }
 .kx-menu.is-open .kx-menu__wordmark { opacity: 1; letter-spacing: 8px; transform: translateY(0); }
+
+.kx-menu__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--kx-black);
+  line-height: 1;
+  transition: color 150ms ease;
+}
+.kx-menu__back svg { color: var(--kx-charcoal); transition: color 150ms ease, transform 200ms ease; }
+.kx-menu__back:hover { color: var(--kx-forest); }
+.kx-menu__back:hover svg { color: var(--kx-forest); transform: translateX(-3px); }
+.kx-menu__back-label { display: inline-block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .kx-menu__close {
   display: inline-flex;
   align-items: center;
@@ -351,40 +521,48 @@
   width: 40px;
   height: 40px;
   margin-right: -8px;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
   color: var(--kx-black);
   opacity: 0;
   transition: color 150ms ease, opacity 320ms ease;
   transition-delay: 280ms;
+  position: relative;
+  z-index: 2;
+  margin-left: auto;
 }
 .kx-menu.is-open .kx-menu__close { opacity: 1; }
 .kx-menu__close:hover { color: var(--kx-forest); }
 
-/* ---------- Scroll body — invisible scrollbar ---------- */
-.kx-menu__scroll {
+/* ---------- Viewport / Track (horizontal slide L1↔L2) ---------- */
+.kx-menu__viewport {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.kx-menu__track {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 320ms var(--kx-slide);
+}
+.kx-menu.is-l2 .kx-menu__track { transform: translateX(-50%); }
+
+.kx-menu__panel {
+  width: 50%;
+  flex-shrink: 0;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE / legacy Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.kx-menu__scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
-  background: transparent;
-}
-.kx-menu__scroll::-webkit-scrollbar-track,
-.kx-menu__scroll::-webkit-scrollbar-thumb { background: transparent; }
+.kx-menu__panel::-webkit-scrollbar { width: 0; height: 0; display: none; background: transparent; }
 .kx-menu, .kx-menu * { scrollbar-width: none; -ms-overflow-style: none; }
 .kx-menu *::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
-/* ---------- Staged reveal ---------- */
+/* ---------- Staged reveal (L1 only) ---------- */
 .kx-menu__stage {
   opacity: 0;
   transform: translateY(10px);
@@ -453,7 +631,7 @@
   letter-spacing: 0.2px;
 }
 
-/* ---------- Categories ---------- */
+/* ---------- Categories grid (drillable, 2 cols × N rows) ---------- */
 .kx-menu__cat-block { margin-top: 40px; }
 .kx-menu__cat-grid {
   display: grid;
@@ -463,22 +641,24 @@
 }
 .kx-menu__cat-card {
   position: relative;
-  height: 100px;
-  padding: 16px;
+  height: 92px;
+  padding: 14px;
   background: var(--kx-card);
   border-radius: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  text-align: left;
+  width: 100%;
   transition: background 220ms ease, color 220ms ease, transform 150ms ease;
 }
 .kx-menu__cat-card:active { transform: scale(0.985); }
 .kx-menu__cat-name {
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 1.15;
+  line-height: 1.18;
   color: var(--kx-black);
   position: relative;
   z-index: 2;
@@ -488,12 +668,12 @@
 .kx-menu__cat-name--italic { font-style: italic; }
 .kx-menu__cat-mark {
   position: absolute;
-  bottom: 6px;
-  right: 12px;
+  bottom: 4px;
+  right: 10px;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 44px;
+  font-size: 40px;
   line-height: 1;
   color: var(--kx-forest);
   opacity: 0.12;
@@ -501,9 +681,10 @@
   user-select: none;
   transition: color 220ms ease, opacity 220ms ease;
 }
-.kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 42px; }
+.kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 38px; }
 .kx-menu__cat-card:hover, .kx-menu__cat-card:focus-visible, .kx-menu__cat-card:active {
   background: var(--kx-forest);
+  outline: none;
 }
 .kx-menu__cat-card:hover .kx-menu__cat-name,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-name,
@@ -511,6 +692,68 @@
 .kx-menu__cat-card:hover .kx-menu__cat-mark,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-mark,
 .kx-menu__cat-card:active .kx-menu__cat-mark { color: var(--kx-gold); opacity: 0.25; }
+
+/* ---------- L2 product list ---------- */
+.kx-menu__sub {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 32px;
+}
+.kx-menu__sub[hidden] { display: none; }
+.kx-menu__sub-overline {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--kx-gold);
+  padding: 0 24px;
+  margin-bottom: 12px;
+}
+.kx-menu__sub-rule {
+  height: 1px;
+  background: var(--kx-hairline);
+  margin: 0 24px 8px;
+}
+.kx-menu__l2-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--kx-hairline);
+  transition: padding 220ms var(--kx-slide), background 220ms ease;
+}
+.kx-menu__l2-row:last-child { border-bottom: 0; }
+.kx-menu__l2-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.32;
+  color: var(--kx-black);
+  flex: 1;
+  min-width: 0;
+  transition: color 150ms ease, transform 220ms var(--kx-slide);
+  display: inline-block;
+}
+.kx-menu__l2-chev {
+  color: var(--kx-gray);
+  flex-shrink: 0;
+  transition: color 200ms ease, transform 220ms var(--kx-slide);
+}
+.kx-menu__l2-row:hover .kx-menu__l2-name,
+.kx-menu__l2-row:focus-visible .kx-menu__l2-name,
+.kx-menu__l2-row:active .kx-menu__l2-name {
+  transform: translateX(3px);
+  color: var(--kx-forest);
+}
+.kx-menu__l2-row:hover .kx-menu__l2-chev,
+.kx-menu__l2-row:focus-visible .kx-menu__l2-chev,
+.kx-menu__l2-row:active .kx-menu__l2-chev {
+  color: var(--kx-gold);
+  transform: translateX(2px);
+}
 
 /* ---------- Service list ---------- */
 .kx-menu__service-block { margin-top: 40px; }
@@ -600,12 +843,13 @@
     opacity: 0;
   }
   .kx-menu.is-open { opacity: 1; transition: opacity 200ms ease, visibility 0s linear 0s; }
-  .kx-menu__wordmark, .kx-menu__close, .kx-menu__stage {
+  .kx-menu__wordmark, .kx-menu__close, .kx-menu__stage, .kx-menu__header-state, .kx-menu__track {
     opacity: 1 !important;
     transform: none !important;
     letter-spacing: 8px !important;
     transition: none !important;
   }
+  .kx-menu.is-l2 .kx-menu__track { transform: translateX(-50%) !important; }
 }
 {%- endstylesheet -%}
 
@@ -615,14 +859,50 @@
     var menu = document.getElementById('custom-mobile-menu');
     var backdrop = document.getElementById('cmm-backdrop');
     var closeBtn = document.getElementById('cmm-close');
+    var backBtn = document.getElementById('cmm-back');
+    var backLabel = document.getElementById('cmm-back-label');
     if (!menu) return;
 
     var lastFocused = null;
+    var l2Panel = menu.querySelector('.kx-menu__panel--l2');
+    var l1Panel = menu.querySelector('.kx-menu__panel--l1');
+    var subPanels = menu.querySelectorAll('.kx-menu__sub');
 
     function lightHaptic() {
       if (window.navigator && window.navigator.vibrate) {
         try { window.navigator.vibrate(8); } catch (e) {}
       }
+    }
+
+    function showSub(key) {
+      subPanels.forEach(function (s) {
+        if (s.getAttribute('data-sub') === key) {
+          s.removeAttribute('hidden');
+        } else {
+          s.setAttribute('hidden', '');
+        }
+      });
+    }
+
+    function drillDown(key, parentLabel) {
+      lightHaptic();
+      showSub(key);
+      if (backLabel) backLabel.textContent = parentLabel || 'Zurück';
+      menu.classList.add('is-l2');
+      if (l2Panel) {
+        l2Panel.setAttribute('aria-hidden', 'false');
+        l2Panel.scrollTop = 0;
+      }
+      if (l1Panel) l1Panel.setAttribute('aria-hidden', 'true');
+      setTimeout(function () { if (backBtn) backBtn.focus(); }, 200);
+    }
+
+    function goBack() {
+      lightHaptic();
+      menu.classList.remove('is-l2');
+      if (l2Panel) l2Panel.setAttribute('aria-hidden', 'true');
+      if (l1Panel) l1Panel.setAttribute('aria-hidden', 'false');
+      setTimeout(function () { if (closeBtn) closeBtn.focus(); }, 200);
     }
 
     function openMenu() {
@@ -643,14 +923,30 @@
       menu.classList.remove('is-open');
       if (backdrop) backdrop.classList.remove('is-open');
       document.body.style.overflow = '';
+      setTimeout(function () {
+        menu.classList.remove('is-l2');
+        if (l2Panel) l2Panel.setAttribute('aria-hidden', 'true');
+        if (l1Panel) l1Panel.setAttribute('aria-hidden', 'false');
+      }, 540);
       if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
     }
 
     if (closeBtn) closeBtn.addEventListener('click', function (e) { e.preventDefault(); closeMenu(); });
     if (backdrop) backdrop.addEventListener('click', closeMenu);
+    if (backBtn) backBtn.addEventListener('click', function (e) { e.preventDefault(); goBack(); });
+
+    menu.querySelectorAll('[data-drill]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        drillDown(btn.getAttribute('data-drill'), btn.getAttribute('data-parent-label'));
+      });
+    });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu();
+      if (e.key === 'Escape' && menu.classList.contains('is-open')) {
+        if (menu.classList.contains('is-l2')) goBack();
+        else closeMenu();
+      }
     });
 
     /* Hijack the theme's hamburger trigger */
@@ -670,7 +966,7 @@
       el.addEventListener('click', lightHaptic);
     });
 
-    /* Swipe-left to close */
+    /* Swipe gestures: L1 swipe-left closes; L2 swipe-right goes back */
     var startX = null, startY = null;
     menu.addEventListener('touchstart', function (e) {
       if (e.touches.length === 1) {
@@ -681,9 +977,15 @@
     menu.addEventListener('touchend', function (e) {
       if (startX === null) return;
       var t = e.changedTouches[0] || {};
-      var dx = startX - (t.clientX || startX);
-      var dy = Math.abs(startY - (t.clientY || startY));
-      if (dx > 60 && dy < 40) closeMenu();
+      var dx = (t.clientX || startX) - startX;
+      var ady = Math.abs(startY - (t.clientY || startY));
+      if (ady < 40) {
+        if (menu.classList.contains('is-l2') && dx > 60) {
+          goBack();
+        } else if (!menu.classList.contains('is-l2') && dx < -60) {
+          closeMenu();
+        }
+      }
       startX = null;
       startY = null;
     });
@@ -691,10 +993,20 @@
     /* Focus trap */
     menu.addEventListener('keydown', function (e) {
       if (e.key !== 'Tab' || !menu.classList.contains('is-open')) return;
-      var focusables = menu.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
-      if (!focusables.length) return;
-      var first = focusables[0];
-      var last = focusables[focusables.length - 1];
+      var scope = menu.classList.contains('is-l2') ? l2Panel : l1Panel;
+      var headerScope = menu.querySelector(menu.classList.contains('is-l2') ? '.kx-menu__header-state--l2' : '.kx-menu__header-state--l1');
+      var nodes = [];
+      if (headerScope) nodes = nodes.concat(Array.prototype.slice.call(headerScope.querySelectorAll('a[href], button:not([disabled])')));
+      if (closeBtn) nodes.push(closeBtn);
+      if (scope) {
+        var visible = scope.querySelectorAll('a[href], button:not([disabled])');
+        nodes = nodes.concat(Array.prototype.slice.call(visible).filter(function (n) {
+          return !n.closest('[hidden]');
+        }));
+      }
+      if (!nodes.length) return;
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();
