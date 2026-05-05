@@ -151,7 +151,17 @@
                 {% if product.featured_image %}
                   <img
                     class="bf-card__img"
-                    src="{{ product.featured_image | img_url: '400x' }}"
+                    src="{{ product.featured_image | image_url: width: 480 }}"
+                    srcset="
+                      {{ product.featured_image | image_url: width: 240 }} 240w,
+                      {{ product.featured_image | image_url: width: 360 }} 360w,
+                      {{ product.featured_image | image_url: width: 480 }} 480w,
+                      {{ product.featured_image | image_url: width: 720 }} 720w,
+                      {{ product.featured_image | image_url: width: 960 }} 960w
+                    "
+                    sizes="(max-width: 480px) 160px, (max-width: 768px) 185px, 210px"
+                    width="{{ product.featured_image.width }}"
+                    height="{{ product.featured_image.height }}"
                     alt="{{ product.title | escape | default: shop.name }}"
                     loading="lazy"
                     decoding="async"
