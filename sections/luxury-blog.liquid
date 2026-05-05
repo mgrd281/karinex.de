@@ -254,6 +254,17 @@
 .lux-blog__grid--carousel > .lux-blog__card {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.lux-blog__grid--carousel > .lux-blog__card .lux-blog__media {
+  width: 100%;
+  max-width: 100%;
+}
+.lux-blog__grid--carousel > .lux-blog__card--editorial {
+  overflow: hidden;
 }
 @media (min-width: 600px) {
   .lux-blog__grid--carousel { grid-auto-columns: minmax(0, calc((100% - 40px) / 2)); }
