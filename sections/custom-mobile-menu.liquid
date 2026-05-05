@@ -219,12 +219,16 @@
         <div class="kx-menu__stage kx-menu__cat-block" data-stage="2">
           <div class="kx-menu__cat-grid">
             {%- for key in drill_keys -%}
-              {%- assign label  = section.settings[ key | append: '_label' ] -%}
-              {%- assign mark   = section.settings[ key | append: '_mark'  ] -%}
-              {%- assign direct = section.settings[ key | append: '_link'  ] -%}
+              {%- assign label_key  = key | append: '_label' -%}
+              {%- assign mark_key   = key | append: '_mark'  -%}
+              {%- assign direct_key = key | append: '_link'  -%}
+              {%- assign label  = section.settings[label_key] -%}
+              {%- assign mark   = section.settings[mark_key] -%}
+              {%- assign direct = section.settings[direct_key] -%}
               {%- assign has_products = false -%}
               {%- for i in (1..8) -%}
-                {%- assign ph = section.settings[ key | append: '_product_' | append: i ] -%}
+                {%- assign ph_key = key | append: '_product_' | append: i -%}
+                {%- assign ph = section.settings[ph_key] -%}
                 {%- if ph != blank -%}
                   {%- assign p = all_products[ph] -%}
                   {%- if p != blank and p.handle != blank -%}
@@ -337,11 +341,13 @@
       {%- comment -%} ====== LEVEL 2 — product name lists per category ====== {%- endcomment -%}
       <section class="kx-menu__panel kx-menu__panel--l2" data-level="2" aria-hidden="true">
         {%- for key in drill_keys -%}
-          {%- assign label = section.settings[ key | append: '_label' ] -%}
+          {%- assign l2_label_key = key | append: '_label' -%}
+          {%- assign label = section.settings[l2_label_key] -%}
           {%- assign visible_count = 0 -%}
           {%- capture rows -%}
             {%- for i in (1..8) -%}
-              {%- assign ph = section.settings[ key | append: '_product_' | append: i ] -%}
+              {%- assign l2_ph_key = key | append: '_product_' | append: i -%}
+              {%- assign ph = section.settings[l2_ph_key] -%}
               {%- if ph != blank -%}
                 {%- assign p = all_products[ph] -%}
                 {%- if p != blank and p.handle != blank -%}
