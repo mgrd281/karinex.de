@@ -73,10 +73,7 @@
 
     { "type": "header", "content": "Footer" },
     { "type": "text", "id": "footer_tagline", "label": "Tagline", "default": "Software, sorgfältig kuratiert." },
-    { "type": "text", "id": "footer_legal", "label": "Legal links (separated by · )", "default": "Impressum · AGB · Datenschutz · Widerruf" },
-
-    { "type": "header", "content": "Suche" },
-    { "type": "text", "id": "search_placeholder", "label": "Search placeholder", "default": "Suchen" }
+    { "type": "text", "id": "footer_legal", "label": "Legal links (separated by · )", "default": "Impressum · AGB · Datenschutz · Widerruf" }
   ]
 }
 {% endschema %}
@@ -93,7 +90,10 @@
 >
   {%- comment -%} ============== HEADER ============== {%- endcomment -%}
   <header class="kx-menu__header">
-    <a href="{{ _root }}" class="kx-menu__wordmark" aria-label="KARINEX Startseite">KARINEX</a>
+    <a href="{{ _root }}" class="kx-menu__wordmark" aria-label="KARINEX Startseite">
+      <span class="kx-menu__wordmark-text">KARINEX</span>
+      <span class="kx-menu__wordmark-dot" aria-hidden="true"></span>
+    </a>
     <button type="button" class="kx-menu__close" id="cmm-close" aria-label="Menü schließen">
       <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -105,25 +105,8 @@
   {%- comment -%} ============== SCROLL BODY (staged reveal) ============== {%- endcomment -%}
   <div class="kx-menu__scroll">
 
-    {%- comment -%} ----- Search ----- {%- endcomment -%}
-    <form action="{{ routes.search_url }}" method="get" role="search" class="kx-menu__search kx-menu__stage" data-stage="1">
-      <svg class="kx-menu__search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="11" cy="11" r="7"/>
-        <line x1="21" y1="21" x2="16.5" y2="16.5"/>
-      </svg>
-      <input
-        type="search"
-        name="q"
-        class="kx-menu__search-input"
-        placeholder="{{ section.settings.search_placeholder }}"
-        autocomplete="off"
-        aria-label="Im Shop suchen"
-        data-kx-search>
-      <input type="hidden" name="type" value="product">
-    </form>
-
     {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage" data-stage="2">
+    <div class="kx-menu__stage" data-stage="1">
       <div class="kx-menu__bestseller-grid">
         {%- if use_collection -%}
           {%- for product in source_collection.products limit: 6 -%}
@@ -147,7 +130,7 @@
     </div>
 
     {%- comment -%} ----- Categories 2x2 (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage kx-menu__cat-block" data-stage="3">
+    <div class="kx-menu__stage kx-menu__cat-block" data-stage="2">
       <div class="kx-menu__cat-grid">
         {%- if section.settings.link_office != blank -%}
           <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card" data-haptic>
@@ -177,7 +160,7 @@
     </div>
 
     {%- comment -%} ----- Service list (no overline) ----- {%- endcomment -%}
-    <div class="kx-menu__stage kx-menu__service-block" data-stage="4">
+    <div class="kx-menu__stage kx-menu__service-block" data-stage="3">
       <ul class="kx-menu__service-list" role="list">
         <li class="kx-menu__service-item">
           <a href="{{ section.settings.link_account | default: routes.account_url }}">
@@ -214,7 +197,7 @@
 
     {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
     {%- if section.settings.feature_headline != blank -%}
-      <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="5">
+      <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="4">
         {%- if section.settings.feature_overline != blank -%}
           <div class="kx-menu__feature-overline">{{ section.settings.feature_overline }}</div>
         {%- endif -%}
@@ -235,7 +218,7 @@
     {%- endif -%}
 
     {%- comment -%} ----- Footer ----- {%- endcomment -%}
-    <footer class="kx-menu__footer kx-menu__stage" data-stage="6">
+    <footer class="kx-menu__footer kx-menu__stage" data-stage="5">
       <div class="kx-menu__locale">Deutsch <span aria-hidden="true">⌄</span></div>
       {%- if section.settings.footer_tagline != blank -%}
         <p class="kx-menu__tagline">{{ section.settings.footer_tagline }}</p>
@@ -253,7 +236,7 @@
 
 .kx-menu-backdrop {
   --kx-bg: #FAFAFA;
-  --kx-card: #F2EFE9;
+  --kx-card: #F4F4F4;
   --kx-forest: #1D4739;
   --kx-gold: #C9B486;
   --kx-black: #0A0A0A;
@@ -279,7 +262,7 @@
 
 .kx-menu {
   --kx-bg: #FAFAFA;
-  --kx-card: #F2EFE9;
+  --kx-card: #F4F4F4;
   --kx-forest: #1D4739;
   --kx-gold: #C9B486;
   --kx-black: #0A0A0A;
@@ -333,19 +316,34 @@
   padding: 0 24px;
   background: var(--kx-bg);
   border-bottom: 1px solid var(--kx-hairline);
+  box-shadow: none;
 }
 .kx-menu__wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 12px;
+  font-weight: 700;
+  letter-spacing: 14px;
   text-transform: uppercase;
   color: var(--kx-black);
   opacity: 0;
   transform: translateY(4px);
+  line-height: 1;
   transition: opacity 480ms ease, letter-spacing 640ms var(--kx-spring), transform 480ms var(--kx-spring);
   transition-delay: 220ms;
 }
-.kx-menu.is-open .kx-menu__wordmark { opacity: 1; letter-spacing: 6px; transform: translateY(0); }
+.kx-menu__wordmark-text { display: inline-block; }
+.kx-menu__wordmark-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--kx-gold);
+  margin-left: -10px;
+  flex-shrink: 0;
+  transform: translateY(-1px);
+}
+.kx-menu.is-open .kx-menu__wordmark { opacity: 1; letter-spacing: 8px; transform: translateY(0); }
 .kx-menu__close {
   display: inline-flex;
   align-items: center;
@@ -387,42 +385,14 @@
 .kx-menu.is-open .kx-menu__stage[data-stage="3"] { transition-delay: 440ms; }
 .kx-menu.is-open .kx-menu__stage[data-stage="4"] { transition-delay: 500ms; }
 .kx-menu.is-open .kx-menu__stage[data-stage="5"] { transition-delay: 560ms; }
-.kx-menu.is-open .kx-menu__stage[data-stage="6"] { transition-delay: 620ms; }
-
-/* ---------- Search ---------- */
-.kx-menu__search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin: 0 24px;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--kx-hairline);
-  transition: border-color 200ms ease, opacity 380ms ease, transform 480ms var(--kx-spring);
-}
-.kx-menu__search:focus-within { border-bottom-color: var(--kx-gold); }
-.kx-menu__search-icon { flex-shrink: 0; color: var(--kx-charcoal); margin-right: 12px; }
-.kx-menu__search-input {
-  flex: 1;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  outline: none;
-  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--kx-black);
-  padding: 0;
-}
-.kx-menu__search-input::placeholder { color: var(--kx-gray); font-style: italic; opacity: 1; }
 
 /* ---------- Bestseller grid (2x3 = 6 cards) ---------- */
 .kx-menu__bestseller-grid {
-  margin-top: 32px;
+  margin-top: 24px;
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
 }
 .kx-menu__bs-card {
   display: flex;
@@ -431,16 +401,16 @@
   border-radius: 6px;
   overflow: hidden;
   transition: transform 150ms ease;
-  min-height: 240px;
 }
 .kx-menu__bs-card:active { transform: scale(0.98); }
 .kx-menu__bs-img-wrap {
-  height: 140px;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 14px;
-  background: var(--kx-card);
+  background: #ffffff;
+  border-radius: 6px 6px 0 0;
 }
 .kx-menu__bs-img {
   max-width: 100%;
@@ -451,9 +421,9 @@
   display: block;
 }
 .kx-menu__bs-name {
-  padding: 12px 12px 4px;
+  padding: 10px 10px 2px;
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.3;
   color: var(--kx-black);
@@ -464,9 +434,9 @@
   flex: 1;
 }
 .kx-menu__bs-price {
-  padding: 0 12px 14px;
+  padding: 0 10px 10px;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--kx-forest);
   letter-spacing: 0.2px;
@@ -482,7 +452,7 @@
 }
 .kx-menu__cat-card {
   position: relative;
-  height: 120px;
+  height: 100px;
   padding: 16px;
   background: var(--kx-card);
   border-radius: 6px;
@@ -507,20 +477,20 @@
 .kx-menu__cat-name--italic { font-style: italic; }
 .kx-menu__cat-mark {
   position: absolute;
-  bottom: 4px;
-  right: 14px;
+  bottom: 6px;
+  right: 12px;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 72px;
+  font-size: 44px;
   line-height: 1;
   color: var(--kx-forest);
-  opacity: 0.18;
+  opacity: 0.12;
   z-index: 1;
   user-select: none;
   transition: color 220ms ease, opacity 220ms ease;
 }
-.kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 64px; }
+.kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 42px; }
 .kx-menu__cat-card:hover, .kx-menu__cat-card:focus-visible, .kx-menu__cat-card:active {
   background: var(--kx-forest);
 }
@@ -529,7 +499,7 @@
 .kx-menu__cat-card:active .kx-menu__cat-name { color: var(--kx-bg); }
 .kx-menu__cat-card:hover .kx-menu__cat-mark,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-mark,
-.kx-menu__cat-card:active .kx-menu__cat-mark { color: var(--kx-gold); opacity: 0.85; }
+.kx-menu__cat-card:active .kx-menu__cat-mark { color: var(--kx-gold); opacity: 0.25; }
 
 /* ---------- Service list ---------- */
 .kx-menu__service-block { margin-top: 40px; }
@@ -622,7 +592,7 @@
   .kx-menu__wordmark, .kx-menu__close, .kx-menu__stage {
     opacity: 1 !important;
     transform: none !important;
-    letter-spacing: 6px !important;
+    letter-spacing: 8px !important;
     transition: none !important;
   }
 }
@@ -683,45 +653,6 @@
       openMenu();
       return false;
     }, true);
-
-    /* Search behavior — submit on Enter; tapping empty field navigates to search page */
-    var searchForm = menu.querySelector('.kx-menu__search');
-    var searchInput = menu.querySelector('[data-kx-search]');
-    if (searchForm && searchInput) {
-      searchForm.addEventListener('submit', function (e) {
-        var q = (searchInput.value || '').trim();
-        if (!q) {
-          /* No query → just go to the search page */
-          e.preventDefault();
-          window.location.href = '/search';
-        }
-        /* otherwise allow native submit to /search?q=... */
-      });
-      /* Tap on empty input opens the dedicated search page (gives user the full search UX) */
-      var navigatedOnce = false;
-      searchInput.addEventListener('focus', function () {
-        if (navigatedOnce) return;
-        if ((searchInput.value || '').trim() === '') {
-          /* small delay so the keyboard appears and the user sees the focus state first */
-          /* if the user starts typing within 1500ms, we cancel the navigation */
-        }
-      });
-      /* Click directly on the field navigates to /search after slight delay */
-      searchForm.addEventListener('click', function (e) {
-        if (e.target === searchInput && (searchInput.value || '').trim() === '') {
-          /* Allow user typing — only navigate if they tap-and-leave or via icon */
-        }
-      });
-      /* Search icon click goes straight to /search */
-      var searchIcon = menu.querySelector('.kx-menu__search-icon');
-      if (searchIcon) {
-        searchIcon.style.cursor = 'pointer';
-        searchIcon.addEventListener('click', function () {
-          var q = (searchInput.value || '').trim();
-          window.location.href = q ? '/search?q=' + encodeURIComponent(q) : '/search';
-        });
-      }
-    }
 
     /* Haptic on category and product taps */
     menu.querySelectorAll('[data-haptic], .kx-menu__bs-card').forEach(function (el) {
