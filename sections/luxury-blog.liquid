@@ -160,6 +160,19 @@
   margin: 0 0 56px;
   background: transparent !important;
   padding: 0;
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  transition: opacity 280ms ease, transform 320ms ease, max-height 360ms ease, margin 360ms ease;
+  overflow: hidden;
+  will-change: opacity, transform;
+}
+.lux-blog__header.is-hidden {
+  opacity: 0;
+  transform: translateY(-12px);
+  max-height: 0;
+  margin-bottom: 0;
+  pointer-events: none;
 }
 .lux-blog__header-text {
   max-width: 680px;
@@ -853,6 +866,28 @@
     window.addEventListener('resize', update);
     update();
     setTimeout(update, 80);
+
+    /* Hide section heading once user scrolls past it (no sticky / no overlap). */
+    var headerEl = section.querySelector('.lux-blog__header');
+    if (headerEl) {
+      var ticking = false;
+      function checkHeader() {
+        ticking = false;
+        var rect = headerEl.getBoundingClientRect();
+        if (rect.bottom < 80) {
+          headerEl.classList.add('is-hidden');
+        } else {
+          headerEl.classList.remove('is-hidden');
+        }
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          window.requestAnimationFrame(checkHeader);
+          ticking = true;
+        }
+      }, { passive: true });
+      checkHeader();
+    }
   })();
 </script>
 
