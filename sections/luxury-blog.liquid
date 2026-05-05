@@ -32,12 +32,16 @@
   assign layout_mode = section.settings.layout_mode | default: 'grid'
   assign card_style = section.settings.card_style | default: 'framed'
   assign cols = section.settings.posts_per_row | default: 3
-  assign desktop_cols = cols | at_most: article_count
-  if desktop_cols < 1
-    assign desktop_cols = 1
-  endif
   if article_count > cols
     assign layout_mode = 'carousel'
+  endif
+  if layout_mode == 'carousel'
+    assign desktop_cols = cols
+  else
+    assign desktop_cols = cols | at_most: article_count
+  endif
+  if desktop_cols < 1
+    assign desktop_cols = 1
   endif
   assign heading = section.settings.heading
   assign eyebrow = section.settings.eyebrow
@@ -108,9 +112,7 @@
             {%- assign block_article = block.settings.article -%}
             {%- if block_article != blank -%}
               {%- assign card_image = block.settings.image | default: block_article.image -%}
-              {%- if card_image != blank -%}
-                {% render 'lux-blog-card', article: block_article, card_image: card_image, card_style: card_style, card_index: forloop.index %}
-              {%- endif -%}
+              {% render 'lux-blog-card', article: block_article, card_image: card_image, card_style: card_style, card_index: forloop.index %}
             {%- endif -%}
           {%- endfor -%}
         {%- else -%}
@@ -130,9 +132,7 @@
               endcase
               assign card_image = override_image | default: article.image
             -%}
-            {%- if card_image != blank -%}
-              {% render 'lux-blog-card', article: article, card_image: card_image, card_style: card_style, card_index: forloop.index %}
-            {%- endif -%}
+            {% render 'lux-blog-card', article: article, card_image: card_image, card_style: card_style, card_index: forloop.index %}
           {%- endfor -%}
         {%- endif -%}
       </div>
