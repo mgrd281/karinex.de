@@ -16,7 +16,13 @@
         "enable_remove_bg": true,
         "remove_bg_api_key": "",
         "remove_bg_api_keys": "",
-        "fallback_collections": [],
+        "fallback_collections": [
+          "microsoft-tools",
+          "microsoft-office",
+          "unsere-bestseller",
+          "sale",
+          "windows"
+        ],
         "max_products": 4,
         "headline": "Microsoft Office 2024 für Windows",
         "subtitle": "Professional Plus Standard",
