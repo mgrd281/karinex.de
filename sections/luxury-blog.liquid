@@ -291,10 +291,12 @@
   overflow: hidden;
 }
 @media (min-width: 600px) {
-  .lux-blog__grid--carousel { grid-auto-columns: minmax(0, calc((100% - 40px) / 2)); }
+  .lux-blog__grid--carousel { grid-auto-columns: calc((100% - 40px) / 2); }
 }
 @media (min-width: 990px) {
-  .lux-blog__grid--carousel { grid-auto-columns: minmax(0, calc((100% - 20px * (var(--lux-cols, 3) - 1)) / var(--lux-cols, 3))); }
+  /* Fixed track width (no minmax) so 7+ cards overflow horizontally
+     instead of squeezing to fit. The carousel scroll then activates. */
+  .lux-blog__grid--carousel { grid-auto-columns: calc((100% - 20px * (var(--lux-cols, 3) - 1)) / var(--lux-cols, 3)); }
 }
 
 .lux-blog__nav {
