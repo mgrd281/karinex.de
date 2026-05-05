@@ -416,21 +416,26 @@
 @media (max-width: 768px) {
   .lux-blog__nav { display: none !important; }
 }
-/* Fade-in stagger reveal on scroll */
-.lux-blog__grid > .lux-blog__card {
+/* Fade-in stagger reveal on scroll — GRID MODE ONLY (carousel cards must always be visible) */
+.lux-blog__grid--grid > .lux-blog__card {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 720ms cubic-bezier(0.22, 0.61, 0.36, 1), transform 720ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.lux-blog__grid > .lux-blog__card.is-revealed {
+.lux-blog__grid--grid > .lux-blog__card.is-revealed {
   opacity: 1;
   transform: translateY(0);
 }
-.lux-blog__grid > .lux-blog__card.is-revealed:nth-child(2) { transition-delay: 80ms; }
-.lux-blog__grid > .lux-blog__card.is-revealed:nth-child(3) { transition-delay: 160ms; }
-.lux-blog__grid > .lux-blog__card.is-revealed:nth-child(4) { transition-delay: 240ms; }
-.lux-blog__grid > .lux-blog__card.is-revealed:nth-child(5) { transition-delay: 320ms; }
-.lux-blog__grid > .lux-blog__card.is-revealed:nth-child(6) { transition-delay: 400ms; }
+.lux-blog__grid--grid > .lux-blog__card.is-revealed:nth-child(2) { transition-delay: 80ms; }
+.lux-blog__grid--grid > .lux-blog__card.is-revealed:nth-child(3) { transition-delay: 160ms; }
+.lux-blog__grid--grid > .lux-blog__card.is-revealed:nth-child(4) { transition-delay: 240ms; }
+.lux-blog__grid--grid > .lux-blog__card.is-revealed:nth-child(5) { transition-delay: 320ms; }
+.lux-blog__grid--grid > .lux-blog__card.is-revealed:nth-child(6) { transition-delay: 400ms; }
+/* Carousel cards always fully visible — no opacity dependence on JS observer */
+.lux-blog__grid--carousel > .lux-blog__card {
+  opacity: 1;
+  transform: none;
+}
 
 /* Carousel scroll progress indicator */
 .lux-blog__progress {
@@ -457,8 +462,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lux-blog__grid > .lux-blog__card,
-  .lux-blog__grid > .lux-blog__card.is-revealed {
+  .lux-blog__grid--grid > .lux-blog__card,
+  .lux-blog__grid--grid > .lux-blog__card.is-revealed {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
