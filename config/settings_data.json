@@ -56,9 +56,9 @@
         "type": "global-sale-bar",
         "settings": {
           "show_close_button": true,
-          "sale_bar_text": "Super Sale: Bis zu 90% Rabatt",
+          "sale_bar_text": "Muttertag SALE: Bis zu 90% Rabatt",
           "show_timer": true,
-          "timer_date": "2026-05-09T23:59:59",
+          "timer_date": "2026-05-10T23:59:59",
           "sale_bar_bg_color": "#1d4739",
           "sale_bar_text_color": "#ffffff"
         }
