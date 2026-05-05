@@ -14,15 +14,9 @@
       "name": "Hero Product Slider",
       "settings": {
         "enable_remove_bg": true,
-        "remove_bg_api_key": "qcCQh9dVMc7ofpJP2NCTV1UY",
-        "remove_bg_api_keys": "wxtf3YE1e2QtebJPxRiRi1T7\nX2QUFqGMRikeVWpVApnVXwQx\n82Yi4zDHmKZL7TDMPbiwfmuD\np43fUKKRtnrQCuNwxf2yuf9C\nVbcz2teZro8BcvcQJRgoAc6B",
-        "fallback_collections": [
-          "boss-uhren",
-          "damenuhren",
-          "controller",
-          "lego",
-          "software"
-        ],
+        "remove_bg_api_key": "",
+        "remove_bg_api_keys": "",
+        "fallback_collections": [],
         "max_products": 4,
         "headline": "Microsoft Office 2024 für Windows",
         "subtitle": "Professional Plus Standard",
@@ -1470,7 +1464,7 @@
         "image_4": "shopify://shop_images/6AE41BEE-1389-44ED-B38F-3470190F5BF2.png",
         "cta_label": "",
         "cta_link": "",
-        "bg_color": "#F5F2EC",
+        "bg_color": "#f5f2ec",
         "card_bg": "#ffffff",
         "text_color": "#0a0a0a",
         "muted_color": "#6a6a6a",
