@@ -4,15 +4,48 @@
     assign _root = _root | append: '/'
   endunless
 
+  comment
+    Bestsellers — try the configured collection first, then fall back through
+    a chain of handles, then to a hand-picked list of product handles, and
+    finally to collections.all so that the row is NEVER empty.
+  endcomment
+
   assign bestseller_collection_handle = section.settings.bestseller_collection | default: 'bestsellers'
   assign bestseller_collection = collections[bestseller_collection_handle]
   if bestseller_collection == blank or bestseller_collection.products_count == 0
     assign bestseller_collection = collections['unsere-bestseller']
   endif
-  if bestseller_collection == blank or bestseller_collection.products_count == 0
-    assign bestseller_collection = collections.all
+
+  assign bestsellers = empty
+  if bestseller_collection != blank and bestseller_collection.products_count > 0
+    assign bestsellers = bestseller_collection.products | slice: 0, 3
   endif
-  assign bestsellers = bestseller_collection.products | slice: 0, 3
+
+  if bestsellers == empty or bestsellers.size == 0
+    assign h1 = section.settings.fallback_handle_1 | default: 'office-2024-professional-plus-windows'
+    assign h2 = section.settings.fallback_handle_2 | default: 'windows-11-pro'
+    assign h3 = section.settings.fallback_handle_3 | default: 'office-2021-professional-plus'
+    assign p1 = all_products[h1]
+    assign p2 = all_products[h2]
+    assign p3 = all_products[h3]
+    assign manual_list = '' | split: ''
+    if p1 != blank and p1.handle != blank
+      assign manual_list = manual_list | concat: p1
+    endif
+    if p2 != blank and p2.handle != blank
+      assign manual_list = manual_list | concat: p2
+    endif
+    if p3 != blank and p3.handle != blank
+      assign manual_list = manual_list | concat: p3
+    endif
+    if manual_list.size > 0
+      assign bestsellers = manual_list
+    endif
+  endif
+
+  if bestsellers == empty or bestsellers.size == 0
+    assign bestsellers = collections.all.products | slice: 0, 3
+  endif
 -%}
 
 {% schema %}
@@ -23,14 +56,15 @@
     { "type": "text", "id": "bestseller_collection", "label": "Collection-Handle (z. B. bestsellers)", "default": "unsere-bestseller" },
     { "type": "text", "id": "bestseller_overline", "label": "Overline", "default": "MEISTGEKAUFT" },
     { "type": "text", "id": "bestseller_subtitle", "label": "Subtitle", "default": "Die Auswahl unserer Kunden" },
+    { "type": "header", "content": "Bestseller Fallback (Produkt-Handles)" },
+    { "type": "text", "id": "fallback_handle_1", "label": "Fallback Handle 1", "default": "office-2024-professional-plus-windows" },
+    { "type": "text", "id": "fallback_handle_2", "label": "Fallback Handle 2", "default": "windows-11-pro" },
+    { "type": "text", "id": "fallback_handle_3", "label": "Fallback Handle 3", "default": "office-2021-professional-plus" },
 
     { "type": "header", "content": "Primäre Navigation (01 — KOLLEKTION)" },
     { "type": "url", "id": "link_office", "label": "Microsoft Office Link" },
-    { "type": "image_picker", "id": "image_office", "label": "Office Silhouette" },
     { "type": "url", "id": "link_windows", "label": "Microsoft Windows Link" },
-    { "type": "image_picker", "id": "image_windows", "label": "Windows Silhouette" },
     { "type": "url", "id": "link_all", "label": "Alle Produkte Link" },
-    { "type": "image_picker", "id": "image_all", "label": "Alle Produkte Silhouette" },
     { "type": "url", "id": "link_offers", "label": "Angebote Link" },
 
     { "type": "header", "content": "Service (02 — SERVICE)" },
@@ -78,11 +112,11 @@
     </button>
   </header>
 
-  {%- comment -%} ============== SCROLLABLE BODY ============== {%- endcomment -%}
+  {%- comment -%} ============== SCROLL BODY (staged reveal) ============== {%- endcomment -%}
   <div class="kx-menu__scroll">
 
     {%- comment -%} ----- Search ----- {%- endcomment -%}
-    <form action="{{ routes.search_url }}" method="get" role="search" class="kx-menu__search">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="kx-menu__search kx-menu__stage" data-stage="1">
       <svg class="kx-menu__search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7"/>
         <line x1="21" y1="21" x2="16.5" y2="16.5"/>
@@ -97,122 +131,108 @@
     </form>
 
     {%- comment -%} ----- Bestsellers ----- {%- endcomment -%}
-    {%- if bestsellers.size > 0 -%}
-      <div class="kx-menu__overline">{{ section.settings.bestseller_overline }}</div>
-      {%- if section.settings.bestseller_subtitle != blank -%}
-        <p class="kx-menu__subtitle">{{ section.settings.bestseller_subtitle }}</p>
-      {%- endif -%}
-      <div class="kx-menu__bestseller-row" role="list">
-        {%- for product in bestsellers -%}
-          <a href="{{ product.url }}" class="kx-menu__bs-card" role="listitem" aria-label="{{ product.title | escape }}">
-            <div class="kx-menu__bs-img-wrap">
-              {%- if product.featured_image -%}
-                <img
-                  src="{{ product.featured_image | image_url: width: 280 }}"
-                  alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                  loading="lazy"
-                  width="160"
-                  height="140"
-                  class="kx-menu__bs-img">
-              {%- endif -%}
-            </div>
-            <div class="kx-menu__bs-name">{{ product.title | truncate: 56 }}</div>
-            <div class="kx-menu__bs-price">
-              {%- if product.price_varies -%}ab {%- endif -%}
-              {{ product.price | money }}
-            </div>
-          </a>
-        {%- endfor -%}
+    {%- if bestsellers != empty and bestsellers.size > 0 -%}
+      <div class="kx-menu__stage" data-stage="2">
+        <div class="kx-menu__overline">{{ section.settings.bestseller_overline }}</div>
+        {%- if section.settings.bestseller_subtitle != blank -%}
+          <p class="kx-menu__subtitle">{{ section.settings.bestseller_subtitle }}</p>
+        {%- endif -%}
+        <div class="kx-menu__bestseller-row" role="list">
+          {%- for product in bestsellers -%}
+            <a href="{{ product.url }}" class="kx-menu__bs-card" role="listitem" aria-label="{{ product.title | escape }}">
+              <div class="kx-menu__bs-img-wrap">
+                {%- if product.featured_image -%}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 280 }}"
+                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    width="160"
+                    height="140"
+                    class="kx-menu__bs-img">
+                {%- endif -%}
+              </div>
+              <div class="kx-menu__bs-name">{{ product.title | truncate: 56 }}</div>
+              <div class="kx-menu__bs-price">
+                {%- if product.price_varies -%}ab {%- endif -%}
+                {{ product.price | money }}
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
       </div>
     {%- endif -%}
 
     {%- comment -%} ----- 01 — KOLLEKTION (2x2 grid) ----- {%- endcomment -%}
-    <div class="kx-menu__overline kx-menu__overline--spaced">01 — KOLLEKTION</div>
-    <div class="kx-menu__cat-grid">
-      {%- if section.settings.link_office != blank -%}
-        <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card">
-          <span class="kx-menu__cat-name">Microsoft Office</span>
-          {%- if section.settings.image_office -%}
-            <img src="{{ section.settings.image_office | image_url: width: 200 }}" alt="" loading="lazy" class="kx-menu__cat-mark" aria-hidden="true">
-          {%- else -%}
-            <span class="kx-menu__cat-glyph kx-menu__cat-glyph--office" aria-hidden="true"></span>
-          {%- endif -%}
-        </a>
-      {%- endif -%}
-      {%- if section.settings.link_windows != blank -%}
-        <a href="{{ section.settings.link_windows }}" class="kx-menu__cat-card">
-          <span class="kx-menu__cat-name">Microsoft Windows</span>
-          {%- if section.settings.image_windows -%}
-            <img src="{{ section.settings.image_windows | image_url: width: 200 }}" alt="" loading="lazy" class="kx-menu__cat-mark" aria-hidden="true">
-          {%- else -%}
-            <span class="kx-menu__cat-glyph kx-menu__cat-glyph--windows" aria-hidden="true"></span>
-          {%- endif -%}
-        </a>
-      {%- endif -%}
-      {%- if section.settings.link_all != blank -%}
-        <a href="{{ section.settings.link_all }}" class="kx-menu__cat-card">
-          <span class="kx-menu__cat-name">Alle Produkte</span>
-          {%- if section.settings.image_all -%}
-            <img src="{{ section.settings.image_all | image_url: width: 200 }}" alt="" loading="lazy" class="kx-menu__cat-mark" aria-hidden="true">
-          {%- else -%}
-            <span class="kx-menu__cat-glyph kx-menu__cat-glyph--all" aria-hidden="true"></span>
-          {%- endif -%}
-        </a>
-      {%- endif -%}
-      {%- if section.settings.link_offers != blank -%}
-        <a href="{{ section.settings.link_offers }}" class="kx-menu__cat-card kx-menu__cat-card--accent">
-          <span class="kx-menu__cat-name kx-menu__cat-name--italic">Angebote</span>
-          <span class="kx-menu__cat-glyph kx-menu__cat-glyph--percent" aria-hidden="true">%</span>
-        </a>
-      {%- endif -%}
+    <div class="kx-menu__stage" data-stage="3">
+      <div class="kx-menu__overline kx-menu__overline--spaced">01 — KOLLEKTION</div>
+      <div class="kx-menu__cat-grid">
+        {%- if section.settings.link_office != blank -%}
+          <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card">
+            <span class="kx-menu__cat-name">Microsoft Office</span>
+            <span class="kx-menu__cat-mark" aria-hidden="true">O</span>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.link_windows != blank -%}
+          <a href="{{ section.settings.link_windows }}" class="kx-menu__cat-card">
+            <span class="kx-menu__cat-name">Microsoft Windows</span>
+            <span class="kx-menu__cat-mark" aria-hidden="true">W</span>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.link_all != blank -%}
+          <a href="{{ section.settings.link_all }}" class="kx-menu__cat-card">
+            <span class="kx-menu__cat-name">Alle Produkte</span>
+            <span class="kx-menu__cat-mark" aria-hidden="true">&amp;</span>
+          </a>
+        {%- endif -%}
+        {%- if section.settings.link_offers != blank -%}
+          <a href="{{ section.settings.link_offers }}" class="kx-menu__cat-card kx-menu__cat-card--accent">
+            <span class="kx-menu__cat-name kx-menu__cat-name--italic">Angebote</span>
+            <span class="kx-menu__cat-mark kx-menu__cat-mark--accent" aria-hidden="true">%</span>
+          </a>
+        {%- endif -%}
+      </div>
     </div>
 
     {%- comment -%} ----- 02 — SERVICE ----- {%- endcomment -%}
-    <div class="kx-menu__overline kx-menu__overline--spaced">02 — SERVICE</div>
-    <ul class="kx-menu__service-list" role="list">
-      <li class="kx-menu__service-item">
-        <a href="{{ section.settings.link_account | default: routes.account_url }}">
-          <span>Mein Konto</span>
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-        </a>
-      </li>
-      {%- if section.settings.link_orders != blank -%}
+    <div class="kx-menu__stage" data-stage="4">
+      <div class="kx-menu__overline kx-menu__overline--spaced">02 — SERVICE</div>
+      <ul class="kx-menu__service-list" role="list">
         <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_orders }}">
+          <a href="{{ section.settings.link_account | default: routes.account_url }}">
+            <span>Mein Konto</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </li>
+        <li class="kx-menu__service-item">
+          <a href="{{ section.settings.link_orders | default: routes.account_url }}">
             <span>Bestellungen</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
         </li>
-      {%- endif -%}
-      {%- if section.settings.link_wishlist != blank -%}
         <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_wishlist }}">
+          <a href="{{ section.settings.link_wishlist | default: '/pages/wishlist' }}">
             <span>Merkliste</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
         </li>
-      {%- endif -%}
-      {%- if section.settings.link_support != blank -%}
         <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_support }}">
+          <a href="{{ section.settings.link_support | default: '/pages/contact' }}">
             <span>Kundensupport</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
         </li>
-      {%- endif -%}
-      {%- if section.settings.link_shipping != blank -%}
         <li class="kx-menu__service-item">
-          <a href="{{ section.settings.link_shipping }}">
-            <span>Versand & Lieferung</span>
+          <a href="{{ section.settings.link_shipping | default: '/pages/versand' }}">
+            <span>Versand &amp; Lieferung</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
         </li>
-      {%- endif -%}
-    </ul>
+      </ul>
+    </div>
 
     {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
     {%- if section.settings.feature_headline != blank -%}
-      <section class="kx-menu__feature">
+      <section class="kx-menu__feature kx-menu__stage" data-stage="5">
         {%- if section.settings.feature_overline != blank -%}
           <div class="kx-menu__feature-overline">{{ section.settings.feature_overline }}</div>
         {%- endif -%}
@@ -233,7 +253,7 @@
     {%- endif -%}
 
     {%- comment -%} ----- Footer ----- {%- endcomment -%}
-    <footer class="kx-menu__footer">
+    <footer class="kx-menu__footer kx-menu__stage" data-stage="6">
       <div class="kx-menu__locale">Deutsch <span aria-hidden="true">⌄</span></div>
       {%- if section.settings.footer_tagline != blank -%}
         <p class="kx-menu__tagline">{{ section.settings.footer_tagline }}</p>
@@ -250,41 +270,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
 
 .kx-menu-backdrop {
-  --karinex-forest: #1D4739;
-  --karinex-cream: #F5F2EC;
-  --karinex-soft-cream: #EDE8DD;
-  --karinex-gold: #C9B486;
-  --karinex-black: #0A0A0A;
-  --karinex-charcoal: #3A3A3A;
-  --karinex-gray: #6A6A6A;
-  --karinex-hairline: #C9C2B0;
-  --karinex-beige: #D4CDB8;
-  --karinex-muted-green: #8FA39A;
+  --kx-bg: #FAFAFA;
+  --kx-card: #F2EFE9;
+  --kx-forest: #1D4739;
+  --kx-gold: #C9B486;
+  --kx-black: #0A0A0A;
+  --kx-charcoal: #3A3A3A;
+  --kx-gray: #6A6A6A;
+  --kx-hairline: #E5E0D5;
+  --kx-beige: #D4CDB8;
+  --kx-muted-green: #8FA39A;
+  --kx-spring: cubic-bezier(0.32, 0.72, 0, 1);
   position: fixed;
   inset: 0;
   background: rgba(10, 10, 10, 0.4);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 200ms ease, visibility 0s linear 200ms;
+  transition: opacity 220ms ease, visibility 0s linear 220ms;
   z-index: 9998;
 }
 .kx-menu-backdrop.is-open {
   opacity: 1;
   visibility: visible;
-  transition: opacity 200ms ease, visibility 0s linear 0s;
+  transition: opacity 240ms ease, visibility 0s linear 0s;
 }
 
 .kx-menu {
-  --karinex-forest: #1D4739;
-  --karinex-cream: #F5F2EC;
-  --karinex-soft-cream: #EDE8DD;
-  --karinex-gold: #C9B486;
-  --karinex-black: #0A0A0A;
-  --karinex-charcoal: #3A3A3A;
-  --karinex-gray: #6A6A6A;
-  --karinex-hairline: #C9C2B0;
-  --karinex-beige: #D4CDB8;
-  --karinex-muted-green: #8FA39A;
+  --kx-bg: #FAFAFA;
+  --kx-card: #F2EFE9;
+  --kx-forest: #1D4739;
+  --kx-gold: #C9B486;
+  --kx-black: #0A0A0A;
+  --kx-charcoal: #3A3A3A;
+  --kx-gray: #6A6A6A;
+  --kx-hairline: #E5E0D5;
+  --kx-beige: #D4CDB8;
+  --kx-muted-green: #8FA39A;
+  --kx-spring: cubic-bezier(0.32, 0.72, 0, 1);
   position: fixed;
   top: 0;
   left: 0;
@@ -292,23 +314,31 @@
   height: 100dvh;
   width: 88vw;
   max-width: 380px;
-  background: var(--karinex-cream);
-  color: var(--karinex-black);
+  background: var(--kx-bg);
+  color: var(--kx-black);
   font-family: "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
   flex-direction: column;
   transform: translateX(-100%);
-  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition:
+    transform 520ms var(--kx-spring),
+    box-shadow 520ms var(--kx-spring);
   z-index: 9999;
   overflow: hidden;
+  visibility: hidden;
 }
-.kx-menu.is-open { transform: translateX(0); }
+.kx-menu.is-open {
+  transform: translateX(0);
+  box-shadow: 24px 0 56px -16px rgba(10, 10, 10, 0.18);
+  visibility: visible;
+}
 .kx-menu *, .kx-menu *::before, .kx-menu *::after { box-sizing: border-box; }
 .kx-menu a { color: inherit; text-decoration: none; }
 
-/* ---------- Header ---------- */
+/* ---------- Header (wordmark fade + tracking-in) ---------- */
 .kx-menu__header {
   flex-shrink: 0;
   position: sticky;
@@ -319,15 +349,24 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: var(--karinex-cream);
-  border-bottom: 1px solid var(--karinex-hairline);
+  background: var(--kx-bg);
+  border-bottom: 1px solid var(--kx-hairline);
 }
 .kx-menu__wordmark {
   font-size: 16px;
   font-weight: 600;
-  letter-spacing: 6px;
+  letter-spacing: 12px;
   text-transform: uppercase;
-  color: var(--karinex-black);
+  color: var(--kx-black);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 480ms ease, letter-spacing 640ms var(--kx-spring), transform 480ms var(--kx-spring);
+  transition-delay: 220ms;
+}
+.kx-menu.is-open .kx-menu__wordmark {
+  opacity: 1;
+  letter-spacing: 6px;
+  transform: translateY(0);
 }
 .kx-menu__close {
   display: inline-flex;
@@ -340,10 +379,13 @@
   border: 0;
   padding: 0;
   cursor: pointer;
-  color: var(--karinex-black);
-  transition: color 150ms ease;
+  color: var(--kx-black);
+  opacity: 0;
+  transition: color 150ms ease, opacity 320ms ease;
+  transition-delay: 280ms;
 }
-.kx-menu__close:hover { color: var(--karinex-forest); }
+.kx-menu.is-open .kx-menu__close { opacity: 1; }
+.kx-menu__close:hover { color: var(--kx-forest); }
 
 /* ---------- Scroll body ---------- */
 .kx-menu__scroll {
@@ -355,6 +397,20 @@
 }
 .kx-menu__scroll::-webkit-scrollbar { width: 0; }
 
+/* ---------- Staged reveal of sections ---------- */
+.kx-menu__stage {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 380ms ease, transform 480ms var(--kx-spring);
+}
+.kx-menu.is-open .kx-menu__stage { opacity: 1; transform: translateY(0); }
+.kx-menu.is-open .kx-menu__stage[data-stage="1"] { transition-delay: 320ms; }
+.kx-menu.is-open .kx-menu__stage[data-stage="2"] { transition-delay: 380ms; }
+.kx-menu.is-open .kx-menu__stage[data-stage="3"] { transition-delay: 440ms; }
+.kx-menu.is-open .kx-menu__stage[data-stage="4"] { transition-delay: 500ms; }
+.kx-menu.is-open .kx-menu__stage[data-stage="5"] { transition-delay: 560ms; }
+.kx-menu.is-open .kx-menu__stage[data-stage="6"] { transition-delay: 620ms; }
+
 /* ---------- Search ---------- */
 .kx-menu__search {
   position: relative;
@@ -362,11 +418,11 @@
   align-items: center;
   margin: 0 24px;
   padding: 20px 0;
-  border-bottom: 1px solid var(--karinex-hairline);
-  transition: border-color 200ms ease;
+  border-bottom: 1px solid var(--kx-hairline);
+  transition: border-color 200ms ease, opacity 380ms ease, transform 480ms var(--kx-spring);
 }
-.kx-menu__search:focus-within { border-bottom-color: var(--karinex-gold); }
-.kx-menu__search-icon { flex-shrink: 0; color: var(--karinex-charcoal); margin-right: 12px; }
+.kx-menu__search:focus-within { border-bottom-color: var(--kx-gold); }
+.kx-menu__search-icon { flex-shrink: 0; color: var(--kx-charcoal); margin-right: 12px; }
 .kx-menu__search-input {
   flex: 1;
   width: 100%;
@@ -377,10 +433,10 @@
   font-style: italic;
   font-size: 18px;
   font-weight: 400;
-  color: var(--karinex-black);
+  color: var(--kx-black);
   padding: 0;
 }
-.kx-menu__search-input::placeholder { color: var(--karinex-gray); font-style: italic; opacity: 1; }
+.kx-menu__search-input::placeholder { color: var(--kx-gray); font-style: italic; opacity: 1; }
 
 /* ---------- Overline + subtitle ---------- */
 .kx-menu__overline {
@@ -389,7 +445,7 @@
   font-weight: 500;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--karinex-gray);
+  color: var(--kx-gray);
 }
 .kx-menu__overline--spaced { padding-top: 40px; padding-bottom: 16px; }
 .kx-menu__subtitle {
@@ -398,7 +454,7 @@
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
   font-size: 16px;
-  color: var(--karinex-charcoal);
+  color: var(--kx-charcoal);
   line-height: 1.4;
 }
 
@@ -417,19 +473,17 @@
   scrollbar-width: none;
 }
 .kx-menu__bestseller-row::-webkit-scrollbar { display: none; }
-
 .kx-menu__bs-card {
   display: flex;
   flex-direction: column;
   height: 220px;
-  background: var(--karinex-soft-cream);
-  border-radius: 4px;
+  background: var(--kx-card);
+  border-radius: 6px;
   scroll-snap-align: start;
   transition: transform 150ms ease, background 200ms ease;
   overflow: hidden;
 }
 .kx-menu__bs-card:active { transform: scale(0.98); }
-
 .kx-menu__bs-img-wrap {
   height: 140px;
   display: flex;
@@ -451,7 +505,7 @@
   font-size: 14px;
   font-weight: 500;
   line-height: 1.3;
-  color: var(--karinex-black);
+  color: var(--kx-black);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -463,7 +517,7 @@
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: var(--karinex-forest);
+  color: var(--kx-forest);
   letter-spacing: 0.2px;
 }
 
@@ -478,106 +532,63 @@
   position: relative;
   height: 120px;
   padding: 16px;
-  background: var(--karinex-soft-cream);
-  border-radius: 4px;
+  background: var(--kx-card);
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  transition: background 200ms ease, color 200ms ease;
+  transition: background 220ms ease, color 220ms ease, transform 150ms ease;
 }
+.kx-menu__cat-card:active { transform: scale(0.985); }
 .kx-menu__cat-name {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 20px;
   font-weight: 500;
   line-height: 1.15;
-  color: var(--karinex-black);
+  color: var(--kx-black);
   position: relative;
   z-index: 2;
   max-width: 70%;
-  transition: color 200ms ease;
+  transition: color 220ms ease;
 }
 .kx-menu__cat-name--italic { font-style: italic; }
 .kx-menu__cat-mark {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  opacity: 0.3;
-  z-index: 1;
-  transition: opacity 200ms ease;
-}
-.kx-menu__cat-glyph {
-  position: absolute;
-  bottom: 12px;
+  bottom: 4px;
   right: 14px;
-  width: 56px;
-  height: 56px;
-  opacity: 0.28;
-  z-index: 1;
-  transition: opacity 200ms ease;
-}
-.kx-menu__cat-glyph--office {
-  border: 1px solid var(--karinex-charcoal);
-  border-radius: 2px;
-  background:
-    linear-gradient(var(--karinex-charcoal), var(--karinex-charcoal)) center/52% 1px no-repeat,
-    linear-gradient(var(--karinex-charcoal), var(--karinex-charcoal)) center/1px 52% no-repeat;
-}
-.kx-menu__cat-glyph--windows {
-  background:
-    linear-gradient(90deg, transparent 49%, var(--karinex-charcoal) 49%, var(--karinex-charcoal) 51%, transparent 51%) center/100% 100%,
-    linear-gradient(0deg, transparent 49%, var(--karinex-charcoal) 49%, var(--karinex-charcoal) 51%, transparent 51%) center/100% 100%;
-  border: 1px solid var(--karinex-charcoal);
-  border-radius: 2px;
-  opacity: 0.25;
-}
-.kx-menu__cat-glyph--all {
-  border-radius: 50%;
-  border: 1px solid var(--karinex-charcoal);
-}
-.kx-menu__cat-glyph--percent {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 60px;
+  font-size: 72px;
   line-height: 1;
-  color: var(--karinex-gold);
-  opacity: 1;
-  background: transparent;
+  color: var(--kx-forest);
+  opacity: 0.18;
+  z-index: 1;
+  user-select: none;
+  transition: color 220ms ease, opacity 220ms ease;
 }
+.kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 64px; }
 
 .kx-menu__cat-card:hover,
 .kx-menu__cat-card:focus-visible,
 .kx-menu__cat-card:active {
-  background: var(--karinex-forest);
+  background: var(--kx-forest);
 }
 .kx-menu__cat-card:hover .kx-menu__cat-name,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-name,
 .kx-menu__cat-card:active .kx-menu__cat-name {
-  color: var(--karinex-cream);
+  color: var(--kx-bg);
 }
 .kx-menu__cat-card:hover .kx-menu__cat-mark,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-mark,
-.kx-menu__cat-card:active .kx-menu__cat-mark { opacity: 0.6; filter: brightness(0) invert(1); }
-.kx-menu__cat-card:hover .kx-menu__cat-glyph,
-.kx-menu__cat-card:focus-visible .kx-menu__cat-glyph,
-.kx-menu__cat-card:active .kx-menu__cat-glyph { opacity: 0.7; }
-.kx-menu__cat-card--accent .kx-menu__cat-glyph--percent { opacity: 1; }
-.kx-menu__cat-card--accent:hover .kx-menu__cat-glyph--percent,
-.kx-menu__cat-card--accent:active .kx-menu__cat-glyph--percent { color: var(--karinex-gold); }
+.kx-menu__cat-card:active .kx-menu__cat-mark {
+  color: var(--kx-gold);
+  opacity: 0.85;
+}
 
 /* ---------- Service list ---------- */
-.kx-menu__service-list {
-  list-style: none;
-  margin: 0;
-  padding: 0 24px;
-}
+.kx-menu__service-list { list-style: none; margin: 0; padding: 0 24px; }
 .kx-menu__service-item a {
   display: flex;
   align-items: center;
@@ -586,28 +597,22 @@
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;
-  color: var(--karinex-charcoal);
-  border-bottom: 1px solid var(--karinex-hairline);
-  transition: color 150ms ease, padding-left 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  color: var(--kx-charcoal);
+  border-bottom: 1px solid var(--kx-hairline);
+  transition: color 150ms ease, padding-left 200ms var(--kx-spring);
 }
 .kx-menu__service-item:last-child a { border-bottom: 0; }
-.kx-menu__service-item a svg { color: var(--karinex-gray); transition: color 150ms ease, transform 200ms ease; }
+.kx-menu__service-item a svg { color: var(--kx-gray); transition: color 150ms ease, transform 200ms ease; }
 .kx-menu__service-item a:hover,
-.kx-menu__service-item a:focus-visible {
-  color: var(--karinex-forest);
-  padding-left: 4px;
-}
+.kx-menu__service-item a:focus-visible { color: var(--kx-forest); padding-left: 4px; }
 .kx-menu__service-item a:hover svg,
-.kx-menu__service-item a:focus-visible svg {
-  color: var(--karinex-gold);
-  transform: translateX(3px);
-}
+.kx-menu__service-item a:focus-visible svg { color: var(--kx-gold); transform: translateX(3px); }
 
 /* ---------- Editorial Feature Block ---------- */
 .kx-menu__feature {
   margin: 32px 0 0;
-  background: var(--karinex-forest);
-  color: var(--karinex-beige);
+  background: var(--kx-forest);
+  color: var(--kx-beige);
   padding: 48px 24px;
 }
 .kx-menu__feature-overline {
@@ -616,7 +621,7 @@
   font-weight: 500;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--karinex-gold);
+  color: var(--kx-gold);
   margin-bottom: 16px;
 }
 .kx-menu__feature-headline {
@@ -625,14 +630,14 @@
   font-weight: 400;
   font-size: 28px;
   line-height: 1.18;
-  color: var(--karinex-cream);
+  color: var(--kx-bg);
   margin: 0 0 12px;
 }
 .kx-menu__feature-body {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 15px;
   line-height: 1.55;
-  color: var(--karinex-beige);
+  color: var(--kx-beige);
   margin: 0;
   font-weight: 400;
 }
@@ -646,44 +651,60 @@
   font-weight: 500;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: var(--karinex-gold);
-  border-bottom: 1px solid var(--karinex-gold);
+  color: var(--kx-gold);
+  border-bottom: 1px solid var(--kx-gold);
   padding-bottom: 4px;
   transition: gap 200ms ease, color 150ms ease, border-color 150ms ease;
 }
 .kx-menu__feature-link:hover {
   gap: 16px;
-  color: var(--karinex-cream);
-  border-color: var(--karinex-cream);
+  color: var(--kx-bg);
+  border-color: var(--kx-bg);
 }
 
 /* ---------- Footer ---------- */
 .kx-menu__footer {
-  background: var(--karinex-cream);
+  background: var(--kx-bg);
   padding: 32px 24px 48px;
 }
 .kx-menu__locale {
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px;
-  color: var(--karinex-gray);
+  color: var(--kx-gray);
 }
 .kx-menu__tagline {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
   font-size: 14px;
-  color: var(--karinex-gray);
+  color: var(--kx-gray);
   margin: 16px 0 0;
 }
 .kx-menu__legal {
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 10px;
   letter-spacing: 0.5px;
-  color: var(--karinex-muted-green);
+  color: var(--kx-muted-green);
   margin: 24px 0 0;
 }
 
 @media (min-width: 990px) {
   .kx-menu, .kx-menu-backdrop { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .kx-menu {
+    transition: opacity 200ms ease, visibility 0s linear 200ms;
+    transform: translateX(0);
+    opacity: 0;
+  }
+  .kx-menu.is-open { opacity: 1; transition: opacity 200ms ease, visibility 0s linear 0s; }
+  .kx-menu__wordmark, .kx-menu__close, .kx-menu__stage {
+    opacity: 1 !important;
+    transform: none !important;
+    letter-spacing: 6px !important;
+    transition: none !important;
+  }
 }
 {%- endstylesheet -%}
 
@@ -697,6 +718,12 @@
 
     var lastFocused = null;
 
+    function lightHaptic() {
+      if (window.navigator && window.navigator.vibrate) {
+        try { window.navigator.vibrate(8); } catch (e) {}
+      }
+    }
+
     function openMenu() {
       lastFocused = document.activeElement;
       menu.classList.add('is-open');
@@ -708,7 +735,7 @@
         nativeDrawer.classList.remove('menu-open');
       }
       document.body.classList.remove('overflow-hidden');
-      setTimeout(function () { if (closeBtn) closeBtn.focus(); }, 80);
+      setTimeout(function () { if (closeBtn) closeBtn.focus(); }, 220);
     }
 
     function closeMenu() {
@@ -736,16 +763,44 @@
       return false;
     }, true);
 
-    /* swipe-left to close */
-    var startX = null;
+    /* Light haptic on category tap */
+    var catCards = menu.querySelectorAll('.kx-menu__cat-card');
+    catCards.forEach(function (card) {
+      card.addEventListener('click', lightHaptic);
+    });
+
+    /* Swipe-left to close */
+    var startX = null, startY = null;
     menu.addEventListener('touchstart', function (e) {
-      if (e.touches.length === 1) startX = e.touches[0].clientX;
+      if (e.touches.length === 1) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }
     }, { passive: true });
     menu.addEventListener('touchend', function (e) {
       if (startX === null) return;
-      var endX = (e.changedTouches[0] || {}).clientX || startX;
-      if (startX - endX > 60) closeMenu();
+      var t = e.changedTouches[0] || {};
+      var dx = startX - (t.clientX || startX);
+      var dy = Math.abs(startY - (t.clientY || startY));
+      if (dx > 60 && dy < 40) closeMenu();
       startX = null;
+      startY = null;
+    });
+
+    /* Focus trap */
+    menu.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab' || !menu.classList.contains('is-open')) return;
+      var focusables = menu.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
