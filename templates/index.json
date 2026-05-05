@@ -1461,7 +1461,7 @@
         "source_mode": "automatic",
         "blog": "news",
         "post_limit": 4,
-        "card_style": "editorial",
+        "card_style": "karinex-numbered",
         "layout_mode": "carousel",
         "posts_per_row": 6,
         "image_1": "shopify://shop_images/windows-11-updates-pausieren-neue-funktionen-2026.png",
