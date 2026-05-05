@@ -254,16 +254,35 @@
 .lux-blog__grid--carousel > .lux-blog__card {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+/* Uniform card sizing across BOTH grid and carousel modes ----- */
+.lux-blog__grid > .lux-blog__card,
+.lux-blog__grid--carousel > .lux-blog__card {
   width: 100%;
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
 }
+.lux-blog__grid > .lux-blog__card .lux-blog__media,
 .lux-blog__grid--carousel > .lux-blog__card .lux-blog__media {
   width: 100%;
   max-width: 100%;
 }
-.lux-blog__grid--carousel > .lux-blog__card--editorial {
+.lux-blog__grid > .lux-blog__card .lux-blog__img,
+.lux-blog__grid--carousel > .lux-blog__card .lux-blog__img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Force overflow:hidden on styles that opt-in to overflow:visible */
+.lux-blog__grid > .lux-blog__card--editorial,
+.lux-blog__grid > .lux-blog__card--karinex-numbered,
+.lux-blog__grid--carousel > .lux-blog__card--editorial,
+.lux-blog__grid--carousel > .lux-blog__card--karinex-numbered {
   overflow: hidden;
 }
 @media (min-width: 600px) {
