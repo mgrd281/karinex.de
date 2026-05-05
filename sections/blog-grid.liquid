@@ -19,12 +19,16 @@
         {% for article in blog.articles %}
           <article class="blog-card">
             <a href="{{ article.url }}" class="blog-card__image-link">
-              <img
-                src="{{ article.image | image_url: width: 720 }}"
-                srcset="{{ article.image | image_url: width: 360 }} 360w,
-                  {{ article.image | image_url: width: 720 }} 720w"
-                sizes="(max-width: 600px) 100vw, 360px"
-                alt="{{ article.title | escape }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
+              {% if article.image != blank %}
+                <img
+                  src="{{ article.image | image_url: width: 720 }}"
+                  srcset="{{ article.image | image_url: width: 360 }} 360w,
+                    {{ article.image | image_url: width: 720 }} 720w"
+                  sizes="(max-width: 600px) 100vw, 360px"
+                  alt="{{ article.title | escape }}" class="blog-card__image" width="720" height="405" loading="lazy" decoding="async" style="aspect-ratio:16/9; border-radius:16px; width:100%; height:auto; background:#f7f8fa;">
+              {% else %}
+                <div class="blog-card__image blog-card__image--placeholder" style="aspect-ratio:16/9; border-radius:16px; width:100%; background:linear-gradient(135deg,#ebe9e3 0%,#d4d2cc 100%);" aria-hidden="true"></div>
+              {% endif %}
             </a>
             <div class="blog-card__category">{{ article.tags[0] }}</div>
             <h2 class="blog-card__title">{{ article.title | truncate: 60 }}</h2>
