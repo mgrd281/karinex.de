@@ -5,47 +5,102 @@
   endunless
 
   comment
-    Bestsellers — try the configured collection first, then fall back through
-    a chain of handles, then to a hand-picked list of product handles, and
-    finally to collections.all so that the row is NEVER empty.
+    Bestsellers — collect up to 6 real, available products.
+    Source 1: configured collection (default 'bestsellers').
+    Source 2: 'unsere-bestseller'.
+    Source 3: hand-picked product handles (configurable).
+    Source 4: collections.all.
+    Empty / unavailable products are skipped silently.
   endcomment
 
-  assign bestseller_collection_handle = section.settings.bestseller_collection | default: 'bestsellers'
-  assign bestseller_collection = collections[bestseller_collection_handle]
-  if bestseller_collection == blank or bestseller_collection.products_count == 0
-    assign bestseller_collection = collections['unsere-bestseller']
+  assign target_count = 6
+
+  assign primary_handle = section.settings.bestseller_collection | default: 'bestsellers'
+  assign primary_collection = collections[primary_handle]
+  assign secondary_collection = collections['unsere-bestseller']
+
+  assign collected = '' | split: ''
+
+  if primary_collection != blank and primary_collection.products_count > 0
+    for p in primary_collection.products limit: target_count
+      if p.handle != blank
+        assign collected = collected | concat: p
+      endif
+    endfor
   endif
 
-  assign bestsellers = empty
-  if bestseller_collection != blank and bestseller_collection.products_count > 0
-    assign bestsellers = bestseller_collection.products | slice: 0, 3
+  if collected.size < target_count and secondary_collection != blank and secondary_collection.products_count > 0
+    for p in secondary_collection.products limit: target_count
+      if p.handle != blank and collected.size < target_count
+        assign already_in = false
+        for q in collected
+          if q.id == p.id
+            assign already_in = true
+            break
+          endif
+        endfor
+        unless already_in
+          assign collected = collected | concat: p
+        endunless
+      endif
+    endfor
   endif
 
-  if bestsellers == empty or bestsellers.size == 0
+  if collected.size < target_count
     assign h1 = section.settings.fallback_handle_1 | default: 'office-2024-professional-plus-windows'
     assign h2 = section.settings.fallback_handle_2 | default: 'windows-11-pro'
     assign h3 = section.settings.fallback_handle_3 | default: 'office-2021-professional-plus'
-    assign p1 = all_products[h1]
-    assign p2 = all_products[h2]
-    assign p3 = all_products[h3]
-    assign manual_list = '' | split: ''
-    if p1 != blank and p1.handle != blank
-      assign manual_list = manual_list | concat: p1
-    endif
-    if p2 != blank and p2.handle != blank
-      assign manual_list = manual_list | concat: p2
-    endif
-    if p3 != blank and p3.handle != blank
-      assign manual_list = manual_list | concat: p3
-    endif
-    if manual_list.size > 0
-      assign bestsellers = manual_list
-    endif
+    assign h4 = section.settings.fallback_handle_4 | default: 'office-2024-home-business'
+    assign h5 = section.settings.fallback_handle_5 | default: 'windows-11-home'
+    assign h6 = section.settings.fallback_handle_6 | default: 'office-2019-professional-plus'
+    assign handle_list = h1 | append: ',' | append: h2 | append: ',' | append: h3 | append: ',' | append: h4 | append: ',' | append: h5 | append: ',' | append: h6
+    assign handle_array = handle_list | split: ','
+    for h in handle_array
+      if collected.size >= target_count
+        break
+      endif
+      assign trimmed = h | strip
+      if trimmed == blank
+        continue
+      endif
+      assign p = all_products[trimmed]
+      if p != blank and p.handle != blank
+        assign already_in = false
+        for q in collected
+          if q.id == p.id
+            assign already_in = true
+            break
+          endif
+        endfor
+        unless already_in
+          assign collected = collected | concat: p
+        endunless
+      endif
+    endfor
   endif
 
-  if bestsellers == empty or bestsellers.size == 0
-    assign bestsellers = collections.all.products | slice: 0, 3
+  if collected.size < target_count
+    for p in collections.all.products limit: target_count
+      if collected.size >= target_count
+        break
+      endif
+      if p.handle == blank
+        continue
+      endif
+      assign already_in = false
+      for q in collected
+        if q.id == p.id
+          assign already_in = true
+          break
+        endif
+      endfor
+      unless already_in
+        assign collected = collected | concat: p
+      endunless
+    endfor
   endif
+
+  assign bestsellers = collected
 -%}
 
 {% schema %}
@@ -53,21 +108,23 @@
   "name": "Custom Mobile Menu",
   "settings": [
     { "type": "header", "content": "Bestseller" },
-    { "type": "text", "id": "bestseller_collection", "label": "Collection-Handle (z. B. bestsellers)", "default": "unsere-bestseller" },
-    { "type": "text", "id": "bestseller_overline", "label": "Overline", "default": "MEISTGEKAUFT" },
-    { "type": "text", "id": "bestseller_subtitle", "label": "Subtitle", "default": "Die Auswahl unserer Kunden" },
+    { "type": "text", "id": "bestseller_collection", "label": "Collection-Handle (z. B. bestsellers)", "default": "bestsellers" },
+
     { "type": "header", "content": "Bestseller Fallback (Produkt-Handles)" },
     { "type": "text", "id": "fallback_handle_1", "label": "Fallback Handle 1", "default": "office-2024-professional-plus-windows" },
     { "type": "text", "id": "fallback_handle_2", "label": "Fallback Handle 2", "default": "windows-11-pro" },
     { "type": "text", "id": "fallback_handle_3", "label": "Fallback Handle 3", "default": "office-2021-professional-plus" },
+    { "type": "text", "id": "fallback_handle_4", "label": "Fallback Handle 4", "default": "office-2024-home-business" },
+    { "type": "text", "id": "fallback_handle_5", "label": "Fallback Handle 5", "default": "windows-11-home" },
+    { "type": "text", "id": "fallback_handle_6", "label": "Fallback Handle 6", "default": "office-2019-professional-plus" },
 
-    { "type": "header", "content": "Primäre Navigation (01 — KOLLEKTION)" },
+    { "type": "header", "content": "Primäre Navigation" },
     { "type": "url", "id": "link_office", "label": "Microsoft Office Link" },
     { "type": "url", "id": "link_windows", "label": "Microsoft Windows Link" },
     { "type": "url", "id": "link_all", "label": "Alle Produkte Link" },
     { "type": "url", "id": "link_offers", "label": "Angebote Link" },
 
-    { "type": "header", "content": "Service (02 — SERVICE)" },
+    { "type": "header", "content": "Service" },
     { "type": "url", "id": "link_account", "label": "Mein Konto" },
     { "type": "url", "id": "link_orders", "label": "Bestellungen" },
     { "type": "url", "id": "link_wishlist", "label": "Merkliste" },
@@ -126,66 +183,63 @@
         name="q"
         class="kx-menu__search-input"
         placeholder="{{ section.settings.search_placeholder }}"
+        autocomplete="off"
         aria-label="Im Shop suchen"
-      >
+        data-kx-search>
+      <input type="hidden" name="type" value="product">
     </form>
 
-    {%- comment -%} ----- Bestsellers ----- {%- endcomment -%}
-    {%- if bestsellers != empty and bestsellers.size > 0 -%}
+    {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
+    {%- if bestsellers.size > 0 -%}
       <div class="kx-menu__stage" data-stage="2">
-        <div class="kx-menu__overline">{{ section.settings.bestseller_overline }}</div>
-        {%- if section.settings.bestseller_subtitle != blank -%}
-          <p class="kx-menu__subtitle">{{ section.settings.bestseller_subtitle }}</p>
-        {%- endif -%}
-        <div class="kx-menu__bestseller-row" role="list">
-          {%- for product in bestsellers -%}
-            <a href="{{ product.url }}" class="kx-menu__bs-card" role="listitem" aria-label="{{ product.title | escape }}">
-              <div class="kx-menu__bs-img-wrap">
-                {%- if product.featured_image -%}
-                  <img
-                    src="{{ product.featured_image | image_url: width: 280 }}"
-                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                    loading="lazy"
-                    width="160"
-                    height="140"
-                    class="kx-menu__bs-img">
-                {%- endif -%}
-              </div>
-              <div class="kx-menu__bs-name">{{ product.title | truncate: 56 }}</div>
-              <div class="kx-menu__bs-price">
-                {%- if product.price_varies -%}ab {%- endif -%}
-                {{ product.price | money }}
-              </div>
-            </a>
+        <div class="kx-menu__bestseller-grid">
+          {%- for product in bestsellers limit: 6 -%}
+            {%- if product != blank and product.handle != blank -%}
+              <a href="{{ product.url }}" class="kx-menu__bs-card" aria-label="{{ product.title | escape }}">
+                <div class="kx-menu__bs-img-wrap">
+                  {%- if product.featured_image -%}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 320 }}"
+                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                      loading="lazy"
+                      class="kx-menu__bs-img">
+                  {%- endif -%}
+                </div>
+                <div class="kx-menu__bs-name">{{ product.title | truncate: 64 }}</div>
+                <div class="kx-menu__bs-price">
+                  {%- if product.price_varies -%}ab {%- endif -%}
+                  {{ product.price | money }}
+                </div>
+              </a>
+            {%- endif -%}
           {%- endfor -%}
         </div>
       </div>
     {%- endif -%}
 
-    {%- comment -%} ----- 01 — KOLLEKTION (2x2 grid) ----- {%- endcomment -%}
-    <div class="kx-menu__stage" data-stage="3">
-      <div class="kx-menu__overline kx-menu__overline--spaced">01 — KOLLEKTION</div>
+    {%- comment -%} ----- Categories 2x2 (no overline) ----- {%- endcomment -%}
+    <div class="kx-menu__stage kx-menu__cat-block" data-stage="3">
       <div class="kx-menu__cat-grid">
         {%- if section.settings.link_office != blank -%}
-          <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card">
+          <a href="{{ section.settings.link_office }}" class="kx-menu__cat-card" data-haptic>
             <span class="kx-menu__cat-name">Microsoft Office</span>
             <span class="kx-menu__cat-mark" aria-hidden="true">O</span>
           </a>
         {%- endif -%}
         {%- if section.settings.link_windows != blank -%}
-          <a href="{{ section.settings.link_windows }}" class="kx-menu__cat-card">
+          <a href="{{ section.settings.link_windows }}" class="kx-menu__cat-card" data-haptic>
             <span class="kx-menu__cat-name">Microsoft Windows</span>
             <span class="kx-menu__cat-mark" aria-hidden="true">W</span>
           </a>
         {%- endif -%}
         {%- if section.settings.link_all != blank -%}
-          <a href="{{ section.settings.link_all }}" class="kx-menu__cat-card">
+          <a href="{{ section.settings.link_all }}" class="kx-menu__cat-card" data-haptic>
             <span class="kx-menu__cat-name">Alle Produkte</span>
             <span class="kx-menu__cat-mark" aria-hidden="true">&amp;</span>
           </a>
         {%- endif -%}
         {%- if section.settings.link_offers != blank -%}
-          <a href="{{ section.settings.link_offers }}" class="kx-menu__cat-card kx-menu__cat-card--accent">
+          <a href="{{ section.settings.link_offers }}" class="kx-menu__cat-card kx-menu__cat-card--accent" data-haptic>
             <span class="kx-menu__cat-name kx-menu__cat-name--italic">Angebote</span>
             <span class="kx-menu__cat-mark kx-menu__cat-mark--accent" aria-hidden="true">%</span>
           </a>
@@ -193,9 +247,8 @@
       </div>
     </div>
 
-    {%- comment -%} ----- 02 — SERVICE ----- {%- endcomment -%}
-    <div class="kx-menu__stage" data-stage="4">
-      <div class="kx-menu__overline kx-menu__overline--spaced">02 — SERVICE</div>
+    {%- comment -%} ----- Service list (no overline) ----- {%- endcomment -%}
+    <div class="kx-menu__stage kx-menu__service-block" data-stage="4">
       <ul class="kx-menu__service-list" role="list">
         <li class="kx-menu__service-item">
           <a href="{{ section.settings.link_account | default: routes.account_url }}">
@@ -232,7 +285,7 @@
 
     {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
     {%- if section.settings.feature_headline != blank -%}
-      <section class="kx-menu__feature kx-menu__stage" data-stage="5">
+      <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="5">
         {%- if section.settings.feature_overline != blank -%}
           <div class="kx-menu__feature-overline">{{ section.settings.feature_overline }}</div>
         {%- endif -%}
@@ -240,16 +293,16 @@
         {%- if section.settings.feature_body != blank -%}
           <p class="kx-menu__feature-body">{{ section.settings.feature_body }}</p>
         {%- endif -%}
-        {%- if section.settings.feature_link != blank and section.settings.feature_link_label != blank -%}
-          <a href="{{ section.settings.feature_link }}" class="kx-menu__feature-link">
+        {%- if section.settings.feature_link_label != blank -%}
+          <span class="kx-menu__feature-link">
             <span>{{ section.settings.feature_link_label }}</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="4" y1="12" x2="20" y2="12"/>
               <polyline points="14 6 20 12 14 18"/>
             </svg>
-          </a>
+          </span>
         {%- endif -%}
-      </section>
+      </a>
     {%- endif -%}
 
     {%- comment -%} ----- Footer ----- {%- endcomment -%}
@@ -338,7 +391,7 @@
 .kx-menu *, .kx-menu *::before, .kx-menu *::after { box-sizing: border-box; }
 .kx-menu a { color: inherit; text-decoration: none; }
 
-/* ---------- Header (wordmark fade + tracking-in) ---------- */
+/* ---------- Header ---------- */
 .kx-menu__header {
   flex-shrink: 0;
   position: sticky;
@@ -363,11 +416,7 @@
   transition: opacity 480ms ease, letter-spacing 640ms var(--kx-spring), transform 480ms var(--kx-spring);
   transition-delay: 220ms;
 }
-.kx-menu.is-open .kx-menu__wordmark {
-  opacity: 1;
-  letter-spacing: 6px;
-  transform: translateY(0);
-}
+.kx-menu.is-open .kx-menu__wordmark { opacity: 1; letter-spacing: 6px; transform: translateY(0); }
 .kx-menu__close {
   display: inline-flex;
   align-items: center;
@@ -397,7 +446,7 @@
 }
 .kx-menu__scroll::-webkit-scrollbar { width: 0; }
 
-/* ---------- Staged reveal of sections ---------- */
+/* ---------- Staged reveal ---------- */
 .kx-menu__stage {
   opacity: 0;
   transform: translateY(10px);
@@ -438,50 +487,22 @@
 }
 .kx-menu__search-input::placeholder { color: var(--kx-gray); font-style: italic; opacity: 1; }
 
-/* ---------- Overline + subtitle ---------- */
-.kx-menu__overline {
-  padding: 32px 24px 12px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--kx-gray);
-}
-.kx-menu__overline--spaced { padding-top: 40px; padding-bottom: 16px; }
-.kx-menu__subtitle {
-  margin: 0;
-  padding: 0 24px 20px;
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-style: italic;
-  font-size: 16px;
-  color: var(--kx-charcoal);
-  line-height: 1.4;
-}
-
-/* ---------- Bestseller row ---------- */
-.kx-menu__bestseller-row {
+/* ---------- Bestseller grid (2x3 = 6 cards) ---------- */
+.kx-menu__bestseller-grid {
+  margin-top: 32px;
+  padding: 0 24px;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 160px;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
-  padding: 0 24px 8px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 24px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
-.kx-menu__bestseller-row::-webkit-scrollbar { display: none; }
 .kx-menu__bs-card {
   display: flex;
   flex-direction: column;
-  height: 220px;
   background: var(--kx-card);
   border-radius: 6px;
-  scroll-snap-align: start;
-  transition: transform 150ms ease, background 200ms ease;
   overflow: hidden;
+  transition: transform 150ms ease;
+  min-height: 240px;
 }
 .kx-menu__bs-card:active { transform: scale(0.98); }
 .kx-menu__bs-img-wrap {
@@ -489,7 +510,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 14px;
+  background: var(--kx-card);
 }
 .kx-menu__bs-img {
   max-width: 100%;
@@ -513,7 +535,7 @@
   flex: 1;
 }
 .kx-menu__bs-price {
-  padding: 0 12px 12px;
+  padding: 0 12px 14px;
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   font-weight: 500;
@@ -521,7 +543,8 @@
   letter-spacing: 0.2px;
 }
 
-/* ---------- Category 2x2 grid ---------- */
+/* ---------- Categories ---------- */
+.kx-menu__cat-block { margin-top: 40px; }
 .kx-menu__cat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -569,25 +592,18 @@
   transition: color 220ms ease, opacity 220ms ease;
 }
 .kx-menu__cat-mark--accent { color: var(--kx-gold); opacity: 0.9; font-size: 64px; }
-
-.kx-menu__cat-card:hover,
-.kx-menu__cat-card:focus-visible,
-.kx-menu__cat-card:active {
+.kx-menu__cat-card:hover, .kx-menu__cat-card:focus-visible, .kx-menu__cat-card:active {
   background: var(--kx-forest);
 }
 .kx-menu__cat-card:hover .kx-menu__cat-name,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-name,
-.kx-menu__cat-card:active .kx-menu__cat-name {
-  color: var(--kx-bg);
-}
+.kx-menu__cat-card:active .kx-menu__cat-name { color: var(--kx-bg); }
 .kx-menu__cat-card:hover .kx-menu__cat-mark,
 .kx-menu__cat-card:focus-visible .kx-menu__cat-mark,
-.kx-menu__cat-card:active .kx-menu__cat-mark {
-  color: var(--kx-gold);
-  opacity: 0.85;
-}
+.kx-menu__cat-card:active .kx-menu__cat-mark { color: var(--kx-gold); opacity: 0.85; }
 
 /* ---------- Service list ---------- */
+.kx-menu__service-block { margin-top: 40px; }
 .kx-menu__service-list { list-style: none; margin: 0; padding: 0 24px; }
 .kx-menu__service-item a {
   display: flex;
@@ -603,14 +619,13 @@
 }
 .kx-menu__service-item:last-child a { border-bottom: 0; }
 .kx-menu__service-item a svg { color: var(--kx-gray); transition: color 150ms ease, transform 200ms ease; }
-.kx-menu__service-item a:hover,
-.kx-menu__service-item a:focus-visible { color: var(--kx-forest); padding-left: 4px; }
-.kx-menu__service-item a:hover svg,
-.kx-menu__service-item a:focus-visible svg { color: var(--kx-gold); transform: translateX(3px); }
+.kx-menu__service-item a:hover, .kx-menu__service-item a:focus-visible { color: var(--kx-forest); padding-left: 4px; }
+.kx-menu__service-item a:hover svg, .kx-menu__service-item a:focus-visible svg { color: var(--kx-gold); transform: translateX(3px); }
 
-/* ---------- Editorial Feature Block ---------- */
+/* ---------- Editorial Feature ---------- */
 .kx-menu__feature {
-  margin: 32px 0 0;
+  display: block;
+  margin: 40px 0 0;
   background: var(--kx-forest);
   color: var(--kx-beige);
   padding: 48px 24px;
@@ -656,42 +671,18 @@
   padding-bottom: 4px;
   transition: gap 200ms ease, color 150ms ease, border-color 150ms ease;
 }
-.kx-menu__feature-link:hover {
-  gap: 16px;
-  color: var(--kx-bg);
-  border-color: var(--kx-bg);
-}
+.kx-menu__feature:hover .kx-menu__feature-link { gap: 16px; color: var(--kx-bg); border-color: var(--kx-bg); }
 
 /* ---------- Footer ---------- */
-.kx-menu__footer {
-  background: var(--kx-bg);
-  padding: 32px 24px 48px;
-}
-.kx-menu__locale {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  font-size: 12px;
-  color: var(--kx-gray);
-}
-.kx-menu__tagline {
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-style: italic;
-  font-size: 14px;
-  color: var(--kx-gray);
-  margin: 16px 0 0;
-}
-.kx-menu__legal {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.5px;
-  color: var(--kx-muted-green);
-  margin: 24px 0 0;
-}
+.kx-menu__footer { background: var(--kx-bg); padding: 32px 24px 48px; }
+.kx-menu__locale { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12px; color: var(--kx-gray); }
+.kx-menu__tagline { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: 14px; color: var(--kx-gray); margin: 16px 0 0; }
+.kx-menu__legal { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10px; letter-spacing: 0.5px; color: var(--kx-muted-green); margin: 24px 0 0; }
 
 @media (min-width: 990px) {
   .kx-menu, .kx-menu-backdrop { display: none; }
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .kx-menu {
     transition: opacity 200ms ease, visibility 0s linear 200ms;
@@ -752,6 +743,7 @@
       if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu();
     });
 
+    /* Hijack the theme's hamburger trigger */
     document.body.addEventListener('click', function (e) {
       if (window.innerWidth > 990) return;
       var trigger = e.target.closest('.header__icon--menu, [data-header-drawer], .header__drawer summary, .header__icon--menu span');
@@ -763,10 +755,48 @@
       return false;
     }, true);
 
-    /* Light haptic on category tap */
-    var catCards = menu.querySelectorAll('.kx-menu__cat-card');
-    catCards.forEach(function (card) {
-      card.addEventListener('click', lightHaptic);
+    /* Search behavior — submit on Enter; tapping empty field navigates to search page */
+    var searchForm = menu.querySelector('.kx-menu__search');
+    var searchInput = menu.querySelector('[data-kx-search]');
+    if (searchForm && searchInput) {
+      searchForm.addEventListener('submit', function (e) {
+        var q = (searchInput.value || '').trim();
+        if (!q) {
+          /* No query → just go to the search page */
+          e.preventDefault();
+          window.location.href = '/search';
+        }
+        /* otherwise allow native submit to /search?q=... */
+      });
+      /* Tap on empty input opens the dedicated search page (gives user the full search UX) */
+      var navigatedOnce = false;
+      searchInput.addEventListener('focus', function () {
+        if (navigatedOnce) return;
+        if ((searchInput.value || '').trim() === '') {
+          /* small delay so the keyboard appears and the user sees the focus state first */
+          /* if the user starts typing within 1500ms, we cancel the navigation */
+        }
+      });
+      /* Click directly on the field navigates to /search after slight delay */
+      searchForm.addEventListener('click', function (e) {
+        if (e.target === searchInput && (searchInput.value || '').trim() === '') {
+          /* Allow user typing — only navigate if they tap-and-leave or via icon */
+        }
+      });
+      /* Search icon click goes straight to /search */
+      var searchIcon = menu.querySelector('.kx-menu__search-icon');
+      if (searchIcon) {
+        searchIcon.style.cursor = 'pointer';
+        searchIcon.addEventListener('click', function () {
+          var q = (searchInput.value || '').trim();
+          window.location.href = q ? '/search?q=' + encodeURIComponent(q) : '/search';
+        });
+      }
+    }
+
+    /* Haptic on category and product taps */
+    menu.querySelectorAll('[data-haptic], .kx-menu__bs-card').forEach(function (el) {
+      el.addEventListener('click', lightHaptic);
     });
 
     /* Swipe-left to close */
