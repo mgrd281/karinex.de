@@ -385,6 +385,22 @@
           var s = Math.min(parseInt(tMatch[3], 10), 59);
           fixedDateStr = fixedDateStr.replace(/T\d{2}:\d{2}:\d{2}/, 'T' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'));
         }
+        // Anchor to Europe/Berlin (matches hero-product-slider behavior)
+        // so both countdowns end at the same instant regardless of viewer's timezone.
+        if (fixedDateStr.indexOf('+') === -1 && fixedDateStr.indexOf('Z') === -1) {
+          try {
+            var berlinNow = new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin' });
+            var berlinDate = new Date(berlinNow);
+            var utcNow = new Date();
+            var offsetMin = Math.round((berlinDate - utcNow) / 60000);
+            var absH = Math.abs(Math.floor(offsetMin / 60));
+            var absM = Math.abs(offsetMin % 60);
+            var sign = offsetMin >= 0 ? '+' : '-';
+            fixedDateStr += sign + String(absH).padStart(2,'0') + ':' + String(absM).padStart(2,'0');
+          } catch(e) {
+            fixedDateStr += '+02:00';
+          }
+        }
         const targetDate = new Date(fixedDateStr).getTime();
         
         // Hide timer only if date is still invalid after fix
