@@ -5,102 +5,35 @@
   endunless
 
   comment
-    Bestsellers — collect up to 6 real, available products.
-    Source 1: configured collection (default 'bestsellers').
-    Source 2: 'unsere-bestseller'.
-    Source 3: hand-picked product handles (configurable).
-    Source 4: collections.all.
-    Empty / unavailable products are skipped silently.
+    Bestseller resolver — pick a single source, no array building.
+    Priority:
+      1. configured collection
+      2. 'unsere-bestseller' collection
+      3. fallback handle list (rendered via for-loop in markup)
+      4. collections.all
   endcomment
 
-  assign target_count = 6
-
   assign primary_handle = section.settings.bestseller_collection | default: 'bestsellers'
-  assign primary_collection = collections[primary_handle]
-  assign secondary_collection = collections['unsere-bestseller']
-
-  assign collected = '' | split: ''
-
-  if primary_collection != blank and primary_collection.products_count > 0
-    for p in primary_collection.products limit: target_count
-      if p.handle != blank
-        assign collected = collected | concat: p
-      endif
-    endfor
+  assign source_collection = collections[primary_handle]
+  if source_collection == blank or source_collection.products_count == 0
+    assign source_collection = collections['unsere-bestseller']
   endif
 
-  if collected.size < target_count and secondary_collection != blank and secondary_collection.products_count > 0
-    for p in secondary_collection.products limit: target_count
-      if p.handle != blank and collected.size < target_count
-        assign already_in = false
-        for q in collected
-          if q.id == p.id
-            assign already_in = true
-            break
-          endif
-        endfor
-        unless already_in
-          assign collected = collected | concat: p
-        endunless
-      endif
-    endfor
+  assign use_collection = false
+  if source_collection != blank and source_collection.products_count > 0
+    assign use_collection = true
   endif
 
-  if collected.size < target_count
-    assign h1 = section.settings.fallback_handle_1 | default: 'office-2024-professional-plus-windows'
-    assign h2 = section.settings.fallback_handle_2 | default: 'windows-11-pro'
-    assign h3 = section.settings.fallback_handle_3 | default: 'office-2021-professional-plus'
-    assign h4 = section.settings.fallback_handle_4 | default: 'office-2024-home-business'
-    assign h5 = section.settings.fallback_handle_5 | default: 'windows-11-home'
-    assign h6 = section.settings.fallback_handle_6 | default: 'office-2019-professional-plus'
-    assign handle_list = h1 | append: ',' | append: h2 | append: ',' | append: h3 | append: ',' | append: h4 | append: ',' | append: h5 | append: ',' | append: h6
-    assign handle_array = handle_list | split: ','
-    for h in handle_array
-      if collected.size >= target_count
-        break
-      endif
-      assign trimmed = h | strip
-      if trimmed == blank
-        continue
-      endif
-      assign p = all_products[trimmed]
-      if p != blank and p.handle != blank
-        assign already_in = false
-        for q in collected
-          if q.id == p.id
-            assign already_in = true
-            break
-          endif
-        endfor
-        unless already_in
-          assign collected = collected | concat: p
-        endunless
-      endif
-    endfor
-  endif
-
-  if collected.size < target_count
-    for p in collections.all.products limit: target_count
-      if collected.size >= target_count
-        break
-      endif
-      if p.handle == blank
-        continue
-      endif
-      assign already_in = false
-      for q in collected
-        if q.id == p.id
-          assign already_in = true
-          break
-        endif
-      endfor
-      unless already_in
-        assign collected = collected | concat: p
-      endunless
-    endfor
-  endif
-
-  assign bestsellers = collected
+  unless use_collection
+    assign h1 = section.settings.fallback_handle_1
+    assign h2 = section.settings.fallback_handle_2
+    assign h3 = section.settings.fallback_handle_3
+    assign h4 = section.settings.fallback_handle_4
+    assign h5 = section.settings.fallback_handle_5
+    assign h6 = section.settings.fallback_handle_6
+    assign handle_csv = h1 | append: ',' | append: h2 | append: ',' | append: h3 | append: ',' | append: h4 | append: ',' | append: h5 | append: ',' | append: h6
+    assign handle_array = handle_csv | split: ','
+  endunless
 -%}
 
 {% schema %}
@@ -108,15 +41,15 @@
   "name": "Custom Mobile Menu",
   "settings": [
     { "type": "header", "content": "Bestseller" },
-    { "type": "text", "id": "bestseller_collection", "label": "Collection-Handle (z. B. bestsellers)", "default": "bestsellers" },
+    { "type": "text", "id": "bestseller_collection", "label": "Collection-Handle (z. B. bestsellers)", "default": "unsere-bestseller" },
 
     { "type": "header", "content": "Bestseller Fallback (Produkt-Handles)" },
-    { "type": "text", "id": "fallback_handle_1", "label": "Fallback Handle 1", "default": "office-2024-professional-plus-windows" },
-    { "type": "text", "id": "fallback_handle_2", "label": "Fallback Handle 2", "default": "windows-11-pro" },
-    { "type": "text", "id": "fallback_handle_3", "label": "Fallback Handle 3", "default": "office-2021-professional-plus" },
-    { "type": "text", "id": "fallback_handle_4", "label": "Fallback Handle 4", "default": "office-2024-home-business" },
-    { "type": "text", "id": "fallback_handle_5", "label": "Fallback Handle 5", "default": "windows-11-home" },
-    { "type": "text", "id": "fallback_handle_6", "label": "Fallback Handle 6", "default": "office-2019-professional-plus" },
+    { "type": "text", "id": "fallback_handle_1", "label": "Fallback Handle 1", "default": "microsoft-office-2024-standard-vollversion-fur-windows" },
+    { "type": "text", "id": "fallback_handle_2", "label": "Fallback Handle 2", "default": "windows-11-pro-key-kaufen-download" },
+    { "type": "text", "id": "fallback_handle_3", "label": "Fallback Handle 3", "default": "microsoft-office-2021-home-business-key-download" },
+    { "type": "text", "id": "fallback_handle_4", "label": "Fallback Handle 4", "default": "office-2024-home-windows" },
+    { "type": "text", "id": "fallback_handle_5", "label": "Fallback Handle 5", "default": "windows-11-home-key" },
+    { "type": "text", "id": "fallback_handle_6", "label": "Fallback Handle 6", "default": "office-2024-standard-mac-key-download" },
 
     { "type": "header", "content": "Primäre Navigation" },
     { "type": "url", "id": "link_office", "label": "Microsoft Office Link" },
@@ -190,32 +123,28 @@
     </form>
 
     {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
-    {%- if bestsellers.size > 0 -%}
-      <div class="kx-menu__stage" data-stage="2">
-        <div class="kx-menu__bestseller-grid">
-          {%- for product in bestsellers limit: 6 -%}
-            {%- if product != blank and product.handle != blank -%}
-              <a href="{{ product.url }}" class="kx-menu__bs-card" aria-label="{{ product.title | escape }}">
-                <div class="kx-menu__bs-img-wrap">
-                  {%- if product.featured_image -%}
-                    <img
-                      src="{{ product.featured_image | image_url: width: 320 }}"
-                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                      loading="lazy"
-                      class="kx-menu__bs-img">
-                  {%- endif -%}
-                </div>
-                <div class="kx-menu__bs-name">{{ product.title | truncate: 64 }}</div>
-                <div class="kx-menu__bs-price">
-                  {%- if product.price_varies -%}ab {%- endif -%}
-                  {{ product.price | money }}
-                </div>
-              </a>
+    <div class="kx-menu__stage" data-stage="2">
+      <div class="kx-menu__bestseller-grid">
+        {%- if use_collection -%}
+          {%- for product in source_collection.products limit: 6 -%}
+            {% render 'kx-bs-card', product: product %}
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign rendered = 0 -%}
+          {%- for h in handle_array -%}
+            {%- if rendered >= 6 -%}{%- break -%}{%- endif -%}
+            {%- assign t = h | strip -%}
+            {%- if t != blank -%}
+              {%- assign product = all_products[t] -%}
+              {%- if product != blank and product.handle != blank -%}
+                {% render 'kx-bs-card', product: product %}
+                {%- assign rendered = rendered | plus: 1 -%}
+              {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
-        </div>
+        {%- endif -%}
       </div>
-    {%- endif -%}
+    </div>
 
     {%- comment -%} ----- Categories 2x2 (no overline) ----- {%- endcomment -%}
     <div class="kx-menu__stage kx-menu__cat-block" data-stage="3">
