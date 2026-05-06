@@ -1,0 +1,427 @@
+{%- comment -%}
+  Bestseller Top 10 — Netflix-inspired editorial rail
+  Premium software store treatment: outlined numerals, dark surface,
+  Apple/Microsoft/Bose-level restraint. No glow, no decoration.
+{%- endcomment -%}
+
+{%- liquid
+  assign coll = section.settings.collection
+  assign total = coll.products.size
+-%}
+
+{% if total > 0 %}
+<section
+  class="bs-section"
+  id="bestseller-{{ section.id }}"
+  aria-label="{{ section.settings.heading | default: 'Bestseller' | escape }}"
+>
+  <div class="bs-container">
+
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <header class="bs-header">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="bs-heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="bs-subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="bs-rail-wrap">
+
+      {%- comment -%} Discrete chevron nav (desktop only, opacity 0.6 → 1 on hover) {%- endcomment -%}
+      <button class="bs-nav bs-nav--prev" type="button" aria-label="Vorherige Bestseller" data-bs-prev hidden>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="bs-nav bs-nav--next" type="button" aria-label="Nächste Bestseller" data-bs-next>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <ol class="bs-rail" role="list" data-bs-rail>
+        {%- for product in coll.products limit: 10 -%}
+          <li class="bs-slot {% if forloop.index == 1 %}bs-slot--first{% endif %}" role="listitem">
+            <a
+              class="bs-card-link"
+              href="{{ product.url }}"
+              aria-label="Rang {{ forloop.index }}: {{ product.title | strip_html | escape }}"
+            >
+              {%- comment -%} Hero numeral — outlined, behind card, bleeds bottom {%- endcomment -%}
+              <span class="bs-numeral" aria-hidden="true">{{ forloop.index }}</span>
+
+              {%- comment -%} Product card — sits to the right, overlaps numeral {%- endcomment -%}
+              <div class="bs-card">
+                <div class="bs-card__media">
+                  {%- if product.featured_image != blank -%}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 600 }}"
+                      srcset="{{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 600 }} 600w, {{ product.featured_image | image_url: width: 900 }} 900w"
+                      sizes="(max-width: 768px) 78vw, (max-width: 1100px) 35vw, 28vw"
+                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                      width="{{ product.featured_image.width }}"
+                      height="{{ product.featured_image.height }}"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                  {%- else -%}
+                    <div class="bs-card__placeholder" aria-hidden="true"></div>
+                  {%- endif -%}
+                </div>
+                <div class="bs-card__meta">
+                  <h3 class="bs-card__title">{{ product.title }}</h3>
+                  <span class="bs-card__price">{{ product.price | money }}</span>
+                </div>
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Section surface — premium near-black, generous breathing room */
+  #bestseller-{{ section.id }}.bs-section {
+    background: #0A0A0B;
+    color: #F5F5F7;
+    padding: 96px 0;
+    overflow-x: clip;
+  }
+  @media (max-width: 768px) {
+    #bestseller-{{ section.id }}.bs-section { padding: 48px 0; }
+  }
+
+  /* Inner container respects theme grid */
+  #bestseller-{{ section.id }} .bs-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 48px);
+  }
+
+  /* Section header — restrained, type-led */
+  #bestseller-{{ section.id }} .bs-header { margin: 0 0 56px 0; }
+  #bestseller-{{ section.id }} .bs-heading {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: #F5F5F7;
+    margin: 0 0 8px 0;
+  }
+  #bestseller-{{ section.id }} .bs-subheading {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #A1A1A6;
+    margin: 0;
+    max-width: 540px;
+  }
+  @media (max-width: 768px) {
+    #bestseller-{{ section.id }} .bs-header { margin-bottom: 32px; }
+  }
+
+  /* Rail wrapper holds nav buttons + scroll list */
+  #bestseller-{{ section.id }} .bs-rail-wrap { position: relative; }
+
+  /* Horizontal scroll list — native scroll-snap, hidden scrollbar */
+  #bestseller-{{ section.id }} .bs-rail {
+    display: grid;
+    grid-auto-flow: column;
+    /* Desktop: 3.5 cards visible (calc accounts for gaps) */
+    grid-auto-columns: minmax(0, calc((100% - 24px * 2.5) / 3.5));
+    gap: 24px;
+    list-style: none;
+    padding: 0 0 24px 0;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #bestseller-{{ section.id }} .bs-rail::-webkit-scrollbar { display: none; }
+
+  /* Tablet: 2.5 cards visible */
+  @media (max-width: 1100px) {
+    #bestseller-{{ section.id }} .bs-rail {
+      grid-auto-columns: minmax(0, calc((100% - 24px * 1.5) / 2.5));
+    }
+  }
+  /* Mobile: 1.3 cards visible */
+  @media (max-width: 768px) {
+    #bestseller-{{ section.id }} .bs-rail {
+      grid-auto-columns: minmax(0, 78vw);
+      gap: 16px;
+    }
+  }
+
+  /* Slot = numeral + card. snap-aligned, allows bleed below card. */
+  #bestseller-{{ section.id }} .bs-slot {
+    position: relative;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    padding-bottom: 24px;
+    list-style: none;
+  }
+
+  /* Card link wraps both numeral + card for a single tap target */
+  #bestseller-{{ section.id }} .bs-card-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+
+  /* Hero numeral — signature element, transparent fill + 2px stroke */
+  #bestseller-{{ section.id }} .bs-numeral {
+    position: absolute;
+    left: 0;
+    bottom: -8%;
+    z-index: 1;
+    font-family: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: clamp(180px, 22vw, 320px);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    /* Fallback for browsers without -webkit-text-stroke */
+    color: rgba(245, 245, 247, 0.18);
+    pointer-events: none;
+    user-select: none;
+    transition: color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+                -webkit-text-stroke-color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @supports (-webkit-text-stroke: 1px white) {
+    #bestseller-{{ section.id }} .bs-numeral {
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.92);
+    }
+  }
+  /* Rank 1 — always full-opacity stroke for subtle hierarchy */
+  #bestseller-{{ section.id }} .bs-slot--first .bs-numeral {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 1);
+  }
+
+  /* Card — slim premium surface, sits to the RIGHT and overlaps numeral */
+  #bestseller-{{ section.id }} .bs-card {
+    position: relative;
+    z-index: 2;
+    margin-left: 38%;
+    aspect-ratio: 3 / 4;
+    background: #141416;
+    border: 1px solid #2A2A2D;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* Rank 1 card — subtle metallic gradient border accent */
+  #bestseller-{{ section.id }} .bs-slot--first .bs-card {
+    border-color: transparent;
+    background:
+      linear-gradient(#141416, #141416) padding-box,
+      linear-gradient(180deg, #E8E8EA 0%, #8C8C92 100%) border-box;
+  }
+  @media (max-width: 768px) {
+    #bestseller-{{ section.id }} .bs-card { margin-left: 28%; }
+  }
+
+  /* Card media — product mockup centered, ~70% of card height */
+  #bestseller-{{ section.id }} .bs-card__media {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14% 14% 8%;
+    overflow: hidden;
+  }
+  #bestseller-{{ section.id }} .bs-card__media img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  #bestseller-{{ section.id }} .bs-card__placeholder {
+    width: 60%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1F1F22, #2A2A2D);
+  }
+
+  /* Card meta strip — title (1 line) + price */
+  #bestseller-{{ section.id }} .bs-card__meta {
+    padding: 14px 16px 18px;
+    border-top: 1px solid #1F1F22;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  #bestseller-{{ section.id }} .bs-card__title {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #F5F5F7;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+  #bestseller-{{ section.id }} .bs-card__price {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #A1A1A6;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Hover — card lifts, numeral stroke fully opaque */
+  @media (hover: hover) and (pointer: fine) {
+    #bestseller-{{ section.id }} .bs-card-link:hover .bs-card {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      border-color: #3A3A3D;
+    }
+    #bestseller-{{ section.id }} .bs-card-link:hover .bs-numeral {
+      -webkit-text-stroke-color: rgba(255, 255, 255, 1);
+    }
+  }
+
+  /* Keyboard focus — accessible outline outside the card border */
+  #bestseller-{{ section.id }} .bs-card-link:focus-visible .bs-card {
+    outline: 2px solid #F5F5F7;
+    outline-offset: 4px;
+  }
+  #bestseller-{{ section.id }} .bs-card-link:focus { outline: none; }
+
+  /* Discreet chevron nav — desktop only */
+  #bestseller-{{ section.id }} .bs-nav {
+    display: none;
+    position: absolute;
+    top: calc(50% - 12px);
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(20, 20, 22, 0.72);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #F5F5F7;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 200ms ease, transform 200ms ease, background 200ms ease;
+    align-items: center;
+    justify-content: center;
+  }
+  #bestseller-{{ section.id }} .bs-nav:hover {
+    opacity: 1;
+    background: rgba(20, 20, 22, 0.9);
+  }
+  #bestseller-{{ section.id }} .bs-nav:focus-visible {
+    opacity: 1;
+    outline: 2px solid #F5F5F7;
+    outline-offset: 2px;
+  }
+  #bestseller-{{ section.id }} .bs-nav[hidden] { display: none !important; }
+  #bestseller-{{ section.id }} .bs-nav--prev { left: -16px; }
+  #bestseller-{{ section.id }} .bs-nav--next { right: -16px; }
+  @media (min-width: 1024px) {
+    #bestseller-{{ section.id }} .bs-nav:not([hidden]) { display: flex; }
+  }
+
+  /* Reduced motion — disable hover lift and smooth scroll */
+  @media (prefers-reduced-motion: reduce) {
+    #bestseller-{{ section.id }} .bs-rail { scroll-behavior: auto; }
+    #bestseller-{{ section.id }} .bs-card,
+    #bestseller-{{ section.id }} .bs-numeral { transition: none; }
+    #bestseller-{{ section.id }} .bs-card-link:hover .bs-card { transform: none; }
+  }
+</style>
+
+<script>
+  (function() {
+    var root = document.getElementById('bestseller-{{ section.id }}');
+    if (!root) return;
+    var rail = root.querySelector('[data-bs-rail]');
+    var prev = root.querySelector('[data-bs-prev]');
+    var next = root.querySelector('[data-bs-next]');
+    if (!rail || !prev || !next) return;
+
+    function step() {
+      var slot = rail.querySelector('.bs-slot');
+      if (!slot) return 0;
+      var rect = slot.getBoundingClientRect();
+      var gap = parseFloat(getComputedStyle(rail).columnGap || getComputedStyle(rail).gap) || 24;
+      return rect.width + gap;
+    }
+    function go(dir) {
+      rail.scrollBy({ left: dir * step(), behavior: 'smooth' });
+    }
+    prev.addEventListener('click', function () { go(-1); });
+    next.addEventListener('click', function () { go(1); });
+
+    function updateNav() {
+      var max = rail.scrollWidth - rail.clientWidth;
+      prev.hidden = rail.scrollLeft <= 4;
+      next.hidden = rail.scrollLeft >= max - 4;
+    }
+    rail.addEventListener('scroll', updateNav, { passive: true });
+    window.addEventListener('resize', updateNav);
+    updateNav();
+  })();
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Bestseller Top 10",
+  "tag": "section",
+  "class": "bs-shopify-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "Bestseller"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Unterüberschrift",
+      "info": "Optional. Kurzer Satz unter der Überschrift.",
+      "default": "Unsere meistverkauften Produkte — manuell sortiert in der Collection."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Reihenfolge in der Collection = Bestseller-Reihenfolge. Maximal 10 Produkte werden gezeigt."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bestseller Top 10",
+      "category": "Premium"
+    }
+  ]
+}
+{% endschema %}
