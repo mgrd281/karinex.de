@@ -304,6 +304,23 @@
     font-weight: 700;
     color: #222;
     letter-spacing: -0.01em;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+/* Both vendor links (logo + fallback text) feel clickable but stay subtle */
+.ay-brand__logo-wrap {
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+.ay-brand__logo-wrap:hover,
+.ay-brand__text:hover {
+    opacity: 0.7;
+}
+.ay-breadcrumb__vendor {
+    cursor: pointer;
 }
 
 .ay-title {
