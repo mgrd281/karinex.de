@@ -465,10 +465,48 @@
         {%- endif -%}
       {%- endfor -%}
 
-      {%- comment -%} Sale Badge + Price {%- endcomment -%}
+      {%- comment -%} Sale / Promo Badge + Price (mirrors product-information logic) {%- endcomment -%}
+      {%- liquid
+        assign ay_promo_text = blank
+        assign ay_promo_text_raw = product.metafields.custom.promo_badge_text.value | default: product.metafields.custom.promo_badge_text
+        if ay_promo_text_raw != blank
+          assign ay_promo_text = ay_promo_text_raw | strip
+        endif
+
+        assign ay_promo_until_raw = product.metafields.custom.promo_badge_until.value | default: product.metafields.custom.promo_badge_until | default: product.metafields.custom.promo_badge_bis.value | default: product.metafields.custom.promo_badge_bis
+        assign ay_promo_until_date = blank
+        if ay_promo_until_raw != blank
+          assign ay_promo_until_date = ay_promo_until_raw | date: '%Y-%m-%d'
+        endif
+
+        assign ay_promo_metaobject = product.metafields.custom.promo_badge.value
+        if ay_promo_metaobject != blank
+          assign ay_promo_meta_text = ay_promo_metaobject.text.value | default: ay_promo_metaobject.text
+          if ay_promo_meta_text != blank
+            assign ay_promo_text = ay_promo_meta_text | strip
+          endif
+          assign ay_promo_meta_until = ay_promo_metaobject.until.value | default: ay_promo_metaobject.until
+          if ay_promo_meta_until != blank
+            assign ay_promo_until_date = ay_promo_meta_until | date: '%Y-%m-%d'
+          endif
+        endif
+
+        assign ay_now_date = 'now' | date: '%Y-%m-%d'
+        assign ay_show_promo_badge = false
+        if ay_promo_text != blank
+          if ay_promo_until_date == blank or ay_promo_until_date >= ay_now_date
+            assign ay_show_promo_badge = true
+          endif
+        endif
+      -%}
+
       <div class="ay-price">
         {%- if current_variant.compare_at_price > current_variant.price -%}
-          <span class="ay-sale-badge">SALE</span><br>
+          {%- if ay_show_promo_badge -%}
+            <span class="ay-sale-badge ay-sale-badge--promo">{{ ay_promo_text }}</span><br>
+          {%- else -%}
+            <span class="ay-sale-badge">SALE</span><br>
+          {%- endif -%}
           <div class="ay-price__line">
             <span class="ay-price__current ay-price__current--sale">{{ current_variant.price | money }}</span>
             <span class="ay-price__tax">inkl. MwSt.</span>
@@ -479,6 +517,9 @@
             <span class="ay-price__discount">-{{ _saved_pct }}%</span>
           </span>
         {%- else -%}
+          {%- if ay_show_promo_badge -%}
+            <span class="ay-sale-badge ay-sale-badge--promo">{{ ay_promo_text }}</span><br>
+          {%- endif -%}
           <div class="ay-price__line">
             <span class="ay-price__current">{{ current_variant.price | money }}</span>
             <span class="ay-price__tax">inkl. MwSt.</span>

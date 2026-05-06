@@ -367,6 +367,14 @@
     margin-bottom: 6px;
 }
 
+/* Promo Badge variant — driven by promo_badge_text + promo_badge_bis metafields */
+.ay-sale-badge--promo {
+    background: #1d1d1f;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    padding: 4px 10px;
+}
+
 /* Price */
 .ay-price {
     margin-bottom: 28px;
