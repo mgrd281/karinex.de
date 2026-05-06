@@ -1586,6 +1586,15 @@
         "gap": 16,
         "show_arrows": true
       }
+    },
+    "bestseller_top_10_CaWMAz": {
+      "type": "bestseller-top-10",
+      "name": "Bestseller Top 10",
+      "settings": {
+        "heading": "Bestseller",
+        "subheading": "Unsere meistverkauften Produkte — manuell sortiert in der Collection.",
+        "collection": "unsere-bestseller"
+      }
     }
   },
   "order": [
@@ -1606,6 +1615,7 @@
     "comparison_table_RPUUC7",
     "luxury_blog_section",
     "hero_product_slider_GNaDeb",
-    "brands_carousel_jrhRJC"
+    "brands_carousel_jrhRJC",
+    "bestseller_top_10_CaWMAz"
   ]
 }
