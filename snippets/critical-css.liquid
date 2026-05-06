@@ -46,8 +46,14 @@
   /* Product Grid */
   .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2rem;margin:2rem 0}
   
-  /* Performance: Below-fold content optimization */
-  footer,#footer-group-wrapper{content-visibility:auto;contain-intrinsic-size:0 500px}
-  .product-recommendations{content-visibility:auto;contain-intrinsic-size:0 400px}
-  .pdp-rv,.custom-similar-products-wrapper,.kx-reviews-section{content-visibility:auto;contain-intrinsic-size:0 400px}
+  /* Performance: Below-fold content optimization
+     Intrinsic-size hints sized to ACTUAL rendered heights to prevent
+     scroll jumps when sections un-clip on viewport entry. */
+  footer,#footer-group-wrapper{content-visibility:auto;contain-intrinsic-size:0 1600px}
+  .product-recommendations{content-visibility:auto;contain-intrinsic-size:0 800px}
+  .pdp-rv,.custom-similar-products-wrapper{content-visibility:auto;contain-intrinsic-size:0 700px}
+  .kx-reviews-section{content-visibility:auto;contain-intrinsic-size:0 1100px}
+  /* Smooth scroll restoration — eliminates micro-stutters from sticky header repaint */
+  html{scroll-behavior:smooth}
+  header{transform:translateZ(0);will-change:auto;contain:layout style}
 </style>
