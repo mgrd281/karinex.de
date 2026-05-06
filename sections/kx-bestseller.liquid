@@ -1,0 +1,333 @@
+{% comment %}
+  KARINEX — Bestseller Top 10 (Premium Edition)
+  Full-bleed, theme-frame-proof, Apple-grade restraint.
+  File path: sections/kx-bestseller.liquid
+{% endcomment %}
+
+<section class="kx-bs" aria-labelledby="kx-bs-title-{{ section.id }}">
+  <div class="kx-bs__head">
+    {% if section.settings.eyebrow != blank %}
+      <span class="kx-bs__eyebrow">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+    <h2 id="kx-bs-title-{{ section.id }}" class="kx-bs__title">
+      {{ section.settings.heading | default: 'Bestseller' }}
+    </h2>
+    {% if section.settings.subheading != blank %}
+      <p class="kx-bs__sub">{{ section.settings.subheading }}</p>
+    {% endif %}
+  </div>
+
+  <div class="kx-bs__rail" role="list">
+    {%- assign items = section.settings.collection.products | slice: 0, 10 -%}
+    {%- for product in items -%}
+      <a href="{{ product.url }}"
+         class="kx-bs__slot {% if forloop.index == 10 %}is-double{% endif %}"
+         role="listitem"
+         aria-label="Rang {{ forloop.index }}: {{ product.title | escape }}">
+
+        <span class="kx-bs__rank" aria-hidden="true">{{ forloop.index }}</span>
+
+        <div class="kx-bs__card">
+          {% if product.featured_image %}
+            <img class="kx-bs__img"
+                 src="{{ product.featured_image | image_url: width: 600 }}"
+                 alt="{{ product.featured_image.alt | escape }}"
+                 loading="lazy"
+                 width="300" height="400">
+          {% endif %}
+          <div class="kx-bs__meta">
+            <h3 class="kx-bs__name">{{ product.title }}</h3>
+            <p class="kx-bs__price">
+              {% if product.price_varies %}ab {% endif %}{{ product.price | money }}
+            </p>
+          </div>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  /* === BREAK OUT OF THEME WRAPPER === */
+  /* Force the Shopify section wrapper to drop its frame, padding, and bg */
+  .section-kx-bestseller {
+    background: #0A0A0B !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  /* Neutralize any inner page-width / container imposed by the theme */
+  .section-kx-bestseller > .page-width,
+  .section-kx-bestseller > .container,
+  .section-kx-bestseller > .shopify-section__inner {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* === Section frame === */
+  /* Full-bleed dark surface, generous vertical breathing */
+  .kx-bs {
+    background: #0A0A0B;
+    color: #F5F5F7;
+    padding: 120px 0 96px;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* === Header (NO frame, NO box, pure text) === */
+  /* Inner-aligned heading block — defeats theme bg/border on h2 */
+  .kx-bs__head {
+    max-width: 1440px;
+    margin: 0 auto 72px;
+    padding: 0 48px;
+    background: transparent !important;
+    border: 0 !important;
+  }
+  /* Smallcaps eyebrow above heading */
+  .kx-bs__eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8C8C92;
+    margin-bottom: 20px;
+  }
+  /* Display heading — premium scale, neutralized against theme */
+  .kx-bs__title {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: clamp(40px, 5.2vw, 72px);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    margin: 0 0 16px;
+    color: #F5F5F7;
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+  /* Optional subheading, max-width keeps it readable */
+  .kx-bs__sub {
+    font-size: 17px;
+    line-height: 1.5;
+    color: #A1A1A6;
+    margin: 0;
+    max-width: 560px;
+    font-weight: 400;
+  }
+
+  /* === Rail === */
+  /* Horizontal scroll container, snap-aligned, scrollbar hidden */
+  .kx-bs__rail {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 48px;
+    padding: 24px 48px 48px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .kx-bs__rail::-webkit-scrollbar { display: none; }
+
+  /* === Slot === */
+  /* Each entry: numeral column (170px) + card column (240px), end-aligned */
+  .kx-bs__slot {
+    flex: 0 0 auto;
+    width: 380px;
+    display: grid;
+    grid-template-columns: 170px 240px;
+    align-items: end;
+    scroll-snap-align: start;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+  /* Slot #10 needs more room for two-digit numeral */
+  .kx-bs__slot.is-double {
+    width: 440px;
+    grid-template-columns: 230px 240px;
+  }
+  /* Subtle lift on hover — Apple-grade micro-motion */
+  .kx-bs__slot:hover { transform: translateY(-6px); }
+
+  /* === Numeral (subtle, premium) === */
+  /* Outlined numeral, transparent fill, behind card via grid order */
+  .kx-bs__rank {
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 280px;
+    line-height: 0.78;
+    letter-spacing: -0.07em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+    user-select: none;
+    pointer-events: none;
+    justify-self: end;
+    margin-right: -42px;
+    margin-bottom: -16px;
+    transition: -webkit-text-stroke-color 400ms ease;
+  }
+  /* Two-digit "10" — slightly smaller to balance visual weight */
+  .kx-bs__slot.is-double .kx-bs__rank {
+    font-size: 240px;
+    margin-right: -32px;
+  }
+  /* Stroke brightens on hover for restrained feedback */
+  .kx-bs__slot:hover .kx-bs__rank {
+    -webkit-text-stroke-color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* === Card === */
+  /* Premium dark card surface, sits on top of numeral via z-index */
+  .kx-bs__card {
+    width: 240px;
+    aspect-ratio: 3 / 4;
+    background: linear-gradient(180deg, #18181B 0%, #131316 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+    transition: border-color 400ms ease, box-shadow 400ms ease;
+  }
+  /* Hover state — border lifts, shadow grows */
+  .kx-bs__slot:hover .kx-bs__card {
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 28px 56px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Product image — centered mockup, contained */
+  .kx-bs__img {
+    width: 64%;
+    height: auto;
+    max-height: 58%;
+    object-fit: contain;
+    margin: auto;
+    padding: 32px 0 16px;
+    display: block;
+  }
+  /* Bottom meta strip — title + price, divider hairline above */
+  .kx-bs__meta {
+    padding: 16px 20px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: auto;
+  }
+  /* Product title — single line, ellipsis, restrained scale */
+  .kx-bs__name {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+    margin: 0 0 6px;
+    color: #F5F5F7;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Price — tabular-nums for column-aligned digits */
+  .kx-bs__price {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: #A1A1A6;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.005em;
+  }
+
+  /* === Tablet === */
+  /* Compact metrics, same layout grammar */
+  @media (max-width: 1024px) {
+    .kx-bs { padding: 88px 0 72px; }
+    .kx-bs__head { margin-bottom: 56px; padding: 0 32px; }
+    .kx-bs__rail { padding: 20px 32px 36px; scroll-padding-left: 32px; }
+    .kx-bs__slot { width: 320px; grid-template-columns: 140px 200px; }
+    .kx-bs__slot.is-double { width: 370px; grid-template-columns: 190px 200px; }
+    .kx-bs__rank { font-size: 230px; margin-right: -34px; margin-bottom: -12px; }
+    .kx-bs__slot.is-double .kx-bs__rank { font-size: 195px; margin-right: -26px; }
+    .kx-bs__card { width: 200px; }
+  }
+
+  /* === Mobile === */
+  /* Tighter spacing, thinner stroke for high-DPI clarity */
+  @media (max-width: 640px) {
+    .kx-bs { padding: 64px 0 56px; }
+    .kx-bs__head { margin-bottom: 40px; padding: 0 20px; }
+    .kx-bs__eyebrow { font-size: 11px; margin-bottom: 14px; }
+    .kx-bs__sub { font-size: 15px; }
+    .kx-bs__rail { gap: 6px; padding: 16px 20px 32px; scroll-padding-left: 20px; }
+    .kx-bs__slot { width: 252px; grid-template-columns: 104px 168px; }
+    .kx-bs__slot.is-double { width: 290px; grid-template-columns: 142px 168px; }
+    .kx-bs__rank {
+      font-size: 180px;
+      margin-right: -28px;
+      margin-bottom: -10px;
+      -webkit-text-stroke-width: 1.2px;
+    }
+    .kx-bs__slot.is-double .kx-bs__rank { font-size: 152px; margin-right: -22px; }
+    .kx-bs__card { width: 168px; border-radius: 14px; }
+    .kx-bs__img { padding: 22px 0 10px; }
+    .kx-bs__meta { padding: 12px 14px 14px; }
+  }
+
+  /* === Reduced motion === */
+  /* Respect user preference — disable lift and stroke transitions */
+  @media (prefers-reduced-motion: reduce) {
+    .kx-bs__slot,
+    .kx-bs__card,
+    .kx-bs__rank { transition: none; }
+    .kx-bs__slot:hover { transform: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Bestseller Top 10",
+  "tag": "section",
+  "class": "section-kx-bestseller",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Kleinkapitälchen (oberhalb)",
+      "default": "TOP 10",
+      "info": "Leer lassen, um auszublenden."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "Bestseller"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Untertitel",
+      "default": "",
+      "info": "Optional. Leer lassen für maximale Reduktion."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Die Reihenfolge der Produkte in der Collection bestimmt das Ranking 1–10."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bestseller Top 10"
+    }
+  ]
+}
+{% endschema %}
