@@ -367,9 +367,9 @@
     margin-bottom: 6px;
 }
 
-/* Promo Badge variant — same red as SALE, slightly larger padding */
+/* Promo Badge variant — refined black for elegance, distinct from SALE red */
 .ay-sale-badge--promo {
-    background: #E30613;
+    background: #1d1d1f;
     text-transform: none;
     letter-spacing: 0.02em;
     padding: 3px 9px;
