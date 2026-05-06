@@ -1,26 +1,20 @@
 {% comment %}
-  Rich Product Description Template
-  - Designed for high conversion and SEO
-  - Structure: Hook -> Features -> Benefits -> Tech Specs -> FAQ
-  - Usage: {% render 'rich-product-description', product: product %}
+  Rich Product Description — preserves admin formatting verbatim.
+
+  Old behavior stripped inline styles, classes, font tags, and forced
+  Cairo/!important on every element via CSS + a MutationObserver.
+  This rewrite renders product.description AS-IS so styling written
+  in Shopify Admin (colors, sizes, headings, custom classes) survives
+  to the customer-facing page.
+
+  Defaults below are intentionally low-specificity (no !important) so
+  any inline style or class on the source element wins.
 {% endcomment %}
 
 <div class="rich-description">
   <div class="rd-intro">
     <div class="rd-content" id="rd-content-area">
-      {%- assign desc_clean = product.description -%}
-      {%- comment -%} Strip inline style attributes {%- endcomment -%}
-      {%- assign desc_clean = desc_clean | replace: ' style="', ' data-x="' -%}
-      {%- assign desc_clean = desc_clean | replace: " style='", " data-x='" -%}
-      {%- comment -%} Strip font tags {%- endcomment -%}
-      {%- assign desc_clean = desc_clean | replace: '<font ', '<span ' -%}
-      {%- assign desc_clean = desc_clean | replace: '</font>', '</span>' -%}
-      {%- assign desc_clean = desc_clean | replace: '<FONT ', '<span ' -%}
-      {%- assign desc_clean = desc_clean | replace: '</FONT>', '</span>' -%}
-      {%- comment -%} Strip class attributes to prevent theme class font inheritance {%- endcomment -%}
-      {%- assign desc_clean = desc_clean | replace: ' class="', ' data-cls="' -%}
-      {%- assign desc_clean = desc_clean | replace: " class='", " data-cls='" -%}
-      {{ desc_clean }}
+      {{ product.description }}
     </div>
   </div>
 
@@ -37,121 +31,53 @@
       </div>
     </div>
   {% endif %}
-
-  {% comment %} 
-    Dynamic content can be expanded here based on product type (e.g. Software vs Physical) 
-  {% endcomment %}
 </div>
 
 <style>
-  .rich-description,
-  .rich-description *,
-  .rd-content,
-  .rd-content *,
-  .rd-content span,
-  .rd-content p,
-  .rd-content div,
-  .rd-content li,
-  .rd-content ul,
-  .rd-content ol,
-  .rd-content a,
-  .rd-content em,
-  .rd-content strong,
-  .rd-content b,
-  .rd-content i {
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-    font-size: 1rem !important;
-    line-height: 1.8 !important;
-    color: #333 !important;
-  }
-  .rd-content h1,
-  .rd-content h2,
-  .rd-content h3,
-  .rd-content h4,
-  .rd-content h5,
-  .rd-content h6,
-  .rich-description h1,
-  .rich-description h2,
-  .rich-description h3,
-  .rich-description h4 {
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-    color: #111 !important;
-    line-height: 1.4 !important;
-  }
-  .rd-content strong,
-  .rd-content b {
-    font-weight: 700 !important;
-  }
+  /* Defaults for un-styled elements only — NO !important so admin styles win */
   .rd-content {
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #333;
     margin-bottom: 2rem;
+  }
+
+  /* Heading rhythm — gentle defaults, override-friendly */
+  .rd-content h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.3; margin: 1.5rem 0 0.75rem; color: #111; }
+  .rd-content h2 { font-size: 1.4rem; font-weight: 700; line-height: 1.3; margin: 1.5rem 0 0.75rem; color: #111; }
+  .rd-content h3 { font-size: 1.2rem; font-weight: 700; line-height: 1.4; margin: 1.25rem 0 0.5rem; color: #111; }
+  .rd-content h4 { font-size: 1.05rem; font-weight: 700; line-height: 1.4; margin: 1rem 0 0.5rem; color: #111; }
+  .rd-content p { margin: 0 0 1rem; }
+  .rd-content ul, .rd-content ol { margin: 0 0 1rem 1.25rem; padding: 0; }
+  .rd-content li { margin: 0 0 0.4rem; }
+  .rd-content a { color: #1d4739; text-decoration: underline; }
+  .rd-content img { max-width: 100%; height: auto; }
+  .rd-content table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  .rd-content th, .rd-content td { border: 1px solid #e5e5e5; padding: 0.5rem 0.75rem; text-align: left; }
+
+  /* Features grid (metafield-driven, separate visual unit) */
+  .rd-features { margin-top: 2rem; }
+  .rd-features h3 {
+    font-family: 'Cairo', -apple-system, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #111;
   }
   .rd-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    gap: 1rem;
   }
   .rd-card {
     background: #f9f9f9;
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
     border-radius: 8px;
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    gap: 0.75rem;
   }
-  .rd-icon {
-    font-size: 1.2rem !important;
-    line-height: 1 !important;
-  }
+  .rd-card .rd-icon { font-size: 1.1rem; }
+  .rd-card p { margin: 0; font-size: 0.95rem; }
 </style>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var area = document.getElementById('rd-content-area');
-    if (!area) return;
-    var sysFont = "'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
-    
-    function forceFont(el) {
-      el.style.setProperty('font-family', sysFont, 'important');
-      var tag = el.tagName;
-      if (tag === 'H1') el.style.setProperty('font-size', '1.6rem', 'important');
-      else if (tag === 'H2') el.style.setProperty('font-size', '1.4rem', 'important');
-      else if (tag === 'H3') el.style.setProperty('font-size', '1.25rem', 'important');
-      else if (tag === 'H4') el.style.setProperty('font-size', '1.1rem', 'important');
-      else el.style.setProperty('font-size', '1rem', 'important');
-      el.removeAttribute('face');
-      el.removeAttribute('color');
-      el.removeAttribute('size');
-    }
-    
-    // Remove any <style> blocks inside description
-    area.querySelectorAll('style').forEach(function(s) { s.remove(); });
-    
-    // Force on all existing elements
-    area.querySelectorAll('*').forEach(forceFont);
-    area.style.setProperty('font-family', sysFont, 'important');
-    
-    // Watch for any future changes and re-apply
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(m) {
-        if (m.type === 'childList') {
-          m.addedNodes.forEach(function(n) {
-            if (n.nodeType === 1) {
-              forceFont(n);
-              n.querySelectorAll('*').forEach(forceFont);
-            }
-          });
-        }
-        if (m.type === 'attributes' && m.attributeName === 'style') {
-          var t = m.target;
-          if (t.style.fontFamily && t.style.fontFamily.indexOf('apple-system') === -1) {
-            forceFont(t);
-          }
-        }
-      });
-    });
-    observer.observe(area, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
-  });
-</script>
