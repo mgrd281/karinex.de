@@ -448,12 +448,11 @@
       "settings": {
         "collection": "",
         "collection_list": [
-          "boss-uhren",
-          "microsoft",
-          "games",
-          "damenuhren",
-          "michael-kors-damenuhr",
-          "herrenuhren"
+          "unsere-bestseller",
+          "microsoft-office",
+          "microsoft-tools",
+          "sale",
+          "windows"
         ],
         "layout_type": "grid",
         "carousel_on_mobile": false,
