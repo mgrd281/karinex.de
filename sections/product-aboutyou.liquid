@@ -542,18 +542,18 @@
         {%- assign _display_color = product.metafields.custom.display_color.value | default: product.metafields.custom.display_color | strip -%}
 
         {%- comment -%}
-          Smart sibling label — colors only make sense for watches/clothing.
-          Software / Microsoft / digital products get "Variante" with the
-          product title as the value (since display_color often holds
-          unrelated copy like "nur diesen Monat" for these SKUs).
+          Smart sibling label — Microsoft's own term is "Edition" (Office
+          Professional Plus, Windows Pro, etc.), so it's the natural fit
+          for the 95% software-license catalog. Watches/clothing stay on
+          "Farbe", Lego stays on "Set".
         {%- endcomment -%}
         {%- liquid
           assign _sib_label = 'Farbe'
           assign _sib_label_plural = 'Farben'
           assign _sib_value = _display_color
           if _is_digital or _vendor_down == 'microsoft' or _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows'
-            assign _sib_label = 'Variante'
-            assign _sib_label_plural = 'Varianten'
+            assign _sib_label = 'Edition'
+            assign _sib_label_plural = 'Editionen'
             assign _sib_value = product.title | truncate: 50
           elsif _vendor_down == 'lego' or _vendor_down == 'lego®' or _type_lc contains 'lego'
             assign _sib_label = 'Set'
@@ -719,7 +719,7 @@
         {%- liquid
           assign _stockout_title = 'Deine Farbe ist ausverkauft'
           if _is_digital or _vendor_down == 'microsoft' or _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows'
-            assign _stockout_title = 'Diese Variante ist ausverkauft'
+            assign _stockout_title = 'Diese Edition ist ausverkauft'
           elsif _vendor_down == 'lego' or _vendor_down == 'lego®' or _type_lc contains 'lego'
             assign _stockout_title = 'Dieses Set ist ausverkauft'
           endif
