@@ -19,31 +19,43 @@
 
   <div class="kx-bs__rail" role="list">
     {%- assign items = section.settings.collection.products | slice: 0, 10 -%}
-    {%- for product in items -%}
-      <a href="{{ product.url }}"
-         class="kx-bs__slot {% if forloop.index == 10 %}is-double{% endif %}"
-         role="listitem"
-         aria-label="Rang {{ forloop.index }}: {{ product.title | escape }}">
+    {%- if section.settings.collection == blank -%}
+      <div class="kx-bs__empty">
+        <p>Bitte verbinden Sie eine Collection im Theme-Editor.</p>
+      </div>
+    {%- elsif items.size == 0 -%}
+      <div class="kx-bs__empty">
+        <p>Diese Collection enthält keine Produkte.</p>
+      </div>
+    {%- else -%}
+      {%- for product in items -%}
+        <a href="{{ product.url }}"
+           class="kx-bs__slot {% if forloop.index == 10 %}is-double{% endif %}"
+           role="listitem"
+           aria-label="Rang {{ forloop.index }}: {{ product.title | escape }}">
 
-        <span class="kx-bs__rank" aria-hidden="true">{{ forloop.index }}</span>
+          <span class="kx-bs__rank" aria-hidden="true">{{ forloop.index }}</span>
 
-        <div class="kx-bs__card">
-          {% if product.featured_image %}
-            <img class="kx-bs__img"
-                 src="{{ product.featured_image | image_url: width: 600 }}"
-                 alt="{{ product.featured_image.alt | escape }}"
-                 loading="lazy"
-                 width="300" height="400">
-          {% endif %}
-          <div class="kx-bs__meta">
-            <h3 class="kx-bs__name">{{ product.title }}</h3>
-            <p class="kx-bs__price">
-              {% if product.price_varies %}ab {% endif %}{{ product.price | money }}
-            </p>
+          <div class="kx-bs__card">
+            {% if product.featured_image %}
+              <img class="kx-bs__img"
+                   src="{{ product.featured_image | image_url: width: 600 }}"
+                   alt="{{ product.featured_image.alt | escape }}"
+                   loading="lazy"
+                   width="300" height="400">
+            {% else %}
+              <div class="kx-bs__img-placeholder" aria-hidden="true">{{ product.title | slice: 0, 1 | upcase }}</div>
+            {% endif %}
+            <div class="kx-bs__meta">
+              <h3 class="kx-bs__name">{{ product.title }}</h3>
+              <p class="kx-bs__price">
+                {% if product.price_varies %}ab {% endif %}{{ product.price | money }}
+              </p>
+            </div>
           </div>
-        </div>
-      </a>
-    {%- endfor -%}
+        </a>
+      {%- endfor -%}
+    {%- endif -%}
   </div>
 </section>
 
@@ -51,7 +63,7 @@
   /* === BREAK OUT OF THEME WRAPPER === */
   /* Force the Shopify section wrapper to drop its frame, padding, and bg */
   .section-kx-bestseller {
-    background: #0A0A0B !important;
+    background: #000000 !important;
     padding: 0 !important;
     margin: 0 !important;
   }
@@ -65,9 +77,9 @@
   }
 
   /* === Section frame === */
-  /* Full-bleed dark surface, generous vertical breathing */
+  /* Full-bleed pure-black surface, generous vertical breathing */
   .kx-bs {
-    background: #0A0A0B;
+    background: #000000;
     color: #F5F5F7;
     padding: 120px 0 96px;
     margin: 0;
@@ -94,7 +106,7 @@
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #8C8C92;
+    color: rgba(255, 255, 255, 0.55);
     margin-bottom: 20px;
   }
   /* Display heading — premium scale, neutralized against theme */
@@ -157,7 +169,7 @@
   /* Subtle lift on hover — Apple-grade micro-motion */
   .kx-bs__slot:hover { transform: translateY(-6px); }
 
-  /* === Numeral (subtle, premium) === */
+  /* === Numeral (visible but not loud) === */
   /* Outlined numeral, transparent fill, behind card via grid order */
   .kx-bs__rank {
     font-family: inherit;
@@ -166,7 +178,7 @@
     line-height: 0.78;
     letter-spacing: -0.07em;
     color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.7);
     user-select: none;
     pointer-events: none;
     justify-self: end;
@@ -181,47 +193,65 @@
   }
   /* Stroke brightens on hover for restrained feedback */
   .kx-bs__slot:hover .kx-bs__rank {
-    -webkit-text-stroke-color: rgba(255, 255, 255, 0.85);
+    -webkit-text-stroke-color: #FFFFFF;
   }
 
-  /* === Card === */
-  /* Premium dark card surface, sits on top of numeral via z-index */
+  /* === Card (Apple Store white) === */
+  /* Pure-white card sits on top of numeral via z-index — flagship product surface */
   .kx-bs__card {
     width: 240px;
     aspect-ratio: 3 / 4;
-    background: linear-gradient(180deg, #18181B 0%, #131316 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 20px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
     z-index: 2;
-    transition: border-color 400ms ease, box-shadow 400ms ease;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    transition: border-color 400ms ease, box-shadow 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  /* Hover state — border lifts, shadow grows */
+  /* Hover state — shadow deepens, border darkens, subtle scale */
   .kx-bs__slot:hover .kx-bs__card {
-    border-color: rgba(255, 255, 255, 0.18);
-    box-shadow: 0 28px 56px rgba(0, 0, 0, 0.55);
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.7);
+    transform: scale(1.02);
   }
 
-  /* Product image — centered mockup, contained */
+  /* Product image — centered mockup, contained, fills more of card */
   .kx-bs__img {
-    width: 64%;
+    width: 75%;
     height: auto;
-    max-height: 58%;
+    max-height: 65%;
     object-fit: contain;
     margin: auto;
-    padding: 32px 0 16px;
+    padding: 24px 0 12px;
     display: block;
   }
-  /* Bottom meta strip — title + price, divider hairline above */
+  /* Image fallback when product has no featured image */
+  .kx-bs__img-placeholder {
+    background: #F5F5F7;
+    color: #1D1D1F;
+    font-size: 64px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75%;
+    aspect-ratio: 1 / 1;
+    margin: 24px auto 12px;
+    border-radius: 12px;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+  }
+  /* Bottom meta strip — title + price, hairline above (dark on white) */
   .kx-bs__meta {
     padding: 16px 20px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
     margin-top: auto;
   }
-  /* Product title — single line, ellipsis, restrained scale */
+  /* Product title — Apple-grade dark on white */
   .kx-bs__name {
     font-family: inherit;
     font-size: 14px;
@@ -229,22 +259,31 @@
     letter-spacing: -0.005em;
     line-height: 1.3;
     margin: 0 0 6px;
-    color: #F5F5F7;
+    color: #1D1D1F;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  /* Price — tabular-nums for column-aligned digits */
+  /* Price — Apple grey, tabular-nums */
   .kx-bs__price {
     font-family: inherit;
     font-size: 13px;
     font-weight: 500;
-    color: #A1A1A6;
+    color: #6E6E73;
     margin: 0;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.005em;
   }
+  /* Empty state — centered message when no collection / no products */
+  .kx-bs__empty {
+    color: #A1A1A6;
+    text-align: center;
+    padding: 80px 40px;
+    font-size: 16px;
+    width: 100%;
+  }
+  .kx-bs__empty p { margin: 0; }
 
   /* === Tablet === */
   /* Compact metrics, same layout grammar */
