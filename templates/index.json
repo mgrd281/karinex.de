@@ -1454,6 +1454,7 @@
     },
     "luxury_blog_section": {
       "type": "luxury-blog",
+      "disabled": true,
       "settings": {
         "eyebrow": "",
         "heading": "",
