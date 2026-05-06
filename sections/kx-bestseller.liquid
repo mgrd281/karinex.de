@@ -1,7 +1,7 @@
 {% comment %}
-  KARINEX — Bestseller Top 10 (Premium Brand Showcase)
-  Refined proportions: cards lead, numerals support.
-  Apple/Bose/Microsoft-grade restraint and rhythm.
+  KARINEX — Bestseller Top 10 (Apple Store Edition)
+  Compact premium grid. Rank pill on card, no giant numerals.
+  Cards lead. Restraint over drama.
 {% endcomment %}
 
 {%- liquid
@@ -33,39 +33,41 @@
       </div>
     {%- else -%}
       {%- for product in coll.products limit: 10 -%}
+        {%- assign rank = forloop.index -%}
         <a href="{{ product.url }}"
-           class="kx-bs__slot {% if forloop.index == 10 %}is-double{% endif %}"
+           class="kx-bs__card"
            role="listitem"
-           aria-label="Rang {{ forloop.index }}: {{ product.title | escape }}">
+           aria-label="Rang {{ rank }}: {{ product.title | escape }}">
 
-          <span class="kx-bs__rank" aria-hidden="true">{{ forloop.index }}</span>
+          <span class="kx-bs__rank" aria-hidden="true">
+            {%- if rank < 10 -%}0{%- endif -%}{{ rank }}
+          </span>
 
-          <div class="kx-bs__card">
-            <div class="kx-bs__media">
-              {% if product.featured_image %}
-                <img class="kx-bs__img"
-                     src="{{ product.featured_image | image_url: width: 600 }}"
-                     srcset="{{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 600 }} 600w, {{ product.featured_image | image_url: width: 900 }} 900w"
-                     sizes="(max-width: 640px) 70vw, (max-width: 1024px) 30vw, 22vw"
-                     alt="{{ product.featured_image.alt | escape }}"
-                     loading="lazy"
-                     decoding="async"
-                     width="{{ product.featured_image.width }}"
-                     height="{{ product.featured_image.height }}">
-              {% else %}
-                <span class="kx-bs__img-placeholder" aria-hidden="true">{{ product.title | slice: 0, 1 | upcase }}</span>
-              {% endif %}
-            </div>
-            <div class="kx-bs__meta">
-              <h3 class="kx-bs__name">{{ product.title }}</h3>
-              <div class="kx-bs__price-row">
-                <span class="kx-bs__price">
-                  {% if product.price_varies %}ab {% endif %}{{ product.price | money }}
-                </span>
-                <span class="kx-bs__cta" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </span>
-              </div>
+          <div class="kx-bs__media">
+            {% if product.featured_image %}
+              <img class="kx-bs__img"
+                   src="{{ product.featured_image | image_url: width: 600 }}"
+                   srcset="{{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 600 }} 600w, {{ product.featured_image | image_url: width: 900 }} 900w"
+                   sizes="(max-width: 640px) 70vw, (max-width: 1024px) 32vw, 22vw"
+                   alt="{{ product.featured_image.alt | escape }}"
+                   loading="lazy"
+                   decoding="async"
+                   width="{{ product.featured_image.width }}"
+                   height="{{ product.featured_image.height }}">
+            {% else %}
+              <span class="kx-bs__img-placeholder" aria-hidden="true">{{ product.title | slice: 0, 1 | upcase }}</span>
+            {% endif %}
+          </div>
+
+          <div class="kx-bs__meta">
+            <h3 class="kx-bs__name">{{ product.title }}</h3>
+            <div class="kx-bs__bottom">
+              <span class="kx-bs__price">
+                {% if product.price_varies %}ab {% endif %}{{ product.price | money }}
+              </span>
+              <span class="kx-bs__cta" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </span>
             </div>
           </div>
         </a>
@@ -75,15 +77,13 @@
 </section>
 
 <style>
-  /* === BREAK OUT OF THEME WRAPPER === */
-  /* Force the Shopify section wrapper to drop bg, padding, margin, max-width */
+  /* === Theme wrapper reset — strip frame, padding, max-width === */
   .section-kx-bestseller {
     background: #000000 !important;
     padding: 0 !important;
     margin: 0 !important;
     max-width: none !important;
   }
-  /* Neutralize any inner page-width / container imposed by the theme */
   .section-kx-bestseller > .page-width,
   .section-kx-bestseller > .container,
   .section-kx-bestseller > .shopify-section__inner,
@@ -95,175 +95,138 @@
   }
 
   /* === Section frame === */
-  /* Pure-black canvas, generous rhythm, premium type stack */
+  /* Compact vertical rhythm — premium, not stretched */
   .kx-bs {
     background: #000000;
     color: #F5F5F7;
-    padding: 128px 0 112px;
+    padding: 80px 0 72px;
     margin: 0;
     width: 100%;
     overflow: hidden;
-    font-family: 'Inter', 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    position: relative;
   }
 
-  /* === Header (NO frame, NO box, pure type) === */
+  /* === Header === */
+  /* Pure type, no boxes, neutralized vs theme h2 styles */
   .kx-bs__head {
-    max-width: 1480px;
-    margin: 0 auto 88px;
-    padding: 0 64px;
+    max-width: 1440px;
+    margin: 0 auto 40px;
+    padding: 0 56px;
     background: transparent !important;
     border: 0 !important;
-    position: relative;
-    z-index: 1;
   }
-  /* Smallcaps eyebrow above heading */
+  /* Smallcaps eyebrow — restrained brand mark */
   .kx-bs__eyebrow {
     display: inline-block;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-    margin-bottom: 18px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 14px;
   }
-  /* Display heading — heavy, tight, hero-scale */
+  /* Heading — confident but not overbearing */
   .kx-bs__title {
     font-family: inherit;
-    font-weight: 700;
-    font-size: clamp(44px, 5.4vw, 76px);
-    letter-spacing: -0.04em;
-    line-height: 0.95;
-    margin: 0 0 18px;
+    font-weight: 600;
+    font-size: clamp(32px, 3.6vw, 48px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0 0 12px;
     color: #FFFFFF;
     background: transparent !important;
     border: 0 !important;
     padding: 0 !important;
   }
-  /* Optional subheading — restrained max-width, soft grey */
+  /* Optional subheading — soft grey, comfortable read */
   .kx-bs__sub {
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.5;
     color: rgba(255, 255, 255, 0.55);
     margin: 0;
-    max-width: 580px;
+    max-width: 560px;
     font-weight: 400;
   }
 
   /* === Rail === */
-  /* Horizontal scroll-snap, scrollbar fully hidden, generous side padding */
+  /* Horizontal scroll with snap, scrollbar hidden */
   .kx-bs__rail {
     display: flex;
     gap: 16px;
     overflow-x: auto;
     overflow-y: visible;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: 64px;
-    padding: 32px 64px 64px;
+    scroll-padding-left: 56px;
+    padding: 0 56px 24px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    position: relative;
-    z-index: 1;
   }
   .kx-bs__rail::-webkit-scrollbar { display: none; }
 
-  /* === Slot === */
-  /* Numeral peek column + card column, both end-aligned for clean baseline */
-  .kx-bs__slot {
-    flex: 0 0 auto;
-    width: 460px;
-    display: grid;
-    grid-template-columns: 160px 300px;
-    align-items: end;
-    scroll-snap-align: start;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
-  }
-  /* Slot #10 — wider for two-digit numeral */
-  .kx-bs__slot.is-double {
-    width: 540px;
-    grid-template-columns: 240px 300px;
-  }
-
-  /* === Numeral (filled chrome — refined, supporting role) === */
-  /* Solid metallic gradient fill, sits behind card, bleeds bottom-left */
-  .kx-bs__rank {
-    font-family: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
-    font-weight: 900;
-    font-size: 300px;
-    line-height: 0.82;
-    letter-spacing: -0.085em;
-    /* Refined chrome gradient — softer than before, more integrated */
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(232, 232, 234, 0.85) 30%,
-      rgba(160, 160, 165, 0.7) 65%,
-      rgba(80, 80, 85, 0.55) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    user-select: none;
-    pointer-events: none;
-    justify-self: end;
-    margin-right: -68px;
-    margin-bottom: -8px;
-    transition: filter 500ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  /* Two-digit "10" — proportionally smaller to balance visual weight */
-  .kx-bs__slot.is-double .kx-bs__rank {
-    font-size: 260px;
-    margin-right: -50px;
-  }
-  /* Hover — numeral subtly brightens via filter */
-  .kx-bs__slot:hover .kx-bs__rank {
-    filter: drop-shadow(0 4px 18px rgba(255, 255, 255, 0.12));
-  }
-
-  /* === Card (Apple-grade white, generous canvas) === */
-  /* Pure-white card sits on top of numeral via z-index — flagship surface */
+  /* === Card === */
+  /* Pure-white surface, generous shadow, integrated rank chip */
   .kx-bs__card {
-    width: 300px;
+    flex: 0 0 auto;
+    width: 240px;
     aspect-ratio: 4 / 5;
     background: #FFFFFF;
-    border-radius: 20px;
+    border-radius: 18px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    z-index: 2;
+    text-decoration: none;
+    color: inherit;
+    scroll-snap-align: start;
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.5),
-      0 16px 36px rgba(0, 0, 0, 0.55);
+      0 8px 20px rgba(0, 0, 0, 0.45);
     transition:
-      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 500ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 350ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  /* Hover — card lifts cleanly, deeper shadow, no scale (more brand-grade) */
-  .kx-bs__slot:hover .kx-bs__card {
-    transform: translateY(-10px);
+  /* Hover — subtle Apple-grade lift */
+  .kx-bs__card:hover {
+    transform: translateY(-6px);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.55),
-      0 36px 72px rgba(0, 0, 0, 0.7);
+      0 24px 48px rgba(0, 0, 0, 0.65);
   }
 
-  /* Image area — flex container that fills majority of card height */
+  /* === Rank chip — top-left, formatted "01" – "10" === */
+  .kx-bs__rank {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    min-width: 28px;
+    padding: 0 9px;
+    background: #1D1D1F;
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* === Image area — ~60% of card height, centered, breathing === */
   .kx-bs__media {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 28px 28px 12px;
+    padding: 32px 28px 16px;
     overflow: hidden;
     background: #FFFFFF;
   }
-  /* Product image — contained, max area for product visibility */
   .kx-bs__img {
     max-width: 100%;
     max-height: 100%;
@@ -272,34 +235,38 @@
     object-fit: contain;
     display: block;
   }
-  /* Image fallback — initial letter on light grey square */
+  /* Image fallback — initial letter on neutral grey */
   .kx-bs__img-placeholder {
     background: #F5F5F7;
     color: #1D1D1F;
-    font-size: 72px;
+    font-size: 56px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-    border-radius: 14px;
+    border-radius: 12px;
     font-family: inherit;
     letter-spacing: -0.03em;
   }
-  /* Bottom meta strip — title + price row, hairline divider above */
+
+  /* === Meta strip — title + price row === */
   .kx-bs__meta {
-    padding: 18px 22px 20px;
+    padding: 14px 18px 16px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
-  /* Product title — Apple-grade dark, 2 lines max with ellipsis */
+  /* Product title — Apple-grade dark, 2 lines, readable */
   .kx-bs__name {
     font-family: inherit;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.01em;
     line-height: 1.35;
-    margin: 0 0 10px;
+    margin: 0;
     color: #1D1D1F;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -307,48 +274,47 @@
     overflow: hidden;
     min-height: 2.7em;
   }
-  /* Price row — price left, chevron CTA right (only visible on hover) */
-  .kx-bs__price-row {
+  /* Bottom row — price left, chevron right */
+  .kx-bs__bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
-  /* Price — Apple grey, tabular-nums, slightly larger */
   .kx-bs__price {
     font-family: inherit;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #1D1D1F;
     margin: 0;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.005em;
   }
-  /* CTA chevron — appears on hover for tactile interaction cue */
+  /* CTA chevron — appears beside price on hover */
   .kx-bs__cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: #1D1D1F;
     color: #FFFFFF;
     opacity: 0;
     transform: translateX(-4px);
-    transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 250ms ease, transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .kx-bs__slot:hover .kx-bs__cta {
+  .kx-bs__card:hover .kx-bs__cta {
     opacity: 1;
     transform: translateX(0);
   }
 
-  /* Empty state — centered, dashed border for hint */
+  /* === Empty state === */
   .kx-bs__empty {
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
-    padding: 80px 40px;
-    font-size: 16px;
+    padding: 60px 40px;
+    font-size: 15px;
     width: 100%;
     border: 1px dashed rgba(255, 255, 255, 0.1);
     border-radius: 14px;
@@ -356,53 +322,36 @@
   .kx-bs__empty p { margin: 0; }
 
   /* === Tablet === */
-  /* Compact metrics, same layout grammar */
-  @media (max-width: 1100px) {
-    .kx-bs { padding: 96px 0 80px; }
-    .kx-bs__head { margin-bottom: 64px; padding: 0 40px; }
-    .kx-bs__rail { padding: 24px 40px 48px; scroll-padding-left: 40px; gap: 12px; }
-    .kx-bs__slot { width: 380px; grid-template-columns: 130px 250px; }
-    .kx-bs__slot.is-double { width: 460px; grid-template-columns: 210px 250px; }
-    .kx-bs__rank { font-size: 250px; margin-right: -54px; margin-bottom: -6px; }
-    .kx-bs__slot.is-double .kx-bs__rank { font-size: 215px; margin-right: -40px; }
-    .kx-bs__card { width: 250px; }
-    .kx-bs__media { padding: 24px 22px 10px; }
+  @media (max-width: 1024px) {
+    .kx-bs { padding: 64px 0 56px; }
+    .kx-bs__head { margin-bottom: 32px; padding: 0 32px; }
+    .kx-bs__rail { padding: 0 32px 20px; scroll-padding-left: 32px; gap: 14px; }
+    .kx-bs__card { width: 220px; }
   }
 
   /* === Mobile === */
-  /* Tighter spacing, scaled-down numerals */
   @media (max-width: 640px) {
-    .kx-bs { padding: 72px 0 64px; }
-    .kx-bs__head { margin-bottom: 48px; padding: 0 24px; }
-    .kx-bs__eyebrow { font-size: 11px; margin-bottom: 14px; letter-spacing: 0.22em; }
-    .kx-bs__title { font-size: clamp(36px, 9vw, 56px); }
-    .kx-bs__sub { font-size: 15px; }
-    .kx-bs__rail { gap: 10px; padding: 20px 24px 40px; scroll-padding-left: 24px; }
-    .kx-bs__slot { width: 280px; grid-template-columns: 100px 180px; }
-    .kx-bs__slot.is-double { width: 330px; grid-template-columns: 150px 180px; }
-    .kx-bs__rank {
-      font-size: 195px;
-      margin-right: -38px;
-      margin-bottom: -4px;
-    }
-    .kx-bs__slot.is-double .kx-bs__rank { font-size: 165px; margin-right: -28px; }
-    .kx-bs__card { width: 180px; border-radius: 16px; }
-    .kx-bs__media { padding: 22px 18px 10px; }
-    .kx-bs__meta { padding: 14px 16px 16px; }
-    .kx-bs__name { font-size: 13px; min-height: 2.6em; -webkit-line-clamp: 2; }
-    .kx-bs__price { font-size: 14px; }
-    .kx-bs__cta { width: 24px; height: 24px; }
-    /* On touch: keep CTA visible always (no hover) */
-    .kx-bs__cta { opacity: 1; transform: translateX(0); }
+    .kx-bs { padding: 48px 0 40px; }
+    .kx-bs__head { margin-bottom: 24px; padding: 0 20px; }
+    .kx-bs__eyebrow { font-size: 10px; margin-bottom: 10px; }
+    .kx-bs__title { font-size: 28px; }
+    .kx-bs__sub { font-size: 14px; }
+    .kx-bs__rail { gap: 12px; padding: 0 20px 16px; scroll-padding-left: 20px; }
+    .kx-bs__card { width: 175px; border-radius: 14px; }
+    .kx-bs__media { padding: 24px 18px 10px; }
+    .kx-bs__rank { top: 10px; left: 10px; height: 24px; min-width: 24px; font-size: 10px; padding: 0 8px; }
+    .kx-bs__meta { padding: 12px 14px 14px; }
+    .kx-bs__name { font-size: 13px; }
+    .kx-bs__price { font-size: 13px; }
+    /* On touch: keep CTA visible */
+    .kx-bs__cta { opacity: 1; transform: translateX(0); width: 22px; height: 22px; }
   }
 
   /* === Reduced motion === */
   @media (prefers-reduced-motion: reduce) {
-    .kx-bs__slot,
     .kx-bs__card,
-    .kx-bs__rank,
     .kx-bs__cta { transition: none; }
-    .kx-bs__slot:hover .kx-bs__card { transform: none; }
+    .kx-bs__card:hover { transform: none; }
   }
 </style>
 
