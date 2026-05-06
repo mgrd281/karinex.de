@@ -354,25 +354,25 @@
     color: #153a2d;
 }
 
-/* Sale Badge */
+/* Sale Badge — 10% more compact */
 .ay-sale-badge {
     display: inline-block;
     background: #E30613;
     color: #fff;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    padding: 3px 8px;
+    padding: 3px 7px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 6px;
 }
 
-/* Promo Badge variant — driven by promo_badge_text + promo_badge_bis metafields */
+/* Promo Badge variant — same red as SALE, slightly larger padding */
 .ay-sale-badge--promo {
-    background: #1d1d1f;
+    background: #E30613;
     text-transform: none;
     letter-spacing: 0.02em;
-    padding: 4px 10px;
+    padding: 3px 9px;
 }
 
 /* Price */
