@@ -44,7 +44,7 @@
       "type": "text",
       "id": "hours_text",
       "label": "Hours Text",
-      "default": "Mo.–So. 09:00–23:00 Uhr"
+      "default": "Mo.–Fr. 10:00–18:00 Uhr (Ortszeit Deutschland)"
     },
     {
       "type": "color",
@@ -298,17 +298,14 @@
 document.addEventListener('DOMContentLoaded', function() {
   const now = new Date();
   
-  // Robust time check for Germany (Europe/Berlin)
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Europe/Berlin',
-    hour: 'numeric',
-    hour12: false
-  });
-  
-  const hour = parseInt(formatter.format(new Date()));
-  // Hours: 09:00 - 23:00 (09 to 22:59)
-  // If hour is 23, it means 23:00+, which is offline (closes at 23:00)
-  const isOnline = hour >= 9 && hour < 23;
+  // Robust time + weekday check for Germany (Europe/Berlin)
+  // Online: Mon–Fri, 10:00–18:00 local time
+  const berlinNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Europe/Berlin' }));
+  const hour = berlinNow.getHours();
+  const day = berlinNow.getDay(); // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
+  const isWeekday = day >= 1 && day <= 5;
+  const isWithinHours = hour >= 10 && hour < 18;
+  const isOnline = isWeekday && isWithinHours;
   
   // Elements
   const badge = document.getElementById('chat-status-badge');
