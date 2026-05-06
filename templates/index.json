@@ -1589,6 +1589,7 @@
     },
     "bestseller_top_10_CaWMAz": {
       "type": "kx-bestseller",
+      "disabled": true,
       "name": "Bestseller Top 10",
       "settings": {
         "eyebrow": "TOP 10",
