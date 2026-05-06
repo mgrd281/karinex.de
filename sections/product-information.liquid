@@ -4312,25 +4312,22 @@ function toggleDesc() {
 
 // Auto-init for physical layout
 (function() {
-  var SF = "'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+  // Cleanup legacy HTML in admin-pasted descriptions WITHOUT touching
+  // intentional inline styles, classes, colors, or background swatches.
+  // Old behavior force-stamped Cairo+!important on every element which
+  // wiped merchant-authored badges (e.g. B2B pill, colored CTAs).
   function forceDescFont(container) {
     if (!container) return;
-    container.style.setProperty('font-family', SF, 'important');
-    var els = container.querySelectorAll('*');
-    for (var i = 0; i < els.length; i++) {
-      els[i].style.setProperty('font-family', SF, 'important');
-      els[i].removeAttribute('face');
-      els[i].removeAttribute('color');
-      els[i].removeAttribute('size');
-      // Strip font tags by replacing with span
-      if (els[i].tagName === 'FONT') {
-        var span = document.createElement('span');
-        span.innerHTML = els[i].innerHTML;
-        span.style.setProperty('font-family', SF, 'important');
-        els[i].parentNode.replaceChild(span, els[i]);
-      }
+    var fonts = container.querySelectorAll('font');
+    for (var i = 0; i < fonts.length; i++) {
+      // Replace deprecated <font> wrapper with <span>, preserving any inline style attribute
+      var span = document.createElement('span');
+      span.innerHTML = fonts[i].innerHTML;
+      var inlineStyle = fonts[i].getAttribute('style');
+      if (inlineStyle) span.setAttribute('style', inlineStyle);
+      fonts[i].parentNode.replaceChild(span, fonts[i]);
     }
-    // Remove any <style> blocks inside description
+    // Remove any <style> blocks inside description (CSP / theme isolation)
     container.querySelectorAll('style').forEach(function(s) { s.remove(); });
   }
   function initWatchDesc() {
