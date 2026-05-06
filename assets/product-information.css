@@ -1459,27 +1459,22 @@
             /* Remove padding to align with FAQ */
         }
 
-        .product-description-text,
-        .product-description-text * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-            font-size: 1rem !important;
-            line-height: 1.8 !important;
-            color: #333 !important;
+        /* Defaults only — NO !important so admin-authored inline styles win */
+        .product-description-text {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #333;
         }
 
-        .product-description-text h1,
-        .product-description-text h2,
-        .product-description-text h3,
-        .product-description-text h4 {
-            font-size: 1.25rem !important;
-            font-weight: 700 !important;
-            color: #111 !important;
-            line-height: 1.4 !important;
-        }
+        .product-description-text h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.3; color: #111; }
+        .product-description-text h2 { font-size: 1.4rem; font-weight: 700; line-height: 1.3; color: #111; }
+        .product-description-text h3 { font-size: 1.2rem; font-weight: 700; line-height: 1.4; color: #111; }
+        .product-description-text h4 { font-size: 1.05rem; font-weight: 700; line-height: 1.4; color: #111; }
 
         .product-description-text strong,
         .product-description-text b {
-            font-weight: 700 !important;
+            font-weight: 700;
         }
 
         .section-title {
