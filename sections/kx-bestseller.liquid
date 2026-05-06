@@ -1,8 +1,13 @@
 {% comment %}
-  KARINEX — Bestseller Top 10 (Premium Edition)
-  Full-bleed, theme-frame-proof, Apple-grade restraint.
-  File path: sections/kx-bestseller.liquid
+  KARINEX — Bestseller Top 10 (Netflix Premium Edition)
+  Solid filled numerals with chrome gradient + Apple-grade white cards.
+  Theme-frame-proof, vanilla CSS, no JS.
 {% endcomment %}
+
+{%- liquid
+  assign coll = section.settings.collection
+  assign count = coll.products_count | default: 0
+-%}
 
 <section class="kx-bs" aria-labelledby="kx-bs-title-{{ section.id }}">
   <div class="kx-bs__head">
@@ -18,31 +23,34 @@
   </div>
 
   <div class="kx-bs__rail" role="list">
-    {%- assign items = section.settings.collection.products | slice: 0, 10 -%}
-    {%- if section.settings.collection == blank -%}
+    {%- if coll == blank -%}
       <div class="kx-bs__empty">
         <p>Bitte verbinden Sie eine Collection im Theme-Editor.</p>
       </div>
-    {%- elsif items.size == 0 -%}
+    {%- elsif count == 0 -%}
       <div class="kx-bs__empty">
         <p>Diese Collection enthält keine Produkte.</p>
       </div>
     {%- else -%}
-      {%- for product in items -%}
+      {%- for product in coll.products limit: 10 -%}
         <a href="{{ product.url }}"
            class="kx-bs__slot {% if forloop.index == 10 %}is-double{% endif %}"
            role="listitem"
            aria-label="Rang {{ forloop.index }}: {{ product.title | escape }}">
 
-          <span class="kx-bs__rank" aria-hidden="true">{{ forloop.index }}</span>
+          <span class="kx-bs__rank" aria-hidden="true" data-rank="{{ forloop.index }}">{{ forloop.index }}</span>
 
           <div class="kx-bs__card">
             {% if product.featured_image %}
               <img class="kx-bs__img"
                    src="{{ product.featured_image | image_url: width: 600 }}"
+                   srcset="{{ product.featured_image | image_url: width: 360 }} 360w, {{ product.featured_image | image_url: width: 600 }} 600w, {{ product.featured_image | image_url: width: 900 }} 900w"
+                   sizes="(max-width: 640px) 60vw, (max-width: 1024px) 28vw, 18vw"
                    alt="{{ product.featured_image.alt | escape }}"
                    loading="lazy"
-                   width="300" height="400">
+                   decoding="async"
+                   width="{{ product.featured_image.width }}"
+                   height="{{ product.featured_image.height }}">
             {% else %}
               <div class="kx-bs__img-placeholder" aria-hidden="true">{{ product.title | slice: 0, 1 | upcase }}</div>
             {% endif %}
@@ -61,23 +69,26 @@
 
 <style>
   /* === BREAK OUT OF THEME WRAPPER === */
-  /* Force the Shopify section wrapper to drop its frame, padding, and bg */
+  /* Force the Shopify section wrapper to drop bg, padding, margin, max-width */
   .section-kx-bestseller {
     background: #000000 !important;
     padding: 0 !important;
     margin: 0 !important;
+    max-width: none !important;
   }
   /* Neutralize any inner page-width / container imposed by the theme */
   .section-kx-bestseller > .page-width,
   .section-kx-bestseller > .container,
-  .section-kx-bestseller > .shopify-section__inner {
+  .section-kx-bestseller > .shopify-section__inner,
+  .section-kx-bestseller .page-width {
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    background: transparent !important;
   }
 
   /* === Section frame === */
-  /* Full-bleed pure-black surface, generous vertical breathing */
+  /* Pure-black canvas, generous breathing room, premium type stack */
   .kx-bs {
     background: #000000;
     color: #F5F5F7;
@@ -85,187 +96,216 @@
     margin: 0;
     width: 100%;
     overflow: hidden;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: relative;
+  }
+  /* Subtle vignette glow — adds depth without decoration */
+  .kx-bs::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255, 255, 255, 0.025), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
   }
 
-  /* === Header (NO frame, NO box, pure text) === */
-  /* Inner-aligned heading block — defeats theme bg/border on h2 */
+  /* === Header (NO frame, NO box, pure type) === */
   .kx-bs__head {
     max-width: 1440px;
-    margin: 0 auto 72px;
-    padding: 0 48px;
+    margin: 0 auto 80px;
+    padding: 0 56px;
     background: transparent !important;
     border: 0 !important;
+    position: relative;
+    z-index: 1;
   }
   /* Smallcaps eyebrow above heading */
   .kx-bs__eyebrow {
     display: inline-block;
     font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 18px;
   }
-  /* Display heading — premium scale, neutralized against theme */
+  /* Display heading — heavy, tight, neutralized vs. theme bg */
   .kx-bs__title {
     font-family: inherit;
-    font-weight: 600;
-    font-size: clamp(40px, 5.2vw, 72px);
-    letter-spacing: -0.035em;
-    line-height: 1;
-    margin: 0 0 16px;
-    color: #F5F5F7;
+    font-weight: 700;
+    font-size: clamp(44px, 5.6vw, 80px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin: 0 0 18px;
+    color: #FFFFFF;
     background: transparent !important;
     border: 0 !important;
     padding: 0 !important;
   }
-  /* Optional subheading, max-width keeps it readable */
+  /* Optional subheading — restrained max-width, soft grey */
   .kx-bs__sub {
     font-size: 17px;
     line-height: 1.5;
-    color: #A1A1A6;
+    color: rgba(255, 255, 255, 0.6);
     margin: 0;
-    max-width: 560px;
+    max-width: 580px;
     font-weight: 400;
   }
 
   /* === Rail === */
-  /* Horizontal scroll container, snap-aligned, scrollbar hidden */
+  /* Horizontal scroll-snap, scrollbar fully hidden, generous side padding */
   .kx-bs__rail {
     display: flex;
     gap: 12px;
     overflow-x: auto;
     overflow-y: visible;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: 48px;
-    padding: 24px 48px 48px;
+    scroll-padding-left: 56px;
+    padding: 32px 56px 56px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 1;
   }
   .kx-bs__rail::-webkit-scrollbar { display: none; }
 
   /* === Slot === */
-  /* Each entry: numeral column (170px) + card column (240px), end-aligned */
+  /* Numeral column + card column, end-aligned. Numeral peeks from left. */
   .kx-bs__slot {
     flex: 0 0 auto;
-    width: 380px;
+    width: 360px;
     display: grid;
-    grid-template-columns: 170px 240px;
+    grid-template-columns: 160px 220px;
     align-items: end;
     scroll-snap-align: start;
     text-decoration: none;
     color: inherit;
-    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
     position: relative;
   }
-  /* Slot #10 needs more room for two-digit numeral */
+  /* Slot #10 — wider for two-digit numeral */
   .kx-bs__slot.is-double {
     width: 440px;
-    grid-template-columns: 230px 240px;
+    grid-template-columns: 240px 220px;
   }
-  /* Subtle lift on hover — Apple-grade micro-motion */
-  .kx-bs__slot:hover { transform: translateY(-6px); }
 
-  /* === Numeral (visible but not loud) === */
-  /* Outlined numeral, transparent fill, behind card via grid order */
+  /* === Numeral (FILLED chrome — Netflix signature) === */
+  /* Solid white fill with subtle chrome gradient, sits behind card */
   .kx-bs__rank {
-    font-family: inherit;
-    font-weight: 800;
-    font-size: 280px;
+    font-family: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 900;
+    font-size: 320px;
     line-height: 0.78;
-    letter-spacing: -0.07em;
+    letter-spacing: -0.08em;
+    /* Chrome gradient fill — premium tactile feel */
+    background: linear-gradient(
+      180deg,
+      #FFFFFF 0%,
+      #E8E8EA 35%,
+      #B8B8BC 65%,
+      #6E6E73 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.7);
     user-select: none;
     pointer-events: none;
     justify-self: end;
-    margin-right: -42px;
-    margin-bottom: -16px;
-    transition: -webkit-text-stroke-color 400ms ease;
+    margin-right: -56px;
+    margin-bottom: -22px;
+    transition: filter 500ms cubic-bezier(0.22, 1, 0.36, 1);
+    /* Soft drop shadow — separates numeral from black bg */
+    filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.08));
   }
   /* Two-digit "10" — slightly smaller to balance visual weight */
   .kx-bs__slot.is-double .kx-bs__rank {
-    font-size: 240px;
-    margin-right: -32px;
+    font-size: 280px;
+    margin-right: -42px;
   }
-  /* Stroke brightens on hover for restrained feedback */
+  /* Hover — numeral glows brighter */
   .kx-bs__slot:hover .kx-bs__rank {
-    -webkit-text-stroke-color: #FFFFFF;
+    filter: drop-shadow(0 6px 24px rgba(255, 255, 255, 0.18));
   }
 
-  /* === Card (Apple Store white) === */
-  /* Pure-white card sits on top of numeral via z-index — flagship product surface */
+  /* === Card (Apple Store white, Netflix poster proportions) === */
+  /* Pure-white card sits on top of numeral via z-index */
   .kx-bs__card {
-    width: 240px;
+    width: 220px;
     aspect-ratio: 3 / 4;
     background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 18px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
     z-index: 2;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-    transition: border-color 400ms ease, box-shadow 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 12px 28px rgba(0, 0, 0, 0.55);
+    transition:
+      transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 500ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 500ms ease;
   }
-  /* Hover state — shadow deepens, border darkens, subtle scale */
+  /* Hover — card lifts dramatically, deeper shadow */
   .kx-bs__slot:hover .kx-bs__card {
-    border-color: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.7);
-    transform: scale(1.02);
+    transform: translateY(-8px) scale(1.03);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.5),
+      0 32px 64px rgba(0, 0, 0, 0.75);
+    border-color: rgba(0, 0, 0, 0.1);
   }
 
-  /* Product image — centered mockup, contained, fills more of card */
+  /* Product image — large, contained, breathing space */
   .kx-bs__img {
-    width: 75%;
+    width: 78%;
     height: auto;
-    max-height: 65%;
+    max-height: 68%;
     object-fit: contain;
     margin: auto;
     padding: 24px 0 12px;
     display: block;
   }
-  /* Image fallback when product has no featured image */
+  /* Image fallback — initial letter on light grey square */
   .kx-bs__img-placeholder {
     background: #F5F5F7;
     color: #1D1D1F;
     font-size: 64px;
-    font-weight: 700;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 75%;
+    width: 70%;
     aspect-ratio: 1 / 1;
     margin: 24px auto 12px;
-    border-radius: 12px;
+    border-radius: 14px;
     font-family: inherit;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
-  /* Bottom meta strip — title + price, hairline above (dark on white) */
+  /* Bottom meta strip — title + price, hairline divider above */
   .kx-bs__meta {
-    padding: 16px 20px 20px;
+    padding: 14px 18px 18px;
     border-top: 1px solid rgba(0, 0, 0, 0.06);
     margin-top: auto;
   }
-  /* Product title — Apple-grade dark on white */
+  /* Product title — Apple-grade dark, single line ellipsis */
   .kx-bs__name {
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: -0.005em;
     line-height: 1.3;
-    margin: 0 0 6px;
+    margin: 0 0 4px;
     color: #1D1D1F;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
-  /* Price — Apple grey, tabular-nums */
+  /* Price — Apple grey, tabular-nums for clean column alignment */
   .kx-bs__price {
     font-family: inherit;
     font-size: 13px;
@@ -275,13 +315,15 @@
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.005em;
   }
-  /* Empty state — centered message when no collection / no products */
+  /* Empty state — centered message when collection unset / has 0 products */
   .kx-bs__empty {
-    color: #A1A1A6;
+    color: rgba(255, 255, 255, 0.5);
     text-align: center;
     padding: 80px 40px;
     font-size: 16px;
     width: 100%;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
   }
   .kx-bs__empty p { margin: 0; }
 
@@ -290,43 +332,45 @@
   @media (max-width: 1024px) {
     .kx-bs { padding: 88px 0 72px; }
     .kx-bs__head { margin-bottom: 56px; padding: 0 32px; }
-    .kx-bs__rail { padding: 20px 32px 36px; scroll-padding-left: 32px; }
-    .kx-bs__slot { width: 320px; grid-template-columns: 140px 200px; }
-    .kx-bs__slot.is-double { width: 370px; grid-template-columns: 190px 200px; }
-    .kx-bs__rank { font-size: 230px; margin-right: -34px; margin-bottom: -12px; }
-    .kx-bs__slot.is-double .kx-bs__rank { font-size: 195px; margin-right: -26px; }
-    .kx-bs__card { width: 200px; }
+    .kx-bs__rail { padding: 24px 32px 40px; scroll-padding-left: 32px; }
+    .kx-bs__slot { width: 300px; grid-template-columns: 130px 180px; }
+    .kx-bs__slot.is-double { width: 370px; grid-template-columns: 200px 180px; }
+    .kx-bs__rank { font-size: 250px; margin-right: -44px; margin-bottom: -16px; }
+    .kx-bs__slot.is-double .kx-bs__rank { font-size: 215px; margin-right: -32px; }
+    .kx-bs__card { width: 180px; }
   }
 
   /* === Mobile === */
-  /* Tighter spacing, thinner stroke for high-DPI clarity */
+  /* Tighter spacing, scaled-down numerals */
   @media (max-width: 640px) {
     .kx-bs { padding: 64px 0 56px; }
     .kx-bs__head { margin-bottom: 40px; padding: 0 20px; }
-    .kx-bs__eyebrow { font-size: 11px; margin-bottom: 14px; }
+    .kx-bs__eyebrow { font-size: 11px; margin-bottom: 14px; letter-spacing: 0.2em; }
+    .kx-bs__title { font-size: clamp(36px, 9vw, 56px); }
     .kx-bs__sub { font-size: 15px; }
-    .kx-bs__rail { gap: 6px; padding: 16px 20px 32px; scroll-padding-left: 20px; }
-    .kx-bs__slot { width: 252px; grid-template-columns: 104px 168px; }
-    .kx-bs__slot.is-double { width: 290px; grid-template-columns: 142px 168px; }
+    .kx-bs__rail { gap: 8px; padding: 20px 20px 36px; scroll-padding-left: 20px; }
+    .kx-bs__slot { width: 244px; grid-template-columns: 100px 152px; }
+    .kx-bs__slot.is-double { width: 290px; grid-template-columns: 146px 152px; }
     .kx-bs__rank {
-      font-size: 180px;
-      margin-right: -28px;
-      margin-bottom: -10px;
-      -webkit-text-stroke-width: 1.2px;
+      font-size: 195px;
+      margin-right: -34px;
+      margin-bottom: -12px;
     }
-    .kx-bs__slot.is-double .kx-bs__rank { font-size: 152px; margin-right: -22px; }
-    .kx-bs__card { width: 168px; border-radius: 14px; }
-    .kx-bs__img { padding: 22px 0 10px; }
+    .kx-bs__slot.is-double .kx-bs__rank { font-size: 165px; margin-right: -24px; }
+    .kx-bs__card { width: 152px; border-radius: 14px; }
+    .kx-bs__img { padding: 20px 0 10px; }
+    .kx-bs__img-placeholder { font-size: 48px; margin: 20px auto 10px; }
     .kx-bs__meta { padding: 12px 14px 14px; }
+    .kx-bs__name { font-size: 13px; }
+    .kx-bs__price { font-size: 12px; }
   }
 
   /* === Reduced motion === */
-  /* Respect user preference — disable lift and stroke transitions */
   @media (prefers-reduced-motion: reduce) {
     .kx-bs__slot,
     .kx-bs__card,
     .kx-bs__rank { transition: none; }
-    .kx-bs__slot:hover { transform: none; }
+    .kx-bs__slot:hover .kx-bs__card { transform: none; }
   }
 </style>
 
