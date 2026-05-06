@@ -540,18 +540,48 @@
       {%- assign sibling_products = product.metafields.custom.siblings.value -%}
       {%- if sibling_products != blank -%}
         {%- assign _display_color = product.metafields.custom.display_color.value | default: product.metafields.custom.display_color | strip -%}
+
+        {%- comment -%}
+          Smart sibling label — colors only make sense for watches/clothing.
+          Software / Microsoft / digital products get "Variante" with the
+          product title as the value (since display_color often holds
+          unrelated copy like "nur diesen Monat" for these SKUs).
+        {%- endcomment -%}
+        {%- liquid
+          assign _sib_label = 'Farbe'
+          assign _sib_label_plural = 'Farben'
+          assign _sib_value = _display_color
+          if _is_digital or _vendor_down == 'microsoft' or _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows'
+            assign _sib_label = 'Variante'
+            assign _sib_label_plural = 'Varianten'
+            assign _sib_value = product.title | truncate: 50
+          elsif _vendor_down == 'lego' or _vendor_down == 'lego®' or _type_lc contains 'lego'
+            assign _sib_label = 'Set'
+            assign _sib_label_plural = 'Sets'
+            assign _sib_value = product.title | truncate: 50
+          endif
+        -%}
+
         <div class="ay-siblings">
           {%- if ay_is_sold_out and ay_has_real_size_options -%}
-            <div class="ay-siblings__headline">Entdecke andere Farben</div>
+            <div class="ay-siblings__headline">Entdecke andere {{ _sib_label_plural }}</div>
           {%- endif -%}
           <div class="ay-siblings__label">
-            Farbe: <strong id="ay-sibling-color-label">{{ _display_color }}</strong>
+            {{ _sib_label }}: <strong id="ay-sibling-color-label">{{ _sib_value }}</strong>
           </div>
           <div class="ay-siblings__grid">
             {%- for sibling in sibling_products -%}
               {%- assign _is_current = false -%}
               {%- if sibling.id == product.id -%}{%- assign _is_current = true -%}{%- endif -%}
-              {%- assign _sib_color = sibling.metafields.custom.display_color.value | default: sibling.metafields.custom.display_color | default: sibling.title -%}
+              {%- comment -%}
+                For software/Microsoft, display_color is meaningless; use the
+                truncated title so hover label is informative.
+              {%- endcomment -%}
+              {%- if _is_digital or _vendor_down == 'microsoft' or _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows' -%}
+                {%- assign _sib_color = sibling.title | truncate: 50 -%}
+              {%- else -%}
+                {%- assign _sib_color = sibling.metafields.custom.display_color.value | default: sibling.metafields.custom.display_color | default: sibling.title -%}
+              {%- endif -%}
               {%- assign _sib_unavailable = false -%}
               {%- if sibling.selected_or_first_available_variant.available == false -%}
                 {%- assign _sib_unavailable = true -%}
@@ -686,8 +716,16 @@
 
       {%- comment -%} Add to Cart {%- endcomment -%}
       {%- if ay_is_sold_out -%}
+        {%- liquid
+          assign _stockout_title = 'Deine Farbe ist ausverkauft'
+          if _is_digital or _vendor_down == 'microsoft' or _type_lc contains 'software' or _type_lc contains 'office' or _type_lc contains 'windows'
+            assign _stockout_title = 'Diese Variante ist ausverkauft'
+          elsif _vendor_down == 'lego' or _vendor_down == 'lego®' or _type_lc contains 'lego'
+            assign _stockout_title = 'Dieses Set ist ausverkauft'
+          endif
+        -%}
         <div class="ay-stockout-box">
-          <h3 class="ay-stockout-box__title">Deine Farbe ist ausverkauft</h3>
+          <h3 class="ay-stockout-box__title">{{ _stockout_title }}</h3>
           <p class="ay-stockout-box__text">Wir können Dich benachrichtigen, sobald das Produkt wieder verfügbar ist.</p>
           <form id="ay-stockout-form" class="ay-stockout-box__form" onsubmit="return false;">
             <input type="hidden" id="ay-stockout-body" value="">
