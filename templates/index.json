@@ -1588,9 +1588,10 @@
       }
     },
     "bestseller_top_10_CaWMAz": {
-      "type": "bestseller-top-10",
+      "type": "kx-bestseller",
       "name": "Bestseller Top 10",
       "settings": {
+        "eyebrow": "TOP 10",
         "heading": "Bestseller",
         "subheading": "Unsere meistverkauften Produkte — manuell sortiert in der Collection.",
         "collection": "unsere-bestseller"
