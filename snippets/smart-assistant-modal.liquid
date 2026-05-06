@@ -34,69 +34,112 @@
       <div class="sa-views-container" id="saViewsContainer">
         
         <!-- ==========================
-             STEP 1: SMART CATEGORIES 
+             STEP 1: TOPIC PICKER (iOS Settings-style list)
              ========================== -->
         <div class="sa-view sa-view--active" id="saView1">
-          <h3 class="sa-step-title">Wie können wir Ihnen helfen?</h3>
-          <p class="sa-step-desc">Wählen Sie das Thema Ihrer Anfrage für eine schnellere Bearbeitung.</p>
 
-          <div class="sa-category-grid">
+          <!-- Hero question -->
+          <div class="sa-hero">
+            <div class="sa-hero__pill">
+              <span class="sa-hero__dot"></span>
+              <span>Antwort meist innerhalb 2 Stunden</span>
+            </div>
+            <h3 class="sa-hero__title">Wie können wir Ihnen helfen?</h3>
+            <p class="sa-hero__desc">Wählen Sie ein Thema für eine schnellere Bearbeitung.</p>
+          </div>
+
+          <!-- List of topics -->
+          <div class="sa-list" role="list">
             {%- assign ptype_lc = product.type | downcase -%}
             {%- assign vendor_lc = product.vendor | downcase -%}
-            
+
             {%- if ptype_lc contains 'uhr' or vendor_lc contains 'michael kors' or vendor_lc contains 'boss' -%}
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Echtheit & Zustand', 'Ist die Uhr original und neuwertig?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Echtheit & Zustand', 'Ist die Uhr original und neuwertig?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Echtheit & Zustand</span>
+                  <span class="sa-row__desc">Original-Garantie und Produktzustand</span>
                 </div>
-                <span>Echtheit & Zustand</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Lieferumfang', 'Was ist genau im Lieferumfang enthalten?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Lieferumfang', 'Was ist genau im Lieferumfang enthalten?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Lieferumfang</span>
+                  <span class="sa-row__desc">Was ist in der Verpackung enthalten</span>
                 </div>
-                <span>Lieferumfang</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             {%- elsif template contains 'product' and product.tags contains 'Software' or ptype_lc contains 'software' -%}
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Aktivierung', 'Wie funktioniert die Aktivierung des Produktschlüssels?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Aktivierung', 'Wie funktioniert die Aktivierung des Produktschlüssels?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Aktivierung</span>
+                  <span class="sa-row__desc">Schlüssel-Eingabe und Lizenz-Setup</span>
                 </div>
-                <span>Aktivierung</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Kompatibilität', 'Ist die Software mit meinem System kompatibel?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Kompatibilität', 'Ist die Software mit meinem System kompatibel?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Kompatibilität</span>
+                  <span class="sa-row__desc">System­anforderungen und Versionen</span>
                 </div>
-                <span>Kompatibilität</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             {%- else -%}
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Kompatibilität', 'Ist das Produkt kompatibel mit meinem Gerät?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Kompatibilität', 'Ist das Produkt kompatibel mit meinem Gerät?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Eigenschaften</span>
+                  <span class="sa-row__desc">Funktionen und Spezifikationen</span>
                 </div>
-                <span>Eigenschaften</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
-              <button type="button" class="sa-category-btn" onclick="saSelectCategory('Lieferzeit', 'Wie lange dauert die Lieferzeit?')">
-                <div class="sa-cat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Lieferzeit', 'Wie lange dauert die Lieferzeit?')">
+                <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div class="sa-row__text">
+                  <span class="sa-row__title">Lieferzeit & Versand</span>
+                  <span class="sa-row__desc">Wann kommt Ihre Bestellung an</span>
                 </div>
-                <span>Lieferzeit & Versand</span>
+                <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             {%- endif -%}
 
-            <button type="button" class="sa-category-btn" onclick="saSelectCategory('Rechnung', 'Kann ich eine Rechnung erhalten?')">
-              <div class="sa-cat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Rechnung', 'Kann ich eine Rechnung erhalten?')">
+              <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+              <div class="sa-row__text">
+                <span class="sa-row__title">Rechnung</span>
+                <span class="sa-row__desc">Steuerbeleg und Geschäftskunden</span>
               </div>
-              <span>Rechnung</span>
+              <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <button type="button" class="sa-category-btn" onclick="saSelectCategory('Sonstiges', '')">
-              <div class="sa-cat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            <button type="button" class="sa-list-row" role="listitem" onclick="saSelectCategory('Sonstiges', '')">
+              <div class="sa-row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+              <div class="sa-row__text">
+                <span class="sa-row__title">Sonstiges</span>
+                <span class="sa-row__desc">Eine andere Frage stellen</span>
               </div>
-              <span>Sonstiges</span>
+              <svg class="sa-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
+          </div>
+
+          <!-- Trust footer -->
+          <div class="sa-trust-footer">
+            <div class="sa-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Verschlüsselt</span>
+            </div>
+            <div class="sa-trust-divider"></div>
+            <div class="sa-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Deutscher Support</span>
+            </div>
+            <div class="sa-trust-divider"></div>
+            <div class="sa-trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>~2h Antwortzeit</span>
+            </div>
           </div>
         </div>
 
@@ -203,34 +246,30 @@
    Dark glassmorphism + electric blue accent + cinematic animations
    ================================================================= */
 
-/* ── Design tokens ── */
+/* ── Design tokens (light premium with depth) ── */
 :root {
   --sa-primary: #1D4739;
   --sa-primary-hover: #16362b;
-  --sa-accent: #4F8EFF;
-  --sa-accent-strong: #2563EB;
-  --sa-accent-soft: rgba(79, 142, 255, 0.10);
-  --sa-accent-glow: rgba(79, 142, 255, 0.25);
-  --sa-accent-ring: rgba(79, 142, 255, 0.30);
-  /* Dark glass surfaces */
-  --sa-bg: rgba(22, 22, 26, 0.92);
-  --sa-bg-solid: #16161A;
-  --sa-surface: rgba(255, 255, 255, 0.04);
-  --sa-surface-hover: rgba(255, 255, 255, 0.08);
-  --sa-surface-strong: rgba(255, 255, 255, 0.10);
-  --sa-border: rgba(255, 255, 255, 0.08);
-  --sa-border-strong: rgba(255, 255, 255, 0.14);
-  --sa-text: #F5F5F7;
-  --sa-text-muted: rgba(245, 245, 247, 0.62);
-  --sa-text-subtle: rgba(245, 245, 247, 0.42);
+  --sa-accent: #2563EB;
+  --sa-accent-soft: #EFF6FF;
+  --sa-accent-ring: rgba(37, 99, 235, 0.18);
+  --sa-bg: #FFFFFF;
+  --sa-canvas: #FAFAFA;
+  --sa-surface: #F5F5F7;
+  --sa-surface-hover: #EFEFF1;
+  --sa-divider: rgba(0, 0, 0, 0.06);
+  --sa-border: rgba(0, 0, 0, 0.08);
+  --sa-text: #1D1D1F;
+  --sa-text-muted: #6E6E73;
+  --sa-text-subtle: #86868B;
+  --sa-success: #34C759;
   --sa-radius-modal: 24px;
-  --sa-radius-card: 16px;
+  --sa-radius-row: 16px;
   --sa-radius-input: 12px;
-  --sa-shadow-modal: 0 32px 80px rgba(0, 0, 0, 0.50), 0 2px 8px rgba(0, 0, 0, 0.25);
-  --sa-shadow-card-hover: 0 16px 40px rgba(79, 142, 255, 0.18), 0 2px 6px rgba(0, 0, 0, 0.30);
+  --sa-shadow-modal: 0 32px 64px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.06);
   --sa-transition: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   --sa-transition-fast: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  --sa-focus-ring: rgba(79, 142, 255, 0.30);
+  --sa-focus-ring: rgba(37, 99, 235, 0.18);
 }
 
 /* ── Trigger Button ── */
@@ -243,16 +282,14 @@
 .frage-btn:hover { color: var(--sa-accent); }
 .frage-icon { color: var(--sa-accent); font-size: 16px; }
 
-/* ── Overlay (deep gradient + heavy blur) ── */
+/* ── Overlay (deep blur, premium dark backdrop) ── */
 .sa-overlay {
   display: none;
   position: fixed !important;
   inset: 0 !important;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(79, 142, 255, 0.10), transparent 70%),
-    rgba(6, 6, 9, 0.72) !important;
-  backdrop-filter: blur(20px) saturate(1.2) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  background: rgba(10, 10, 15, 0.55) !important;
+  backdrop-filter: blur(20px) saturate(1.1) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.1) !important;
   z-index: 999999 !important;
   align-items: center;
   justify-content: center;
@@ -268,35 +305,22 @@
 }
 body.sa-modal-open { overflow: hidden; }
 
-/* ── Modal Container (true dark glassmorphism) ── */
+/* ── Modal — clean light surface, generous corners, crisp shadow ── */
 .sa-modal {
   background: var(--sa-bg);
-  backdrop-filter: blur(40px) saturate(1.8);
-  -webkit-backdrop-filter: blur(40px) saturate(1.8);
-  border: 1px solid var(--sa-border);
   border-radius: var(--sa-radius-modal);
   width: 100%;
-  max-width: 580px;
-  max-height: 90vh;
+  max-width: 480px;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
   box-shadow: var(--sa-shadow-modal);
-  transform: translateY(28px) scale(0.96);
+  transform: translateY(20px) scale(0.98);
   opacity: 0;
   transition: transform var(--sa-transition), opacity var(--sa-transition);
   outline: none;
   position: relative;
   overflow: hidden;
-}
-/* Subtle inner highlight on top edge — premium glass refraction */
-.sa-modal::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-  pointer-events: none;
-  z-index: 1;
 }
 .sa-overlay.is-open .sa-modal {
   transform: translateY(0) scale(1);
@@ -311,69 +335,61 @@ body.sa-modal-open { overflow: hidden; }
   max-height: 90vh;
 }
 
-/* ── Header (cinematic spacing, white text on dark) ── */
+/* ── Header (compact, breathable) ── */
 .sa-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  padding: 32px 32px 20px;
-  background: transparent;
+  padding: 20px 24px;
+  background: var(--sa-bg);
+  border-bottom: 1px solid var(--sa-divider);
   z-index: 10;
   flex-shrink: 0;
-  position: relative;
 }
-.sa-header__text { display: flex; flex-direction: column; gap: 8px; padding-right: 16px; }
+.sa-header__text { display: flex; flex-direction: column; gap: 2px; padding-right: 12px; min-width: 0; }
 .sa-title {
-  font: 600 26px/1.15 Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font: 600 16px/1.25 Inter, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--sa-text);
   margin: 0;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
 }
 .sa-subtitle {
-  font: 400 13px/1.5 Inter, -apple-system, sans-serif;
+  font: 400 12px/1.4 Inter, -apple-system, sans-serif;
   color: var(--sa-text-subtle);
   margin: 0;
-  letter-spacing: 0;
-  font-feature-settings: "tnum";
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sa-close-btn {
-  width: 36px; height: 36px;
+  width: 30px; height: 30px;
   border-radius: 50%;
   background: var(--sa-surface);
-  border: 1px solid var(--sa-border);
+  border: none;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background var(--sa-transition-fast), border-color var(--sa-transition-fast), transform var(--sa-transition-fast);
+  transition: background var(--sa-transition-fast);
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 }
-.sa-close-btn svg { width: 14px; height: 14px; stroke: var(--sa-text); stroke-width: 2.2; }
-.sa-close-btn:hover {
-  background: var(--sa-surface-hover);
-  border-color: var(--sa-border-strong);
-  transform: scale(1.04);
-}
-.sa-close-btn:active { transform: scale(0.94); }
-.sa-close-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--sa-accent-ring);
-}
+.sa-close-btn svg { width: 12px; height: 12px; stroke: var(--sa-text); stroke-width: 2.5; }
+.sa-close-btn:hover { background: var(--sa-surface-hover); }
+.sa-close-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--sa-accent-ring); }
 
-/* ── Progress Bar (electric blue gradient with glow) ── */
+/* ── Progress Bar (only visible on form step) ── */
 .sa-progress-bar {
   height: 2px;
-  background: var(--sa-border);
+  background: var(--sa-divider);
   width: 100%;
   flex-shrink: 0;
-  position: relative;
+  display: none;
 }
 .sa-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2563EB, var(--sa-accent), #6BA0FF);
-  box-shadow: 0 0 12px var(--sa-accent-glow);
+  background: var(--sa-accent);
   width: 50%;
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── View Controller ── */
@@ -383,10 +399,16 @@ body.sa-modal-open { overflow: hidden; }
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 16px 32px 32px;
+  padding: 0;
   scrollbar-width: none;
 }
 .sa-views-container::-webkit-scrollbar { display: none; }
+/* Form view keeps generous padding */
+#saView2 { padding: 24px; }
+#saView3 { padding: 32px 24px; }
+/* Show progress bar on form step */
+.sa-views-container:has(#saView2.sa-view--active) ~ * .sa-progress-bar,
+body.sa-step-form .sa-progress-bar { display: block; }
 
 .sa-view {
   display: none;
@@ -401,143 +423,200 @@ body.sa-modal-open { overflow: hidden; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Step 1: Categories (cinematic dark glass cards) ── */
-.sa-step-title {
-  font: 600 18px/1.3 Inter, -apple-system, sans-serif;
+/* ============================================
+   STEP 1: HERO + LIST PATTERN (iOS Settings)
+   ============================================ */
+
+/* Hero block — large welcoming intro */
+.sa-hero {
+  padding: 28px 24px 20px;
+  background: linear-gradient(180deg, var(--sa-canvas), var(--sa-bg));
+}
+.sa-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 8px;
+  background: rgba(52, 199, 89, 0.10);
+  border: 1px solid rgba(52, 199, 89, 0.20);
+  border-radius: 999px;
+  font: 500 11px/1 Inter, -apple-system, sans-serif;
+  color: #16803D;
+  margin-bottom: 14px;
+  letter-spacing: 0.01em;
+}
+.sa-hero__dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--sa-success);
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.20);
+  animation: saPulse 2s ease-in-out infinite;
+}
+@keyframes saPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.20); }
+  50% { box-shadow: 0 0 0 6px rgba(52, 199, 89, 0.10); }
+}
+.sa-hero__title {
+  font: 600 24px/1.2 Inter, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--sa-text);
   margin: 0 0 6px;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
 }
-.sa-step-desc {
-  font: 400 14px/1.55 Inter, -apple-system, sans-serif;
+.sa-hero__desc {
+  font: 400 14px/1.5 Inter, -apple-system, sans-serif;
   color: var(--sa-text-muted);
-  margin: 0 0 28px;
-  max-width: 440px;
+  margin: 0;
 }
 
-.sa-category-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-/* Cards — elevated dark glass with electric-blue accent on hover */
-.sa-category-btn {
+/* List container — vertical stack, no card-like borders */
+.sa-list {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 16px;
-  padding: 22px 20px;
-  border-radius: var(--sa-radius-card);
-  border: 1px solid var(--sa-border);
-  background: var(--sa-surface);
+  padding: 8px 16px 4px;
+}
+
+/* Single row — icon + text + chevron, generous tap target */
+.sa-list-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 16px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 12px;
+  border-radius: var(--sa-radius-row);
+  border: none;
+  background: transparent;
   cursor: pointer;
-  transition:
-    transform var(--sa-transition-fast),
-    border-color var(--sa-transition-fast),
-    box-shadow var(--sa-transition-fast),
-    background var(--sa-transition-fast);
   font-family: Inter, -apple-system, sans-serif;
   color: var(--sa-text);
+  text-align: left;
+  transition: background var(--sa-transition-fast);
   -webkit-tap-highlight-color: transparent;
   position: relative;
-  overflow: hidden;
-  /* Stagger entry animation */
+  /* Stagger entry */
   opacity: 0;
-  animation: saCardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: saRowIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.sa-category-btn:nth-child(1) { animation-delay: 0.05s; }
-.sa-category-btn:nth-child(2) { animation-delay: 0.10s; }
-.sa-category-btn:nth-child(3) { animation-delay: 0.15s; }
-.sa-category-btn:nth-child(4) { animation-delay: 0.20s; }
-@keyframes saCardIn {
-  from { opacity: 0; transform: translateY(8px); }
+.sa-list-row:nth-child(1) { animation-delay: 0.04s; }
+.sa-list-row:nth-child(2) { animation-delay: 0.10s; }
+.sa-list-row:nth-child(3) { animation-delay: 0.16s; }
+.sa-list-row:nth-child(4) { animation-delay: 0.22s; }
+@keyframes saRowIn {
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.sa-category-btn span {
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: var(--sa-text);
-  position: relative;
-  z-index: 1;
+/* Hairline separator between rows (not after last) */
+.sa-list-row:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 66px;
+  right: 12px;
+  bottom: 0;
+  height: 1px;
+  background: var(--sa-divider);
 }
 
-/* Icon container — gradient with subtle glow, electric blue */
-.sa-cat-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(79, 142, 255, 0.18), rgba(79, 142, 255, 0.06));
-  border: 1px solid rgba(79, 142, 255, 0.20);
+.sa-list-row:hover { background: var(--sa-surface); }
+.sa-list-row:hover::after { opacity: 0; }
+.sa-list-row:hover .sa-row__chevron { transform: translateX(2px); color: var(--sa-text); }
+.sa-list-row:active { background: var(--sa-surface-hover); }
+.sa-list-row:focus-visible {
+  outline: none;
+  background: var(--sa-surface);
+  box-shadow: 0 0 0 2px var(--sa-accent-ring);
+}
+
+/* Icon container — squircle with subtle blue tint */
+.sa-row__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--sa-accent-soft);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--sa-accent);
-  transition: background var(--sa-transition-fast), border-color var(--sa-transition-fast), transform var(--sa-transition-fast);
   flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 0 0 0 rgba(79, 142, 255, 0);
 }
-.sa-cat-icon svg { width: 20px; height: 20px; stroke-width: 1.8; }
+.sa-row__icon svg { width: 20px; height: 20px; }
 
-/* Hover — lift + electric glow + brighter glass */
-.sa-category-btn:hover {
-  border-color: rgba(79, 142, 255, 0.40);
-  background: var(--sa-surface-hover);
-  box-shadow: var(--sa-shadow-card-hover);
-  transform: translateY(-3px);
+/* Text block — title + secondary description */
+.sa-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
-.sa-category-btn:hover .sa-cat-icon {
-  background: linear-gradient(135deg, rgba(79, 142, 255, 0.30), rgba(79, 142, 255, 0.12));
-  border-color: rgba(79, 142, 255, 0.45);
-  box-shadow: 0 0 24px rgba(79, 142, 255, 0.30);
-  transform: scale(1.05);
+.sa-row__title {
+  font: 500 15px/1.3 Inter, -apple-system, sans-serif;
+  color: var(--sa-text);
+  letter-spacing: -0.005em;
 }
-
-/* Subtle gradient edge overlay on hover (top-right glow) */
-.sa-category-btn::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: var(--sa-radius-card);
-  background: radial-gradient(circle at 100% 0%, rgba(79, 142, 255, 0.12), transparent 60%);
-  opacity: 0;
-  transition: opacity var(--sa-transition-fast);
-  pointer-events: none;
-  z-index: 0;
-}
-.sa-category-btn:hover::after { opacity: 1; }
-
-.sa-category-btn:active { transform: translateY(0) scale(0.98); }
-.sa-category-btn:focus-visible {
-  outline: none;
-  border-color: var(--sa-accent);
-  box-shadow: 0 0 0 3px var(--sa-accent-ring);
+.sa-row__desc {
+  font: 400 13px/1.35 Inter, -apple-system, sans-serif;
+  color: var(--sa-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ── Step 2: Form (dark theme inputs) ── */
+/* Chevron — subtle, animates right on hover */
+.sa-row__chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--sa-text-subtle);
+  transition: transform var(--sa-transition-fast), color var(--sa-transition-fast);
+  flex-shrink: 0;
+}
+
+/* Trust footer — three pill-stat row at bottom */
+.sa-trust-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px 22px;
+  margin-top: 8px;
+  border-top: 1px solid var(--sa-divider);
+  background: var(--sa-canvas);
+}
+.sa-trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 500 12px/1 Inter, -apple-system, sans-serif;
+  color: var(--sa-text-muted);
+}
+.sa-trust-item svg {
+  width: 14px;
+  height: 14px;
+  color: var(--sa-text-subtle);
+  flex-shrink: 0;
+}
+.sa-trust-divider {
+  width: 1px;
+  height: 12px;
+  background: var(--sa-divider);
+}
+
+/* ── Step 2: Form ── */
 .sa-back-btn {
   background: var(--sa-surface);
-  border: 1px solid var(--sa-border);
-  padding: 8px 14px;
-  margin: 0 0 24px;
+  border: none;
+  padding: 8px 12px 8px 8px;
+  margin: 0 0 20px;
   border-radius: 999px;
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 4px;
   font: 500 13px Inter, sans-serif; color: var(--sa-text-muted);
-  cursor: pointer; transition: color 0.2s, background 0.2s, border-color 0.2s;
+  cursor: pointer; transition: color 0.2s, background 0.2s;
 }
 .sa-back-btn svg { width: 14px; height: 14px; }
-.sa-back-btn:hover { color: var(--sa-text); background: var(--sa-surface-hover); border-color: var(--sa-border-strong); }
+.sa-back-btn:hover { color: var(--sa-text); background: var(--sa-surface-hover); }
 
 .sa-form { display: flex; flex-direction: column; gap: 14px; }
-.sa-row { display: flex; gap: 14px; }
+.sa-row { display: flex; gap: 12px; }
 .sa-row > * { flex: 1 1 0; }
 
-/* Floating Labels — dark glass inputs */
 .sa-field {
   position: relative;
   display: flex;
@@ -548,7 +627,7 @@ body.sa-modal-open { overflow: hidden; }
   padding: 22px 16px 8px;
   border-radius: var(--sa-radius-input);
   background: var(--sa-surface);
-  border: 1px solid var(--sa-border);
+  border: 1px solid transparent;
   font: 400 15px/1.4 Inter, sans-serif;
   color: var(--sa-text);
   outline: none;
@@ -563,7 +642,7 @@ body.sa-modal-open { overflow: hidden; }
 .sa-field--select .sa-input {
   padding: 16px;
   color: transparent;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5F5F7' stroke-opacity='0.42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2386868B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: calc(100% - 16px) center;
 }
@@ -583,10 +662,10 @@ body.sa-modal-open { overflow: hidden; }
   transition: all 0.2s ease;
 }
 
-/* Floating animation — focus turns input border electric blue */
+/* Floating animation */
 .sa-input:focus,
 .sa-input:not(:placeholder-shown) {
-  background: var(--sa-surface-strong);
+  background: var(--sa-bg);
   border-color: var(--sa-accent);
   box-shadow: 0 0 0 3px var(--sa-accent-ring);
 }
@@ -607,9 +686,9 @@ body.sa-modal-open { overflow: hidden; }
   color: var(--sa-primary);
 }
 
-/* File Upload — dark dashed glass */
+/* File Upload */
 .sa-upload-area {
-  border: 1.5px dashed var(--sa-border-strong);
+  border: 1.5px dashed var(--sa-border);
   border-radius: var(--sa-radius-input);
   background: var(--sa-surface);
   padding: 20px;
@@ -619,7 +698,7 @@ body.sa-modal-open { overflow: hidden; }
 }
 .sa-upload-area:hover, .sa-upload-area.is-dragover {
   border-color: var(--sa-accent);
-  background: rgba(79, 142, 255, 0.06);
+  background: var(--sa-accent-soft);
 }
 .sa-upload-area input[type="file"] { display: none; }
 .sa-upload-area svg { width: 24px; height: 24px; stroke: var(--sa-text-muted); flex-shrink: 0; transition: stroke 0.2s; }
@@ -641,16 +720,15 @@ body.sa-modal-open { overflow: hidden; }
 .sa-file-item-txt { font: 600 12px Inter, sans-serif; color: var(--sa-accent); }
 .sa-file-remove {
   position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
-  border-radius: 50%; background: rgba(20, 20, 24, 0.85); border: 1px solid var(--sa-border); cursor: pointer;
+  border-radius: 50%; background: rgba(255, 255, 255, 0.92); border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; padding: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
 }
-.sa-file-remove svg { width: 12px; height: 12px; stroke: #fff; stroke-width: 2.5; }
+.sa-file-remove svg { width: 12px; height: 12px; stroke: var(--sa-text); stroke-width: 2.5; }
 
 /* Legal text */
 .sa-legal-text { font: 400 12px/1.5 Inter, sans-serif; color: var(--sa-text-muted); text-align: center; margin: 8px 0; }
-.sa-legal-text a { color: var(--sa-accent); text-decoration: underline; text-decoration-color: rgba(79, 142, 255, 0.4); }
-.sa-legal-text a:hover { text-decoration-color: var(--sa-accent); }
+.sa-legal-text a { color: var(--sa-accent); text-decoration: underline; }
 
 /* Buttons */
 .sa-submit-wrapper {
@@ -660,25 +738,20 @@ body.sa-modal-open { overflow: hidden; }
 .sa-btn-primary {
   position: relative;
   width: 100%;
-  height: 54px;
-  background: linear-gradient(180deg, #2563EB, #1D4ED8);
+  height: 52px;
+  background: var(--sa-text);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: none;
   border-radius: 999px;
-  font: 600 16px Inter, sans-serif;
-  letter-spacing: -0.01em;
+  font: 600 15px Inter, sans-serif;
+  letter-spacing: -0.005em;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
-.sa-btn-primary:hover {
-  background: linear-gradient(180deg, #4F8EFF, #2563EB);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.20);
-}
+.sa-btn-primary:hover { background: #000; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.20); }
 .sa-btn-primary:active { transform: translateY(0) scale(0.98); }
 
 .sa-btn-primary.is-loading .sa-btn-text { opacity: 0; }
@@ -691,33 +764,31 @@ body.sa-modal-open { overflow: hidden; }
 }
 @keyframes saSpin { to { transform: rotate(360deg); } }
 
-/* ── Step 3: Success (cinematic check) ── */
+/* ── Step 3: Success ── */
 .sa-success-wrapper {
   display: flex; flex-direction: column; align-items: center; text-align: center;
-  padding: 32px 0 24px;
+  padding: 16px 0;
 }
 .sa-success-icon-anim {
-  width: 72px; height: 72px; border-radius: 50%;
-  background: linear-gradient(135deg, rgba(79, 142, 255, 0.20), rgba(79, 142, 255, 0.08));
-  border: 1px solid rgba(79, 142, 255, 0.30);
-  color: var(--sa-accent);
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(52, 199, 89, 0.10);
+  color: var(--sa-success);
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 24px;
   transform: scale(0);
-  box-shadow: 0 0 32px rgba(79, 142, 255, 0.30);
   animation: saPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.1s;
 }
 .sa-success-icon-anim svg { width: 32px; height: 32px; stroke-dasharray: 50; stroke-dashoffset: 50; animation: saDrawCheck 0.4s ease forwards 0.4s; }
-.sa-success-title { font: 700 26px Inter, sans-serif; letter-spacing: -0.025em; color: var(--sa-text); margin: 0 0 12px; }
-.sa-success-text { font: 400 15px/1.55 Inter, sans-serif; color: var(--sa-text-muted); margin: 0 0 32px; max-width: 400px; }
+.sa-success-title { font: 600 22px Inter, sans-serif; letter-spacing: -0.025em; color: var(--sa-text); margin: 0 0 8px; }
+.sa-success-text { font: 400 14px/1.55 Inter, sans-serif; color: var(--sa-text-muted); margin: 0 0 28px; max-width: 360px; }
 
 .sa-btn-secondary {
-  height: 48px; padding: 0 32px;
+  height: 44px; padding: 0 28px;
   background: var(--sa-surface); color: var(--sa-text);
-  border: 1px solid var(--sa-border); border-radius: 999px;
-  font: 600 15px Inter, sans-serif; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  border: none; border-radius: 999px;
+  font: 600 14px Inter, sans-serif; cursor: pointer; transition: background 0.2s;
 }
-.sa-btn-secondary:hover { background: var(--sa-surface-hover); border-color: var(--sa-border-strong); }
+.sa-btn-secondary:hover { background: var(--sa-surface-hover); }
 
 @keyframes saPopIn {
   0% { transform: scale(0); }
@@ -762,21 +833,20 @@ body.sa-modal-open { overflow: hidden; }
     z-index: 20;
   }
 
-  .sa-header { padding: 28px 20px 16px; }
-  .sa-views-container { padding: 8px 20px 32px; }
-  .sa-title { font-size: 20px; }
+  .sa-header { padding: 18px 20px; }
+  .sa-views-container { padding: 0; }
+  .sa-title { font-size: 15px; }
+  .sa-hero { padding: 24px 20px 18px; }
+  .sa-hero__title { font-size: 22px; }
+  .sa-list { padding: 8px 12px 4px; }
+  .sa-list-row { padding: 12px 10px; }
+  .sa-list-row:not(:last-child)::after { left: 60px; right: 10px; }
+  .sa-trust-footer { padding: 12px 20px 18px; gap: 10px; }
+  .sa-trust-item { font-size: 11px; }
+  #saView2 { padding: 20px; }
+  #saView3 { padding: 24px 20px; }
 
-  /* Mobile: single column with horizontal card layout (icon-left, label-right) */
-  .sa-category-grid { grid-template-columns: 1fr; gap: 10px; }
-  .sa-category-btn {
-    flex-direction: row;
-    align-items: center;
-    padding: 16px;
-    gap: 14px;
-  }
-  .sa-cat-icon { width: 40px; height: 40px; border-radius: 10px; }
-
-  .sa-row { flex-direction: column; gap: 16px; }
+  .sa-row { flex-direction: column; gap: 12px; }
 }
 </style>
 
