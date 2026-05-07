@@ -5404,21 +5404,8 @@ function toggleDesc() {
 <style>
 
   .product-description-text {
-    --font-body--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-heading--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-subheading--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-paragraph--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-secondary--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-primary--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-body-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-heading-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h1--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h2--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h3--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h4--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h5--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --font-h6--family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+    /* Default font as fallback only — no !important so admin inline styles win */
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.7;
     color: var(--text-color);
     font-size: 16px;
@@ -5426,41 +5413,6 @@ function toggleDesc() {
     width: 100%;
     max-width: 100%;
     margin-bottom: 20px;
-  }
-
-  .product-description-text *,
-  .product-description-text h1,
-  .product-description-text h2,
-  .product-description-text h3,
-  .product-description-text h4,
-  .product-description-text h5,
-  .product-description-text h6,
-  .product-description-text p,
-  .product-description-text span,
-  .product-description-text div,
-  .product-description-text li,
-  .product-description-text ul,
-  .product-description-text ol,
-  .product-description-text a,
-  .product-description-text b,
-  .product-description-text strong,
-  .product-description-text em,
-  .product-description-text i,
-  .product-description-text blockquote,
-  #product-description *,
-  #product-description h1,
-  #product-description h2,
-  #product-description h3,
-  #product-description h4,
-  #product-description p,
-  #product-description span,
-  #product-description div,
-  #product-description li,
-  #product-description a,
-  #product-description b,
-  #product-description strong {
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-    text-align: left;
   }
 
   .product-description-text h1,
