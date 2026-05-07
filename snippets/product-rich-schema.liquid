@@ -1,0 +1,242 @@
+{%- comment -%}
+  Karinex — Rich Schema.org @graph for Microsoft software products.
+
+  Includes:
+    - Organization (Karinex)
+    - BreadcrumbList
+    - Product (with Brand: Microsoft, Offer, Seller: Karinex)
+    - SoftwareApplication (BusinessApplication)
+    - FAQPage (from product.metafields.karinex.faq.value, optional)
+
+  All values are pulled dynamically from Shopify Liquid — no hardcoded
+  product data. AggregateRating / Reviews are deliberately omitted
+  (only emit when reviews really exist via product.metafields.reviews.*).
+
+  MarkenG note (§ 23 Nr. 2): "Microsoft", "Office", "Windows" appear
+  here purely descriptively for product identification. We mark
+  product.brand as a Brand entity (Microsoft Corporation) and put
+  Karinex as the seller of the offer — never as the vendor of
+  the brand.
+
+  Usage: {% render 'product-rich-schema' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant   = product.selected_or_first_available_variant
+  assign price_decimal     = current_variant.price | divided_by: 100.0
+  assign price_valid_until = 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d'
+  assign currency          = cart.currency.iso_code | default: 'EUR'
+  assign in_stock          = current_variant.available
+  assign vendor_name       = product.vendor | default: 'Microsoft'
+  assign vendor_lc         = vendor_name | downcase | strip
+  if vendor_lc == 'unknown' or vendor_lc == 'unbekannt' or vendor_lc == ''
+    assign vendor_name = 'Microsoft'
+  endif
+  assign mpn               = product.metafields.custom.mpn
+  assign gtin              = current_variant.barcode
+  assign sku               = current_variant.sku | default: product.id
+  assign img_main          = product.featured_image | image_url: width: 1200
+  assign img_thumb         = product.featured_image | image_url: width: 600
+  assign desc_clean        = product.description | strip_html | strip_newlines | truncate: 5000
+  assign canonical         = shop.url | append: product.url
+  assign org_url           = shop.url
+  assign org_id            = canonical | append: '#org'
+  assign breadcrumb_id     = canonical | append: '#breadcrumb'
+  assign product_id        = canonical | append: '#product'
+  assign offer_id          = canonical | append: '#offer'
+  assign software_id       = canonical | append: '#software'
+  assign faq_id            = canonical | append: '#faq'
+
+  assign faq_raw           = product.metafields.karinex.faq.value
+  assign has_faq           = false
+  if faq_raw and faq_raw.size and faq_raw.size > 0
+    assign has_faq = true
+  endif
+
+  comment
+    Detect software vs general product so we can emit SoftwareApplication
+    only when relevant (avoids polluting non-software entries).
+  endcomment
+  assign type_lc      = product.type | downcase
+  assign tags_csv     = product.tags | join: ',' | downcase
+  assign cols_csv     = product.collections | map: 'handle' | join: ',' | downcase
+  assign is_software  = false
+  if type_lc contains 'software' or type_lc contains 'lizenz' or type_lc contains 'license' or type_lc contains 'office' or type_lc contains 'windows' or type_lc contains 'microsoft' or type_lc contains 'esd' or tags_csv contains 'software' or cols_csv contains 'microsoft-office' or cols_csv contains 'windows' or cols_csv contains 'microsoft-tools'
+    assign is_software = true
+  endif
+
+  assign os_req = ''
+  if type_lc contains 'mac' or product.title contains 'Mac' or tags_csv contains 'mac'
+    assign os_req = 'macOS'
+  elsif type_lc contains 'windows' or product.title contains 'Windows'
+    assign os_req = 'Windows'
+  else
+    assign os_req = 'Windows, macOS'
+  endif
+-%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": {{ org_id | json }},
+      "name": {{ shop.name | json }},
+      "url": {{ org_url | json }},
+      "logo": {%- if settings.logo -%}{{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}{%- else -%}{{ org_url | append: '/cdn/shop/files/karinex-logo.png' | json }}{%- endif -%},
+      "sameAs": [
+        "https://www.linkedin.com/in/karinex-",
+        "https://x.com/Karinexshop"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "shop@karinex.de",
+        "areaServed": ["DE", "AT", "CH", "EU"],
+        "availableLanguage": ["German", "English"]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": {{ breadcrumb_id | json }},
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": {{ org_url | json }}
+        }{% if collection %},
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ collection.title | json }},
+          "item": {{ shop.url | append: collection.url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ product.title | json }},
+          "item": {{ canonical | json }}
+        }{% else %},
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ vendor_name | json }},
+          "item": {{ vendor_name | url_for_vendor | prepend: shop.url | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ product.title | json }},
+          "item": {{ canonical | json }}
+        }{% endif %}
+      ]
+    },
+    {
+      "@type": "Product",
+      "@id": {{ product_id | json }},
+      "name": {{ product.title | json }},
+      "description": {{ desc_clean | json }},
+      "image": [
+        {{ img_main | json }}{% for m in product.media limit: 4 %},
+        {{ m | image_url: width: 1200 | json }}{% endfor %}
+      ],
+      "sku": {{ sku | json }}{% if mpn != blank %},
+      "mpn": {{ mpn | json }}{% endif %}{% if gtin != blank %},
+      "gtin": {{ gtin | json }}{% endif %},
+      "brand": {
+        "@type": "Brand",
+        "name": {{ vendor_name | json }}
+      },
+      "category": {{ product.type | default: 'Software' | json }},
+      "url": {{ canonical | json }},
+      "disambiguatingDescription": "Diese Produktseite verwendet die Bezeichnungen Microsoft, Windows und Office ausschließlich beschreibend zur Produktidentifikation gemäß § 23 Nr. 2 MarkenG. Karinex ist kein autorisierter Microsoft-Wiederverkäufer. Die angebotenen Lizenzen werden im Rahmen des unionsrechtlichen Erschöpfungsgrundsatzes (EuGH-Urteil C-128/11, UsedSoft) weitervertrieben.",
+      "offers": {
+        "@type": "Offer",
+        "@id": {{ offer_id | json }},
+        "url": {{ canonical | json }},
+        "priceCurrency": {{ currency | json }},
+        "price": "{{ price_decimal | round: 2 }}",
+        "priceValidUntil": {{ price_valid_until | json }},
+        "availability": "{% if in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "areaServed": ["DE", "AT", "CH", "EU"],
+        "seller": { "@id": {{ org_id | json }} },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "DE",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 100,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
+        },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingDestination": {
+            "@type": "DefinedRegion",
+            "addressCountry": ["DE", "AT", "CH"]
+          },
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "EUR"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 0,
+              "maxValue": 0,
+              "unitCode": "DAY"
+            },
+            "transitTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 0,
+              "maxValue": 1,
+              "unitCode": "MIN"
+            }
+          }
+        }
+      }
+    }{% if is_software %},
+    {
+      "@type": "SoftwareApplication",
+      "@id": {{ software_id | json }},
+      "name": {{ product.title | json }},
+      "description": {{ desc_clean | json }},
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": {{ os_req | json }},
+      "image": {{ img_main | json }},
+      "url": {{ canonical | json }},
+      "downloadUrl": {{ canonical | json }},
+      "softwareVersion": {{ product.metafields.karinex.version.value | default: '' | json }},
+      "publisher": {
+        "@type": "Organization",
+        "name": {{ vendor_name | json }}
+      },
+      "offers": { "@id": {{ offer_id | json }} }
+    }{% endif %}{% if has_faq %},
+    {
+      "@type": "FAQPage",
+      "@id": {{ faq_id | json }},
+      "mainEntity": [
+        {%- for entry in faq_raw -%}
+          {%- assign q = entry.q | default: entry.question -%}
+          {%- assign a = entry.a | default: entry.answer -%}
+          {%- if q != blank and a != blank -%}
+        {
+          "@type": "Question",
+          "name": {{ q | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ a | json }}
+          }
+        }{% unless forloop.last %},{% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }{% endif %}
+  ]
+}
+</script>

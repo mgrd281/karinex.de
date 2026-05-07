@@ -78,8 +78,8 @@
   endif
 -%}
 
-{%- comment -%} Product structured data (JSON-LD) {%- endcomment -%}
-{% render 'schema-product-smart' %}
+{%- comment -%} Product structured data (rich JSON-LD @graph) {%- endcomment -%}
+{% render 'product-rich-schema' %}
 
 {%- comment -%} HowTo schema for digital/software products {%- endcomment -%}
 {%- if _is_digital -%}

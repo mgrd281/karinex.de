@@ -5,7 +5,7 @@
 {%- endcomment -%}
 
 <link rel="stylesheet" href="{{ 'product-software.css' | asset_url }}">
-{% render 'product-software-schema' %}
+{% render 'product-rich-schema' %}
 
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant

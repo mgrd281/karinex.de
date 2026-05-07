@@ -40,7 +40,7 @@
   {%- assign market_title = product.metafields.custom.title_ch | strip -%}
 {%- endif -%}
 
-    {% render 'schema-product-smart' %}
+    {% render 'product-rich-schema' %}
     {%- if is_digital -%}
       {% render 'schema-howto' %}
     {%- endif -%}
