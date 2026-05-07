@@ -3519,33 +3519,39 @@ nav[aria-label="Breadcrumb"],
 
 <ul class="product-meta-list benefits-list" data-nosnippet>
   {%- if is_digital -%}
+    <li class="meta-list-divider" aria-hidden="true"></li>
+
     <li class="meta-list-item">
-      <i class="fa-solid fa-clock"></i>
-      <span class="meta-text"><strong>Blitz Versand</strong> – Direkt nach dem Kauf per E-Mail</span>
-    </li>
-    <li class="meta-list-item">
-      <i class="fa-solid fa-check-circle"></i>
-      <span class="meta-text">Einmalige Zahlung – keine Folgekosten</span>
+      <i class="fa-solid fa-bolt"></i>
+      <span class="meta-text"><span class="meta-label">Blitz-Versand:</span> <span class="meta-value">Direkt nach dem Kauf per E-Mail</span></span>
     </li>
     <li class="meta-list-item">
       <i class="fa-solid fa-file-invoice"></i>
-      <span class="meta-text">Inklusive Download-Anleitung</span>
+      <span class="meta-text"><span class="meta-label">Download-Anleitung:</span> <span class="meta-value">in der Bestätigungs-E-Mail enthalten</span></span>
     </li>
     <li class="meta-list-item">
+      <i class="fa-solid fa-check-circle"></i>
+      <span class="meta-text"><span class="meta-label">Einmalige Zahlung:</span> <span class="meta-value">keine Folgekosten</span></span>
+    </li>
+
+    <li class="meta-list-divider" aria-hidden="true"></li>
+
+    <li class="meta-list-item">
       <i class="fa-solid fa-shield-alt"></i>
-      <span class="meta-text">DSGVO-konform & rechtlich geprüft</span>
+      <span class="meta-text"><span class="meta-label">Rechtlich geprüft:</span> <span class="meta-value">DSGVO-konform &amp; deutsche AGB</span></span>
     </li>
     <li class="meta-list-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--primary,#1D4739);">
         <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>
       </svg>
-      <span class="meta-text">Deutscher Kundenservice 24/7</span>
+      <span class="meta-text"><span class="meta-label">Kundenservice:</span> <span class="meta-value">Deutsch · 24/7 erreichbar</span></span>
     </li>
-    <li class="meta-list-item">
+    <li class="meta-list-item meta-list-action">
       <i class="fa-solid fa-circle-question"></i>
       <span class="meta-text">
         <button type="button" class="frage-trigger-btn" onclick="if(window.openSmartAssistant) window.openSmartAssistant()" aria-haspopup="dialog" aria-controls="smart-assistant-modal">
           <span>Frage zum Artikel</span>
+          <span class="frage-chevron" aria-hidden="true">›</span>
         </button>
       </span>
     </li>
@@ -3581,6 +3587,49 @@ nav[aria-label="Breadcrumb"],
     margin-top: 40px;
     margin-bottom: 8px !important;
   }
+
+  /* Unified typography for product meta + benefits list */
+  .product-meta-list .meta-list-item {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+  .product-meta-list .meta-label { font-weight: 600; color: #1a1a1a; }
+  .product-meta-list .meta-value { font-weight: 400; color: #2a2a2a; }
+
+  /* Subtle hairline between groups */
+  .product-meta-list .meta-list-divider {
+    list-style: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e5e5 25%, #e5e5e5 75%, transparent);
+    margin: 10px 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Frage-zum-Artikel: reads as an action row */
+  .product-meta-list .meta-list-action .frage-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: #1D4739;
+    cursor: pointer;
+    text-align: left;
+  }
+  .product-meta-list .meta-list-action .frage-trigger-btn:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .product-meta-list .meta-list-action .frage-chevron {
+    font-size: 18px;
+    line-height: 1;
+    color: #1D4739;
+    transition: transform .15s ease;
+  }
+  .product-meta-list .meta-list-action .frage-trigger-btn:hover .frage-chevron { transform: translateX(2px); }
 </style>
 
 <style>
