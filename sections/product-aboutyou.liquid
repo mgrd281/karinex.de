@@ -384,38 +384,17 @@
         {%- endif -%}
       </nav>
 
-      {%- comment -%} Brand Logo {%- endcomment -%}
+      {%- comment -%} Brand Logo (Microsoft only — non-Microsoft brand logos removed) {%- endcomment -%}
       {%- if product.vendor != blank -%}
         {%- assign _vendor_down = product.vendor | downcase -%}
         {%- assign _brand_logo_url = nil -%}
-        {%- case _vendor_down -%}
-          {%- when 'diesel' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/diesel-logo-schwarz-modern-minimalistisch.png?v=1775040423' -%}
-          {%- when 'boss' or 'hugo boss' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/boss-logo-schwarz-minimalistisch.avif?v=1775597554' -%}
-          {%- when 'michael kors' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/Michael_Kors_Logo_MK_rundes_Symbol_minimalistisches_Design_transparenter_Hintergrund.avif?v=1775597429' -%}
-          {%- when 'emporio armani' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/emporio-armani-logo-adler-schwarz.avif?v=1775597492' -%}
-          {%- when 'armani exchange' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/armani-exchange-logo-ax-schwarz-minimalistisch.avif?v=1775597351' -%}
-          {%- when 'tag heuer' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/tag-heuer-logo-original-marke-schweiz-luxusuhren.avif?v=1775596321' -%}
-          {%- when 'casio' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/casio-logo-blau-marke.avif?v=1775597287' -%}
-          {%- when 'maserati' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/maserati-logo-dreizack-schwarz.avif?v=1775597217' -%}
-          {%- when 'daniel wellington' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/daniel-wellington-logo-schriftzug-minimalistisch.avif?v=1775597127' -%}
-          {%- when 'lego' or 'lego®' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/lego-spielzeug-marke-logo.avif?v=1775597007' -%}
-          {%- when 'microsoft' -%}
-            {%- assign _brand_logo_url = 'https://cdn.shopify.com/s/files/1/0917/5328/3851/files/Microsoft-Partner-Logo-2.avif?v=1775740403' -%}
-        {%- endcase -%}
+        {%- if _vendor_down == 'microsoft' -%}
+          {%- assign _brand_logo_url = 'brand-microsoft.svg' | asset_url -%}
+        {%- endif -%}
         <div class="ay-brand">
           {%- if _brand_logo_url -%}
             <a href="{{ product.vendor | url_for_vendor }}" class="ay-brand__logo-wrap" aria-label="Alle Produkte von {{ product.vendor | escape }}" title="Alle Produkte von {{ product.vendor | escape }}">
-              <img class="ay-brand__logo{% if _vendor_down == 'emporio armani' or _vendor_down == 'casio' %} ay-brand__logo--half{% endif %}{% if _vendor_down == 'michael kors' %} ay-brand__logo--mk{% endif %}{% if _vendor_down == 'tag heuer' %} ay-brand__logo--tag{% endif %}{% if _vendor_down == 'lego' or _vendor_down == 'lego®' %} ay-brand__logo--lego{% endif %}{% if _vendor_down == 'microsoft' %} ay-brand__logo--ms{% endif %}" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}" width="120" height="40" loading="lazy">
+              <img class="ay-brand__logo ay-brand__logo--ms" src="{{ _brand_logo_url }}" alt="{{ product.vendor | escape }}" width="120" height="40" loading="lazy">
             </a>
           {%- else -%}
             <a href="{{ product.vendor | url_for_vendor }}" class="ay-brand__text">{{ product.vendor }}</a>
