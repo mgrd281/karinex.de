@@ -3519,9 +3519,7 @@ nav[aria-label="Breadcrumb"],
 
 <ul class="product-meta-list benefits-list" data-nosnippet>
   {%- if is_digital -%}
-    <li class="meta-list-divider" aria-hidden="true"></li>
-
-    <li class="meta-list-item">
+<li class="meta-list-item">
       <i class="fa-solid fa-bolt"></i>
       <span class="meta-text"><span class="meta-label">Blitz-Versand:</span> <span class="meta-value">Direkt nach dem Kauf per E-Mail</span></span>
     </li>
@@ -3534,9 +3532,7 @@ nav[aria-label="Breadcrumb"],
       <span class="meta-text"><span class="meta-label">Einmalige Zahlung:</span> <span class="meta-value">keine Folgekosten</span></span>
     </li>
 
-    <li class="meta-list-divider" aria-hidden="true"></li>
-
-    <li class="meta-list-item">
+<li class="meta-list-item">
       <i class="fa-solid fa-shield-alt"></i>
       <span class="meta-text"><span class="meta-label">Rechtlich geprüft:</span> <span class="meta-value">DSGVO-konform &amp; deutsche AGB</span></span>
     </li>
@@ -3598,17 +3594,7 @@ nav[aria-label="Breadcrumb"],
   .product-meta-list .meta-label { font-weight: 600; color: #1a1a1a; }
   .product-meta-list .meta-value { font-weight: 400; color: #2a2a2a; }
 
-  /* Subtle hairline between groups */
-  .product-meta-list .meta-list-divider {
-    list-style: none;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #e5e5e5 25%, #e5e5e5 75%, transparent);
-    margin: 10px 0;
-    padding: 0;
-    border: 0;
-  }
-
-  /* Frage-zum-Artikel: reads as an action row */
+/* Frage-zum-Artikel: reads as an action row */
   .product-meta-list .meta-list-action .frage-trigger-btn {
     display: inline-flex;
     align-items: center;
