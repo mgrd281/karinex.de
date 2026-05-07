@@ -1255,14 +1255,14 @@
             margin-right: 6px;
         }
 
-        /* Custom promo badge (e.g. "nur bis Dienstag") — refined, smaller, black */
+        /* Custom promo badge (e.g. "nur bis Dienstag") — refined, smaller, red */
         .sale-badge.sale-badge--promo {
             font-size: 10.5px;
             font-weight: 600;
             text-transform: none;
             letter-spacing: 0.2px;
             color: #fff;
-            background: #1a1a1a;
+            background: #e31b23;
             padding: 4px 10px;
             border-radius: 3px;
         }
