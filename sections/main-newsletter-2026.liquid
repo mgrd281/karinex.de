@@ -1,0 +1,318 @@
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+-%}
+<link rel="stylesheet" href="{{ 'main-legal-notice.css' | asset_url }}">
+
+<style>
+  /* Newsletter form styled to match the legal-notice palette */
+  .nl-form-card {
+    background: var(--legal-bg-soft);
+    border: 1px solid var(--legal-border);
+    border-radius: var(--legal-radius);
+    padding: 28px 24px;
+    margin-top: 8px;
+  }
+  .nl-voucher-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--legal-text); color: #fff;
+    font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 999px; margin-bottom: 16px;
+  }
+  .nl-form { display: flex; flex-direction: column; gap: 14px; }
+  .nl-input-row { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 560px) { .nl-input-row { flex-direction: row; } }
+  .nl-email {
+    flex: 1;
+    font: inherit; font-size: 15px;
+    padding: 14px 16px;
+    border: 1px solid var(--legal-border);
+    border-radius: var(--legal-radius);
+    background: #fff; color: var(--legal-text);
+    transition: border-color var(--legal-transition);
+  }
+  .nl-email:focus { outline: none; border-color: var(--legal-accent); }
+  .nl-submit {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--legal-text); color: #fff;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.3px;
+    padding: 14px 28px; border: none; border-radius: var(--legal-radius);
+    cursor: pointer; min-height: 50px; white-space: nowrap;
+    transition: background var(--legal-transition), transform var(--legal-transition);
+  }
+  .nl-submit:hover { background: var(--legal-accent); transform: translateY(-1px); }
+  .nl-consent {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--legal-text-muted); line-height: 1.55;
+  }
+  .nl-consent input { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; accent-color: var(--legal-accent); }
+  .nl-consent a { color: var(--legal-accent); text-decoration: underline; }
+  .nl-message {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: var(--legal-radius);
+    font-size: 14px; font-weight: 500;
+  }
+  .nl-message.success { background: #e8f5e9; color: var(--legal-accent); border: 1px solid var(--legal-accent); }
+  .nl-message.error { background: #fee2e2; color: #b91c1c; border: 1px solid #b91c1c; }
+  .nl-message svg { flex-shrink: 0; }
+  /* Benefit grid */
+  .nl-benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
+  .nl-benefit {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px; background: var(--legal-bg-soft);
+    border: 1px solid var(--legal-border); border-radius: var(--legal-radius);
+  }
+  .nl-benefit-icon {
+    flex-shrink: 0; width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff; color: var(--legal-accent);
+    border-radius: 50%; border: 1px solid var(--legal-border);
+  }
+  .nl-benefit-icon svg { width: 18px; height: 18px; }
+  .nl-benefit-text { font-size: 14px; color: var(--legal-text); font-weight: 600; line-height: 1.4; }
+  /* Voucher conditions box */
+  .nl-conditions {
+    background: var(--legal-bg-soft);
+    border-left: 3px solid var(--legal-accent);
+    padding: 18px 20px;
+    border-radius: 0 var(--legal-radius) var(--legal-radius) 0;
+    margin-top: 12px;
+  }
+  .nl-conditions h3 {
+    font-size: 15px; font-weight: 700; color: var(--legal-text);
+    margin: 0 0 10px; letter-spacing: 0.2px;
+  }
+  .nl-conditions ul { margin: 0; padding-left: 20px; color: var(--legal-text-muted); font-size: 14px; line-height: 1.7; }
+  .nl-conditions li { margin-bottom: 4px; }
+  .nl-conditions li strong { color: var(--legal-text); }
+</style>
+
+<div class="legal-page">
+
+  <!-- HERO SECTION -->
+  <section class="legal-hero">
+    <div class="legal-hero-content">
+      <h1 class="legal-hero-title">Newsletter &amp; 10 € Willkommensgutschein</h1>
+      <p class="legal-hero-subtitle">Exklusive Microsoft-Angebote, Lizenz-Tipps und Software-Updates direkt in Ihr Postfach. Als Dankeschön: 10 € Rabatt auf Ihre erste Bestellung ab 80 €.</p>
+      <div class="legal-hero-divider"></div>
+    </div>
+  </section>
+
+  <div class="legal-container">
+
+    <article class="legal-content">
+
+      <!-- 1. Was Sie erwartet -->
+      <section class="legal-section" id="vorteile">
+        <h2 class="legal-section-title">Was Sie als Abonnent erwartet</h2>
+        <p>Unser Newsletter erscheint maximal 1–2 Mal pro Monat. Keine Werbeflut, keine fremden Anbieter – nur Inhalte, die für Microsoft-Anwender relevant sind.</p>
+        <div class="nl-benefits">
+          <div class="nl-benefit">
+            <span class="nl-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7.5M3 7h18M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg></span>
+            <span class="nl-benefit-text">Exklusive Rabatte auf Office, Windows &amp; Microsoft Tools</span>
+          </div>
+          <div class="nl-benefit">
+            <span class="nl-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+            <span class="nl-benefit-text">Frühzeitiger Zugang zu SALE-Aktionen</span>
+          </div>
+          <div class="nl-benefit">
+            <span class="nl-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+            <span class="nl-benefit-text">Lizenz-Updates &amp; Support-Ende-Hinweise</span>
+          </div>
+          <div class="nl-benefit">
+            <span class="nl-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+            <span class="nl-benefit-text">Praxis-Anleitungen &amp; Vergleichs-Guides</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Anmeldung -->
+      <section class="legal-section" id="anmeldung">
+        <h2 class="legal-section-title">Jetzt anmelden &amp; Gutschein sichern</h2>
+        <p>Tragen Sie Ihre E-Mail-Adresse ein. Sie erhalten direkt im Anschluss eine Bestätigungs-Mail mit Ihrem persönlichen 10 €-Gutscheincode.</p>
+
+        <div class="nl-form-card">
+          <span class="nl-voucher-pill">🎁 10 € Willkommensgutschein</span>
+
+          {% form 'customer', class: 'nl-form' %}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+
+            {%- if form.posted_successfully? -%}
+              <div class="nl-message success" tabindex="-1" autofocus>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div><strong>Vielen Dank!</strong> Ihr 10 €-Gutschein ist auf dem Weg in Ihr Postfach.</div>
+              </div>
+            {%- elsif form.errors -%}
+              <div class="nl-message error" tabindex="-1" autofocus>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <div>{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</div>
+              </div>
+            {%- endif -%}
+
+            <div class="nl-input-row">
+              <input type="email" name="contact[email]" class="nl-email" value="{{ form.email }}" placeholder="Ihre E-Mail-Adresse" required aria-label="E-Mail-Adresse">
+              <button type="submit" class="nl-submit">
+                Anmelden &amp; 10 € sichern
+              </button>
+            </div>
+
+            <label class="nl-consent">
+              <input type="checkbox" required>
+              Ich möchte den karinex-Newsletter mit Microsoft-Angeboten erhalten und stimme der Verarbeitung meiner E-Mail-Adresse gemäß <a href="{{ _root }}policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. Eine Abmeldung ist jederzeit über den Link in jeder E-Mail möglich.
+            </label>
+          {% endform %}
+        </div>
+      </section>
+
+      <!-- 3. Gutschein-Bedingungen -->
+      <section class="legal-section" id="gutschein-bedingungen">
+        <h2 class="legal-section-title">Bedingungen für den 10 €-Gutschein</h2>
+        <p>Damit alles transparent ist, hier die rechtlich verbindlichen Bedingungen für den Willkommensgutschein:</p>
+
+        <div class="nl-conditions">
+          <h3>Gutschein-Konditionen im Überblick</h3>
+          <ul>
+            <li><strong>Mindestbestellwert:</strong> 80,00 € (Warenwert vor Abzug des Gutscheins, exkl. Versand).</li>
+            <li><strong>Rabatt:</strong> 10,00 € Nachlass auf den Warenwert.</li>
+            <li><strong>Einlösung:</strong> Einmalig pro Person und E-Mail-Adresse. Eine Auszahlung in bar ist ausgeschlossen.</li>
+            <li><strong>Gültigkeit:</strong> 60 Tage ab Erhalt des Gutscheincodes per E-Mail.</li>
+            <li><strong>Kombinierbarkeit:</strong> Nicht mit anderen Rabattaktionen, SALE-Preisen oder weiteren Gutscheinen kombinierbar.</li>
+            <li><strong>Gültig auf:</strong> Alle regulär bepreisten Produkte im karinex-Sortiment. Ausgenommen sind Geschenkkarten und bereits reduzierte Artikel im SALE.</li>
+            <li><strong>Stornierung &amp; Rückgabe:</strong> Bei vollständiger Rücksendung der Bestellung verfällt der Gutscheincode. Bei teilweiser Rückgabe muss der Mindestbestellwert von 80 € weiterhin erreicht bleiben.</li>
+            <li><strong>Übertragbarkeit:</strong> Der Gutscheincode ist personenbezogen und nicht übertragbar.</li>
+          </ul>
+        </div>
+
+        <p>Der Gutscheincode wird Ihnen unmittelbar nach erfolgreicher Anmeldung und Bestätigung Ihrer E-Mail-Adresse (Double-Opt-in) zugesandt. Sollten Sie keine E-Mail erhalten, prüfen Sie bitte Ihren Spam-Ordner oder kontaktieren Sie unseren Kundenservice.</p>
+      </section>
+
+      <!-- 4. Datenschutz & Abmeldung -->
+      <section class="legal-section" id="datenschutz">
+        <h2 class="legal-section-title">Datenschutz &amp; Abmeldung</h2>
+        <p>Wir verarbeiten Ihre E-Mail-Adresse ausschließlich zum Versand des Newsletters auf Grundlage Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO. Eine Weitergabe an Dritte findet nicht statt.</p>
+        <p><strong>Abmeldung jederzeit möglich:</strong> Am Ende jeder Newsletter-E-Mail finden Sie einen Abmelde-Link. Mit einem Klick werden Sie aus dem Verteiler entfernt – ohne Angabe von Gründen.</p>
+        <p>Die rechtlichen Details zur Verarbeitung Ihrer Daten finden Sie in unserer <a href="{{ _root }}policies/privacy-policy">Datenschutzerklärung</a>.</p>
+      </section>
+
+      <!-- 5. Weitere Dokumente -->
+      <section class="legal-section" id="weitere-dokumente">
+        <h2 class="legal-section-title">Rechtliche Grundlagen</h2>
+        <p>Vollständige Informationen zu Ihren Rechten und unseren Bedingungen:</p>
+
+        <div class="legal-references">
+          <a href="{{ _root }}policies/terms-of-service" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">AGB</span>
+              <span class="reference-desc">Allgemeine Geschäftsbedingungen</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="{{ _root }}policies/privacy-policy" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Datenschutz</span>
+              <span class="reference-desc">DSGVO-konforme Datenverarbeitung</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="{{ _root }}policies/refund-policy" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Widerrufsrecht</span>
+              <span class="reference-desc">14-tägiges Rückgaberecht</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+
+          <a href="{{ _root }}pages/kundenberatung" class="legal-reference-box">
+            <span class="reference-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </span>
+            <span class="reference-content">
+              <span class="reference-title">Kundenberatung</span>
+              <span class="reference-desc">Fragen? Wir rufen kostenlos zurück</span>
+            </span>
+            <span class="reference-arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+    </article>
+
+    <!-- TRUST SECTION -->
+    <section class="legal-trust">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>100 % kostenlos</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Jederzeit kündbar</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Kein Spam, max. 2× / Monat</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>DSGVO-konform</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT BLOCK -->
+    <section class="legal-contact">
+      <div class="contact-content">
+        <h2 class="contact-title">Fragen zum Newsletter oder Gutschein?</h2>
+        <p class="contact-text">Unser Team beantwortet Ihre Fragen rund um Anmeldung, Abmeldung und Gutschein-Einlösung.</p>
+        <div class="contact-actions">
+          <a href="{{ _root }}pages/kontakt" class="contact-btn contact-btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Kontakt
+          </a>
+          <a href="mailto:shop@karinex.de" class="contact-btn contact-btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            shop@karinex.de
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter 2026",
+  "tag": "section",
+  "class": "section-newsletter-2026",
+  "settings": []
+}
+{% endschema %}

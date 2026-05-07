@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-newsletter-2026",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
