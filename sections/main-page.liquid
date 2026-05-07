@@ -114,22 +114,7 @@
     <h1 class="visually-hidden">{{ page.title | escape }}</h1>
     {% content_for 'blocks' %}
     
-    {% if page.handle == 'uber-uns' or page.handle == 'about-us' %}
-      <div style="margin-top: 50px; padding: 40px; background: #f8f9fa; border-radius: 12px; text-align: center; border: 1px solid #e9ecef;">
-        <h3 style="margin-bottom: 20px; font-size: 24px; color: #2e7d32; font-weight: 700;">Wir sind offizielle Partner</h3>
-        
-        <div style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
-             <!-- Microsoft Partner Center · Publisher Badge -->
-                <img src="{{ 'microsoft-partner-logo.png' | asset_url }}" alt="Microsoft Partner Center · Publisher" loading="lazy" width="180" height="60" style="height: 60px; width: auto; display: block;">
-
-
-        </div>
-
-        <p style="margin-top: 25px; color: #666; font-size: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
-            KARINEX ist im Microsoft Partner Center als Publisher registriert (Partner-ID 7018124). Wir garantieren originale Softwarelizenzen aus dem unionsrechtlichen Erschöpfungsgrundsatz, erstklassigen Support und höchste Sicherheitsstandards.
-        </p>
-      </div>
-    {% endif %}
+    {%- comment -%} Microsoft Partner Center · Publisher info now lives in main-about badge + AGB § 5 (3a). {%- endcomment -%}
   </div>
 {% endif %}
 </div>
