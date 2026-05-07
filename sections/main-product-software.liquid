@@ -27,7 +27,7 @@
 
 <section class="product-software" data-product-software data-product-id="{{ product.id }}">
 
-  {# ────────── STICKY HEADER (desktop, appears after main CTA scrolls out) ────────── #}
+  {%- comment -%} STICKY HEADER (desktop, appears after main CTA scrolls out) {%- endcomment -%}
   <div class="product-software__sticky-header" data-sticky-header aria-hidden="true">
     <div class="product-software__sticky-header-inner">
       <span class="product-software__sticky-header-title">{{ product.title | truncatewords: 8 }}</span>
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  {# ────────── 1. HERO ────────── #}
+  {%- comment -%} 1. HERO {%- endcomment -%}
   <header class="product-software__hero">
     <div class="product-software__hero-grid">
 
@@ -88,7 +88,8 @@
       </div>
 
       <div class="product-software__hero-info">
-        {%- if product.vendor != blank -%}
+        {%- assign vendor_lc = product.vendor | downcase | strip -%}
+        {%- if product.vendor != blank and vendor_lc != 'unknown' and vendor_lc != 'unbekannt' -%}
           <a class="product-software__eyebrow" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
         {%- endif -%}
 
@@ -135,7 +136,7 @@
     </div>
   </header>
 
-  {# ────────── 2. KEY-SPECS-BAR ────────── #}
+  {%- comment -%} 2. KEY-SPECS-BAR {%- endcomment -%}
   {%- if mf_lizenztyp != blank or mf_arch != blank or mf_geraete != blank or mf_lieferung != blank -%}
     <div class="product-software__specs">
       <div class="product-software__specs-grid">
@@ -167,7 +168,7 @@
     </div>
   {%- endif -%}
 
-  {# ────────── 3. PRODUKTBESCHREIBUNG ────────── #}
+  {%- comment -%} 3. PRODUKTBESCHREIBUNG {%- endcomment -%}
   {%- if product.description != blank -%}
     <article class="product-software__description" id="product-software-details">
       <div class="product-software__description-inner">
@@ -176,7 +177,7 @@
     </article>
   {%- endif -%}
 
-  {# ────────── 4. DREI-SPALTEN-INFO-BLOCK ────────── #}
+  {%- comment -%} 4. DREI-SPALTEN-INFO-BLOCK {%- endcomment -%}
   {%- if mf_shipping != blank or mf_warranty != blank or mf_details != blank -%}
     <section class="product-software__info">
       <div class="product-software__info-grid">
