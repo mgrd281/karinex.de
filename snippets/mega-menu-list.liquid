@@ -92,7 +92,7 @@
       (Software collection, Microsoft Office collection, or a custom
       "Microsoft" / "Produkte" / "Software" entry).
     endcomment
-    if parent_handle == 'software' or parent_handle == 'microsoft-office' or parent_handle == 'microsoft' or parent_handle == 'produkte' or parent_title == 'software' or parent_title == 'microsoft' or parent_title == 'produkte' or parent_handle == 'games' or parent_handle == 'lego' or parent_handle == 'herrenuhren'
+    if parent_handle == 'software' or parent_handle == 'microsoft-office' or parent_handle == 'microsoft' or parent_handle == 'produkte' or parent_title == 'software' or parent_title == 'microsoft' or parent_title == 'produkte'
       assign is_hardcoded = true
     endif
     comment
@@ -180,103 +180,6 @@
           </div>
         </li>
 
-      {% when 'games' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Plattformen</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/steam" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Steam</span></a></li>
-              <li><a href="{{ _root }}collections/xbox" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Xbox</span></a></li>
-              <li><a href="{{ _root }}collections/playstation" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">PlayStation</span></a></li>
-              <li><a href="{{ _root }}collections/nintendo" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Nintendo</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Game Genres</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/action" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Action</span></a></li>
-              <li><a href="{{ _root }}collections/adventure" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Adventure</span></a></li>
-              <li><a href="{{ _root }}collections/rpg" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">RPG</span></a></li>
-              <li><a href="{{ _root }}collections/simulation" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Simulation</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Digitale Codes</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/gamecards" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Gamecards</span></a></li>
-              <li><a href="{{ _root }}collections/guthaben" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Guthaben</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'lego' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Kollektionen</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/lego-star-wars" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">LEGO Star Wars</span></a></li>
-              <li><a href="{{ _root }}collections/lego-technic" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">LEGO Technic</span></a></li>
-              <li><a href="{{ _root }}collections/lego-icons" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">LEGO Icons</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Alter</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/lego-4-plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">4+</span></a></li>
-              <li><a href="{{ _root }}collections/lego-9-plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">9+</span></a></li>
-              <li><a href="{{ _root }}collections/lego-18-plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">18+</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Themen</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/weltraum" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Weltraum</span></a></li>
-              <li><a href="{{ _root }}collections/fahrzeuge" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Fahrzeuge</span></a></li>
-              <li><a href="{{ _root }}collections/gebaude" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Gebäude</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'herrenuhren' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Marken</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/casio" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">CASIO</span></a></li>
-              <li><a href="{{ _root }}collections/seiko" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">SEIKO</span></a></li>
-              <li><a href="{{ _root }}collections/boss" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">BOSS</span></a></li>
-              <li><a href="{{ _root }}collections/citizen" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Citizen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Stil</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/sportlich" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Sportlich</span></a></li>
-              <li><a href="{{ _root }}collections/elegant" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Elegant</span></a></li>
-              <li><a href="{{ _root }}collections/chronographen" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Chronographen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Material</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/edelstahl" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Edelstahl</span></a></li>
-              <li><a href="{{ _root }}collections/leder" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Leder</span></a></li>
-              <li><a href="{{ _root }}collections/silikon" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Silikon</span></a></li>
-            </ul>
-          </div>
-        </li>
     {% endcase %}
   {% else %}
     {% for link in parent_link.links %}
@@ -577,24 +480,6 @@
             <li><a href="{{ _root }}products/microsoft-office-2024-professional-plus" class="mega-menu__link hover:text-primary transition-colors">Office 2024 Professional</a></li>
             <li><a href="{{ _root }}products/windows-11-pro-key-kaufen-download" class="mega-menu__link hover:text-primary transition-colors">Windows 11 Pro</a></li>
             <li><a href="{{ _root }}products/microsoft-office-2021-professional-plus" class="mega-menu__link hover:text-primary transition-colors">Office 2021</a></li>
-          </ul>
-        {% when 'games' %}
-          <h3 class="mega-menu__highlights-title font-bold text-lg mb-4">Top Games</h3>
-          <ul class="list-unstyled space-y-2">
-            <li><a href="{{ _root }}collections/bestseller-games" class="mega-menu__link hover:text-primary transition-colors">Bestseller Games</a></li>
-            <li><a href="{{ _root }}collections/neue-releases" class="mega-menu__link hover:text-primary transition-colors">Neue Releases</a></li>
-          </ul>
-        {% when 'lego' %}
-          <h3 class="mega-menu__highlights-title font-bold text-lg mb-4">Beliebte Sets</h3>
-          <ul class="list-unstyled space-y-2">
-            <li><a href="{{ _root }}collections/lego-botanicals" class="mega-menu__link hover:text-primary transition-colors">LEGO Botanicals</a></li>
-            <li><a href="{{ _root }}collections/lego-technic-bestseller" class="mega-menu__link hover:text-primary transition-colors">LEGO Technic Bestseller</a></li>
-          </ul>
-        {% when 'herrenuhren' %}
-          <h3 class="mega-menu__highlights-title font-bold text-lg mb-4">Top Uhren</h3>
-          <ul class="list-unstyled space-y-2">
-            <li><a href="{{ _root }}collections/bestseller-uhren" class="mega-menu__link hover:text-primary transition-colors">Bestseller Uhren</a></li>
-            <li><a href="{{ _root }}collections/neuheiten-uhren" class="mega-menu__link hover:text-primary transition-colors">Neue Modelle</a></li>
           </ul>
         {% when 'bestseller' %}
           <h3 class="mega-menu__highlights-title font-bold text-lg mb-4">Top 10 Produkte</h3>

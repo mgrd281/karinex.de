@@ -724,12 +724,8 @@
         
         const productDictionary = {
           // Main Collections - Instant redirects
-          'herren-uhren': '/collections/uhren',
           'microsoft-office': '/collections/microsoft-office',
           'windows': '/collections/windows',
-          'pc-games': '/collections/games',
-          'nintendo': '/collections/games',
-          'steam': '/collections/games',
           'laptops': '/',
           'keyboards': '/',
           'monitore': '/',
@@ -1185,10 +1181,6 @@
   /* Specific product redirects (deleted/renamed products) */
   else if (p === '/products/windows-11-pro' || p === '/en/products/windows-11-pro' || p === '/pl/products/windows-11-pro') {
     target = '/products/windows-11-pro-key-kaufen-download' + q;
-  }
-  /* /collections/herren-uhren → /collections/uhren */
-  else if (p === '/collections/herren-uhren') {
-    target = '/collections/uhren' + q;
   }
   /* /en/... → strip locale prefix */
   else if (p.indexOf('/en/') === 0) {
