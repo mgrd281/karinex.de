@@ -1255,6 +1255,18 @@
             margin-right: 6px;
         }
 
+        /* Custom promo badge (e.g. "nur bis Dienstag") — refined, smaller, black */
+        .sale-badge.sale-badge--promo {
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0.2px;
+            color: #fff;
+            background: #1a1a1a;
+            padding: 4px 10px;
+            border-radius: 3px;
+        }
+
         /* Price Section - Perfectly Matched */
         .price-horizontal {
             display: flex;
