@@ -1,27 +1,38 @@
 
-{%- assign type_lc = product.type | downcase -%}
-{%- assign handle_lc = product.handle | downcase -%}
-{%- assign title_lc = product.title | downcase -%}
-{%- assign collections_csv = product.collections | map: 'handle' | join: ',' | downcase -%}
-{%- assign is_digital = false -%}
-{%- if type_lc contains 'software' or type_lc contains 'office' or type_lc contains 'windows' or type_lc contains 'microsoft' or type_lc contains 'esd' or type_lc contains 'digital' or type_lc contains 'key' or type_lc contains 'lizenz' or type_lc contains 'license' or type_lc contains 'download' -%}
-  {%- assign is_digital = true -%}
-{%- endif -%}
-{%- if is_digital == false -%}
-  {%- if collections_csv contains 'software' or collections_csv contains 'digital' or collections_csv contains 'microsoft' or collections_csv contains 'office' or collections_csv contains 'windows' or collections_csv contains 'download' or collections_csv contains 'key' or collections_csv contains 'esd' or collections_csv contains 'lizenz' -%}
-    {%- assign is_digital = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- if is_digital == false -%}
-  {%- if handle_lc contains 'key' or handle_lc contains 'software' or handle_lc contains 'digital' or handle_lc contains 'esd' or handle_lc contains 'lizenz' or handle_lc contains 'license' or handle_lc contains 'download' or handle_lc contains 'office' or handle_lc contains 'microsoft' or handle_lc contains 'windows' -%}
-    {%- assign is_digital = true -%}
-  {%- endif -%}
-{%- endif -%}
-{%- if is_digital == false -%}
-  {%- if title_lc contains 'key' or title_lc contains 'download' or title_lc contains 'lizenzschlüssel' or title_lc contains 'aktivierungsschlüssel' or title_lc contains 'produktschlüssel' -%}
-    {%- assign is_digital = true -%}
-  {%- endif -%}
-{%- endif -%}
+{%- liquid
+  assign type_lc = product.type | downcase
+  assign handle_lc = product.handle | downcase
+  assign title_lc = product.title | downcase
+  assign collections_csv = product.collections | map: 'handle' | join: ',' | downcase
+  assign requires_shipping = product.selected_or_first_available_variant.requires_shipping
+  assign is_digital = false
+
+  comment
+    Single source of truth: Shopify Admin → Produkt → "Versand" toggle.
+    "Kein physisches Produkt" ON  → requires_shipping = false → may be digital
+    "Kein physisches Produkt" OFF → requires_shipping = true  → physical, skip heuristics.
+  endcomment
+  if requires_shipping == false
+    if type_lc contains 'software' or type_lc contains 'office' or type_lc contains 'windows' or type_lc contains 'microsoft' or type_lc contains 'esd' or type_lc contains 'digital' or type_lc contains 'key' or type_lc contains 'lizenz' or type_lc contains 'license' or type_lc contains 'download'
+      assign is_digital = true
+    endif
+    if is_digital == false
+      if collections_csv contains 'software' or collections_csv contains 'digital' or collections_csv contains 'microsoft' or collections_csv contains 'office' or collections_csv contains 'windows' or collections_csv contains 'download' or collections_csv contains 'key' or collections_csv contains 'esd' or collections_csv contains 'lizenz'
+        assign is_digital = true
+      endif
+    endif
+    if is_digital == false
+      if handle_lc contains 'key' or handle_lc contains 'software' or handle_lc contains 'digital' or handle_lc contains 'esd' or handle_lc contains 'lizenz' or handle_lc contains 'license' or handle_lc contains 'download' or handle_lc contains 'office' or handle_lc contains 'microsoft' or handle_lc contains 'windows'
+        assign is_digital = true
+      endif
+    endif
+    if is_digital == false
+      if title_lc contains 'key' or title_lc contains 'download' or title_lc contains 'lizenzschlüssel' or title_lc contains 'aktivierungsschlüssel' or title_lc contains 'produktschlüssel'
+        assign is_digital = true
+      endif
+    endif
+  endif
+-%}
 
 {%- assign is_ch_market = false -%}
 {%- assign market_handle_lc = localization.market.handle | default: '' | downcase -%}
