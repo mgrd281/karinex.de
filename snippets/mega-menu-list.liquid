@@ -84,9 +84,22 @@
 >
   {% liquid
     assign parent_handle = parent_link.handle | downcase
+    assign parent_title  = parent_link.title  | downcase
     assign is_hardcoded = false
-    if parent_handle == 'software' or parent_handle == 'games' or parent_handle == 'lego' or parent_handle == 'herrenuhren'
+    comment
+      Trigger the Microsoft mega menu on any of these handles or titles —
+      whichever handle the merchant happens to use for the parent menu item
+      (Software collection, Microsoft Office collection, or a custom
+      "Microsoft" / "Produkte" / "Software" entry).
+    endcomment
+    if parent_handle == 'software' or parent_handle == 'microsoft-office' or parent_handle == 'microsoft' or parent_handle == 'produkte' or parent_title == 'software' or parent_title == 'microsoft' or parent_title == 'produkte' or parent_handle == 'games' or parent_handle == 'lego' or parent_handle == 'herrenuhren'
       assign is_hardcoded = true
+    endif
+    comment
+      Map every Microsoft-aliased handle/title to the same mega-menu case.
+    endcomment
+    if parent_handle == 'microsoft-office' or parent_handle == 'microsoft' or parent_handle == 'produkte' or parent_title == 'software' or parent_title == 'microsoft' or parent_title == 'produkte'
+      assign parent_handle = 'software'
     endif
   %}
 
