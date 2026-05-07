@@ -81,7 +81,7 @@
             "settings": {
               "title": "Software",
               "image": "shopify://shop_images/microsoft.jpg",
-              "url": "shopify://collections/software",
+              "url": "shopify://collections/microsoft-office",
               "tab_assignment": "1",
               "card_size": "small"
             }
