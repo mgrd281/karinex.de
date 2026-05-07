@@ -183,9 +183,22 @@
         </div>
         
         <div class="premium-privacy">
-          Mit der Anmeldung akzeptierst du die <a href="/policies/privacy-policy">Datenschutzbestimmungen</a>.
+          Mit der Anmeldung akzeptierst du die <a href="/policies/privacy-policy">Datenschutzbestimmungen</a>. Abmeldung jederzeit über den Link in jeder E-Mail möglich.
         </div>
       {% endform %}
+
+      <!-- Voucher conditions (legally required) -->
+      <details class="premium-voucher-terms">
+        <summary>Bedingungen für den 10 €-Gutschein</summary>
+        <ul>
+          <li><strong>Mindestbestellwert:</strong> 80 € (Warenwert vor Abzug, exkl. Versand)</li>
+          <li><strong>Einlösung:</strong> einmalig pro Person und E-Mail-Adresse</li>
+          <li><strong>Gültigkeit:</strong> 60 Tage ab Erhalt des Codes</li>
+          <li><strong>Nicht kombinierbar</strong> mit anderen Rabatten oder SALE-Aktionen</li>
+          <li>Personenbezogen, nicht übertragbar, keine Barauszahlung</li>
+          <li>Ausgenommen: Geschenkkarten und bereits reduzierte SALE-Artikel</li>
+        </ul>
+      </details>
     </div>
 
   </div>
@@ -394,6 +407,41 @@
   text-underline-offset: 2px;
   transition: color 0.2s;
 }
+/* Voucher T&Cs (collapsible, fine-print) */
+.premium-voucher-terms {
+  margin: 22px auto 0;
+  max-width: 520px;
+  text-align: left;
+  font-size: 12px;
+  color: #6b7280;
+  background: #fafafa;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+.premium-voucher-terms summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #444;
+  list-style: none;
+  outline: none;
+}
+.premium-voucher-terms summary::-webkit-details-marker { display: none; }
+.premium-voucher-terms summary::after {
+  content: " ›";
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 0.2s;
+}
+.premium-voucher-terms[open] summary::after { transform: rotate(90deg); }
+.premium-voucher-terms ul {
+  margin: 10px 0 4px;
+  padding-left: 18px;
+  line-height: 1.65;
+}
+.premium-voucher-terms li { margin-bottom: 3px; }
+.premium-voucher-terms strong { color: #333; }
+
 .premium-privacy a:hover {
   color: #000;
 }
