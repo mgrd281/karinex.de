@@ -19,7 +19,7 @@
         "fallback_collections": [
           "microsoft-tools",
           "microsoft-office",
-          "unsere-bestseller",
+          "bestseller",
           "sale",
           "windows"
         ],
@@ -448,7 +448,7 @@
       "settings": {
         "collection": "",
         "collection_list": [
-          "unsere-bestseller",
+          "bestseller",
           "microsoft-office",
           "microsoft-tools",
           "sale",
