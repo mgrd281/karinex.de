@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-kundenberatung-2026",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
