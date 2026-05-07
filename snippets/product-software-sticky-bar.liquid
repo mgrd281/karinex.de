@@ -1,0 +1,28 @@
+{%- comment -%}
+  Mobile sticky buy bar — fixed to bottom of viewport.
+  Shown after 200px scroll (toggled in JS via .is-visible class).
+{%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+<div class="product-software__sticky-bar" data-sticky-bar aria-hidden="true">
+  <div class="product-software__sticky-inner">
+    <div class="product-software__sticky-meta">
+      <div class="product-software__sticky-title">{{ product.title | truncatewords: 6 }}</div>
+      <div class="product-software__sticky-price">{{ current_variant.price | money }}</div>
+    </div>
+    {%- form 'product', product, class: 'product-software__sticky-form', data-sticky-form: '' -%}
+      <input type="hidden" name="id" value="{{ current_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button
+        type="submit"
+        class="product-software__btn product-software__btn--primary product-software__sticky-cta"
+        data-sticky-cta
+        {% unless current_variant.available %}disabled{% endunless %}
+      >
+        <span data-cta-default>{% if current_variant.available %}In den Warenkorb{% else %}Ausverkauft{% endif %}</span>
+        <span data-cta-success hidden>✓ Hinzugefügt</span>
+      </button>
+    {%- endform -%}
+  </div>
+</div>

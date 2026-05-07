@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product-software",
+      "settings": {
+        "section_bg": "#ffffff"
+      }
+    },
+    "trust": {
+      "type": "product-software-trust",
+      "settings": {}
+    },
+    "faq": {
+      "type": "product-software-faq",
+      "settings": {}
+    }
+  },
+  "order": ["main", "trust", "faq"]
+}

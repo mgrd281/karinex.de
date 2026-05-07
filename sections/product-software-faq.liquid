@@ -1,0 +1,110 @@
+{%- comment -%}
+  FAQ accordion. Reads optional Q/A list from product metafield
+  karinex.faq (JSON array of {q, a} objects). Falls back to a curated
+  default set tuned for Microsoft license products.
+{%- endcomment -%}
+
+{%- liquid
+  assign faq_raw = product.metafields.karinex.faq.value
+  assign use_metafield = false
+  if faq_raw and faq_raw != blank
+    assign use_metafield = true
+  endif
+-%}
+
+<section class="product-software product-software--faq" aria-labelledby="product-software-faq-title">
+  <div class="product-software__faq-wrap">
+    <h2 id="product-software-faq-title" class="product-software__faq-title">Häufige Fragen</h2>
+
+    <div class="product-software__faq-list" data-faq>
+
+      {%- if use_metafield -%}
+        {%- for entry in faq_raw -%}
+          {%- liquid
+            assign q = entry.q | default: entry.question
+            assign a = entry.a | default: entry.answer
+          -%}
+          <details class="product-software__faq-item" data-faq-item>
+            <summary class="product-software__faq-q">
+              <span>{{ q }}</span>
+              <span class="product-software__faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="product-software__faq-a">
+              <p>{{ a }}</p>
+            </div>
+          </details>
+        {%- endfor -%}
+      {%- else -%}
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Wie schnell erhalte ich meinen Lizenzschlüssel?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Sofort. Direkt nach erfolgreicher Zahlung wird der Schlüssel automatisch generiert und innerhalb von 30–60 Sekunden per E-Mail zugestellt – inklusive Download-Link und Schritt-für-Schritt-Anleitung.</p>
+          </div>
+        </details>
+
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Sind die Lizenzen original und legal?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Ja, zu 100 %. Wir vertreiben ausschließlich originale, ungenutzte Microsoft-Schlüssel aus dem unionsrechtlichen Erschöpfungsgrundsatz (EuGH-Urteil C-128/11) – legal weiterverkäuflich und für die dauerhafte Nutzung zertifiziert.</p>
+          </div>
+        </details>
+
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Was, wenn die Aktivierung nicht funktioniert?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Sie erhalten kostenlos einen neuen Schlüssel – so oft, bis Sie erfolgreich aktivieren können. Unser deutschsprachiger Support antwortet meist innerhalb von 10 Minuten per E-Mail, WhatsApp oder Live-Chat.</p>
+          </div>
+        </details>
+
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Läuft die Lizenz irgendwann ab?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Nein. Es handelt sich um eine Dauerlizenz ohne Abo, ohne Folgekosten und ohne zeitliche Begrenzung. Einmal kaufen, dauerhaft nutzen.</p>
+          </div>
+        </details>
+
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Erhalte ich eine MwSt.-Rechnung?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Ja. Eine PDF-Rechnung mit separat ausgewiesener Mehrwertsteuer (19 %) wird automatisch mit dem Lizenzschlüssel versendet – voll absetzbar und GoBD-konform.</p>
+          </div>
+        </details>
+
+        <details class="product-software__faq-item" data-faq-item>
+          <summary class="product-software__faq-q">
+            <span>Wie ist die Geld-zurück-Garantie geregelt?</span>
+            <span class="product-software__faq-icon" aria-hidden="true"></span>
+          </summary>
+          <div class="product-software__faq-a">
+            <p>Bei nicht aktivierten digitalen Lizenzen erstatten wir den Kaufpreis innerhalb von 100 Tagen vollständig zurück. Bereits aktivierte Schlüssel sind gemäß § 356 Abs. 5 BGB von der Rückerstattung ausgenommen.</p>
+          </div>
+        </details>
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Software · FAQ",
+  "tag": "section",
+  "class": "section-product-software-faq",
+  "settings": []
+}
+{% endschema %}
