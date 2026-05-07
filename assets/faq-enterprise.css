@@ -18,7 +18,7 @@ html body .kx-faq {
     display: block;
     box-sizing: border-box;
     width: 100%;
-    margin: 52px 0 0 !important;
+    margin: 28px 0 0 !important;
     padding: 0 !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
@@ -248,7 +248,7 @@ html body .kx-faq .kx-faq__panel-inner p {
 /* ── Mobile ──────────────────────────────────────────────── */
 @media screen and (max-width: 749px) {
     html body .kx-faq {
-        margin-top: 40px !important;
+        margin-top: 20px !important;
     }
 
     html body .kx-faq .kx-faq__title {
