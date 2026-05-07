@@ -102,7 +102,7 @@
   {% if product.vendor != blank %}
     <li class="meta-list-item">
       <i class="fa-solid fa-tag"></i>
-      <span class="meta-text"><span class="meta-label">Marke:</span> <span class="meta-value">{{ product.vendor }}</span></span>
+      <span class="meta-text"><span class="meta-label">Marke:</span> <a href="{{ product.vendor | url_for_vendor }}" class="meta-value meta-link" aria-label="Alle Produkte von {{ product.vendor }} ansehen">{{ product.vendor }}</a></span>
     </li>
   {% endif %}
 
