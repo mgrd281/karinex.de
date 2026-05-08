@@ -32,14 +32,14 @@
   <h3 style="font-size:15px;font-weight:600;letter-spacing:-0.005em;color:#1d1d1f;margin:0 0 16px;">Weiterführende Links zu &laquo;{{ product.title | escape }}&raquo;</h3>
   <ul style="list-style:none;margin:0;padding:0;">
     <li>
-      <a class="kx-wfl__item" href="#" onclick="if(window.openSmartAssistant){window.openSmartAssistant();return false;}return true;" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+      <a class="kx-wfl__item" href="#" onclick="if(window.openSmartAssistant){window.openSmartAssistant();return false;}return true;" style="display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px;color:#1d1d1f;text-decoration:none;">
         <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
         <span>Fragen zum Artikel?</span>
       </a>
     </li>
     {%- if cat_url != blank -%}
       <li>
-        <a class="kx-wfl__item" href="{{ cat_url }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+        <a class="kx-wfl__item" href="{{ cat_url }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px;color:#1d1d1f;text-decoration:none;">
           <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
           <span>{{ cat_label }}</span>
         </a>
@@ -47,7 +47,7 @@
     {%- endif -%}
     {%- if show_vendor -%}
       <li>
-        <a class="kx-wfl__item" href="{{ product.vendor | url_for_vendor }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+        <a class="kx-wfl__item" href="{{ product.vendor | url_for_vendor }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14px;color:#1d1d1f;text-decoration:none;">
           <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
           <span>Weitere Artikel von {{ product.vendor | escape }}</span>
         </a>
