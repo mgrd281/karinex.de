@@ -5356,7 +5356,7 @@ function toggleDesc() {
 
       function checkContentHeight() {
         var isDesktop = window.innerWidth >= 990;
-        var maxHeight = isDesktop ? 380 : 250;
+        var minThreshold = isDesktop ? 400 : 350;
 
         // Temporarily reset to measure
         var prevMaskStyle = mask.style.maxHeight;
@@ -5364,10 +5364,11 @@ function toggleDesc() {
         var actualHeight = desc.scrollHeight;
         mask.style.maxHeight = prevMaskStyle;
 
-        if(actualHeight > maxHeight + 60) {
+        if(actualHeight > minThreshold) {
+          var halfHeight = Math.round(actualHeight * 0.5);
           btn.style.display = 'inline-flex';
           if(expandState === 0) {
-            mask.style.maxHeight = maxHeight + 'px';
+            mask.style.maxHeight = halfHeight + 'px';
           }
         } else {
           mask.classList.add('is-expanded');
@@ -5387,9 +5388,6 @@ function toggleDesc() {
       window.addEventListener('resize', checkContentHeight);
 
       btn.addEventListener('click', function() {
-        var isDesktop = window.innerWidth >= 990;
-        var step1 = isDesktop ? 380 : 250;
-
         // Measure true content height
         var prevMax = mask.style.maxHeight;
         var prevOverflow = mask.style.overflow;
@@ -5399,25 +5397,10 @@ function toggleDesc() {
         mask.style.maxHeight = prevMax;
         mask.style.overflow = prevOverflow;
 
-        var step60 = Math.round(fullHeight * 0.6);
+        var halfHeight = Math.round(fullHeight * 0.5);
 
         if(expandState === 0) {
-          // First click → 60%
-          if(fullHeight <= step60 + 60) {
-            // Content small enough → go full directly
-            expandState = 2;
-            mask.classList.add('is-expanded');
-            mask.style.maxHeight = fullHeight + 'px';
-            btn.setAttribute('aria-expanded', 'true');
-            txt.textContent = "Weniger anzeigen";
-            setTimeout(function() { if(expandState === 2) mask.style.maxHeight = 'none'; }, 550);
-          } else {
-            expandState = 1;
-            mask.style.maxHeight = step60 + 'px';
-            // Keep "Mehr anzeigen" visible for second click
-          }
-        } else if(expandState === 1) {
-          // Second click → full
+          // First click → full
           expandState = 2;
           mask.classList.add('is-expanded');
           mask.style.maxHeight = fullHeight + 'px';
@@ -5425,10 +5408,10 @@ function toggleDesc() {
           txt.textContent = "Weniger anzeigen";
           setTimeout(function() { if(expandState === 2) mask.style.maxHeight = 'none'; }, 550);
         } else {
-          // Collapse back
+          // Collapse back to 50%
           expandState = 0;
           mask.classList.remove('is-expanded');
-          mask.style.maxHeight = step1 + 'px';
+          mask.style.maxHeight = halfHeight + 'px';
           btn.setAttribute('aria-expanded', 'false');
           txt.textContent = "Mehr anzeigen";
           mask.closest('.tab-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
