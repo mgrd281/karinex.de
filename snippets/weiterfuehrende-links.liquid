@@ -1,48 +1,58 @@
 {%- comment -%}
-  Weiterführende Links — Apple/Microsoft-style internal link list.
-  All visual styles set inline on the elements per spec; the only
-  <style> block is for :hover (which cannot be expressed as an inline
-  style attribute).
+  Weiterführende Links — context-aware product page footer link list.
+  Title carries the actual product name. Body shows 2–3 links: an
+  "ask a question" entry, the matching category collection (Office /
+  Windows / Microsoft Tools), and a "more from this vendor" entry.
+  All visual styles set inline on the elements; the only <style> rule
+  is :hover (cannot be expressed as inline style attribute).
 {%- endcomment -%}
-<section style="max-width:760px;margin:0 auto 64px;padding:32px 16px 0;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-  <h2 style="font-size:24px;font-weight:600;letter-spacing:-0.01em;color:#1d1d1f;margin:0 0 24px;">Weiterführende Links</h2>
+{%- liquid
+  assign cols      = product.collections | map: 'handle' | join: ',' | downcase
+  assign type_lc   = product.type  | downcase
+  assign title_lc  = product.title | downcase
+  assign cat_label = ''
+  assign cat_url   = ''
+  if cols contains 'microsoft-office' or type_lc contains 'office' or title_lc contains 'office' or title_lc contains 'microsoft 365'
+    assign cat_label = 'Alle Office-Lizenzen'
+    assign cat_url   = '/collections/microsoft-office'
+  elsif cols contains 'windows' or type_lc contains 'windows' or title_lc contains 'windows'
+    assign cat_label = 'Alle Windows-Betriebssysteme'
+    assign cat_url   = '/collections/windows'
+  elsif cols contains 'microsoft-tools' or type_lc contains 'project' or type_lc contains 'visio' or type_lc contains 'sql' or type_lc contains 'visual studio' or type_lc contains 'exchange' or title_lc contains 'project' or title_lc contains 'visio' or title_lc contains 'sql server' or title_lc contains 'visual studio' or title_lc contains 'exchange'
+    assign cat_label = 'Alle Microsoft Tools'
+    assign cat_url   = '/collections/microsoft-tools'
+  endif
+  assign vendor_lc   = product.vendor | downcase | strip
+  assign show_vendor = false
+  if product.vendor != blank and vendor_lc != 'unknown' and vendor_lc != 'unbekannt' and vendor_lc != ''
+    assign show_vendor = true
+  endif
+-%}
+<section style="max-width:760px;margin:0 auto 48px;padding:24px 16px 0;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <h3 style="font-size:15px;font-weight:600;letter-spacing:-0.005em;color:#1d1d1f;margin:0 0 16px;">Weiterführende Links zu &laquo;{{ product.title | escape }}&raquo;</h3>
   <ul style="list-style:none;margin:0;padding:0;border-top:1px solid #d2d2d7;">
     <li>
-      <a class="kx-wfl__item" href="/collections/microsoft-office" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Microsoft Office Lizenzen</span>
+      <a class="kx-wfl__item" href="#" onclick="if(window.openSmartAssistant){window.openSmartAssistant();return false;}return true;" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+        <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
+        <span>Fragen zum Artikel?</span>
       </a>
     </li>
-    <li>
-      <a class="kx-wfl__item" href="/collections/windows" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Windows Betriebssysteme</span>
-      </a>
-    </li>
-    <li>
-      <a class="kx-wfl__item" href="/collections/microsoft-tools" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Microsoft Tools &amp; Server</span>
-      </a>
-    </li>
-    <li>
-      <a class="kx-wfl__item" href="/blogs/news" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Karinex Blog</span>
-      </a>
-    </li>
-    <li>
-      <a class="kx-wfl__item" href="/pages/faq" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Häufige Fragen (FAQ)</span>
-      </a>
-    </li>
-    <li>
-      <a class="kx-wfl__item" href="/pages/kontakt" style="display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid #d2d2d7;font-size:15px;color:#1d1d1f;text-decoration:none;">
-        <span aria-hidden="true" style="color:#86868b;font-size:18px;line-height:1;">›</span>
-        <span>Kontakt &amp; Support</span>
-      </a>
-    </li>
+    {%- if cat_url != blank -%}
+      <li>
+        <a class="kx-wfl__item" href="{{ cat_url }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+          <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
+          <span>{{ cat_label }}</span>
+        </a>
+      </li>
+    {%- endif -%}
+    {%- if show_vendor -%}
+      <li>
+        <a class="kx-wfl__item" href="{{ product.vendor | url_for_vendor }}" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #d2d2d7;font-size:14px;color:#1d1d1f;text-decoration:none;">
+          <span aria-hidden="true" style="color:#86868b;font-size:16px;line-height:1;">›</span>
+          <span>Weitere Artikel von {{ product.vendor | escape }}</span>
+        </a>
+      </li>
+    {%- endif -%}
   </ul>
 </section>
 <style>.kx-wfl__item:hover{text-decoration:underline;text-underline-offset:2px;}</style>
