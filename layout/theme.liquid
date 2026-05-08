@@ -255,33 +255,25 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     })();
   </script>
 
-  <!-- Trusted Shops - Deferred to idle for page speed -->
-  <script>
-    (function() {
-      function loadTS() {
-        var ts = document.createElement('script');
-        ts.src = 'https://widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js';
-        ts.async = true;
-        ts.charset = 'UTF-8';
-        ts.dataset.desktopYOffset = '0';
-        ts.dataset.mobileYOffset = '0';
-        ts.dataset.desktopDisableReviews = 'false';
-        ts.dataset.desktopEnableCustom = 'false';
-        ts.dataset.desktopPosition = 'right';
-        ts.dataset.desktopCustomWidth = '156';
-        ts.dataset.desktopEnableFadeout = 'false';
-        ts.dataset.disableMobile = 'false';
-        ts.dataset.disableTrustbadge = 'false';
-        ts.dataset.mobileCustomWidth = '156';
-        ts.dataset.mobileDisableReviews = 'false';
-        ts.dataset.mobileEnableCustom = 'false';
-        ts.dataset.mobilePosition = 'right';
-        ts.dataset.colorScheme = 'os-default';
-        document.head.appendChild(ts);
-      }
-      if ('requestIdleCallback' in window) { requestIdleCallback(loadTS, { timeout: 4000 }); }
-      else { setTimeout(loadTS, 4000); }
-    })();
+  <!-- Trusted Shops Trustbadge -->
+  <script
+    async
+    data-desktop-y-offset="0"
+    data-mobile-y-offset="0"
+    data-desktop-disable-reviews="false"
+    data-desktop-enable-custom="false"
+    data-desktop-position="right"
+    data-desktop-custom-width="156"
+    data-desktop-enable-fadeout="false"
+    data-disable-mobile="false"
+    data-disable-trustbadge="false"
+    data-mobile-custom-width="156"
+    data-mobile-disable-reviews="false"
+    data-mobile-enable-custom="false"
+    data-mobile-position="right"
+    data-color-scheme="os-default"
+    charset="UTF-8"
+    src="//widgets.trustedshops.com/js/X78A4D7E62B3E73E82B6751A647AB17E5.js">
   </script>
   <meta name="kundennote-verify" content="d008eb0340d27768b00d875b7b0f757b548520331" />
   </head>
