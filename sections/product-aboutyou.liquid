@@ -885,42 +885,6 @@
           </details>
         {%- endif -%}
 
-        {%- if product.metafields.custom.details_content != blank -%}
-          <details class="ay-accordion">
-            <summary class="ay-accordion__trigger">
-              {{ product.metafields.custom.details_heading | default: 'Produktdetails' }}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </summary>
-            <div class="ay-accordion__content">
-              {{ product.metafields.custom.details_content | metafield_tag }}
-            </div>
-          </details>
-        {%- endif -%}
-
-        {%- if product.metafields.custom.shipping_content != blank -%}
-          <details class="ay-accordion">
-            <summary class="ay-accordion__trigger">
-              {{ product.metafields.custom.shipping_heading | default: 'Versand & Lieferung' }}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </summary>
-            <div class="ay-accordion__content">
-              {{ product.metafields.custom.shipping_content | metafield_tag }}
-            </div>
-          </details>
-        {%- endif -%}
-
-        {%- if product.metafields.custom.warranty_content != blank -%}
-          <details class="ay-accordion">
-            <summary class="ay-accordion__trigger">
-              {{ product.metafields.custom.warranty_heading | default: 'Rückgabe & Garantie' }}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </summary>
-            <div class="ay-accordion__content">
-              {{ product.metafields.custom.warranty_content | metafield_tag }}
-            </div>
-          </details>
-        {%- endif -%}
-
         <details class="ay-accordion">
           <summary class="ay-accordion__trigger">
             Häufig gestellte Fragen
