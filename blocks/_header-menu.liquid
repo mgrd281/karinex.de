@@ -80,71 +80,27 @@
       endif
     %}
 
+    {%- comment -%}
+      Single shared megamenu architecture:
+      - Top-level <li>s are bare links (no per-item submenu).
+      - One <div class="megamenu-panel-shared"> renders ONCE outside the <ul>,
+        containing the unified 6-column software panel.
+      - CSS opens the shared panel on hover/focus of ANY top-level <li>,
+        so all categories stay visible regardless of which item is hovered.
+    {%- endcomment -%}
     {% capture children %}
       {% for link in block_settings.menu.links %}
-        <li
-          class="menu-list__list-item"
-          on:focus="/activate"
-          on:blur="/deactivate"
-          on:pointerenter="/activate"
-          on:pointerleave="/deactivate"
-        >
+        <li class="menu-list__list-item has-megamenu">
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
             class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}{% if link.title == 'SALE' or link.title == 'Sale' %} menu-list__link--sale{% endif %}"
-            {%- if link.links != blank -%}
-              aria-controls="submenu-{{ forloop.index }}"
-              aria-haspopup="true"
-              aria-expanded="false"
-            {%- endif -%}
             ref="menuitem"
           >
             <span class="menu-list__link-title">{{- link.title -}}</span>
           </a>
-          {%- if link.links != blank -%}
-            <div class="menu-list__submenu{{ color_scheme_classes }}" ref="submenu[]">
-              <div
-                id="submenu-{{ forloop.index }}"
-                class="menu-list__submenu-inner"
-                style="{% render 'submenu-font-styles', settings: block_settings %}"
-              >
-                {% assign list_id = 'MegaMenuList-' | append: forloop.index %}
-                <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
-                  <div
-                    class="mega-menu__grid"
-                    data-menu-grid-id="{{ list_id }}"
-                  >
-                    {% render 'mega-menu-list',
-                      parent_link: link,
-                      id: list_id,
-                      section: section,
-                      grid_columns_count: 6,
-                      grid_columns_count_tablet: 4,
-                      grid_columns_count_collection_images: 8,
-                      menu_content_type: menu_content_type,
-                      content_aspect_ratio: ratio,
-                      image_border_radius: image_border_radius
-                    %}
-                  </div>
-                </div>
-              </div>
-            </div>
-          {%- endif -%}
         </li>
       {% endfor %}
-      <li
-        class="menu-list__list-item"
-        slot="more"
-        on:focus="/activate"
-        on:blur="/deactivate"
-        on:pointerenter="/activate"
-        on:pointerleave="/deactivate"
-      >
-        <button class="button menu-list__link button-unstyled">
-          <span class="menu-list__link-title">{{ 'actions.more' | t }}</span>
-        </button>
-      </li>
     {% endcapture %}
 
     <header-menu
@@ -155,20 +111,28 @@
       style="--submenu-animation-speed: {{ animation_speed }}ms;"
     >
       <div class="header-menu__inner">
-        <nav header-menu>
+        <nav header-menu class="header-menu__nav">
           <div
             class="menu-list"
             style="{% render 'menu-font-styles', settings: block_settings %}"
           >
-            {% assign class = 'overflow-menu' | append: color_scheme_classes %}
-            {% render 'overflow-list',
-              class: class,
-              ref: 'overflowMenu',
-              children: children,
-              minimum-items: 2,
-              data-testid: 'header-menu-overflow-list',
-              attributes: 'data-skip-node-update'
-            %}
+            <ul class="menu-list__list nav-main list-unstyled" role="list">
+              {{ children }}
+            </ul>
+          </div>
+
+          <div
+            class="megamenu-panel-shared{{ color_scheme_classes }}"
+            data-megamenu-shared
+            style="{% render 'submenu-font-styles', settings: block_settings %}"
+          >
+            <div class="megamenu-panel-shared__inner">
+              <div class="mega-menu section section--full-width-margin section--{{ section.settings.section_width }}">
+                <div class="mega-menu__grid megamenu-panel-shared__grid" data-menu-grid-id="MegaMenuShared">
+                  {% render 'mega-menu-software-unified', _root: routes.root_url, mode: 'desktop' %}
+                </div>
+              </div>
+            </div>
           </div>
         </nav>
       </div>
@@ -789,6 +753,76 @@
   }
   .mega-menu__list {
     overflow: hidden;
+  }
+
+  /*
+    SHARED MEGAMENU PANEL
+    A single panel sibling of the <ul>, opened on hover/focus of any
+    top-level <li>, the panel itself, or while keyboard focus is inside.
+    All top-level columns (Windows, Office, Mac, ...) stay visible at once.
+  */
+  .header-menu__nav {
+    position: relative;
+  }
+
+  .megamenu-panel-shared {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: var(--layer-header-menu);
+    background-color: var(--color-background);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition:
+      opacity var(--submenu-animation-speed, 200ms) var(--ease-out-cubic),
+      transform var(--submenu-animation-speed, 200ms) var(--ease-out-cubic),
+      visibility 0s linear var(--submenu-animation-speed, 200ms);
+    overflow: hidden;
+  }
+
+  .megamenu-panel-shared__inner {
+    max-width: var(--page-width, 1440px);
+    margin-inline: auto;
+    padding-block: var(--padding-2xl, 4rem);
+    padding-inline: var(--section-padding-inline, 2rem);
+    max-height: calc(80vh - var(--header-height));
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .megamenu-panel-shared__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--menu-vertical-gap, 1.5rem) var(--menu-horizontal-gap, 2.5rem);
+    width: 100%;
+  }
+
+  @media (max-width: 1199px) {
+    .megamenu-panel-shared__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  /* Reveal: any top-level li hovered/focused, the panel hovered, or any link inside focused */
+  .header-menu__nav:hover .megamenu-panel-shared,
+  .header-menu__nav:focus-within .megamenu-panel-shared,
+  .megamenu-panel-shared:hover {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition:
+      opacity var(--submenu-animation-speed, 200ms) var(--ease-out-cubic),
+      transform var(--submenu-animation-speed, 200ms) var(--ease-out-cubic),
+      visibility 0s;
+  }
+
+  /* Reset legacy per-item submenu rules — the shared panel replaces them on desktop */
+  .menu-list__list-item.has-megamenu > .menu-list__submenu {
+    display: none !important;
   }
 {% endstylesheet %}
 
