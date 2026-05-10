@@ -1,11 +1,10 @@
 {%- doc -%}
-  Renders the unified Karinex mega-menu with 7 columns matching the actual
-  Hauptmenü top-level items: Office für Windows, Office für Mac, Microsoft 365,
-  Windows, Windows Server, Microsoft Tools, SALE & Bestseller.
+  Renders the unified Karinex software mega-menu. Six fixed columns: Windows 11,
+  Windows 10, Windows 8/8.1, Windows 7/XP, Microsoft Office, Office für Mac.
 
-  Triggered for any top-level item whose handle/title contains
-  windows / office / microsoft / 365 / sale / bestseller — so the same panel
-  shows regardless of which top-level item the visitor hovers.
+  Used for any top-level menu item whose handle/title contains windows / office /
+  microsoft / mac / 365, so that the same wide panel appears regardless of which
+  software-related top-level item the visitor hovers.
 
   @param {string} _root - Theme root URL prefix, e.g. '/' or '/de/'.
   @param {string} [mode] - 'desktop' (default) | 'mobile'.
@@ -24,18 +23,17 @@
     endunless
   endunless
 
-  assign col_titles = 'Office für Windows|Office für Mac|Microsoft 365|Windows|Windows Server|Microsoft Tools|SALE & Bestseller' | split: '|'
-  assign col_hrefs = 'collections/microsoft-office|collections/microsoft-office-fur-mac|collections/microsoft-365-abonnement|collections/windows|collections/windows-server|collections/microsoft-tools|collections/sale' | split: '|'
+  assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac' | split: '|'
+  assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac' | split: '|'
 
-  assign sub_office_win = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Office Home & Business~search?q=Office+Home+Business;;Alle Office-Lizenzen~collections/microsoft-office'
-  assign sub_office_mac = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Office Home & Student Mac~search?q=Office+Home+Student+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
-  assign sub_365 = 'Microsoft 365 Family~search?q=Microsoft+365+Family;;Microsoft 365 Personal~search?q=Microsoft+365+Personal;;Microsoft 365 Business Standard~search?q=Microsoft+365+Business+Standard;;Microsoft 365 Business Premium~search?q=Microsoft+365+Business+Premium;;Alle 365 Abos~collections/microsoft-365-abonnement'
-  assign sub_windows = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home~search?q=Windows+10+Home;;Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 7 Ultimate~search?q=Windows+7+Ultimate;;Alle Windows-Versionen~collections/windows'
-  assign sub_server = 'Server 2025 Standard~search?q=Windows+Server+2025+Standard;;Server 2025 Datacenter~search?q=Windows+Server+2025+Datacenter;;Server 2022 Standard~search?q=Windows+Server+2022+Standard;;Server 2019 Standard~search?q=Windows+Server+2019+Standard;;Alle Server-Lizenzen~collections/windows-server'
-  assign sub_tools = 'Project 2024~search?q=Microsoft+Project+2024;;Visio 2024~search?q=Microsoft+Visio+2024;;Visual Studio 2022~search?q=Visual+Studio+2022;;SQL Server~search?q=SQL+Server;;Exchange Server~search?q=Exchange+Server;;Alle Microsoft Tools~collections/microsoft-tools'
-  assign sub_sale = 'Alle Deals~collections/sale;;Bis 90 % Rabatt~collections/sale;;Top 10 Bestseller~collections/bestseller;;Letzte Stück~collections/sale;;Alle Produkte~collections/all'
+  assign sub_w11 = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
+  assign sub_w10 = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
+  assign sub_w8 = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
+  assign sub_w7 = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
+  assign sub_mso = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
+  assign sub_mac = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
 
-  assign all_subs = sub_office_win | append: '@@' | append: sub_office_mac | append: '@@' | append: sub_365 | append: '@@' | append: sub_windows | append: '@@' | append: sub_server | append: '@@' | append: sub_tools | append: '@@' | append: sub_sale
+  assign all_subs = sub_w11 | append: '@@' | append: sub_w10 | append: '@@' | append: sub_w8 | append: '@@' | append: sub_w7 | append: '@@' | append: sub_mso | append: '@@' | append: sub_mac
   assign cols_subs = all_subs | split: '@@'
 -%}
 
@@ -72,34 +70,10 @@
     {%- endfor -%}
   </ul>
 {%- else -%}
-  {%- comment -%} Force a 7-column grid on the parent .mega-menu__grid when this snippet is used. {%- endcomment -%}
-  <style>
-    .mega-menu__grid:has(.mega-menu-software-unified) {
-      --menu-columns-desktop: 7 !important;
-      --menu-columns-tablet: 4 !important;
-    }
-    .mega-menu__list:has(.mega-menu-software-unified) {
-      grid-column: span 7 !important;
-    }
-    @media (max-width: 1199px) {
-      .mega-menu__grid:has(.mega-menu-software-unified) {
-        --menu-columns-desktop: 4 !important;
-      }
-      .mega-menu__list:has(.mega-menu-software-unified) {
-        grid-column: span 4 !important;
-      }
-    }
-    @media (max-width: 989px) {
-      .mega-menu__grid:has(.mega-menu-software-unified) {
-        --menu-columns-tablet: 3 !important;
-      }
-    }
-  </style>
-
   {%- for col_title in col_titles -%}
     {%- assign col_href = col_hrefs[forloop.index0] -%}
     {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
-    <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified">
+    <li class="mega-menu__column mega-menu__column--span-1">
       <div class="mega-menu__item-wrapper">
         <a href="{{ _root }}{{ col_href }}" class="mega-menu__link mega-menu__link--parent">{{ col_title }}</a>
         <ul class="list-unstyled mega-menu__submenu-list">
