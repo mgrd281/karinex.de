@@ -794,38 +794,44 @@
 
   /*
     KEEP TOP NAV BAR (Hauptmenü) ALWAYS VISIBLE WHILE DROPDOWN IS OPEN.
-    Hard-coded dark text + white background; bypasses the theme's
-    'inherit color on menu open' rule that made the nav fade. No CSS
-    variables to avoid circular references with --menu-top-level-font-color.
+    Cancels the theme's "inherit color on menu open" rule which made the
+    nav text fade into the dropdown background, neutralizes any height
+    collapse, and pins the menu row above the dropdown via stacking order.
   */
-  .header .menu-list .menu-list__link,
-  .header .menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link,
-  .header .menu-list:where(:has(.menu-list__list-item:focus-within)) .menu-list__link,
-  .header .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link,
-  .header .menu-list .menu-list__list-item .menu-list__link[aria-expanded='true'] {
-    color: #1B3A2E !important;
-    opacity: 1 !important;
+  .header--inherit-color-scheme-on-menu-open:has(.mega-menu__list:hover) .header__row,
+  .header--inherit-color-scheme-on-menu-open:has(.menu-list__link[aria-haspopup]:is(:hover, [aria-expanded='true'], [data-animating])) .header__row,
+  .header--inherit-color-scheme-on-menu-open:has(.menu-list__list-item[slot='overflow'] .menu-list__link:is(:hover, [aria-expanded='true'], [data-animating])) .header__row {
+    --color-foreground: var(--menu-top-level-font-color) !important;
+    --color-foreground-rgb: var(--menu-top-level-font-color-rgb) !important;
+    --color-background: var(--header-bg-color, #ffffff) !important;
+    --color-background-rgb: 255, 255, 255 !important;
   }
 
-  .header .menu-list .menu-list__link--sale,
-  .header .menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link--sale,
-  .header .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link--sale {
-    color: #E60000 !important;
-    opacity: 1 !important;
+  .header__row,
+  .header__row--bottom {
+    position: relative;
+    z-index: calc(var(--layer-header-menu) + 1) !important;
   }
 
   .header__row--bottom,
   .header:has(.menu-list__link[aria-expanded='true']) .header__row--bottom,
-  .header:has(.menu-list__list-item:hover) .header__row--bottom,
-  .header:has(.mega-menu__list:hover) .header__row--bottom {
-    background-color: #ffffff !important;
+  .header:has(.menu-list__list-item:hover) .header__row--bottom {
+    min-height: var(--header-padding, 44px) !important;
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;
   }
 
-  .header__row--bottom .menu-list,
-  .header__row--bottom .menu-list__list {
+  .menu-list,
+  .header:has(.menu-list__link[aria-expanded='true']) .menu-list,
+  .header:has(.menu-list__list-item:hover) .menu-list,
+  .header:has(.mega-menu__list:hover) .menu-list {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+  }
+
+  .menu-list__list {
     opacity: 1 !important;
     visibility: visible !important;
   }
