@@ -791,6 +791,39 @@
   .mega-menu__list {
     overflow: hidden;
   }
+
+  /*
+    Lock the top nav bar (.header__row--bottom) above the dropdown panel.
+    Solid white background, opaque text — nothing the theme does on menu
+    open can fade it out anymore.
+  */
+  .header__row--bottom {
+    position: relative !important;
+    z-index: 100 !important;
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .header__row--bottom .menu-list,
+  .header__row--bottom .menu-list__list,
+  .header__row--bottom .menu-list__list-item {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background-color: transparent !important;
+  }
+
+  .header__row--bottom .menu-list__link,
+  .header__row--bottom .menu-list__link-title {
+    color: #1B3A2E !important;
+    opacity: 1 !important;
+  }
+
+  .header__row--bottom .menu-list__link--sale,
+  .header__row--bottom .menu-list__link--sale .menu-list__link-title {
+    color: #E60000 !important;
+    opacity: 1 !important;
+  }
 {% endstylesheet %}
 
 {% schema %}
