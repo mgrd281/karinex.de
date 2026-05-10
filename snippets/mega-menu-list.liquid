@@ -84,240 +84,30 @@
 >
   {% liquid
     assign parent_handle = parent_link.handle | downcase
-    assign parent_title  = parent_link.title  | downcase
-    assign is_hardcoded = false
+    assign parent_title = parent_link.title | downcase | replace: 'ü', 'u' | replace: 'ö', 'o' | replace: 'ä', 'a' | replace: 'ß', 'ss'
+
     comment
-      Each top-level Karinex menu item gets its own bespoke mega-menu case.
-      Handles match the linked collection of each Hauptmenü item.
+      Match by handle OR title (umlaut-stripped, lowercased). Any top-level item
+      whose name contains a software keyword shows the same unified 6-column
+      software mega-menu — robust to umlaut/spelling differences in handles.
     endcomment
-    if parent_handle == 'microsoft-office' or parent_handle == 'microsoft-office-fur-mac' or parent_handle == 'microsoft-365-abonnement' or parent_handle == 'windows' or parent_handle == 'windows-server' or parent_handle == 'microsoft-tools' or parent_handle == 'sale'
-      assign is_hardcoded = true
+    assign is_software_unified = false
+    if parent_handle contains 'windows' or parent_handle contains 'office' or parent_handle contains 'microsoft' or parent_handle contains '365'
+      assign is_software_unified = true
+    elsif parent_title contains 'windows' or parent_title contains 'office' or parent_title contains 'microsoft' or parent_title contains '365'
+      assign is_software_unified = true
+    endif
+
+    assign is_sale_bespoke = false
+    if parent_handle == 'sale' or parent_title == 'sale'
+      assign is_sale_bespoke = true
     endif
   %}
 
-  {% if is_hardcoded %}
-    {% case parent_handle %}
-      {% when 'microsoft-office' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Office+2024" class="mega-menu__link mega-menu__link--parent">Office 2024</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Office+2024+Standard" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2024 Standard</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2024+Professional+Plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2024 Pro Plus</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2024+LTSC" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2024 LTSC</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Office+2021" class="mega-menu__link mega-menu__link--parent">Office 2021</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Office+2021+Professional+Plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2021 Pro Plus</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2021+Home+Student" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2021 Home &amp; Student</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2021+LTSC" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2021 LTSC</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Office+2019" class="mega-menu__link mega-menu__link--parent">Office 2019</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Office+2019+Professional+Plus" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2019 Pro Plus</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2019+Home+Business" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2019 Home &amp; Business</span></a></li>
-              <li><a href="{{ _root }}collections/microsoft-office" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Office-Lizenzen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Office Programme</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Microsoft+Word" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Word</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Excel" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Excel</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Outlook" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Outlook</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+PowerPoint" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft PowerPoint</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Access" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Access</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Publisher" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Publisher</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+OneNote" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft OneNote</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'microsoft-office-fur-mac' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Office+2024+Mac" class="mega-menu__link mega-menu__link--parent">Office für Mac 2024</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Office+2024+Standard+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2024 Standard für Mac</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2024+Home+Business+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2024 Home &amp; Business für Mac</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Office+2021+Mac" class="mega-menu__link mega-menu__link--parent">Office für Mac 2021</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Office+2021+Standard+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2021 Standard für Mac</span></a></li>
-              <li><a href="{{ _root }}search?q=Office+2021+Home+Student+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office 2021 Home &amp; Student für Mac</span></a></li>
-              <li><a href="{{ _root }}collections/microsoft-office-fur-mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Mac-Lizenzen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Mac-Programme</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Word+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Word für Mac</span></a></li>
-              <li><a href="{{ _root }}search?q=Excel+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Excel für Mac</span></a></li>
-              <li><a href="{{ _root }}search?q=PowerPoint+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">PowerPoint für Mac</span></a></li>
-              <li><a href="{{ _root }}search?q=Outlook+Mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Outlook für Mac</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'microsoft-365-abonnement' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Microsoft+365+Business" class="mega-menu__link mega-menu__link--parent">Business</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Microsoft+365+Business+Standard" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Business Standard</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+365+Business+Premium" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Business Premium</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+365+Apps+Business" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Apps for Business</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Microsoft+365+Family" class="mega-menu__link mega-menu__link--parent">Privat</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Microsoft+365+Family" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Family</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+365+Personal" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Personal</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+365+Single" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365 Single</span></a></li>
-              <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Microsoft 365 Abos</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'windows' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+11" class="mega-menu__link mega-menu__link--parent">Windows 11</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+11+Pro" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 11 Pro</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+11+Home" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 11 Home</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+11+Enterprise" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 11 Enterprise</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+11+Pro+Workstations" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 11 Pro for Workstations</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+11+Pro+DVD" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 11 Pro DVD/OEM</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+10" class="mega-menu__link mega-menu__link--parent">Windows 10</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+10+Pro" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 10 Pro</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+10+Home+OEM" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 10 Home OEM</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+10+Enterprise" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 10 Enterprise</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+10+Education" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 10 Education</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+8" class="mega-menu__link mega-menu__link--parent">Windows 8</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+8.1+Pro" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 8.1 Pro</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+8+Pro" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 8 Pro</span></a></li>
-              <li><a href="{{ _root }}collections/windows" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Windows-Versionen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+7" class="mega-menu__link mega-menu__link--parent">Windows 7 / XP</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+7+Ultimate+OEM" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 7 Ultimate OEM</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+7+Home+Premium+OEM" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows 7 Home Premium OEM</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+XP" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows XP</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'windows-server' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+Server+2025" class="mega-menu__link mega-menu__link--parent">Server 2025</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+Server+2025+Standard" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2025 Standard</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+Server+2025+Datacenter" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2025 Datacenter</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+Server+2025+Essentials" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2025 Essentials</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+Server+2022" class="mega-menu__link mega-menu__link--parent">Server 2022</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+Server+2022+Standard" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2022 Standard</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+Server+2022+Datacenter" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2022 Datacenter</span></a></li>
-              <li><a href="{{ _root }}collections/windows-server" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Server-Lizenzen</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Windows+Server+2019" class="mega-menu__link mega-menu__link--parent">Server 2019</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Windows+Server+2019+Standard" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2019 Standard</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+Server+2019+Datacenter" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2019 Datacenter</span></a></li>
-              <li><a href="{{ _root }}search?q=Windows+Server+2019+Essentials" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Server 2019 Essentials</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'microsoft-tools' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Microsoft+Project" class="mega-menu__link mega-menu__link--parent">Project</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Microsoft+Project+2024" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Project 2024</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Project+2021" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Project 2021</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Project+2019" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Project 2019</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Microsoft+Visio" class="mega-menu__link mega-menu__link--parent">Visio</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Microsoft+Visio+2024" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Visio 2024</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Visio+2021" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Visio 2021</span></a></li>
-              <li><a href="{{ _root }}search?q=Microsoft+Visio+2019" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Visio 2019</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}search?q=Visual+Studio" class="mega-menu__link mega-menu__link--parent">Visual Studio</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=Visual+Studio+2022+Professional" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Visual Studio 2022 Professional</span></a></li>
-              <li><a href="{{ _root }}search?q=Visual+Studio+2022+Enterprise" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Visual Studio 2022 Enterprise</span></a></li>
-              <li><a href="{{ _root }}collections/microsoft-tools" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Microsoft Tools</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">SQL &amp; Exchange</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}search?q=SQL+Server" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">SQL Server</span></a></li>
-              <li><a href="{{ _root }}search?q=Exchange+Server" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Exchange Server</span></a></li>
-            </ul>
-          </div>
-        </li>
-
-      {% when 'sale' %}
-        <li class="mega-menu__column mega-menu__column--span-1">
+  {% if is_software_unified %}
+    {% render 'mega-menu-software-unified', _root: _root %}
+  {% elsif is_sale_bespoke %}
+    <li class="mega-menu__column mega-menu__column--span-1">
           <div class="mega-menu__item-wrapper">
             <a href="{{ _root }}collections/sale" class="mega-menu__link mega-menu__link--parent">SALE</a>
             <ul class="list-unstyled mega-menu__submenu-list">
@@ -347,8 +137,6 @@
             </ul>
           </div>
         </li>
-
-    {% endcase %}
   {% else %}
     {% for link in parent_link.links %}
       {% liquid

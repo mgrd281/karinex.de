@@ -1,0 +1,92 @@
+{%- doc -%}
+  Renders the unified Karinex software mega-menu. Six fixed columns: Windows 11,
+  Windows 10, Windows 8/8.1, Windows 7/XP, Microsoft Office, Office für Mac.
+
+  Used for any top-level menu item whose handle/title contains windows / office /
+  microsoft / mac / 365, so that the same wide panel appears regardless of which
+  software-related top-level item the visitor hovers.
+
+  @param {string} _root - Theme root URL prefix, e.g. '/' or '/de/'.
+  @param {string} [mode] - 'desktop' (default) | 'mobile'.
+{%- enddoc -%}
+
+{%- liquid
+  assign mode = mode | default: 'desktop'
+
+  if _root == blank
+    assign _root = routes.root_url | default: '/'
+  endif
+  unless _root == '/'
+    assign _root_check = _root | slice: -1, 1
+    unless _root_check == '/'
+      assign _root = _root | append: '/'
+    endunless
+  endunless
+
+  assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac' | split: '|'
+  assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac' | split: '|'
+
+  assign sub_w11 = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
+  assign sub_w10 = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
+  assign sub_w8 = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
+  assign sub_w7 = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
+  assign sub_mso = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
+  assign sub_mac = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
+
+  assign all_subs = sub_w11 | append: '@@' | append: sub_w10 | append: '@@' | append: sub_w8 | append: '@@' | append: sub_w7 | append: '@@' | append: sub_mso | append: '@@' | append: sub_mac
+  assign cols_subs = all_subs | split: '@@'
+-%}
+
+{%- if mode == 'mobile' -%}
+  <ul class="menu-drawer__menu menu-drawer__menu--childlist software-unified-mobile" role="list" tabindex="-1" style="padding: 0;">
+    {%- for col_title in col_titles -%}
+      {%- assign col_href = col_hrefs[forloop.index0] -%}
+      {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
+      <li class="menu-drawer__list-item software-unified-mobile__item">
+        <accordion-custom>
+          <details>
+            <summary class="menu-drawer__menu-item menu-drawer__menu-item--parent focus-inset">
+              <span class="menu-drawer__menu-item-text wrap-text">{{ col_title }}</span>
+              <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+            </summary>
+            <ul class="menu-drawer__menu menu-drawer__menu--grandchildlist details-content" role="list" tabindex="-1">
+              <li class="menu-drawer__list-item">
+                <a href="{{ _root }}{{ col_href }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset" style="font-weight:600;">
+                  <span class="menu-drawer__menu-item-text wrap-text">{{ col_title }} ansehen</span>
+                </a>
+              </li>
+              {%- for sub in subs -%}
+                {%- assign parts = sub | split: '~' -%}
+                <li class="menu-drawer__list-item">
+                  <a href="{{ _root }}{{ parts[1] }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset">
+                    <span class="menu-drawer__menu-item-text wrap-text">{{ parts[0] }}</span>
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </details>
+        </accordion-custom>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- else -%}
+  {%- for col_title in col_titles -%}
+    {%- assign col_href = col_hrefs[forloop.index0] -%}
+    {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
+    <li class="mega-menu__column mega-menu__column--span-1">
+      <div class="mega-menu__item-wrapper">
+        <a href="{{ _root }}{{ col_href }}" class="mega-menu__link mega-menu__link--parent">{{ col_title }}</a>
+        <ul class="list-unstyled mega-menu__submenu-list">
+          {%- for sub in subs -%}
+            {%- assign parts = sub | split: '~' -%}
+            <li>
+              <a href="{{ _root }}{{ parts[1] }}" class="mega-menu__link">
+                <span class="mega-menu__link-title wrap-text">{{ parts[0] }}</span>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </li>
+  {%- endfor -%}
+{%- endif -%}

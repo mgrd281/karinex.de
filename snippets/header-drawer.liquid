@@ -747,6 +747,17 @@
               {%- comment -%} Determine Icon based on Title {%- endcomment -%}
               {% assign icon_class = "fa-solid fa-list" %}
               {% assign title_down = link.title | downcase %}
+              {% assign handle_down = link.handle | downcase %}
+              {% assign title_norm = title_down | replace: 'ü', 'u' | replace: 'ö', 'o' | replace: 'ä', 'a' | replace: 'ß', 'ss' %}
+
+              {%- comment -%} Match same software pattern as desktop mega-menu (windows, office, microsoft, mac, 365). {%- endcomment -%}
+              {% assign is_software_unified = false %}
+              {% if handle_down contains 'windows' or handle_down contains 'office' or handle_down contains 'microsoft' or handle_down contains '365' %}
+                {% assign is_software_unified = true %}
+              {% elsif title_norm contains 'windows' or title_norm contains 'office' or title_norm contains 'microsoft' or title_norm contains '365' %}
+                {% assign is_software_unified = true %}
+              {% endif %}
+
               {% if title_down contains 'damen' or title_down contains 'woman' %}{% assign icon_class = "fa-solid fa-person-dress" %}
               {% elsif title_down contains 'herren' or title_down contains 'men' %}{% assign icon_class = "fa-solid fa-user-tie" %}
               {% elsif title_down contains 'kinder' or title_down contains 'kid' %}{% assign icon_class = "fa-solid fa-child" %}
@@ -754,7 +765,7 @@
               {% elsif title_down contains 'wohnen' or title_down contains 'home' %}{% assign icon_class = "fa-solid fa-couch" %}
               {% elsif title_down contains 'sport' %}{% assign icon_class = "fa-solid fa-person-running" %}
               {% elsif title_down contains 'beauty' %}{% assign icon_class = "fa-solid fa-wand-magic-sparkles" %}
-              {% elsif title_down contains 'software' %}{% assign icon_class = "fa-brands fa-windows" %}
+              {% elsif is_software_unified or title_down contains 'software' %}{% assign icon_class = "fa-brands fa-windows" %}
               {% elsif title_down contains 'sale' or title_down contains 'aktion' %}{% assign icon_class = "fa-solid fa-percent" %}
               {% endif %}
 
@@ -762,7 +773,7 @@
                 style="--menu-drawer-animation-index: {{ animation_index }};"
                 class="menu-drawer__list-item"
               >
-                {% if link.links != blank %}
+                {% if is_software_unified or link.links != blank %}
                     <details
                       id="Details-menu-drawer-{{ link.handle }}"
                       style="width: 100%;"
@@ -793,16 +804,20 @@
                                     <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">{{- 'icon-close.svg' | inline_asset_content -}}</span>
                                   </button>
                                 </div>
-                                <ul class="menu-drawer__menu menu-drawer__menu--childlist" role="list" tabindex="-1" style="padding: 0;">
-                                    {%- for childlink in link.links -%}
-                                      <li class="menu-drawer__list-item">
-                                        <a href="{{ childlink.url }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset">
-                                          <span class="menu-drawer__menu-item-text wrap-text" style="font-weight: 500;">{{ childlink.title | escape }}</span>
-                                          {% if childlink.links != blank %}<svg class="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>{% endif %}
-                                        </a>
-                                      </li>
-                                    {%- endfor -%}
-                                </ul>
+                                {% if is_software_unified %}
+                                  {% render 'mega-menu-software-unified', _root: routes.root_url, mode: 'mobile' %}
+                                {% else %}
+                                  <ul class="menu-drawer__menu menu-drawer__menu--childlist" role="list" tabindex="-1" style="padding: 0;">
+                                      {%- for childlink in link.links -%}
+                                        <li class="menu-drawer__list-item">
+                                          <a href="{{ childlink.url }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset">
+                                            <span class="menu-drawer__menu-item-text wrap-text" style="font-weight: 500;">{{ childlink.title | escape }}</span>
+                                            {% if childlink.links != blank %}<svg class="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>{% endif %}
+                                          </a>
+                                        </li>
+                                      {%- endfor -%}
+                                  </ul>
+                                {% endif %}
                            </div>
                       </div>
                     </details>

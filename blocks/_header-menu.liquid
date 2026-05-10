@@ -781,6 +781,15 @@
     color: #E60000 !important;
     opacity: 1 !important;
   }
+
+  /* Bound the unified mega-menu panel so it never overflows the page width nor causes horizontal scroll */
+  .menu-list__submenu-inner {
+    max-width: var(--page-width, 1440px);
+    margin-inline: auto;
+  }
+  .mega-menu__list {
+    overflow: hidden;
+  }
 {% endstylesheet %}
 
 {% schema %}
