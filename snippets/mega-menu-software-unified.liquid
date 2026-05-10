@@ -39,6 +39,27 @@
 
 {%- if mode == 'mobile' -%}
   <ul class="menu-drawer__menu menu-drawer__menu--childlist software-unified-mobile" role="list" tabindex="-1" style="padding: 0;">
+    {%- comment -%} Menüpunkte sidebar at the top of every mobile accordion. {%- endcomment -%}
+    <li class="menu-drawer__list-item software-unified-mobile__item">
+      <accordion-custom open-by-default-on-mobile>
+        <details open>
+          <summary class="menu-drawer__menu-item menu-drawer__menu-item--parent focus-inset">
+            <span class="menu-drawer__menu-item-text wrap-text" style="font-weight:700;">Menüpunkte</span>
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </summary>
+          <ul class="menu-drawer__menu menu-drawer__menu--grandchildlist details-content" role="list" tabindex="-1">
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/microsoft-office" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office für Windows</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/microsoft-office-fur-mac" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office für Mac</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/microsoft-365-abonnement" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Microsoft 365</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/windows" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/windows-server" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows Server</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/microsoft-tools" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Microsoft Tools</span></a></li>
+            <li class="menu-drawer__list-item"><a href="{{ _root }}collections/sale" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">SALE &amp; Bestseller</span></a></li>
+          </ul>
+        </details>
+      </accordion-custom>
+    </li>
+
     {%- for col_title in col_titles -%}
       {%- assign col_href = col_hrefs[forloop.index0] -%}
       {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
@@ -70,10 +91,57 @@
     {%- endfor -%}
   </ul>
 {%- else -%}
+  {%- comment -%}
+    "Menüpunkte" sidebar — fixed list of all 7 top-level Hauptmenü items, shown
+    as the first column of every dropdown so visitors always see the full
+    navigation structure regardless of which item they hovered.
+    Force a 7-column grid (sidebar + 6 software columns).
+  {%- endcomment -%}
+  <style>
+    .mega-menu__grid:has(.mega-menu-software-unified) {
+      --menu-columns-desktop: 7 !important;
+      --menu-columns-tablet: 4 !important;
+    }
+    .mega-menu__list:has(.mega-menu-software-unified) {
+      grid-column: span 7 !important;
+    }
+    .mega-menu-software-unified__sidebar {
+      border-right: 1px solid #eeeeee;
+      padding-right: 1.25rem;
+    }
+    @media (max-width: 1199px) {
+      .mega-menu__grid:has(.mega-menu-software-unified) {
+        --menu-columns-desktop: 4 !important;
+      }
+      .mega-menu__list:has(.mega-menu-software-unified) {
+        grid-column: span 4 !important;
+      }
+      .mega-menu-software-unified__sidebar {
+        border-right: 0;
+        padding-right: 0;
+      }
+    }
+  </style>
+
+  <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified mega-menu-software-unified__sidebar">
+    <div class="mega-menu__item-wrapper">
+      <span class="mega-menu__link mega-menu__link--parent">Menüpunkte</span>
+      <ul class="list-unstyled mega-menu__submenu-list">
+        <li><a href="{{ _root }}collections/microsoft-office" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office für Windows</span></a></li>
+        <li><a href="{{ _root }}collections/microsoft-office-fur-mac" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Office für Mac</span></a></li>
+        <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft 365</span></a></li>
+        <li><a href="{{ _root }}collections/windows" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows</span></a></li>
+        <li><a href="{{ _root }}collections/windows-server" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Windows Server</span></a></li>
+        <li><a href="{{ _root }}collections/microsoft-tools" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Microsoft Tools</span></a></li>
+        <li><a href="{{ _root }}collections/sale" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">SALE &amp; Bestseller</span></a></li>
+      </ul>
+    </div>
+  </li>
+
   {%- for col_title in col_titles -%}
     {%- assign col_href = col_hrefs[forloop.index0] -%}
     {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
-    <li class="mega-menu__column mega-menu__column--span-1">
+    <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified">
       <div class="mega-menu__item-wrapper">
         <a href="{{ _root }}{{ col_href }}" class="mega-menu__link mega-menu__link--parent">{{ col_title }}</a>
         <ul class="list-unstyled mega-menu__submenu-list">
