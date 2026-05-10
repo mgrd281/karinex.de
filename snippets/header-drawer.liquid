@@ -752,9 +752,9 @@
 
               {%- comment -%} Match same software pattern as desktop mega-menu (windows, office, microsoft, mac, 365). {%- endcomment -%}
               {% assign is_software_unified = false %}
-              {% if handle_down contains 'windows' or handle_down contains 'office' or handle_down contains 'microsoft' or handle_down contains '365' %}
+              {% if handle_down contains 'windows' or handle_down contains 'office' or handle_down contains 'microsoft' or handle_down contains '365' or handle_down contains 'sale' or handle_down contains 'bestseller' %}
                 {% assign is_software_unified = true %}
-              {% elsif title_norm contains 'windows' or title_norm contains 'office' or title_norm contains 'microsoft' or title_norm contains '365' %}
+              {% elsif title_norm contains 'windows' or title_norm contains 'office' or title_norm contains 'microsoft' or title_norm contains '365' or title_norm contains 'sale' or title_norm contains 'bestseller' %}
                 {% assign is_software_unified = true %}
               {% endif %}
 

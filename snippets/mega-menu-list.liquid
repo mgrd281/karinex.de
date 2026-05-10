@@ -88,55 +88,19 @@
 
     comment
       Match by handle OR title (umlaut-stripped, lowercased). Any top-level item
-      whose name contains a software keyword shows the same unified 6-column
-      software mega-menu — robust to umlaut/spelling differences in handles.
+      whose name contains a known keyword opens the same unified 7-column panel
+      that mirrors the Hauptmenü structure — robust to umlaut/spelling drift.
     endcomment
     assign is_software_unified = false
-    if parent_handle contains 'windows' or parent_handle contains 'office' or parent_handle contains 'microsoft' or parent_handle contains '365'
+    if parent_handle contains 'windows' or parent_handle contains 'office' or parent_handle contains 'microsoft' or parent_handle contains '365' or parent_handle contains 'sale' or parent_handle contains 'bestseller'
       assign is_software_unified = true
-    elsif parent_title contains 'windows' or parent_title contains 'office' or parent_title contains 'microsoft' or parent_title contains '365'
+    elsif parent_title contains 'windows' or parent_title contains 'office' or parent_title contains 'microsoft' or parent_title contains '365' or parent_title contains 'sale' or parent_title contains 'bestseller'
       assign is_software_unified = true
-    endif
-
-    assign is_sale_bespoke = false
-    if parent_handle == 'sale' or parent_title == 'sale'
-      assign is_sale_bespoke = true
     endif
   %}
 
   {% if is_software_unified %}
     {% render 'mega-menu-software-unified', _root: _root %}
-  {% elsif is_sale_bespoke %}
-    <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}collections/sale" class="mega-menu__link mega-menu__link--parent">SALE</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/sale" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Deals</span></a></li>
-              <li><a href="{{ _root }}collections/sale" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Bis 90 % Rabatt</span></a></li>
-              <li><a href="{{ _root }}collections/sale" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Letzte Stück</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <a href="{{ _root }}collections/bestseller" class="mega-menu__link mega-menu__link--parent">Bestseller</a>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}collections/bestseller" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Top 10</span></a></li>
-              <li><a href="{{ _root }}collections/bestseller" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Wochenfavoriten</span></a></li>
-              <li><a href="{{ _root }}collections/all" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Alle Produkte</span></a></li>
-            </ul>
-          </div>
-        </li>
-        <li class="mega-menu__column mega-menu__column--span-1">
-          <div class="mega-menu__item-wrapper">
-            <span class="mega-menu__link mega-menu__link--parent">Empfehlungen</span>
-            <ul class="list-unstyled mega-menu__submenu-list">
-              <li><a href="{{ _root }}pages/kundenberatung" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Kostenlose Beratung</span></a></li>
-              <li><a href="{{ _root }}pages/kontakt" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">Kontakt &amp; Support</span></a></li>
-              <li><a href="{{ _root }}pages/faq" class="mega-menu__link"><span class="mega-menu__link-title wrap-text">FAQ</span></a></li>
-            </ul>
-          </div>
-        </li>
   {% else %}
     {% for link in parent_link.links %}
       {% liquid
