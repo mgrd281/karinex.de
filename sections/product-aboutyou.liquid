@@ -87,6 +87,27 @@
 {%- endif -%}
 
 <link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
+
+{%- comment -%} Per-template hide rules for product-card icons. {%- endcomment -%}
+{%- if section.settings.show_card_wishlist_heart == false or section.settings.show_card_quick_add == false -%}
+  <style>
+    {%- if section.settings.show_card_wishlist_heart == false -%}
+    wishlist-heart,
+    .wishlist-heart,
+    .wishlist-heart__button {
+      display: none !important;
+    }
+    {%- endif -%}
+    {%- if section.settings.show_card_quick_add == false -%}
+    .quick-add,
+    .quick-add__button,
+    .quick-add-component,
+    [data-quick-add-button] {
+      display: none !important;
+    }
+    {%- endif -%}
+  </style>
+{%- endif -%}
 <style>
   /* Global Sale Bar — black variant on aboutyou template only */
   .announcement-bar-wrapper { background-color: #000; color: #fff; }
@@ -2370,6 +2391,24 @@
       "id": "show_payment_buttons",
       "label": "PayPal / SEPA / Apple Pay … anzeigen",
       "info": "Zeigt die dynamischen Shopify-Checkout-Buttons unter dem Warenkorb-Button an. Die angezeigten Methoden hängen von den unter „Einstellungen → Zahlungen“ aktivierten Anbietern ab.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Produktkarten-Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_card_wishlist_heart",
+      "label": "Herz-Icon (Wunschliste) auf Produktkarten anzeigen",
+      "info": "Steuert die Sichtbarkeit des Herz-Icons auf allen Produktkarten dieses Templates (Empfohlene Produkte, Zuletzt angesehen, Similar Products …).",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_card_quick_add",
+      "label": "Warenkorb-Icon (Quick Add) auf Produktkarten anzeigen",
+      "info": "Steuert die Sichtbarkeit des Warenkorb-Schnellzugriffs auf allen Produktkarten dieses Templates.",
       "default": true
     },
     {
