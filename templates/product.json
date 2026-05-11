@@ -14,10 +14,15 @@
       "settings": {
         "show_shipping_info": false,
         "gallery_bg_color": "#f7f7f7",
+        "enable_hover_zoom": false,
         "enable_badge": true,
         "enable_category_rules": true,
         "rating_star_color": "#1d4739"
       }
+    },
+    "product_faq": {
+      "type": "product-faq",
+      "settings": {}
     },
     "product_recommendations_xmXAhw": {
       "type": "product-recommendations",
@@ -391,10 +396,6 @@
       "type": "product-recently-viewed",
       "settings": {}
     },
-    "product_faq": {
-      "type": "product-faq",
-      "settings": {}
-    },
     "product_reviews": {
       "type": "product-reviews",
       "settings": {}
@@ -403,7 +404,8 @@
       "type": "product-feedback",
       "settings": {
         "heading": "Kurze Frage zu unserer Seite",
-        "question": "Haben Sie alle Informationen gefunden, die Sie benötigen?"
+        "question": "Haben Sie alle Informationen gefunden, die Sie benötigen?",
+        "service_url": ""
       }
     }
   },
