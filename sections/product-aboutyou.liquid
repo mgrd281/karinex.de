@@ -779,7 +779,7 @@
           Wrapped in a dedicated <product-form> so the variant id stays in
           sync with the user's selection.
         {%- endcomment -%}
-        {%- if section.settings.show_payment_buttons and current_variant.available -%}
+        {%- if section.settings.show_payment_buttons != false and current_variant.available -%}
           <div class="ay-payment-buttons" data-shopify-payment-buttons>
             {%- form 'product', product, id: 'ay-payment-form', class: 'ay-payment-buttons__form' -%}
               <input type="hidden" name="id" value="{{ current_variant.id }}" id="ay-payment-variant-id">

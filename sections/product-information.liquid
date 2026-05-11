@@ -3506,7 +3506,7 @@ nav[aria-label="Breadcrumb"],
       The merchant can hide the whole block from the theme customizer
       via section.settings.show_payment_buttons.
     {%- endcomment -%}
-    {%- if section.settings.show_payment_buttons and product.selected_or_first_available_variant.available -%}
+    {%- if section.settings.show_payment_buttons != false and product.selected_or_first_available_variant.available -%}
       <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px;">
         {%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id">
