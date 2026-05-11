@@ -103,47 +103,77 @@
     .mega-menu__grid:has(.mega-menu-software-unified) {
       --menu-columns-desktop: 7 !important;
       --menu-columns-tablet: 4 !important;
+      column-gap: 1.2rem !important;
     }
     .mega-menu__list:has(.mega-menu-software-unified) {
       grid-column: span 7 !important;
+      column-gap: 1.2rem !important;
     }
 
     /* === Karinex unified mega-menu — visual polish === */
     .mega-menu-software-unified {
       padding-block: 0.25rem;
+      min-width: 0;
     }
     .mega-menu-software-unified .mega-menu__item-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.55rem;
+      min-width: 0;
     }
+
+    /*
+      Kill German auto-hyphenation inside the mega-menu so "Windows",
+      "Enterprise", "Education", "Premium" no longer split as
+      Win-dows / Enterpri-se / Educati-on / Pre-mium. Long compound
+      labels wrap on word boundaries only.
+    */
+    .mega-menu-software-unified,
+    .mega-menu-software-unified *,
+    .mega-menu-software-unified .wrap-text {
+      hyphens: manual !important;
+      -webkit-hyphens: manual !important;
+      word-break: normal !important;
+      overflow-wrap: break-word;
+    }
+
     /* Column titles: tighter so 2-word headings stay on one line */
     .mega-menu-software-unified .mega-menu__link--parent {
       font-size: 12px !important;
       letter-spacing: 0.06em !important;
       font-weight: 700 !important;
       color: #1B3A2E !important;
-      margin-bottom: 0.35rem !important;
+      margin-bottom: 0.4rem !important;
       white-space: nowrap;
-      padding-bottom: 0.4rem;
+      padding-bottom: 0.45rem;
       border-bottom: 1px solid #ececec;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    /* Sub-links: a touch smaller, fixed weight, no wrap for the common ones */
+
+    /* Sub-link list */
     .mega-menu-software-unified .mega-menu__submenu-list {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.15rem;
       margin: 0;
       padding: 0;
+      min-width: 0;
+    }
+    .mega-menu-software-unified .mega-menu__submenu-list li {
+      min-width: 0;
     }
     .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link {
       padding: 0.28rem 0;
       line-height: 1.35;
+      width: 100%;
     }
     .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link-title.wrap-text {
-      font-size: 13px;
+      font-size: 12.5px;
       color: #4a4a4a;
       letter-spacing: 0;
+      line-height: 1.35;
+      display: block;
     }
     .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link:hover .mega-menu__link-title.wrap-text {
       color: #1B3A2E;
@@ -152,7 +182,7 @@
 
     .mega-menu-software-unified__sidebar {
       border-right: 1px solid #eeeeee;
-      padding-right: 1.5rem;
+      padding-right: 1.25rem;
     }
     .mega-menu-software-unified__sidebar .mega-menu__link--parent {
       border-bottom-color: #1B3A2E !important;
