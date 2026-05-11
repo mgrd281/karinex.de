@@ -283,7 +283,447 @@
   .kx-cookie[data-expanded="true"] .kx-cookie__more-text {
     display: block;
   }
+
+  /* =========================================================
+     ADVANCED SETTINGS MODAL (Erweiterte Einstellungen)
+     ========================================================= */
+  .kx-cset {
+    --kx-c-brand: #1B3A2E;
+    --kx-c-brand-hover: #11261E;
+    --kx-c-accent: #06822F;
+    --kx-c-ink: #1d1d1f;
+    --kx-c-ink-muted: #6a6a6f;
+    --kx-c-line: #e5e5e5;
+    --kx-c-grey: #f5f5f6;
+    --kx-c-tab-active: #f9f9fa;
+
+    position: fixed;
+    inset: 0;
+    z-index: 2147483641;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 25, 20, 0.45);
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+  .kx-cset[data-open="true"] {
+    display: flex;
+    opacity: 1;
+  }
+
+  .kx-cset__dialog {
+    width: 100%;
+    max-width: 940px;
+    max-height: 90vh;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 80px rgba(15, 25, 20, 0.28);
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+    overflow: hidden;
+    transform: translateY(8px);
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .kx-cset[data-open="true"] .kx-cset__dialog { transform: translateY(0); }
+
+  @media (max-width: 720px) {
+    .kx-cset__dialog {
+      grid-template-columns: 1fr;
+      max-height: 92vh;
+    }
+  }
+
+  .kx-cset__sidebar {
+    background: #fafafa;
+    border-right: 1px solid var(--kx-c-line);
+    padding: 1.25rem 0;
+    overflow-y: auto;
+  }
+  @media (max-width: 720px) {
+    .kx-cset__sidebar {
+      border-right: 0;
+      border-bottom: 1px solid var(--kx-c-line);
+      padding: 0.5rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: row;
+      white-space: nowrap;
+    }
+  }
+  .kx-cset__sidebar-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    padding: 0.75rem 1.25rem;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--kx-c-ink);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  }
+  .kx-cset__sidebar-btn:hover { background: rgba(27, 58, 46, 0.05); }
+  .kx-cset__sidebar-btn[data-active="true"] {
+    background: var(--kx-c-tab-active);
+    border-left-color: var(--kx-c-brand);
+    font-weight: 700;
+    color: var(--kx-c-brand);
+  }
+  @media (max-width: 720px) {
+    .kx-cset__sidebar-btn {
+      flex: 0 0 auto;
+      width: auto;
+      border-left: 0;
+      border-bottom: 3px solid transparent;
+      padding: 0.6rem 0.85rem;
+    }
+    .kx-cset__sidebar-btn[data-active="true"] {
+      border-bottom-color: var(--kx-c-brand);
+      border-left: 0;
+    }
+  }
+
+  .kx-cset__main {
+    padding: 1.5rem 1.75rem;
+    overflow-y: auto;
+  }
+  .kx-cset__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .kx-cset__heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--kx-c-ink);
+    margin: 0;
+  }
+  .kx-cset__close {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--kx-c-ink-muted);
+    font-size: 22px;
+    line-height: 1;
+    padding: 6px 8px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 160ms ease;
+  }
+  .kx-cset__close:hover { background: var(--kx-c-grey); }
+
+  .kx-cset__intro {
+    font-size: 13px;
+    color: var(--kx-c-ink-muted);
+    line-height: 1.55;
+    margin: 0 0 1rem;
+  }
+
+  .kx-cset__panel { display: none; }
+  .kx-cset__panel[data-active="true"] { display: block; }
+
+  .kx-cset__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #f0f0f1;
+  }
+  .kx-cset__row:last-child { border-bottom: 0; }
+  .kx-cset__row-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .kx-cset__row-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--kx-c-ink);
+  }
+  .kx-cset__row-desc {
+    font-size: 12px;
+    color: var(--kx-c-ink-muted);
+    line-height: 1.45;
+  }
+  .kx-cset__row--master { padding: 1rem 0 1.1rem; border-bottom: 1px solid var(--kx-c-line); margin-bottom: 0.25rem; }
+  .kx-cset__row--master .kx-cset__row-title { font-size: 15px; font-weight: 700; }
+
+  /* iOS-style switch */
+  .kx-cset__switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #d1d1d6;
+    cursor: pointer;
+    transition: background-color 180ms ease;
+    border: 0;
+    padding: 0;
+  }
+  .kx-cset__switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .kx-cset__switch[aria-checked="true"] { background: var(--kx-c-accent); }
+  .kx-cset__switch[aria-checked="true"]::after { transform: translateX(18px); }
+  .kx-cset__switch[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+  .kx-cset__footer {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.75rem;
+    border-top: 1px solid var(--kx-c-line);
+    background: #fafafa;
+  }
+  .kx-cset__btn {
+    appearance: none;
+    border: 0;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+  .kx-cset__btn--primary {
+    background: var(--kx-c-brand);
+    color: #fff;
+  }
+  .kx-cset__btn--primary:hover { background: var(--kx-c-brand-hover); }
+  .kx-cset__btn--secondary {
+    background: var(--kx-c-grey);
+    color: var(--kx-c-ink);
+  }
+  .kx-cset__btn--secondary:hover { background: #ececed; }
 </style>
+
+<!-- Erweiterte Einstellungen — Modal -->
+<div class="kx-cset" id="kxCookieSettingsModal" role="dialog" aria-modal="true" aria-labelledby="kxCsetTitle">
+  <div class="kx-cset__dialog">
+    <nav class="kx-cset__sidebar" aria-label="Cookie-Kategorien">
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="functional" data-active="true">Funktion / Technisch erforderlich</button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="marketing">Marketing</button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="analytics">Analyse</button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="other">Andere</button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="controller">Datenverantwortlicher</button>
+    </nav>
+    <div class="kx-cset__main">
+      <div class="kx-cset__header">
+        <h3 class="kx-cset__heading" id="kxCsetTitle">Erweiterte Einstellungen</h3>
+        <button type="button" class="kx-cset__close" data-cset-close aria-label="Schließen">×</button>
+      </div>
+      <p class="kx-cset__intro">Auf dieser Seite können Sie Informationen zu den Zwecken und Anbietern erfahren, die personenbezogene Daten auf unserer Webseite verarbeiten.</p>
+
+      <!-- FUNCTIONAL -->
+      <div class="kx-cset__panel" data-cset-panel="functional" data-active="true">
+        <div class="kx-cset__row kx-cset__row--master">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Funktion / Technisch erforderlich</span>
+            <span class="kx-cset__row-desc">Diese Cookies sind für den Betrieb der Website unbedingt erforderlich und können nicht deaktiviert werden.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="true" disabled aria-label="Immer aktiv"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Shopify Checkout &amp; Warenkorb</span>
+            <span class="kx-cset__row-desc">Sitzungs- und Warenkorb-Cookies für den Bestellprozess.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="true" disabled></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">CSRF-Schutz</span>
+            <span class="kx-cset__row-desc">Sicherheits-Token gegen Cross-Site-Anfragen.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="true" disabled></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Sprache &amp; Währung</span>
+            <span class="kx-cset__row-desc">Speichert Ihre regionale Einstellung (DE / EUR).</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="true" disabled></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Cookie-Zustimmung</span>
+            <span class="kx-cset__row-desc">Speichert Ihre Auswahl, damit diese Abfrage nicht erneut erscheint.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="true" disabled></button>
+        </div>
+      </div>
+
+      <!-- MARKETING -->
+      <div class="kx-cset__panel" data-cset-panel="marketing">
+        <div class="kx-cset__row kx-cset__row--master">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Marketing</span>
+            <span class="kx-cset__row-desc">Cookies und Pixel für personalisierte Werbung und Erfolgsmessung.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-master="marketing"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Meta / Facebook Pixel</span>
+            <span class="kx-cset__row-desc">Zielgruppen für Facebook- und Instagram-Anzeigen.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="marketing.meta_pixel"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Google Ads</span>
+            <span class="kx-cset__row-desc">Conversion-Tracking und Remarketing für Google-Anzeigen.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="marketing.google_ads"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">TikTok Pixel</span>
+            <span class="kx-cset__row-desc">Reichweite und Werbe-Performance auf TikTok.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="marketing.tiktok_pixel"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Microsoft Advertising</span>
+            <span class="kx-cset__row-desc">Bing-Anzeigen und LinkedIn-Insight-Tag.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="marketing.bing_ads"></button>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="kx-cset__panel" data-cset-panel="analytics">
+        <div class="kx-cset__row kx-cset__row--master">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Analyse</span>
+            <span class="kx-cset__row-desc">Helfen uns, die Website-Nutzung zu verstehen und zu verbessern.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-master="analytics"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Google Analytics 4</span>
+            <span class="kx-cset__row-desc">Anonyme Nutzungsstatistiken zur Optimierung des Shops.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="analytics.google_analytics"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Google Tag Manager</span>
+            <span class="kx-cset__row-desc">Container für die Verwaltung weiterer Analyse-Tags.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="analytics.gtm"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Hotjar</span>
+            <span class="kx-cset__row-desc">Heatmaps und Session-Recordings (anonymisiert).</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="analytics.hotjar"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Microsoft Clarity</span>
+            <span class="kx-cset__row-desc">UX-Analyse mit anonymisierten Heatmaps.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="analytics.clarity"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Shopify Analytics</span>
+            <span class="kx-cset__row-desc">Shopify-eigene Performance- und Conversion-Daten.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="analytics.shopify"></button>
+        </div>
+      </div>
+
+      <!-- OTHER -->
+      <div class="kx-cset__panel" data-cset-panel="other">
+        <div class="kx-cset__row kx-cset__row--master">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Andere Services</span>
+            <span class="kx-cset__row-desc">Eingebettete Inhalte, Bewertungsplattformen und Komfort-Dienste von Drittanbietern.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-master="other"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">YouTube-Einbettungen</span>
+            <span class="kx-cset__row-desc">Eingebettete YouTube-Videos auf Produktseiten.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="other.youtube"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Trusted Shops</span>
+            <span class="kx-cset__row-desc">Käuferschutz-Siegel und Bewertungssterne.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="other.trusted_shops"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Trustpilot</span>
+            <span class="kx-cset__row-desc">Trustpilot-Bewertungs-Widget.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="other.trustpilot"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Google Maps</span>
+            <span class="kx-cset__row-desc">Karten und Standortdarstellungen.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="other.google_maps"></button>
+        </div>
+        <div class="kx-cset__row">
+          <div class="kx-cset__row-text">
+            <span class="kx-cset__row-title">Live-Chat / Support</span>
+            <span class="kx-cset__row-desc">Echtzeit-Chat mit dem Karinex-Support.</span>
+          </div>
+          <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-toggle="other.live_chat"></button>
+        </div>
+      </div>
+
+      <!-- CONTROLLER -->
+      <div class="kx-cset__panel" data-cset-panel="controller">
+        <p class="kx-cset__intro" style="margin-top: 0.5rem;">
+          <strong>Verantwortliche Stelle:</strong> Karinex<br>
+          E-Mail: <a href="mailto:support@karinex.de" style="color: var(--kx-c-brand);">support@karinex.de</a><br>
+          Webseite: <a href="https://karinex.de" style="color: var(--kx-c-brand);">karinex.de</a>
+        </p>
+        <p class="kx-cset__intro">
+          Weitere Details zur Verarbeitung Ihrer Daten finden Sie in unserer
+          <a href="{{ routes.root_url }}policies/privacy-policy" style="color: var(--kx-c-brand);">Datenschutzerklärung</a>
+          und im <a href="{{ routes.root_url }}pages/impressum" style="color: var(--kx-c-brand);">Impressum</a>.
+        </p>
+        <p class="kx-cset__intro">
+          Sie haben jederzeit das Recht, Ihre Zustimmung zu widerrufen, Auskunft über die gespeicherten Daten zu erhalten oder deren Löschung zu verlangen. Wenden Sie sich dafür bitte an die oben genannte E-Mail-Adresse.
+        </p>
+      </div>
+    </div>
+    <footer class="kx-cset__footer">
+      <button type="button" class="kx-cset__btn kx-cset__btn--secondary" data-cset-close>Schließen</button>
+      <button type="button" class="kx-cset__btn kx-cset__btn--primary" id="kxCsetSave">Speichern</button>
+    </footer>
+  </div>
+</div>
 
 <div class="kx-cookie-backdrop" id="kxCookieBackdrop" aria-hidden="true"></div>
 <aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
@@ -378,9 +818,144 @@
         notifyShopify('rejected');
         hide();
       } else if (action === 'settings') {
-        window.location.href = '{{ routes.root_url }}pages/cookie-einstellungen';
+        openSettings();
       }
     });
+
+    // === Erweiterte Einstellungen modal ==============================
+    var cset = document.getElementById('kxCookieSettingsModal');
+    var SETTINGS_KEY = 'karinex_cookie_settings';
+
+    function readSettings() {
+      try {
+        var raw = localStorage.getItem(SETTINGS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+    function writeSettings(obj) {
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(obj)); } catch (e) {}
+    }
+    function applySettingsToUI() {
+      if (!cset) return;
+      var settings = readSettings();
+      cset.querySelectorAll('[data-cset-toggle]').forEach(function (sw) {
+        var key = sw.getAttribute('data-cset-toggle');
+        var on = !!getValue(settings, key);
+        sw.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+      cset.querySelectorAll('[data-cset-master]').forEach(function (sw) {
+        var group = sw.getAttribute('data-cset-master');
+        var allOn = true;
+        cset.querySelectorAll('[data-cset-toggle^="' + group + '."]').forEach(function (child) {
+          if (child.getAttribute('aria-checked') !== 'true') allOn = false;
+        });
+        sw.setAttribute('aria-checked', allOn ? 'true' : 'false');
+      });
+    }
+    function getValue(obj, dotted) {
+      var parts = dotted.split('.');
+      var cur = obj;
+      for (var i = 0; i < parts.length; i++) { cur = cur ? cur[parts[i]] : undefined; }
+      return cur;
+    }
+    function setValue(obj, dotted, val) {
+      var parts = dotted.split('.');
+      var cur = obj;
+      for (var i = 0; i < parts.length - 1; i++) {
+        cur[parts[i]] = cur[parts[i]] || {};
+        cur = cur[parts[i]];
+      }
+      cur[parts[parts.length - 1]] = val;
+    }
+
+    function openSettings() {
+      if (!cset) return;
+      applySettingsToUI();
+      cset.setAttribute('data-open', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSettings() {
+      if (!cset) return;
+      cset.setAttribute('data-open', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (cset) {
+      cset.addEventListener('click', function (e) {
+        if (e.target === cset) closeSettings();
+        var closeBtn = e.target.closest('[data-cset-close]');
+        if (closeBtn) closeSettings();
+
+        var tabBtn = e.target.closest('[data-cset-tab]');
+        if (tabBtn) {
+          var tab = tabBtn.getAttribute('data-cset-tab');
+          cset.querySelectorAll('[data-cset-tab]').forEach(function (b) {
+            b.setAttribute('data-active', b === tabBtn ? 'true' : 'false');
+          });
+          cset.querySelectorAll('[data-cset-panel]').forEach(function (p) {
+            p.setAttribute('data-active', p.getAttribute('data-cset-panel') === tab ? 'true' : 'false');
+          });
+        }
+
+        var toggle = e.target.closest('[data-cset-toggle]');
+        if (toggle && !toggle.hasAttribute('disabled')) {
+          var on = toggle.getAttribute('aria-checked') !== 'true';
+          toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+          // Re-sync master switches
+          var key = toggle.getAttribute('data-cset-toggle');
+          var group = key.split('.')[0];
+          var master = cset.querySelector('[data-cset-master="' + group + '"]');
+          if (master) {
+            var allOn = true;
+            cset.querySelectorAll('[data-cset-toggle^="' + group + '."]').forEach(function (child) {
+              if (child.getAttribute('aria-checked') !== 'true') allOn = false;
+            });
+            master.setAttribute('aria-checked', allOn ? 'true' : 'false');
+          }
+        }
+
+        var masterBtn = e.target.closest('[data-cset-master]');
+        if (masterBtn && !masterBtn.hasAttribute('disabled') && !e.target.closest('[data-cset-toggle]')) {
+          var grp = masterBtn.getAttribute('data-cset-master');
+          var newState = masterBtn.getAttribute('aria-checked') !== 'true';
+          masterBtn.setAttribute('aria-checked', newState ? 'true' : 'false');
+          cset.querySelectorAll('[data-cset-toggle^="' + grp + '."]').forEach(function (child) {
+            child.setAttribute('aria-checked', newState ? 'true' : 'false');
+          });
+        }
+      });
+
+      var saveBtn = document.getElementById('kxCsetSave');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function () {
+          var settings = {};
+          cset.querySelectorAll('[data-cset-toggle]').forEach(function (sw) {
+            setValue(settings, sw.getAttribute('data-cset-toggle'), sw.getAttribute('aria-checked') === 'true');
+          });
+          writeSettings(settings);
+
+          // Map categories to Shopify Customer Privacy flags
+          var anyMarketing = (settings.marketing && Object.values(settings.marketing).some(Boolean)) || false;
+          var anyAnalytics = (settings.analytics && Object.values(settings.analytics).some(Boolean)) || false;
+          var anyOther = (settings.other && Object.values(settings.other).some(Boolean)) || false;
+
+          save(anyMarketing || anyAnalytics || anyOther ? 'accepted' : 'rejected');
+          try {
+            if (window.Shopify && window.Shopify.customerPrivacy && window.Shopify.customerPrivacy.setTrackingConsent) {
+              window.Shopify.customerPrivacy.setTrackingConsent({
+                analytics: anyAnalytics,
+                marketing: anyMarketing,
+                preferences: anyOther,
+                sale_of_data: anyMarketing
+              }, function () {});
+            }
+          } catch (e) {}
+
+          closeSettings();
+          hide();
+        });
+      }
+    }
 
     var moreBtn = document.getElementById('kxCookieMore');
     if (moreBtn) {
@@ -393,6 +968,11 @@
     }
 
     // Public hook: window.kxCookieBanner.show() to re-open later (e.g. from footer link)
-    window.kxCookieBanner = { show: function () { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} show(); }, hide: hide };
+    window.kxCookieBanner = {
+      show: function () { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} show(); },
+      hide: hide,
+      openSettings: openSettings,
+      closeSettings: closeSettings
+    };
   })();
 </script>
