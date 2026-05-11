@@ -76,7 +76,14 @@ class HeaderMenu extends Component {
     this.#debouncedDeactivate.cancel();
     this.#debouncedActivateHandler.cancel();
 
-    this.#debouncedActivateHandler(event);
+    // If a menu is already open, switch to the new item immediately so
+    // sliding the pointer between top-level items feels seamless. The
+    // hover-intent delay only applies to the first activation.
+    if (this.#state.activeItem) {
+      this.#activateHandler(event);
+    } else {
+      this.#debouncedActivateHandler(event);
+    }
   };
 
   /**
