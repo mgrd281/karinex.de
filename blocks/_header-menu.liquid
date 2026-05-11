@@ -430,7 +430,7 @@
     opacity: var(--submenu-opacity, 1);
     transition: height var(--submenu-animation-speed) var(--ease-out-cubic),
       opacity var(--animation-speed-slow) var(--ease-out-cubic) var(--animation-speed-fast);
-    z-index: 9998;
+    z-index: 10000;
   }
 
   /** mega menu **/
@@ -461,24 +461,26 @@
     width: 100%;
     left: 0;
     top: calc(100% - 1px + var(--border-bottom-width));
-    z-index: 9999;
+    z-index: 10001;
     padding-inline: var(--padding-inline);
     clip-path: rect(0 100% var(--submenu-height) 0); /* stylelint-disable-line */
     transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
   }
 
-  /* Lift the entire header + menu above any page content that uses high z-index */
+  /* Lift the entire header + menu above any page content that uses high z-index
+     (covers both Standard-Produkt and AboutYou Produkt templates, whose page
+     elements use z-index up to 9999) */
   header-menu,
   .header-menu {
     position: relative;
-    z-index: 9999;
+    z-index: 10000;
   }
 
   /* When the mega-menu is open, lift the whole header so the dropdown
      can never be pierced by product-page elements with very high z-index */
   .header:has(.menu-list__list-item:has([aria-expanded='true'])),
   .header:has(.overflow-menu:hover) {
-    z-index: 9999;
+    z-index: 10000;
   }
 
   /* Show the submenus on hover */
@@ -869,7 +871,7 @@
   */
   .header__row--bottom {
     position: relative !important;
-    z-index: 9999 !important;
+    z-index: 10000 !important;
     background-color: #ffffff !important;
     opacity: 1 !important;
     visibility: visible !important;
