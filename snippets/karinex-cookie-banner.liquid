@@ -1,0 +1,286 @@
+{%- doc -%}
+  Karinex Cookie-Consent Banner — Thalia-style.
+
+  Slides up from the bottom of the viewport on first visit, persists the
+  customer's choice via Shopify's Customer Privacy API and a fallback
+  localStorage key (`karinex_cookie_consent`). Hides Shopify's default
+  consent banner via CSS so only this one is visible.
+
+  States stored: 'accepted' | 'rejected'
+{%- enddoc -%}
+
+<style>
+  /* Hide Shopify's default consent banner — we render our own */
+  shopify-privacy-banner,
+  .privacy-banner,
+  #shopify-pc__banner {
+    display: none !important;
+  }
+
+  .kx-cookie {
+    --kx-c-brand: #1B3A2E;
+    --kx-c-brand-hover: #11261E;
+    --kx-c-ink: #1d1d1f;
+    --kx-c-ink-muted: #555;
+    --kx-c-surface: #ffffff;
+    --kx-c-line: #e5e5e5;
+    --kx-c-grey: #f2f2f3;
+    --kx-c-grey-hover: #e6e6e7;
+
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 2147483640;
+    background: var(--kx-c-surface);
+    border-top: 1px solid var(--kx-c-line);
+    box-shadow: 0 -8px 32px rgba(15, 25, 20, 0.12);
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 4vw, 2.5rem) clamp(1.25rem, 3vw, 1.75rem);
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 320ms ease,
+                visibility 0s linear 360ms;
+    font-family: inherit;
+  }
+  .kx-cookie[data-open="true"] {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 360ms cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 320ms ease,
+                visibility 0s linear 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kx-cookie { transition: opacity 200ms ease; transform: none; }
+  }
+
+  .kx-cookie__inner {
+    max-width: 720px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .kx-cookie__logo {
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    color: var(--kx-c-ink);
+    line-height: 1;
+  }
+
+  .kx-cookie__title {
+    margin: 0;
+    font-size: clamp(17px, 2.2vw, 19px);
+    font-weight: 700;
+    color: var(--kx-c-ink);
+    letter-spacing: -0.005em;
+  }
+
+  .kx-cookie__text {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--kx-c-ink-muted);
+  }
+  .kx-cookie__text strong { color: var(--kx-c-ink); font-weight: 600; }
+
+  .kx-cookie__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    font-size: 12.5px;
+    margin-top: -0.25rem;
+  }
+  .kx-cookie__links a {
+    color: var(--kx-c-ink-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 180ms ease;
+  }
+  .kx-cookie__links a:hover { color: var(--kx-c-brand); }
+
+  .kx-cookie__more {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--kx-c-ink-muted);
+    font-family: inherit;
+    font-size: 12.5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .kx-cookie__more:hover { color: var(--kx-c-brand); }
+
+  .kx-cookie__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  .kx-cookie__btn {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 0.85rem 1.25rem;
+    border-radius: 999px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+  .kx-cookie__btn--primary {
+    background: var(--kx-c-brand);
+    color: #fff;
+  }
+  .kx-cookie__btn--primary:hover,
+  .kx-cookie__btn--primary:focus-visible {
+    background: var(--kx-c-brand-hover);
+    transform: translateY(-1px);
+    outline: none;
+  }
+  .kx-cookie__btn--secondary {
+    background: var(--kx-c-grey);
+    color: var(--kx-c-ink);
+  }
+  .kx-cookie__btn--secondary:hover,
+  .kx-cookie__btn--secondary:focus-visible {
+    background: var(--kx-c-grey-hover);
+    outline: none;
+  }
+  .kx-cookie__btn--ghost {
+    background: transparent;
+    color: var(--kx-c-ink-muted);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: auto;
+    padding: 0.4rem 0;
+  }
+  .kx-cookie__btn--ghost:hover,
+  .kx-cookie__btn--ghost:focus-visible {
+    color: var(--kx-c-brand);
+    outline: none;
+  }
+
+  .kx-cookie__powered {
+    text-align: center;
+    font-size: 10.5px;
+    color: #999;
+    letter-spacing: 0.02em;
+    margin: 0.25rem 0 0;
+  }
+
+  /* Hidden long-text section */
+  .kx-cookie__more-text {
+    display: none;
+    margin-top: -0.5rem;
+  }
+  .kx-cookie[data-expanded="true"] .kx-cookie__more-text {
+    display: block;
+  }
+</style>
+
+<aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
+  <div class="kx-cookie__inner">
+    <span class="kx-cookie__logo">KARINEX</span>
+    <h3 class="kx-cookie__title" id="kxCookieTitle">Helfen Sie uns, Ihr Karinex Erlebnis zu verbessern!</h3>
+    <p class="kx-cookie__text" id="kxCookieDesc">
+      Wir möchten Ihr Shopping-Erlebnis einzigartig und persönlich machen. Dafür verwenden wir und unsere Partner (auch Dritte) Cookies, Pixel und ähnliche Dienste („Services“), die Informationen und Daten speichern und/oder von Ihrem Endgerät abrufen.
+    </p>
+    <div class="kx-cookie__more-text">
+      <p class="kx-cookie__text">
+        Diese Informationen und Daten werden von uns z.B. zur Identifikation auf Drittseiten, zur Personalisierung, Marktforschung, Analyse und zur Produktentwicklung genutzt und können auch im EU-Ausland (Drittstaaten) verarbeitet werden.
+      </p>
+    </div>
+    <button type="button" class="kx-cookie__more" id="kxCookieMore" aria-expanded="false" aria-controls="kxCookieMoreText">Mehr lesen…</button>
+    <div class="kx-cookie__links">
+      <a href="{{ routes.root_url }}policies/privacy-policy">Datenschutzerklärung</a>
+      <a href="{{ routes.root_url }}pages/impressum">Impressum</a>
+    </div>
+    <div class="kx-cookie__actions">
+      <button type="button" class="kx-cookie__btn kx-cookie__btn--primary" data-kx-cookie-action="accept">Alles akzeptieren</button>
+      <button type="button" class="kx-cookie__btn kx-cookie__btn--secondary" data-kx-cookie-action="reject">Nur technisch Erforderliches akzeptieren</button>
+      <button type="button" class="kx-cookie__btn kx-cookie__btn--ghost" data-kx-cookie-action="settings">Einstellungen / Mehr Informationen</button>
+    </div>
+    <p class="kx-cookie__powered">Powered by Karinex Consent Management</p>
+  </div>
+</aside>
+
+<script>
+  (function () {
+    var STORAGE_KEY = 'karinex_cookie_consent';
+    var banner = document.getElementById('kxCookieBanner');
+    if (!banner) return;
+
+    function alreadyAnswered() {
+      try { return !!localStorage.getItem(STORAGE_KEY); } catch (e) { return false; }
+    }
+    function save(value) {
+      try { localStorage.setItem(STORAGE_KEY, value); } catch (e) {}
+    }
+    function notifyShopify(value) {
+      var consented = value === 'accepted';
+      try {
+        if (window.Shopify && window.Shopify.customerPrivacy && typeof window.Shopify.customerPrivacy.setTrackingConsent === 'function') {
+          window.Shopify.customerPrivacy.setTrackingConsent({
+            analytics: consented,
+            marketing: consented,
+            preferences: consented,
+            sale_of_data: consented
+          }, function () {});
+        }
+      } catch (e) {}
+    }
+    function hide() {
+      banner.setAttribute('data-open', 'false');
+      banner.dataset.open = 'false';
+      setTimeout(function () { banner.style.display = 'none'; }, 400);
+    }
+    function show() {
+      banner.style.display = '';
+      requestAnimationFrame(function () { banner.setAttribute('data-open', 'true'); });
+    }
+
+    if (!alreadyAnswered()) {
+      setTimeout(show, 600);
+    }
+
+    banner.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-kx-cookie-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-kx-cookie-action');
+      if (action === 'accept') {
+        save('accepted');
+        notifyShopify('accepted');
+        hide();
+      } else if (action === 'reject') {
+        save('rejected');
+        notifyShopify('rejected');
+        hide();
+      } else if (action === 'settings') {
+        window.location.href = '{{ routes.root_url }}pages/cookie-einstellungen';
+      }
+    });
+
+    var moreBtn = document.getElementById('kxCookieMore');
+    if (moreBtn) {
+      moreBtn.addEventListener('click', function () {
+        var expanded = banner.getAttribute('data-expanded') === 'true';
+        banner.setAttribute('data-expanded', expanded ? 'false' : 'true');
+        moreBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        moreBtn.textContent = expanded ? 'Mehr lesen…' : 'Weniger anzeigen';
+      });
+    }
+
+    // Public hook: window.kxCookieBanner.show() to re-open later (e.g. from footer link)
+    window.kxCookieBanner = { show: function () { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} show(); }, hide: hide };
+  })();
+</script>

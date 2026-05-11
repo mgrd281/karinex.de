@@ -347,6 +347,8 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
     {% section 'custom-mobile-menu' %}
 
+    {% render 'karinex-cookie-banner' %}
+
     <!-- 🟢 KARINEX Cart-Tracker — Browser-Tracking für Tab-Close + Inactivity -->
     {%- if template == 'cart' or request.page_type == 'cart' or template.name contains 'checkout' or request.path contains '/checkouts' -%}
     <script>
