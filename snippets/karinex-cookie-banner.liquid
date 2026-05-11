@@ -17,6 +17,25 @@
     display: none !important;
   }
 
+  /* Backdrop — only visible on desktop where the banner is a centered modal */
+  .kx-cookie-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 25, 20, 0.4);
+    z-index: 2147483639;
+    opacity: 0;
+    transition: opacity 280ms ease;
+    pointer-events: none;
+  }
+  .kx-cookie-backdrop[data-open="true"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (min-width: 768px) {
+    .kx-cookie-backdrop { display: block; }
+  }
+
   .kx-cookie {
     --kx-c-brand: #1B3A2E;
     --kx-c-brand-hover: #11261E;
@@ -54,8 +73,42 @@
                 opacity 320ms ease,
                 visibility 0s linear 0s;
   }
+
+  /* Desktop: centered modal with rounded corners + backdrop */
+  @media (min-width: 768px) {
+    .kx-cookie {
+      inset-inline: auto;
+      bottom: auto;
+      top: 50%;
+      left: 50%;
+      width: calc(100vw - 2rem);
+      max-width: 640px;
+      max-height: min(86vh, 720px);
+      border: 1px solid rgba(15, 25, 20, 0.04);
+      border-top: 1px solid rgba(15, 25, 20, 0.04);
+      border-radius: 18px;
+      padding: 2rem 2.25rem 1.75rem;
+      box-shadow: 0 24px 80px rgba(15, 25, 20, 0.24),
+                  0 4px 12px rgba(15, 25, 20, 0.08);
+      transform: translate(-50%, -50%) scale(0.96);
+      transform-origin: center;
+    }
+    .kx-cookie[data-open="true"] {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .kx-cookie { transition: opacity 200ms ease; transform: none; }
+    .kx-cookie[data-open="true"] { transform: none; }
+    @media (min-width: 768px) {
+      .kx-cookie {
+        transform: translate(-50%, -50%);
+      }
+      .kx-cookie[data-open="true"] {
+        transform: translate(-50%, -50%);
+      }
+    }
   }
 
   .kx-cookie__inner {
@@ -64,6 +117,16 @@
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
+  }
+  @media (min-width: 768px) {
+    .kx-cookie__inner { gap: 0.85rem; }
+    .kx-cookie__logo { font-size: 22px; margin-bottom: 0.25rem; }
+    .kx-cookie__title { font-size: 17px; }
+    .kx-cookie__text { font-size: 13.5px; line-height: 1.5; }
+    .kx-cookie__more { font-size: 13px; }
+    .kx-cookie__links { font-size: 13px; }
+    .kx-cookie__settings-link { font-size: 13px; }
+    .kx-cookie__btn { min-height: 44px; font-size: 14px; padding: 0.6rem 1.5rem; }
   }
 
   .kx-cookie__logo {
@@ -144,6 +207,19 @@
     gap: 0.4rem;
     margin-top: 0.1rem;
   }
+  @media (min-width: 768px) {
+    .kx-cookie__actions {
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+    .kx-cookie__btn {
+      width: auto;
+      min-width: 200px;
+      flex: 0 1 auto;
+    }
+  }
   .kx-cookie__btn {
     appearance: none;
     border: 0;
@@ -194,6 +270,7 @@
   }
 </style>
 
+<div class="kx-cookie-backdrop" id="kxCookieBackdrop" aria-hidden="true"></div>
 <aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
   <div class="kx-cookie__inner">
     <span class="kx-cookie__logo" aria-label="Karinex">KARINEX</span>
@@ -227,6 +304,7 @@
   (function () {
     var STORAGE_KEY = 'karinex_cookie_consent';
     var banner = document.getElementById('kxCookieBanner');
+    var backdrop = document.getElementById('kxCookieBackdrop');
     if (!banner) return;
 
     function alreadyAnswered() {
@@ -251,11 +329,19 @@
     function hide() {
       banner.setAttribute('data-open', 'false');
       banner.dataset.open = 'false';
-      setTimeout(function () { banner.style.display = 'none'; }, 400);
+      if (backdrop) backdrop.setAttribute('data-open', 'false');
+      setTimeout(function () {
+        banner.style.display = 'none';
+        if (backdrop) backdrop.style.display = 'none';
+      }, 400);
     }
     function show() {
       banner.style.display = '';
-      requestAnimationFrame(function () { banner.setAttribute('data-open', 'true'); });
+      if (backdrop) backdrop.style.display = '';
+      requestAnimationFrame(function () {
+        banner.setAttribute('data-open', 'true');
+        if (backdrop) backdrop.setAttribute('data-open', 'true');
+      });
     }
 
     if (!alreadyAnswered()) {
