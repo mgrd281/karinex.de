@@ -140,6 +140,21 @@
     line-height: 1;
     margin-bottom: 0.05rem;
   }
+  .kx-cookie__logo--img {
+    font-size: 0;
+    line-height: 0;
+  }
+  .kx-cookie__logo--img img {
+    height: 26px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+  @media (min-width: 768px) {
+    .kx-cookie__logo--img img {
+      height: 34px;
+    }
+  }
 
   .kx-cookie__title {
     margin: 0;
@@ -273,7 +288,13 @@
 <div class="kx-cookie-backdrop" id="kxCookieBackdrop" aria-hidden="true"></div>
 <aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
   <div class="kx-cookie__inner">
-    <span class="kx-cookie__logo" aria-label="Karinex">KARINEX</span>
+    {%- if settings.logo -%}
+      <span class="kx-cookie__logo kx-cookie__logo--img" aria-label="{{ shop.name | escape }}">
+        <img src="{{ settings.logo | image_url: width: 480 }}" alt="{{ shop.name | escape }}" loading="lazy" width="160" height="32">
+      </span>
+    {%- else -%}
+      <span class="kx-cookie__logo" aria-label="Karinex">KARINEX</span>
+    {%- endif -%}
     <h3 class="kx-cookie__title" id="kxCookieTitle">Helfen Sie uns, Ihr Karinex Erlebnis zu verbessern!</h3>
     <p class="kx-cookie__text" id="kxCookieDesc">
       Wir möchten Ihr Shopping-Erlebnis einzigartig und persönlich machen. Dafür verwenden wir und unsere Partner (auch Dritte) Cookies, Pixel und ähnliche Dienste („Services“), die Informationen und Daten speichern und/oder von Ihrem Endgerät abrufen.
