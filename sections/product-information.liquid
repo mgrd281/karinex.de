@@ -3505,9 +3505,15 @@ nav[aria-label="Breadcrumb"],
       payment methods enabled in Shopify Admin → Settings → Payments.
       The merchant can hide the whole block from the theme customizer
       via section.settings.show_payment_buttons.
+
+      Note: {{ form | payment_button }} only outputs HTML when at
+      least one express-checkout provider is enabled under Shopify
+      Settings → Payments → "Express checkout / Accelerated checkouts".
+      If nothing appears, that toggle is the first thing to check in
+      Shopify Admin (not a code issue).
     {%- endcomment -%}
-    {%- if section.settings.show_payment_buttons != false and product.selected_or_first_available_variant.available -%}
-      <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px;">
+    {%- unless section.settings.show_payment_buttons == false -%}
+      <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px; display: block;">
         {%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id">
           <input type="hidden" name="quantity" value="1">
@@ -3524,9 +3530,7 @@ nav[aria-label="Breadcrumb"],
               payInput.value = mainInput.value;
             }
           };
-          // 1) Programmatic value changes via the attribute
           new MutationObserver(sync).observe(mainInput, { attributes: true, attributeFilter: ['value'] });
-          // 2) JS-driven .value changes (no attribute change) — poll briefly after any product-form interaction
           document.addEventListener('change', function (e) {
             if (e.target && e.target.closest && e.target.closest('product-form-component')) {
               setTimeout(sync, 60);
@@ -3534,7 +3538,7 @@ nav[aria-label="Breadcrumb"],
           });
         })();
       </script>
-    {%- endif -%}
+    {%- endunless -%}
     </div>
   </div>
 
