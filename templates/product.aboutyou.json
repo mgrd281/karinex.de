@@ -11,10 +11,34 @@
   "sections": {
     "main": {
       "type": "product-aboutyou",
-      "settings": {}
+      "settings": {
+        "enable_hover_zoom": false,
+        "backinstock_webapp_url": "https://script.google.com/macros/s/AKfycbzJPrYFa_QE6rpG5GPmySgxQA_HM-wpuJCmNIZ3EX5qcbuje03Au2zd2mGKlYfnFEg1/exec",
+        "backinstock_seller_email": ""
+      }
     },
     "product_recommendations": {
       "type": "product-recommendations",
+      "blocks": {
+        "static-product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 6,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
       "settings": {
         "product": "{{ closest.product }}",
         "recommendation_type": "related",
@@ -25,15 +49,14 @@
         "mobile_columns": "2",
         "columns_gap": 12,
         "rows_gap": 36,
+        "icons_style": "arrow",
+        "icons_shape": "none",
         "section_width": "page-width",
         "gap": 28,
+        "color_scheme": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
-    },
-    "product_reviews": {
-      "type": "product-reviews",
-      "settings": {}
     },
     "product_recently_viewed": {
       "type": "product-recently-viewed",
@@ -41,6 +64,14 @@
     },
     "custom_similar": {
       "type": "custom-similar-products",
+      "settings": {
+        "heading": "Das könnte Dir auch gefallen",
+        "subheading": "Ähnliche Produkte",
+        "products_to_show": 4
+      }
+    },
+    "product_reviews": {
+      "type": "product-reviews",
       "settings": {}
     }
   },
