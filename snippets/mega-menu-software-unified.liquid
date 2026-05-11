@@ -118,20 +118,21 @@
 {%- else -%}
 
   <style>
-    /* === Karinex category dropdown — wide horizontal panel centered === */
+    /* === Karinex category dropdown — full-width strip under header === */
 
-    /* Keep theme's full-width strip but make it transparent so only our
-       centered card is visible. Theme's clip-path animation still works. */
+    /* Use the theme's full-width strip as our background. White, soft
+       hairline border-bottom. No floating card, no rounded corners. */
     .menu-list .menu-list__list-item:has(.kx-cat) > .menu-list__submenu,
     .overflow-menu::part(overflow):has(.kx-cat) {
-      background: transparent !important;
-      box-shadow: none !important;
+      background: #ffffff !important;
+      box-shadow: 0 1px 0 rgba(15, 25, 20, 0.06) !important;
+      border-bottom: 1px solid #ececec !important;
       padding-inline: 0 !important;
     }
-    /* Hide the animated white strip behind the dropdown */
+    /* Kill the theme's animated extra white strip — our strip IS the bg */
     .overflow-menu:has(.kx-cat)::after { display: none !important; }
 
-    /* Flatten the parent grid so our card can be centered naturally */
+    /* Flatten the parent grid */
     .mega-menu__grid:has(.kx-cat) {
       --menu-columns-desktop: 1 !important;
       --menu-columns-tablet: 1 !important;
@@ -145,36 +146,30 @@
       gap: 0 !important;
       overflow: visible;
     }
-    /* Center the card horizontally inside the full-width strip */
+    /* Inner container: page-wide gutter, content max-width 1400px centered */
     .menu-list__submenu-inner:has(.kx-cat) {
-      max-width: none !important;
-      margin: 0 !important;
-      padding: 0.6rem 1.5rem 1.25rem !important;
-      display: flex !important;
-      justify-content: center !important;
+      max-width: 1400px !important;
+      margin: 0 auto !important;
+      padding: clamp(1.75rem, 2.5vw, 2.5rem) clamp(1.5rem, 4vw, 3rem) !important;
+      display: block !important;
     }
     .kx-cat-cell {
       grid-column: 1 / -1 !important;
       padding: 0 !important;
       min-width: 0;
       list-style: none;
-      display: flex;
-      justify-content: center;
       width: 100%;
     }
 
-    /* === Card =========================================================== */
+    /* === Content — flat, no card chrome ================================ */
     .kx-cat {
-      width: max-content;
-      min-width: 560px;
-      max-width: 1100px;
-      background: #ffffff;
-      border: 1px solid rgba(15, 25, 20, 0.04);
-      border-radius: 16px;
-      box-shadow:
-        0 1px 2px rgba(0,0,0,0.04),
-        0 24px 60px rgba(15, 25, 20, 0.12);
-      padding: clamp(1.5rem, 2vw, 2rem) clamp(1.75rem, 2.5vw, 2.5rem);
+      width: 100%;
+      max-width: none;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
       animation: kxCatIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     @keyframes kxCatIn {
