@@ -174,8 +174,21 @@
       box-shadow: 0 1px 0 rgba(15, 25, 20, 0.06) !important;
       border-bottom: 1px solid #ececec !important;
       padding-inline: 0 !important;
+      z-index: 2147483647 !important;
     }
     .overflow-menu:has(.kx-cat)::after { display: none !important; }
+
+    /* Lift the entire header stacking context to the absolute max while a
+       desktop dropdown is open, so high-z product-page elements
+       (back-in-stock pills, wishlist hearts, share toasts) can never
+       bleed through the dropdown surface. */
+    .header:has(.menu-list__list-item [aria-expanded='true']),
+    .header-section:has(.menu-list__list-item [aria-expanded='true']),
+    #header-group:has(.menu-list__list-item [aria-expanded='true']),
+    header-menu:has([aria-expanded='true']) {
+      z-index: 2147483647 !important;
+      position: relative;
+    }
 
     .mega-menu__grid:has(.kx-cat) {
       --menu-columns-desktop: 1 !important;
