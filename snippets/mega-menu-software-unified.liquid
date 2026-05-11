@@ -107,10 +107,57 @@
     .mega-menu__list:has(.mega-menu-software-unified) {
       grid-column: span 7 !important;
     }
+
+    /* === Karinex unified mega-menu — visual polish === */
+    .mega-menu-software-unified {
+      padding-block: 0.25rem;
+    }
+    .mega-menu-software-unified .mega-menu__item-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    /* Column titles: tighter so 2-word headings stay on one line */
+    .mega-menu-software-unified .mega-menu__link--parent {
+      font-size: 12px !important;
+      letter-spacing: 0.06em !important;
+      font-weight: 700 !important;
+      color: #1B3A2E !important;
+      margin-bottom: 0.35rem !important;
+      white-space: nowrap;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #ececec;
+    }
+    /* Sub-links: a touch smaller, fixed weight, no wrap for the common ones */
+    .mega-menu-software-unified .mega-menu__submenu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      margin: 0;
+      padding: 0;
+    }
+    .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link {
+      padding: 0.28rem 0;
+      line-height: 1.35;
+    }
+    .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link-title.wrap-text {
+      font-size: 13px;
+      color: #4a4a4a;
+      letter-spacing: 0;
+    }
+    .mega-menu-software-unified .mega-menu__submenu-list .mega-menu__link:hover .mega-menu__link-title.wrap-text {
+      color: #1B3A2E;
+      transform: translateX(2px);
+    }
+
     .mega-menu-software-unified__sidebar {
       border-right: 1px solid #eeeeee;
-      padding-right: 1.25rem;
+      padding-right: 1.5rem;
     }
+    .mega-menu-software-unified__sidebar .mega-menu__link--parent {
+      border-bottom-color: #1B3A2E !important;
+    }
+
     @media (max-width: 1199px) {
       .mega-menu__grid:has(.mega-menu-software-unified) {
         --menu-columns-desktop: 4 !important;
