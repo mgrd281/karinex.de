@@ -114,13 +114,22 @@
 
   /* Tighten the gap between the AboutYou product info and the next section */
   body.template-product .ay-product__wrapper {
-    padding-bottom: 0;
-    margin-bottom: 0;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.template-product .ay-product {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.template-product .shopify-section:has(.ay-product) {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
   }
   body.template-product .section-product-recently-viewed,
+  body.template-product .shopify-section:has(.pdp-rv),
   body.template-product section[id*="product-recently-viewed"] {
     padding-top: 0 !important;
-    margin-top: 0 !important;
+    margin-top: -32px !important;
   }
   body.template-product .section-product-recently-viewed .pdp-rv,
   body.template-product section[id*="product-recently-viewed"] .pdp-rv {
@@ -129,7 +138,7 @@
   }
   body.template-product .pdp-rv__header {
     margin-top: 0;
-    padding-top: 8px;
+    padding-top: 0;
   }
 </style>
 
