@@ -805,7 +805,7 @@
                                   </button>
                                 </div>
                                 {% if is_software_unified %}
-                                  {% render 'mega-menu-software-unified', _root: routes.root_url, mode: 'mobile' %}
+                                  {% render 'mega-menu-software-unified', _root: routes.root_url, mode: 'mobile', parent_link: link %}
                                 {% else %}
                                   <ul class="menu-drawer__menu menu-drawer__menu--childlist" role="list" tabindex="-1" style="padding: 0;">
                                       {%- for childlink in link.links -%}
