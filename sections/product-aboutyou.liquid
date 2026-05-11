@@ -88,6 +88,19 @@
 
 <link rel="stylesheet" href="{{ 'product-aboutyou.css' | asset_url }}">
 
+<style>
+  /*
+    AboutYou template often renders product-recommendations even when the
+    Shopify Related Products API returns nothing for the current product,
+    leaving a tall empty 48-96px padded strip between the product info and
+    "Zuletzt angesehene Artikel". Hide the wrapper if it ends up with no
+    product cards inside.
+  */
+  body.template-product product-recommendations.product-recommendations:not(:has(.product-card-gallery)):not(:has(.product-card)):not(:has(.resource-card)) {
+    display: none !important;
+  }
+</style>
+
 {%- comment -%} Per-template hide rules for product-card icons. {%- endcomment -%}
 {%- if section.settings.show_card_wishlist_heart == false or section.settings.show_card_quick_add == false -%}
   <style>
