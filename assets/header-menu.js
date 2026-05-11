@@ -2,7 +2,7 @@ import { Component } from '@theme/component';
 import { debounce, onDocumentLoaded } from '@theme/utilities';
 import { MegaMenuHoverEvent } from '@theme/events';
 
-const ACTIVATE_DELAY = 0;
+const ACTIVATE_DELAY = 250;
 const DEACTIVATE_DELAY = 350;
 
 /**
