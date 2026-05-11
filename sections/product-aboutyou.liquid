@@ -119,8 +119,17 @@
   }
   body.template-product .section-product-recently-viewed,
   body.template-product section[id*="product-recently-viewed"] {
-    padding-top: 16px;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+  body.template-product .section-product-recently-viewed .pdp-rv,
+  body.template-product section[id*="product-recently-viewed"] .pdp-rv {
+    padding-top: 0;
     margin-top: 0;
+  }
+  body.template-product .pdp-rv__header {
+    margin-top: 0;
+    padding-top: 8px;
   }
 </style>
 
