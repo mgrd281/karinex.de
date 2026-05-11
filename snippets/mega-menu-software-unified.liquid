@@ -1,12 +1,14 @@
 {%- doc -%}
-  Renders a category-specific Karinex software mega-menu. The Menüpunkte
-  sidebar (the 7 top-level Hauptmenü items) is always shown on the left;
-  the remaining columns vary based on the hovered top-level item, so each
-  category (Office für Windows / Mac, Microsoft 365, Windows, Windows
-  Server, Microsoft Tools, SALE & Bestseller) has its own panel.
+  Renders the unified Karinex software mega-menu. Six fixed software
+  columns (Windows 11, Windows 10, Windows 8/8.1, Windows 7/XP,
+  Microsoft Office, Office für Mac) plus the Menüpunkte sidebar are
+  shown for every top-level Hauptmenü item, so the visitor always sees
+  the full software catalog regardless of which item they hovered or
+  clicked.
 
   @param {string} _root - Theme root URL prefix, e.g. '/' or '/de/'.
-  @param {object} parent_link - The top-level Hauptmenü link being hovered.
+  @param {object} [parent_link] - The hovered top-level Hauptmenü link
+    (accepted for compatibility; the panel is the same for all items).
   @param {string} [mode] - 'desktop' (default) | 'mobile'.
 {%- enddoc -%}
 
@@ -23,101 +25,18 @@
     endunless
   endunless
 
-  assign p_handle = parent_link.handle | default: '' | downcase
-  assign p_title = parent_link.title | default: '' | downcase | replace: 'ü', 'u' | replace: 'ö', 'o' | replace: 'ä', 'a' | replace: 'ß', 'ss'
+  assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac' | split: '|'
+  assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac' | split: '|'
 
-  comment
-    Detect category. Order matters: Mac before generic Office, Server
-    before generic Windows, Sale/Bestseller before generic keywords.
-  endcomment
-  assign category = 'default'
-  if p_handle contains 'mac' or p_title contains 'mac'
-    assign category = 'office-mac'
-  elsif p_handle contains '365' or p_title contains '365'
-    assign category = 'microsoft-365'
-  elsif p_handle contains 'server' or p_title contains 'server'
-    assign category = 'windows-server'
-  elsif p_handle contains 'tools' or p_title contains 'tools'
-    assign category = 'microsoft-tools'
-  elsif p_handle contains 'sale' or p_handle contains 'bestseller' or p_title contains 'sale' or p_title contains 'bestseller'
-    assign category = 'sale-bestseller'
-  elsif p_handle contains 'office' or p_title contains 'office'
-    assign category = 'office-windows'
-  elsif p_handle contains 'windows' or p_title contains 'windows'
-    assign category = 'windows'
-  endif
+  assign sub_w11 = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
+  assign sub_w10 = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
+  assign sub_w8 = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
+  assign sub_w7 = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
+  assign sub_mso = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
+  assign sub_mac = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
 
-  case category
-    when 'office-windows'
-      assign col_titles = 'Office 2024|Office 2021|Office 2019|Home & Student' | split: '|'
-      assign col_hrefs = 'search?q=Office+2024+Professional+Plus|search?q=Office+2021+Professional+Plus|search?q=Office+2019+Professional+Plus|search?q=Office+Home+Student' | split: '|'
-      assign sub_a = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2024 Standard~search?q=Office+2024+Standard;;Office 2024 Home & Business~search?q=Office+2024+Home+Business;;Alle 2024-Lizenzen~search?q=Office+2024'
-      assign sub_b = 'Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2021 Home & Business~search?q=Office+2021+Home+Business;;Office 2021 Standard~search?q=Office+2021+Standard;;Alle 2021-Lizenzen~search?q=Office+2021'
-      assign sub_c = 'Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Office 2019 Home & Business~search?q=Office+2019+Home+Business;;Office 2019 Standard~search?q=Office+2019+Standard;;Alle 2019-Lizenzen~search?q=Office+2019'
-      assign sub_d = 'Home & Student 2024~search?q=Office+2024+Home+Student;;Home & Student 2021~search?q=Office+2021+Home+Student;;Home & Student 2019~search?q=Office+2019+Home+Student;;Alle Office-Lizenzen~collections/microsoft-office'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c | append: '@@' | append: sub_d
-    when 'office-mac'
-      assign col_titles = 'Office 2024 Mac|Office 2021 Mac|Home & Student Mac' | split: '|'
-      assign col_hrefs = 'search?q=Office+2024+Mac|search?q=Office+2021+Mac|search?q=Office+Mac+Home' | split: '|'
-      assign sub_a = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2024 Home & Business Mac~search?q=Office+2024+Home+Business+Mac;;Alle 2024 Mac~search?q=Office+2024+Mac'
-      assign sub_b = 'Office 2021 für Mac~search?q=Office+2021+Mac;;Office 2021 Home & Business Mac~search?q=Office+2021+Home+Business+Mac;;Alle 2021 Mac~search?q=Office+2021+Mac'
-      assign sub_c = 'Home & Student 2024 Mac~search?q=Office+2024+Home+Student+Mac;;Home & Student 2021 Mac~search?q=Office+2021+Home+Student+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c
-    when 'microsoft-365'
-      assign col_titles = '365 Personal|365 Family|365 Business' | split: '|'
-      assign col_hrefs = 'search?q=Microsoft+365+Personal|search?q=Microsoft+365+Family|search?q=Microsoft+365+Business' | split: '|'
-      assign sub_a = '365 Personal 1 Jahr~search?q=Microsoft+365+Personal+1+Jahr;;365 Personal 5 Jahre~search?q=Microsoft+365+Personal+5+Jahre;;Alle Personal-Abos~search?q=Microsoft+365+Personal'
-      assign sub_b = '365 Family 1 Jahr~search?q=Microsoft+365+Family;;365 Home~search?q=Microsoft+365+Home;;Alle Family-Abos~search?q=Microsoft+365+Family'
-      assign sub_c = '365 Business Standard~search?q=Microsoft+365+Business+Standard;;365 Business Premium~search?q=Microsoft+365+Business+Premium;;Alle 365-Abos~collections/microsoft-365-abonnement'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c
-    when 'windows'
-      assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP' | split: '|'
-      assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7' | split: '|'
-      assign sub_a = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
-      assign sub_b = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
-      assign sub_c = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
-      assign sub_d = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c | append: '@@' | append: sub_d
-    when 'windows-server'
-      assign col_titles = 'Server 2022|Server 2019|Server 2016 / 2012' | split: '|'
-      assign col_hrefs = 'search?q=Windows+Server+2022|search?q=Windows+Server+2019|search?q=Windows+Server+2016' | split: '|'
-      assign sub_a = 'Server 2022 Standard~search?q=Windows+Server+2022+Standard;;Server 2022 Datacenter~search?q=Windows+Server+2022+Datacenter;;Server 2022 Essentials~search?q=Windows+Server+2022+Essentials;;Alle Server 2022~search?q=Windows+Server+2022'
-      assign sub_b = 'Server 2019 Standard~search?q=Windows+Server+2019+Standard;;Server 2019 Datacenter~search?q=Windows+Server+2019+Datacenter;;Server 2019 Essentials~search?q=Windows+Server+2019+Essentials;;Alle Server 2019~search?q=Windows+Server+2019'
-      assign sub_c = 'Server 2016 Standard~search?q=Windows+Server+2016+Standard;;Server 2016 Datacenter~search?q=Windows+Server+2016+Datacenter;;Server 2012 R2~search?q=Windows+Server+2012;;Alle Server-Lizenzen~collections/windows-server'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c
-    when 'microsoft-tools'
-      assign col_titles = 'Visual Studio|SQL Server|Project|Visio' | split: '|'
-      assign col_hrefs = 'search?q=Visual+Studio|search?q=SQL+Server|search?q=Microsoft+Project|search?q=Microsoft+Visio' | split: '|'
-      assign sub_a = 'Visual Studio 2022 Pro~search?q=Visual+Studio+2022+Professional;;Visual Studio 2022 Enterprise~search?q=Visual+Studio+2022+Enterprise;;Visual Studio 2019~search?q=Visual+Studio+2019;;Alle Visual Studio~search?q=Visual+Studio'
-      assign sub_b = 'SQL Server 2022 Standard~search?q=SQL+Server+2022+Standard;;SQL Server 2019 Standard~search?q=SQL+Server+2019+Standard;;SQL Server 2017~search?q=SQL+Server+2017;;Alle SQL Server~search?q=SQL+Server'
-      assign sub_c = 'Project 2024 Pro~search?q=Project+2024+Professional;;Project 2021 Pro~search?q=Project+2021+Professional;;Project 2019 Pro~search?q=Project+2019+Professional;;Alle Project~search?q=Microsoft+Project'
-      assign sub_d = 'Visio 2024 Pro~search?q=Visio+2024+Professional;;Visio 2021 Pro~search?q=Visio+2021+Professional;;Visio 2019 Pro~search?q=Visio+2019+Professional;;Alle Visio~search?q=Microsoft+Visio'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c | append: '@@' | append: sub_d
-    when 'sale-bestseller'
-      assign col_titles = 'SALE|Bestseller' | split: '|'
-      assign col_hrefs = 'collections/sale|collections/bestseller' | split: '|'
-      assign sub_a = 'Office Angebote~search?q=Office+Sale;;Windows Angebote~search?q=Windows+Sale;;Microsoft 365 Angebote~search?q=365+Sale;;Server Angebote~search?q=Server+Sale;;Alle Angebote ansehen~collections/sale'
-      assign sub_b = 'Bestseller Office~search?q=Office+Bestseller;;Bestseller Windows~search?q=Windows+Bestseller;;Bestseller 365~search?q=365+Bestseller;;Bestseller Tools~search?q=Tools+Bestseller;;Alle Bestseller~collections/bestseller'
-      assign all_subs = sub_a | append: '@@' | append: sub_b
-    else
-      assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac' | split: '|'
-      assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac' | split: '|'
-      assign sub_a = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
-      assign sub_b = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
-      assign sub_c = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
-      assign sub_d = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
-      assign sub_e = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
-      assign sub_f = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
-      assign all_subs = sub_a | append: '@@' | append: sub_b | append: '@@' | append: sub_c | append: '@@' | append: sub_d | append: '@@' | append: sub_e | append: '@@' | append: sub_f
-  endcase
-
+  assign all_subs = sub_w11 | append: '@@' | append: sub_w10 | append: '@@' | append: sub_w8 | append: '@@' | append: sub_w7 | append: '@@' | append: sub_mso | append: '@@' | append: sub_mac
   assign cols_subs = all_subs | split: '@@'
-  assign cols_count = col_titles.size
-  assign total_cols = cols_count | plus: 1
-  assign tablet_cols = 4
-  if total_cols < 4
-    assign tablet_cols = total_cols
-  endif
 -%}
 
 {%- if mode == 'mobile' -%}
@@ -174,19 +93,31 @@
     {%- endfor -%}
   </ul>
 {%- else -%}
+  {%- comment -%}
+    "Menüpunkte" sidebar — fixed list of all 7 top-level Hauptmenü items,
+    shown as the first column of every dropdown so visitors always see
+    the full navigation structure regardless of which item they hovered.
+    Force a 7-column grid (sidebar + 6 software columns) on desktop.
+  {%- endcomment -%}
   <style>
-    .mega-menu__grid:has(.mega-menu-software-unified--{{ category }}) {
-      --menu-columns-desktop: {{ total_cols }} !important;
-      --menu-columns-tablet: {{ tablet_cols }} !important;
+    .mega-menu__grid:has(.mega-menu-software-unified) {
+      --menu-columns-desktop: 7 !important;
+      --menu-columns-tablet: 4 !important;
     }
-    .mega-menu__list:has(.mega-menu-software-unified--{{ category }}) {
-      grid-column: span {{ total_cols }} !important;
+    .mega-menu__list:has(.mega-menu-software-unified) {
+      grid-column: span 7 !important;
     }
     .mega-menu-software-unified__sidebar {
       border-right: 1px solid #eeeeee;
       padding-right: 1.25rem;
     }
     @media (max-width: 1199px) {
+      .mega-menu__grid:has(.mega-menu-software-unified) {
+        --menu-columns-desktop: 4 !important;
+      }
+      .mega-menu__list:has(.mega-menu-software-unified) {
+        grid-column: span 4 !important;
+      }
       .mega-menu-software-unified__sidebar {
         border-right: 0;
         padding-right: 0;
@@ -194,7 +125,7 @@
     }
   </style>
 
-  <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified mega-menu-software-unified--{{ category }} mega-menu-software-unified__sidebar">
+  <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified mega-menu-software-unified__sidebar">
     <div class="mega-menu__item-wrapper">
       <span class="mega-menu__link mega-menu__link--parent">Menüpunkte</span>
       <ul class="list-unstyled mega-menu__submenu-list">
@@ -212,7 +143,7 @@
   {%- for col_title in col_titles -%}
     {%- assign col_href = col_hrefs[forloop.index0] -%}
     {%- assign subs = cols_subs[forloop.index0] | split: ';;' -%}
-    <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified mega-menu-software-unified--{{ category }}">
+    <li class="mega-menu__column mega-menu__column--span-1 mega-menu-software-unified">
       <div class="mega-menu__item-wrapper">
         <a href="{{ _root }}{{ col_href }}" class="mega-menu__link mega-menu__link--parent">{{ col_title }}</a>
         <ul class="list-unstyled mega-menu__submenu-list">
