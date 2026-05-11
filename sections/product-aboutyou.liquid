@@ -771,6 +771,23 @@
             <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
           </button>
         </div>
+
+        {%- comment -%}
+          Dynamic Shopify checkout buttons — PayPal / Shop Pay / Apple Pay /
+          Google Pay / SEPA / Klarna etc. They render automatically based on
+          the payment methods enabled in Shopify Admin → Settings → Payments.
+          Wrapped in a dedicated <product-form> so the variant id stays in
+          sync with the user's selection.
+        {%- endcomment -%}
+        {%- if current_variant.available -%}
+          <div class="ay-payment-buttons" data-shopify-payment-buttons>
+            {%- form 'product', product, id: 'ay-payment-form', class: 'ay-payment-buttons__form' -%}
+              <input type="hidden" name="id" value="{{ current_variant.id }}" id="ay-payment-variant-id">
+              <input type="hidden" name="quantity" value="1">
+              {{ form | payment_button }}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
       {%- endif -%}
 
       {%- comment -%} Social Proof — recently sold (digital only) {%- endcomment -%}
@@ -1210,6 +1227,10 @@
     if (!variant) return;
     var idInput = document.getElementById('ay-variant-id');
     if (idInput) idInput.value = variant.id;
+
+    // Keep the dynamic-checkout-buttons form in sync with the selected variant
+    var payIdInput = document.getElementById('ay-payment-variant-id');
+    if (payIdInput) payIdInput.value = variant.id;
 
     var atcBtn = document.querySelector('.ay-atc-btn');
     if (atcBtn) {
