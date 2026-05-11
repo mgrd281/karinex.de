@@ -290,12 +290,15 @@
   .kx-cset {
     --kx-c-brand: #1B3A2E;
     --kx-c-brand-hover: #11261E;
+    --kx-c-brand-soft: rgba(27, 58, 46, 0.08);
     --kx-c-accent: #06822F;
     --kx-c-ink: #1d1d1f;
     --kx-c-ink-muted: #6a6a6f;
-    --kx-c-line: #e5e5e5;
+    --kx-c-ink-soft: #8a8a90;
+    --kx-c-line: #e8e8ea;
+    --kx-c-line-soft: #f0f0f2;
     --kx-c-grey: #f5f5f6;
-    --kx-c-tab-active: #f9f9fa;
+    --kx-c-surface-alt: #fafafb;
 
     position: fixed;
     inset: 0;
@@ -304,9 +307,10 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    background: rgba(15, 25, 20, 0.45);
+    background: rgba(15, 25, 20, 0.55);
     opacity: 0;
     transition: opacity 220ms ease;
+    font-family: inherit;
   }
   .kx-cset[data-open="true"] {
     display: flex;
@@ -315,150 +319,253 @@
 
   .kx-cset__dialog {
     width: 100%;
-    max-width: 940px;
+    max-width: 980px;
     max-height: 90vh;
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 24px 80px rgba(15, 25, 20, 0.28);
+    border-radius: 18px;
+    box-shadow: 0 28px 90px rgba(15, 25, 20, 0.32),
+                0 4px 12px rgba(15, 25, 20, 0.08);
     display: grid;
-    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+    grid-template-columns: 280px minmax(0, 1fr);
     overflow: hidden;
-    transform: translateY(8px);
+    transform: translateY(8px) scale(0.985);
     transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .kx-cset[data-open="true"] .kx-cset__dialog { transform: translateY(0); }
+  .kx-cset[data-open="true"] .kx-cset__dialog { transform: translateY(0) scale(1); }
 
   @media (max-width: 720px) {
     .kx-cset__dialog {
       grid-template-columns: 1fr;
-      max-height: 92vh;
+      max-height: 94vh;
+      border-radius: 14px;
     }
   }
 
+  /* ---- Sidebar ---- */
   .kx-cset__sidebar {
-    background: #fafafa;
+    background: var(--kx-c-surface-alt);
     border-right: 1px solid var(--kx-c-line);
-    padding: 1.25rem 0;
+    padding: 1.5rem 0.75rem;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .kx-cset__sidebar-brand {
+    padding: 0 0.85rem 1.1rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--kx-c-line);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kx-c-ink-soft);
   }
   @media (max-width: 720px) {
     .kx-cset__sidebar {
       border-right: 0;
       border-bottom: 1px solid var(--kx-c-line);
-      padding: 0.5rem 0;
+      padding: 0.5rem 0.75rem;
       overflow-x: auto;
       overflow-y: hidden;
-      display: flex;
       flex-direction: row;
       white-space: nowrap;
+      gap: 0.25rem;
     }
+    .kx-cset__sidebar-brand { display: none; }
   }
   .kx-cset__sidebar-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
     width: 100%;
     text-align: left;
     background: transparent;
     border: 0;
-    padding: 0.75rem 1.25rem;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
     font-family: inherit;
     font-size: 13.5px;
     font-weight: 500;
     color: var(--kx-c-ink);
     cursor: pointer;
-    border-left: 3px solid transparent;
-    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+    transition: background-color 160ms ease, color 160ms ease;
   }
-  .kx-cset__sidebar-btn:hover { background: rgba(27, 58, 46, 0.05); }
-  .kx-cset__sidebar-btn[data-active="true"] {
-    background: var(--kx-c-tab-active);
-    border-left-color: var(--kx-c-brand);
+  .kx-cset__sidebar-btn-icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    color: var(--kx-c-ink-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 160ms ease;
+  }
+  .kx-cset__sidebar-btn-icon svg { width: 100%; height: 100%; display: block; }
+  .kx-cset__sidebar-btn-label {
+    flex: 1 1 auto;
+    line-height: 1.25;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .kx-cset__sidebar-btn-badge {
+    flex: 0 0 auto;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(15, 25, 20, 0.08);
+    color: var(--kx-c-ink-muted);
+    font-size: 11px;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  .kx-cset__sidebar-btn:hover {
+    background: rgba(27, 58, 46, 0.06);
     color: var(--kx-c-brand);
+  }
+  .kx-cset__sidebar-btn:hover .kx-cset__sidebar-btn-icon { color: var(--kx-c-brand); }
+  .kx-cset__sidebar-btn[data-active="true"] {
+    background: var(--kx-c-brand);
+    color: #fff;
+    font-weight: 700;
+  }
+  .kx-cset__sidebar-btn[data-active="true"] .kx-cset__sidebar-btn-icon { color: #fff; }
+  .kx-cset__sidebar-btn[data-active="true"] .kx-cset__sidebar-btn-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
   }
   @media (max-width: 720px) {
     .kx-cset__sidebar-btn {
       flex: 0 0 auto;
       width: auto;
-      border-left: 0;
-      border-bottom: 3px solid transparent;
-      padding: 0.6rem 0.85rem;
+      padding: 0.55rem 0.85rem;
+      font-size: 12.5px;
     }
-    .kx-cset__sidebar-btn[data-active="true"] {
-      border-bottom-color: var(--kx-c-brand);
-      border-left: 0;
-    }
+    .kx-cset__sidebar-btn-label { white-space: nowrap; }
   }
 
+  /* ---- Main panel ---- */
   .kx-cset__main {
-    padding: 1.5rem 1.75rem;
+    padding: 1.75rem 2rem 1.25rem;
     overflow-y: auto;
+  }
+  @media (max-width: 720px) {
+    .kx-cset__main { padding: 1.25rem 1.25rem 1rem; }
   }
   .kx-cset__header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.85rem;
   }
   .kx-cset__heading {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     color: var(--kx-c-ink);
     margin: 0;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
   }
   .kx-cset__close {
     appearance: none;
-    background: transparent;
+    background: var(--kx-c-grey);
     border: 0;
     color: var(--kx-c-ink-muted);
-    font-size: 22px;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
     line-height: 1;
-    padding: 6px 8px;
     border-radius: 999px;
     cursor: pointer;
-    transition: background-color 160ms ease;
+    transition: background-color 160ms ease, color 160ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
   }
-  .kx-cset__close:hover { background: var(--kx-c-grey); }
+  .kx-cset__close:hover { background: var(--kx-c-brand); color: #fff; }
 
   .kx-cset__intro {
-    font-size: 13px;
+    font-size: 13.5px;
     color: var(--kx-c-ink-muted);
-    line-height: 1.55;
-    margin: 0 0 1rem;
+    line-height: 1.6;
+    margin: 0 0 1.1rem;
   }
 
   .kx-cset__panel { display: none; }
   .kx-cset__panel[data-active="true"] { display: block; }
 
+  /* Master / category card */
+  .kx-cset__row--master {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    background: var(--kx-c-surface-alt);
+    border: 1px solid var(--kx-c-line);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+  .kx-cset__row--master .kx-cset__row-title { font-size: 15.5px; font-weight: 700; }
+  .kx-cset__row--master .kx-cset__row-desc { font-size: 12.5px; }
+
+  /* Service rows */
+  .kx-cset__rows-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kx-c-ink-soft);
+    margin: 0.25rem 0 0.5rem;
+  }
   .kx-cset__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid #f0f0f1;
+    gap: 0.85rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--kx-c-line-soft);
   }
   .kx-cset__row:last-child { border-bottom: 0; }
-  .kx-cset__row-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .kx-cset__row-logo {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .kx-cset__row-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .kx-cset__row-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
   .kx-cset__row-title {
     font-size: 13.5px;
     font-weight: 600;
     color: var(--kx-c-ink);
   }
   .kx-cset__row-desc {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--kx-c-ink-muted);
-    line-height: 1.45;
+    line-height: 1.5;
   }
-  .kx-cset__row--master { padding: 1rem 0 1.1rem; border-bottom: 1px solid var(--kx-c-line); margin-bottom: 0.25rem; }
-  .kx-cset__row--master .kx-cset__row-title { font-size: 15px; font-weight: 700; }
 
   /* iOS-style switch */
   .kx-cset__switch {
     position: relative;
     flex: 0 0 auto;
-    width: 42px;
-    height: 24px;
+    width: 44px;
+    height: 26px;
     border-radius: 999px;
     background: #d1d1d6;
     cursor: pointer;
@@ -471,8 +578,8 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     background: #fff;
     border-radius: 999px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.18);
@@ -480,16 +587,64 @@
   }
   .kx-cset__switch[aria-checked="true"] { background: var(--kx-c-accent); }
   .kx-cset__switch[aria-checked="true"]::after { transform: translateX(18px); }
-  .kx-cset__switch[disabled] { opacity: 0.6; cursor: not-allowed; }
+  .kx-cset__switch[disabled] { opacity: 0.55; cursor: not-allowed; }
 
+  /* Controller / DPO cards */
+  .kx-cset__card {
+    background: var(--kx-c-surface-alt);
+    border: 1px solid var(--kx-c-line);
+    border-radius: 12px;
+    padding: 1rem 1.15rem;
+    margin-bottom: 0.75rem;
+  }
+  .kx-cset__card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kx-c-ink-soft);
+    margin: 0 0 0.5rem;
+  }
+  .kx-cset__card p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--kx-c-ink);
+  }
+  .kx-cset__card a {
+    color: var(--kx-c-brand);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .kx-cset__card a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .kx-cset__card strong { color: var(--kx-c-ink); }
+
+  /* Footer */
   .kx-cset__footer {
     grid-column: 1 / -1;
     display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.75rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
     border-top: 1px solid var(--kx-c-line);
-    background: #fafafa;
+    background: var(--kx-c-surface-alt);
+  }
+  .kx-cset__footer-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .kx-cset__footer-note {
+    font-size: 11.5px;
+    color: var(--kx-c-ink-soft);
+  }
+  @media (max-width: 480px) {
+    .kx-cset__footer { padding: 0.85rem 1rem; }
+    .kx-cset__footer-note { display: none; }
+    .kx-cset__footer-actions { width: 100%; }
+    .kx-cset__footer-actions .kx-cset__btn { flex: 1 1 50%; }
   }
   .kx-cset__btn {
     appearance: none;
@@ -518,10 +673,34 @@
 <div class="kx-cset" id="kxCookieSettingsModal" role="dialog" aria-modal="true" aria-labelledby="kxCsetTitle">
   <div class="kx-cset__dialog">
     <nav class="kx-cset__sidebar" aria-label="Cookie-Kategorien">
-      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="functional" data-active="true">Funktion / Technisch erforderlich</button>
-      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="analytics">Analyse</button>
-      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="other">Andere</button>
-      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="controller">Datenverantwortlicher</button>
+      <div class="kx-cset__sidebar-brand">Kategorien</div>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="functional" data-active="true">
+        <span class="kx-cset__sidebar-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg>
+        </span>
+        <span class="kx-cset__sidebar-btn-label">Notwendig</span>
+        <span class="kx-cset__sidebar-btn-badge">4</span>
+      </button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="analytics">
+        <span class="kx-cset__sidebar-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>
+        </span>
+        <span class="kx-cset__sidebar-btn-label">Analyse</span>
+        <span class="kx-cset__sidebar-btn-badge">2</span>
+      </button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="other">
+        <span class="kx-cset__sidebar-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+        </span>
+        <span class="kx-cset__sidebar-btn-label">Andere Services</span>
+        <span class="kx-cset__sidebar-btn-badge">4</span>
+      </button>
+      <button type="button" class="kx-cset__sidebar-btn" data-cset-tab="controller">
+        <span class="kx-cset__sidebar-btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
+        <span class="kx-cset__sidebar-btn-label">Verantwortlicher</span>
+      </button>
     </nav>
     <div class="kx-cset__main">
       <div class="kx-cset__header">
@@ -539,6 +718,7 @@
           </div>
           <button type="button" class="kx-cset__switch" aria-checked="true" disabled aria-label="Immer aktiv"></button>
         </div>
+        <p class="kx-cset__rows-label">Verwendete Dienste</p>
         <div class="kx-cset__row">
           <div class="kx-cset__row-text">
             <span class="kx-cset__row-title">Shopify Checkout &amp; Warenkorb</span>
@@ -578,7 +758,11 @@
           </div>
           <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-master="analytics"></button>
         </div>
+        <p class="kx-cset__rows-label">Anbieter</p>
         <div class="kx-cset__row">
+          <span class="kx-cset__row-logo" aria-hidden="true">
+            <img src="https://www.vectorlogo.zone/logos/google_analytics/google_analytics-horizontal~old.svg" alt="" loading="lazy" width="56" height="28">
+          </span>
           <div class="kx-cset__row-text">
             <span class="kx-cset__row-title">Google Analytics 4</span>
             <span class="kx-cset__row-desc">Anonyme Nutzungsstatistiken zur Optimierung des Shops.</span>
@@ -603,6 +787,7 @@
           </div>
           <button type="button" class="kx-cset__switch" aria-checked="false" data-cset-master="other"></button>
         </div>
+        <p class="kx-cset__rows-label">Anbieter</p>
         <div class="kx-cset__row">
           <div class="kx-cset__row-text">
             <span class="kx-cset__row-title">YouTube-Einbettungen</span>
@@ -635,32 +820,39 @@
 
       <!-- CONTROLLER -->
       <div class="kx-cset__panel" data-cset-panel="controller">
-        <p class="kx-cset__intro" style="margin-top: 0.5rem;">
-          <strong>Verantwortliche Stelle:</strong> Karinex<br>
-          E-Mail: <a href="mailto:support@karinex.de" style="color: var(--kx-c-brand);">support@karinex.de</a><br>
-          Webseite: <a href="https://karinex.de" style="color: var(--kx-c-brand);">karinex.de</a>
-        </p>
+        <div class="kx-cset__card">
+          <p class="kx-cset__card-title">Verantwortliche Stelle</p>
+          <p>
+            <strong>Karinex</strong><br>
+            E-Mail: <a href="mailto:support@karinex.de">support@karinex.de</a><br>
+            Web: <a href="https://karinex.de">karinex.de</a>
+          </p>
+        </div>
 
-        <p class="kx-cset__intro"><strong>Datenschutzbeauftragter</strong></p>
-        <p class="kx-cset__intro" style="margin-top: -0.3rem;">
-          Unser Datenschutzbeauftragter ist wie folgt erreichbar:<br>
-          <strong>Trusted Shops GmbH</strong><br>
-          E-Mail: <a href="mailto:dsb@trustedshops.de" style="color: var(--kx-c-brand);">dsb@trustedshops.de</a>
-        </p>
+        <div class="kx-cset__card">
+          <p class="kx-cset__card-title">Datenschutzbeauftragter</p>
+          <p>
+            <strong>Trusted Shops GmbH</strong><br>
+            E-Mail: <a href="mailto:dsb@trustedshops.de">dsb@trustedshops.de</a>
+          </p>
+        </div>
 
-        <p class="kx-cset__intro">
-          Weitere Details zur Verarbeitung Ihrer Daten finden Sie in unserer
-          <a href="{{ routes.root_url }}policies/privacy-policy" style="color: var(--kx-c-brand);">Datenschutzerklärung</a>
-          und im <a href="{{ routes.root_url }}pages/impressum" style="color: var(--kx-c-brand);">Impressum</a>.
+        <p class="kx-cset__intro" style="margin: 1rem 0 0.5rem;">
+          Weitere Details finden Sie in unserer
+          <a href="{{ routes.root_url }}policies/privacy-policy" style="color: var(--kx-c-brand); font-weight: 500;">Datenschutzerklärung</a>
+          und im <a href="{{ routes.root_url }}pages/impressum" style="color: var(--kx-c-brand); font-weight: 500;">Impressum</a>.
         </p>
-        <p class="kx-cset__intro">
-          Sie haben jederzeit das Recht, Ihre Zustimmung zu widerrufen, Auskunft über die gespeicherten Daten zu erhalten oder deren Löschung zu verlangen. Wenden Sie sich dafür bitte an die oben genannte E-Mail-Adresse.
+        <p class="kx-cset__intro" style="margin-bottom: 0;">
+          Sie haben jederzeit das Recht, Ihre Zustimmung zu widerrufen, Auskunft über die gespeicherten Daten zu erhalten oder deren Löschung zu verlangen.
         </p>
       </div>
     </div>
     <footer class="kx-cset__footer">
-      <button type="button" class="kx-cset__btn kx-cset__btn--secondary" data-cset-close>Schließen</button>
-      <button type="button" class="kx-cset__btn kx-cset__btn--primary" id="kxCsetSave">Speichern</button>
+      <span class="kx-cset__footer-note">Powered by Karinex Consent</span>
+      <div class="kx-cset__footer-actions">
+        <button type="button" class="kx-cset__btn kx-cset__btn--secondary" data-cset-close>Schließen</button>
+        <button type="button" class="kx-cset__btn kx-cset__btn--primary" id="kxCsetSave">Auswahl speichern</button>
+      </div>
     </footer>
   </div>
 </div>
