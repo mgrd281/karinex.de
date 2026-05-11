@@ -203,6 +203,7 @@
 
     /* === Grid ========================================================== */
     .kx-cat__grid {
+      width: 100%;
       display: grid;
       gap: clamp(1rem, 2vw, 2rem);
       align-items: start;
@@ -273,6 +274,18 @@
       transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
                   color 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .kx-cat__col-list a::after {
+      content: '→';
+      margin-left: auto;
+      flex-shrink: 0;
+      color: #1B3A2E;
+      opacity: 0;
+      transform: translateX(-4px);
+      font-size: 12.5px;
+      font-weight: 600;
+      transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
     .kx-cat__col-list a:hover,
     .kx-cat__col-list a:focus-visible {
       background: #eff4f1;
@@ -283,6 +296,11 @@
     .kx-cat__col-list a:focus-visible::before {
       color: #1B3A2E;
       transform: translateX(3px);
+    }
+    .kx-cat__col-list a:hover::after,
+    .kx-cat__col-list a:focus-visible::after {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     /* === "Alle X" footer link =========================================== */
@@ -550,10 +568,10 @@
             <div class="kx-cat__col">
               <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_code }}</span>Visual Studio</h4>
               <ul class="kx-cat__col-list" role="list">
-                <li><a href="{{ _root }}search?q=Visual+Studio+2022+Professional">VS 2022 Professional</a></li>
-                <li><a href="{{ _root }}search?q=Visual+Studio+2022+Enterprise">VS 2022 Enterprise</a></li>
-                <li><a href="{{ _root }}search?q=Visual+Studio+2019">VS 2019</a></li>
-                <li><a href="{{ _root }}search?q=Visual+Studio+2017">VS 2017</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2026">Visual Studio 2026</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2022">Visual Studio 2022</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2019">Visual Studio 2019</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2017">Visual Studio 2017</a></li>
               </ul>
             </div>
             <div class="kx-cat__col">
@@ -567,17 +585,19 @@
             <div class="kx-cat__col">
               <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_chart }}</span>Microsoft Project</h4>
               <ul class="kx-cat__col-list" role="list">
-                <li><a href="{{ _root }}search?q=Project+2024+Professional">Project 2024 Professional</a></li>
-                <li><a href="{{ _root }}search?q=Project+2021+Professional">Project 2021 Professional</a></li>
+                <li><a href="{{ _root }}search?q=Project+2024">Project 2024</a></li>
+                <li><a href="{{ _root }}search?q=Project+2021">Project 2021</a></li>
                 <li><a href="{{ _root }}search?q=Project+2019">Project 2019</a></li>
+                <li><a href="{{ _root }}search?q=Project+2016">Project 2016</a></li>
               </ul>
             </div>
             <div class="kx-cat__col">
               <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_nodes }}</span>Microsoft Visio</h4>
               <ul class="kx-cat__col-list" role="list">
-                <li><a href="{{ _root }}search?q=Visio+2024+Professional">Visio 2024 Professional</a></li>
-                <li><a href="{{ _root }}search?q=Visio+2021+Professional">Visio 2021 Professional</a></li>
+                <li><a href="{{ _root }}search?q=Visio+2024">Visio 2024</a></li>
+                <li><a href="{{ _root }}search?q=Visio+2021">Visio 2021</a></li>
                 <li><a href="{{ _root }}search?q=Visio+2019">Visio 2019</a></li>
+                <li><a href="{{ _root }}search?q=Visio+2016">Visio 2016</a></li>
               </ul>
             </div>
             <div class="kx-cat__footer">
@@ -590,27 +610,30 @@
         <nav class="kx-cat kx-cat--sale" role="navigation" aria-label="SALE &amp; Bestseller">
           <div class="kx-cat__grid kx-cat__grid--3">
             <div class="kx-cat__col">
-              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_tag }}</span>Top Deals<span class="kx-cat__hot">HOT</span></h4>
+              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_star }}</span>Bestseller Software<span class="kx-cat__hot">HOT</span></h4>
               <ul class="kx-cat__col-list" role="list">
-                <li><a href="{{ _root }}collections/bestseller">Bestseller</a></li>
-                <li><a href="{{ _root }}collections/sale">Sale</a></li>
-                <li><a href="{{ _root }}search?q=Angebote">Angebote</a></li>
-              </ul>
-            </div>
-            <div class="kx-cat__col">
-              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_star }}</span>Bestseller Software</h4>
-              <ul class="kx-cat__col-list" role="list">
-                <li><a href="{{ _root }}search?q=Office+Bestseller">Office Bestseller</a></li>
-                <li><a href="{{ _root }}search?q=Windows+Bestseller">Windows Bestseller</a></li>
-                <li><a href="{{ _root }}search?q=365+Bestseller">Microsoft 365 Bestseller</a></li>
-              </ul>
-            </div>
-            <div class="kx-cat__col">
-              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_star }}</span>Bestseller Tools</h4>
-              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+2024+Bestseller">Office 2024 Bestseller</a></li>
+                <li><a href="{{ _root }}search?q=Windows+11+Bestseller">Windows 11 Bestseller</a></li>
                 <li><a href="{{ _root }}search?q=Visual+Studio+Bestseller">Visual Studio Bestseller</a></li>
                 <li><a href="{{ _root }}search?q=Project+Bestseller">Project Bestseller</a></li>
                 <li><a href="{{ _root }}search?q=Visio+Bestseller">Visio Bestseller</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_tag }}</span>Top Deals</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}collections/bestseller">Alle Bestseller</a></li>
+                <li><a href="{{ _root }}collections/sale">Sale Produkte</a></li>
+                <li><a href="{{ _root }}search?q=Angebote">Aktuelle Angebote</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title"><span class="kx-cat__col-icon">{{ svg_layers }}</span>Kategorien im Sale</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+Sale">Office im Sale</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Sale">Windows im Sale</a></li>
+                <li><a href="{{ _root }}search?q=365+Sale">Microsoft 365 im Sale</a></li>
+                <li><a href="{{ _root }}search?q=Server+Sale">Server im Sale</a></li>
               </ul>
             </div>
             <div class="kx-cat__footer">
