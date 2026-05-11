@@ -1,25 +1,23 @@
 {%- doc -%}
-  Karinex Mega Menu — premium full-width navigation panel.
+  Karinex Mega Menu — premium SaaS-grade navigation panel.
 
-  Renders a stable, full-width professional dropdown that exposes the
-  full software catalog at once. Identical content is shown for every
-  top-level Hauptmenü item (Office, Mac, 365, Windows, Server, Tools,
-  SALE & Bestseller), so categories never disappear and the panel
-  never reflows when the visitor moves between top-level items.
+  Architecture (desktop)
+  ──────────────────────
+  ┌────────────┬─────────────────────────────────┬───────────────────┐
+  │  RAIL      │  CARD GRID (12 categories)      │  FEATURED PROMOS  │
+  │  Sidebar   │  Icon · Title · Description     │  Hero · Bestseller│
+  │  7 items   │  Hover: lift + border + arrow   │  Gradient CTAs    │
+  └────────────┴─────────────────────────────────┴───────────────────┘
 
-  Layout
-  ──────
-    ┌──────────┬──────────────────────────────────────────────┐
-    │ Sidebar  │  Row 1: Win 11 · Win 10 · Win 8 · Win 7/XP   │
-    │ (7 top-  │          · Microsoft Office · Office für Mac │
-    │  level   │  Row 2: Microsoft 365 · Server · Visual      │
-    │  links)  │          Studio · SQL Server · Project       │
-    │          │          · Visio                              │
-    └──────────┴──────────────────────────────────────────────┘
+  Every top-level Hauptmenü item opens the *same* panel — categories
+  never disappear or reflow when the visitor moves between top-level
+  items, which is the layout-stability rule for SaaS-grade nav.
+
+  Self-contained: ships its own CSS (scoped to .kx-mm) and SVG icons.
 
   @param {string} _root - Theme root URL prefix, e.g. '/' or '/de/'.
-  @param {object} [parent_link] - The hovered top-level link (accepted
-    for API compatibility; the panel content is identical for all items).
+  @param {object} [parent_link] - Hovered top-level link (accepted for
+    API compatibility; panel content is identical for every item).
   @param {string} [mode] - 'desktop' (default) | 'mobile'.
 {%- enddoc -%}
 
@@ -36,6 +34,19 @@
     endunless
   endunless
 -%}
+
+{%- capture svg_office -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 3l-9 2.5v13L14 21l5-2V5l-5-2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3v18" stroke="currentColor" stroke-width="1.6"/></svg>{%- endcapture -%}
+{%- capture svg_mac -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>{%- endcapture -%}
+{%- capture svg_365 -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9.5a3.5 3.5 0 0 1 0 7H7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>{%- endcapture -%}
+{%- capture svg_windows -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="3" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="13" width="8" height="8" rx="1" stroke="currentColor" stroke-width="1.6"/></svg>{%- endcapture -%}
+{%- capture svg_server -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="5" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="11" width="18" height="5" rx="1" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="18" width="18" height="2.5" rx="1" stroke="currentColor" stroke-width="1.6"/><circle cx="7" cy="6.5" r=".7" fill="currentColor"/><circle cx="7" cy="13.5" r=".7" fill="currentColor"/></svg>{%- endcapture -%}
+{%- capture svg_tools -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l-5 6 5 6M15 6l5 6-5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>{%- endcapture -%}
+{%- capture svg_sale -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12l9-9 9 9-9 9-9-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 15l6-6M9.5 10a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Zm5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>{%- endcapture -%}
+{%- capture svg_visualstudio -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 7L4 12l4 5M16 7l4 5-4 5M14 6l-4 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>{%- endcapture -%}
+{%- capture svg_sql -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M5 5.5v13c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-13M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" stroke="currentColor" stroke-width="1.6"/></svg>{%- endcapture -%}
+{%- capture svg_project -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20V8M9 20V12M14 20v-6M19 20V4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>{%- endcapture -%}
+{%- capture svg_visio -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="5" r="2" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.6"/><circle cx="5" cy="19" r="2" stroke="currentColor" stroke-width="1.6"/><circle cx="19" cy="19" r="2" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 6.5l4 4M17.5 6.5l-4 4M10.5 13.5l-4 4M13.5 13.5l4 4" stroke="currentColor" stroke-width="1.4"/></svg>{%- endcapture -%}
+{%- capture svg_arrow -%}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{%- endcapture -%}
 
 {%- if mode == 'mobile' -%}
   <ul class="kx-mm-mobile menu-drawer__menu menu-drawer__menu--childlist" role="list" tabindex="-1">
@@ -59,34 +70,25 @@
       </accordion-custom>
     </li>
 
-    {%- comment -%} Mobile category accordions — same 12 categories as desktop. {%- endcomment -%}
-    {%- assign mobile_groups = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac|Microsoft 365|Windows Server|Visual Studio|SQL Server|Microsoft Project|Microsoft Visio' | split: '|' -%}
-    {%- assign mobile_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac|collections/microsoft-365-abonnement|collections/windows-server|search?q=Visual+Studio|search?q=SQL+Server|search?q=Microsoft+Project|search?q=Microsoft+Visio' | split: '|' -%}
-    {%- assign mobile_subs = 'Pro~search?q=Windows+11+Pro;;Home~search?q=Windows+11+Home;;Enterprise~search?q=Windows+11+Enterprise;;Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Pro DVD/OEM~search?q=Windows+11+Pro+DVD@@Pro~search?q=Windows+10+Pro;;Home OEM~search?q=Windows+10+Home+OEM;;Enterprise~search?q=Windows+10+Enterprise;;Education~search?q=Windows+10+Education@@8.1 Pro~search?q=Windows+8.1+Pro;;8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows@@7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;XP~search?q=Windows+XP@@2024 Pro Plus~search?q=Office+2024+Professional+Plus;;2021 Pro Plus~search?q=Office+2021+Professional+Plus;;2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office@@2024 für Mac~search?q=Office+2024+Mac;;2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac@@365 Personal~search?q=Microsoft+365+Personal;;365 Family~search?q=Microsoft+365+Family;;365 Business~search?q=Microsoft+365+Business;;Alle 365-Abos~collections/microsoft-365-abonnement@@Server 2022~search?q=Windows+Server+2022;;Server 2019~search?q=Windows+Server+2019;;Server 2016~search?q=Windows+Server+2016;;Alle Server~collections/windows-server@@VS 2022 Pro~search?q=Visual+Studio+2022+Professional;;VS 2022 Enterprise~search?q=Visual+Studio+2022+Enterprise;;VS 2019~search?q=Visual+Studio+2019;;Alle Visual Studio~search?q=Visual+Studio@@SQL 2022 Std~search?q=SQL+Server+2022+Standard;;SQL 2019 Std~search?q=SQL+Server+2019+Standard;;SQL 2017~search?q=SQL+Server+2017;;Alle SQL Server~search?q=SQL+Server@@Project 2024 Pro~search?q=Project+2024+Professional;;Project 2021 Pro~search?q=Project+2021+Professional;;Project 2019 Pro~search?q=Project+2019+Professional;;Alle Project~search?q=Microsoft+Project@@Visio 2024 Pro~search?q=Visio+2024+Professional;;Visio 2021 Pro~search?q=Visio+2021+Professional;;Visio 2019 Pro~search?q=Visio+2019+Professional;;Alle Visio~search?q=Microsoft+Visio' | split: '@@' -%}
+    {%- assign mob_groups = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac|Microsoft 365|Windows Server|Visual Studio|SQL Server|Microsoft Project|Microsoft Visio' | split: '|' -%}
+    {%- assign mob_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac|collections/microsoft-365-abonnement|collections/windows-server|search?q=Visual+Studio|search?q=SQL+Server|search?q=Microsoft+Project|search?q=Microsoft+Visio' | split: '|' -%}
+    {%- assign mob_subs = 'Pro~search?q=Windows+11+Pro;;Home~search?q=Windows+11+Home;;Enterprise~search?q=Windows+11+Enterprise;;Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Pro DVD/OEM~search?q=Windows+11+Pro+DVD@@Pro~search?q=Windows+10+Pro;;Home OEM~search?q=Windows+10+Home+OEM;;Enterprise~search?q=Windows+10+Enterprise;;Education~search?q=Windows+10+Education@@8.1 Pro~search?q=Windows+8.1+Pro;;8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows@@7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;XP~search?q=Windows+XP@@2024 Pro Plus~search?q=Office+2024+Professional+Plus;;2021 Pro Plus~search?q=Office+2021+Professional+Plus;;2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office@@2024 für Mac~search?q=Office+2024+Mac;;2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac@@365 Personal~search?q=Microsoft+365+Personal;;365 Family~search?q=Microsoft+365+Family;;365 Business~search?q=Microsoft+365+Business;;Alle 365-Abos~collections/microsoft-365-abonnement@@Server 2022~search?q=Windows+Server+2022;;Server 2019~search?q=Windows+Server+2019;;Server 2016~search?q=Windows+Server+2016;;Alle Server~collections/windows-server@@VS 2022 Pro~search?q=Visual+Studio+2022+Professional;;VS 2022 Enterprise~search?q=Visual+Studio+2022+Enterprise;;VS 2019~search?q=Visual+Studio+2019;;Alle Visual Studio~search?q=Visual+Studio@@SQL 2022 Std~search?q=SQL+Server+2022+Standard;;SQL 2019 Std~search?q=SQL+Server+2019+Standard;;SQL 2017~search?q=SQL+Server+2017;;Alle SQL Server~search?q=SQL+Server@@Project 2024 Pro~search?q=Project+2024+Professional;;Project 2021 Pro~search?q=Project+2021+Professional;;Project 2019 Pro~search?q=Project+2019+Professional;;Alle Project~search?q=Microsoft+Project@@Visio 2024 Pro~search?q=Visio+2024+Professional;;Visio 2021 Pro~search?q=Visio+2021+Professional;;Visio 2019 Pro~search?q=Visio+2019+Professional;;Alle Visio~search?q=Microsoft+Visio' | split: '@@' -%}
 
-    {%- for group_title in mobile_groups -%}
-      {%- assign group_href = mobile_hrefs[forloop.index0] -%}
-      {%- assign group_subs = mobile_subs[forloop.index0] | split: ';;' -%}
+    {%- for g_title in mob_groups -%}
+      {%- assign g_href = mob_hrefs[forloop.index0] -%}
+      {%- assign g_subs = mob_subs[forloop.index0] | split: ';;' -%}
       <li class="menu-drawer__list-item kx-mm-mobile__item">
         <accordion-custom>
           <details>
             <summary class="menu-drawer__menu-item menu-drawer__menu-item--parent focus-inset">
-              <span class="menu-drawer__menu-item-text wrap-text">{{ group_title }}</span>
+              <span class="menu-drawer__menu-item-text wrap-text">{{ g_title }}</span>
               <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
             </summary>
             <ul class="menu-drawer__menu menu-drawer__menu--grandchildlist details-content kx-mm-mobile__sublist" role="list" tabindex="-1">
-              <li>
-                <a href="{{ _root }}{{ group_href }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-mm-mobile__see-all">
-                  <span class="menu-drawer__menu-item-text wrap-text">{{ group_title }} ansehen</span>
-                </a>
-              </li>
-              {%- for sub in group_subs -%}
+              <li><a href="{{ _root }}{{ g_href }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-mm-mobile__see-all"><span class="menu-drawer__menu-item-text wrap-text">{{ g_title }} ansehen</span></a></li>
+              {%- for sub in g_subs -%}
                 {%- assign parts = sub | split: '~' -%}
-                <li>
-                  <a href="{{ _root }}{{ parts[1] }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset">
-                    <span class="menu-drawer__menu-item-text wrap-text">{{ parts[0] }}</span>
-                  </a>
-                </li>
+                <li><a href="{{ _root }}{{ parts[1] }}" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">{{ parts[0] }}</span></a></li>
               {%- endfor -%}
             </ul>
           </details>
@@ -96,411 +98,546 @@
   </ul>
 
   <style>
-    .kx-mm-mobile {
-      padding: 0;
-    }
-    .kx-mm-mobile__item {
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .kx-mm-mobile__item:last-child {
-      border-bottom: 0;
-    }
-    .kx-mm-mobile__group {
-      font-weight: 700;
-      color: #1B3A2E;
-      letter-spacing: 0.04em;
-    }
-    .kx-mm-mobile__sublist {
-      padding-left: 0.75rem;
-    }
-    .kx-mm-mobile__see-all {
-      font-weight: 600;
-      color: #1B3A2E !important;
-    }
-    .kx-mm-mobile__sale {
-      color: #E60000 !important;
-      font-weight: 700;
-    }
+    .kx-mm-mobile { padding: 0; }
+    .kx-mm-mobile__item { border-bottom: 1px solid #f0f0f0; }
+    .kx-mm-mobile__item:last-child { border-bottom: 0; }
+    .kx-mm-mobile__group { font-weight: 700; color: #1B3A2E; letter-spacing: 0.04em; }
+    .kx-mm-mobile__sublist { padding-left: 0.75rem; }
+    .kx-mm-mobile__see-all { font-weight: 600; color: #1B3A2E !important; }
+    .kx-mm-mobile__sale { color: #E60000 !important; font-weight: 700; }
   </style>
 
 {%- else -%}
 
   <style>
-    /* === Karinex Mega Menu — premium full-width grid (desktop) === */
+    /* === Karinex Mega Menu — premium SaaS desktop panel ===================
+       Scoped to .kx-mm. No styles leak into the rest of the theme.
+       Uses CSS Grid + clamp() + :has() for fluid, modern layout.
+    ========================================================================= */
 
-    /* Force the theme's outer mega-menu grid to a single full-width cell
-       so our panel can render its own layout. */
-    .mega-menu__grid:has(.kx-mm-panel) {
+    /* Make the theme's outer mega-menu grid a single full-width cell */
+    .mega-menu__grid:has(.kx-mm) {
       --menu-columns-desktop: 1 !important;
       --menu-columns-tablet: 1 !important;
       grid-template-columns: 1fr !important;
       gap: 0 !important;
     }
-    .mega-menu__list:has(.kx-mm-panel) {
+    .mega-menu__list:has(.kx-mm) {
       grid-column: 1 / -1 !important;
       grid-template-columns: 1fr !important;
       gap: 0 !important;
       overflow: visible;
     }
-    .kx-mm-panel-cell {
+    .kx-mm-cell {
       grid-column: 1 / -1 !important;
       padding: 0 !important;
       min-width: 0;
+      list-style: none;
     }
 
-    /* Reset theme link defaults inside our panel so nothing leaks in */
-    .kx-mm-panel a,
-    .kx-mm-panel a:hover {
-      text-decoration: none;
-    }
-    .kx-mm-panel,
-    .kx-mm-panel * {
+    /* Kill theme link defaults inside our panel */
+    .kx-mm a,
+    .kx-mm a:hover { text-decoration: none; color: inherit; }
+    .kx-mm,
+    .kx-mm * {
       -webkit-hyphens: manual !important;
       hyphens: manual !important;
       word-break: normal !important;
       overflow-wrap: break-word;
+      box-sizing: border-box;
+    }
+    .kx-mm ul { list-style: none; padding: 0; margin: 0; }
+
+    /* === Design tokens ================================================== */
+    .kx-mm {
+      --kx-brand: #1B3A2E;
+      --kx-brand-soft: #E8F0EC;
+      --kx-accent: #E60000;
+      --kx-ink: #1a1a1a;
+      --kx-ink-muted: #5a5a5a;
+      --kx-line: #ececec;
+      --kx-surface: #ffffff;
+      --kx-surface-alt: #fafbfa;
+      --kx-radius: 14px;
+      --kx-radius-sm: 10px;
+      --kx-shadow: 0 1px 2px rgba(15, 25, 20, 0.04),
+                   0 10px 30px rgba(15, 25, 20, 0.06);
+      --kx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+      --kx-pad-x: clamp(1.25rem, 2.5vw, 2.25rem);
+      --kx-pad-y: clamp(1.5rem, 2.25vw, 2rem);
     }
 
-    /* === Panel container === */
-    .kx-mm-panel {
+    /* === Panel container ================================================ */
+    .kx-mm {
       width: 100%;
-      max-width: var(--page-width, 1440px);
+      max-width: 1600px;
       margin-inline: auto;
-      padding: 1.75rem 0 2rem;
+      padding: var(--kx-pad-y) var(--kx-pad-x);
 
       display: grid;
-      grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
-      gap: 2.25rem;
+      grid-template-columns: clamp(200px, 16vw, 240px) minmax(0, 1fr) clamp(240px, 18vw, 300px);
+      gap: clamp(1.25rem, 2vw, 2.25rem);
+      align-items: start;
 
-      /* Lock vertical footprint so the panel never reflows between items */
-      min-height: 360px;
+      /* Lock vertical footprint so the panel never reflows */
+      min-height: 420px;
 
-      animation: kxMmFadeIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      background: var(--kx-surface);
+      animation: kxMmIn 260ms var(--kx-ease) both;
+      will-change: opacity, transform;
     }
 
-    @keyframes kxMmFadeIn {
+    @keyframes kxMmIn {
       from { opacity: 0; transform: translateY(-6px); }
       to   { opacity: 1; transform: translateY(0);    }
     }
-
     @media (prefers-reduced-motion: reduce) {
-      .kx-mm-panel { animation: none; }
+      .kx-mm { animation: none; }
     }
 
-    /* === Sidebar === */
-    .kx-mm-panel__sidebar {
-      border-right: 1px solid #ececec;
-      padding-right: 1.5rem;
+    /* === RAIL (left sidebar) ============================================ */
+    .kx-mm__rail {
+      border-right: 1px solid var(--kx-line);
+      padding-right: clamp(0.75rem, 1.25vw, 1.25rem);
     }
-
-    .kx-mm-panel__heading {
-      font-family: var(--menu-parent-font-family, inherit);
+    .kx-mm__rail-heading {
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #1B3A2E;
+      color: var(--kx-ink-muted);
       margin: 0 0 0.85rem;
-      padding-bottom: 0.55rem;
-      border-bottom: 2px solid #1B3A2E;
-      white-space: nowrap;
-      display: block;
     }
-
-    .kx-mm-panel__sidebar-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .kx-mm__rail-list {
       display: flex;
       flex-direction: column;
-      gap: 0.1rem;
+      gap: 0.15rem;
     }
-
-    .kx-mm-panel__sidebar-list a {
-      display: block;
-      padding: 0.42rem 0;
-      font-size: 13px;
-      line-height: 1.4;
-      color: #444;
-      transition: color 160ms ease, transform 160ms ease;
+    .kx-mm__rail-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--kx-radius-sm);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--kx-ink);
+      transition: background-color 180ms var(--kx-ease),
+                  color 180ms var(--kx-ease),
+                  transform 180ms var(--kx-ease);
+      position: relative;
     }
-    .kx-mm-panel__sidebar-list a:hover,
-    .kx-mm-panel__sidebar-list a:focus-visible {
-      color: #1B3A2E;
-      transform: translateX(3px);
+    .kx-mm__rail-link::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 50%;
+      width: 3px;
+      height: 0;
+      background: var(--kx-brand);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      transition: height 200ms var(--kx-ease);
+    }
+    .kx-mm__rail-link:hover,
+    .kx-mm__rail-link:focus-visible {
+      background: var(--kx-brand-soft);
+      color: var(--kx-brand);
       outline: none;
     }
-    .kx-mm-panel__sidebar-list a:focus-visible {
-      text-decoration: underline;
-      text-underline-offset: 4px;
+    .kx-mm__rail-link:hover::before,
+    .kx-mm__rail-link:focus-visible::before {
+      height: 60%;
     }
-
-    .kx-mm-panel__sidebar-sale {
-      color: #E60000 !important;
+    .kx-mm__rail-icon {
+      flex: 0 0 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--kx-brand);
+      display: inline-flex;
+    }
+    .kx-mm__rail-icon svg { width: 100%; height: 100%; }
+    .kx-mm__rail-link--sale {
+      color: var(--kx-accent);
       font-weight: 700;
-      letter-spacing: 0.02em;
     }
-    .kx-mm-panel__sidebar-sale:hover {
-      color: #E60000 !important;
+    .kx-mm__rail-link--sale .kx-mm__rail-icon { color: var(--kx-accent); }
+    .kx-mm__rail-link--sale:hover,
+    .kx-mm__rail-link--sale:focus-visible {
+      background: rgba(230, 0, 0, 0.06);
+      color: var(--kx-accent);
+    }
+    .kx-mm__rail-link--sale:hover::before,
+    .kx-mm__rail-link--sale:focus-visible::before {
+      background: var(--kx-accent);
     }
 
-    /* === Content grid (2 rows × 6 columns) === */
-    .kx-mm-panel__content {
+    /* === Card grid (center) ============================================= */
+    .kx-mm__grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 1.75rem 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: clamp(0.75rem, 1vw, 1rem);
       align-content: start;
     }
 
-    .kx-mm-panel__col {
+    .kx-mm__card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-areas:
+        "icon title arrow"
+        "icon desc  arrow";
+      column-gap: 0.85rem;
+      align-items: center;
+
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--kx-line);
+      border-radius: var(--kx-radius);
+      background: var(--kx-surface);
+      transition: border-color 200ms var(--kx-ease),
+                  background-color 200ms var(--kx-ease),
+                  box-shadow 200ms var(--kx-ease),
+                  transform 200ms var(--kx-ease);
       min-width: 0;
-      display: flex;
-      flex-direction: column;
     }
-
-    .kx-mm-panel__col-title {
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #1B3A2E;
-      margin: 0 0 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #e6e6e6;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: border-bottom-color 180ms ease;
-    }
-    .kx-mm-panel__col-title:hover {
-      border-bottom-color: #1B3A2E;
-    }
-
-    .kx-mm-panel__col-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.05rem;
-    }
-    .kx-mm-panel__col-list li { min-width: 0; }
-
-    .kx-mm-panel__col-list a {
-      display: block;
-      padding: 0.32rem 0;
-      font-size: 12.5px;
-      line-height: 1.4;
-      color: #5a5a5a;
-      transition: color 160ms ease, transform 160ms ease;
-    }
-    .kx-mm-panel__col-list a:hover,
-    .kx-mm-panel__col-list a:focus-visible {
-      color: #1B3A2E;
-      transform: translateX(2px);
+    .kx-mm__card:hover,
+    .kx-mm__card:focus-visible {
+      border-color: var(--kx-brand);
+      background: var(--kx-surface-alt);
+      box-shadow: 0 6px 18px rgba(27, 58, 46, 0.08);
+      transform: translateY(-1px);
       outline: none;
     }
-    .kx-mm-panel__col-list a:focus-visible {
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    .kx-mm__card-icon {
+      grid-area: icon;
+      align-self: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--kx-brand-soft);
+      color: var(--kx-brand);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 200ms var(--kx-ease),
+                  color 200ms var(--kx-ease);
+    }
+    .kx-mm__card-icon svg { width: 20px; height: 20px; }
+    .kx-mm__card:hover .kx-mm__card-icon,
+    .kx-mm__card:focus-visible .kx-mm__card-icon {
+      background: var(--kx-brand);
+      color: #fff;
+    }
+    .kx-mm__card-title {
+      grid-area: title;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--kx-ink);
+      letter-spacing: 0.005em;
+    }
+    .kx-mm__card-desc {
+      grid-area: desc;
+      margin: 2px 0 0;
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--kx-ink-muted);
+    }
+    .kx-mm__card-arrow {
+      grid-area: arrow;
+      width: 22px;
+      height: 22px;
+      color: var(--kx-ink-muted);
+      align-self: center;
+      transform: translateX(-2px);
+      opacity: 0;
+      transition: transform 220ms var(--kx-ease),
+                  opacity 200ms var(--kx-ease),
+                  color 200ms var(--kx-ease);
+    }
+    .kx-mm__card-arrow svg { width: 18px; height: 18px; }
+    .kx-mm__card:hover .kx-mm__card-arrow,
+    .kx-mm__card:focus-visible .kx-mm__card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+      color: var(--kx-brand);
     }
 
-    .kx-mm-panel__col-all {
-      margin-top: 0.4rem;
-      padding-top: 0.4rem;
-      border-top: 1px dashed #ececec;
+    /* === FEATURED (right rail) ========================================== */
+    .kx-mm__featured {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
     }
-    .kx-mm-panel__col-all a {
+    .kx-mm__featured-heading {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--kx-ink-muted);
+      margin: 0 0 0.5rem;
+    }
+
+    .kx-mm__promo {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 1.1rem 1.15rem 1.25rem;
+      border-radius: var(--kx-radius);
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 220ms var(--kx-ease),
+                  box-shadow 220ms var(--kx-ease);
+    }
+    .kx-mm__promo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, var(--kx-brand) 0%, #0f2820 100%);
+    }
+    .kx-mm__promo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: radial-gradient(circle at 80% 0%, rgba(255,255,255,.12), transparent 55%);
+    }
+    .kx-mm__promo:hover,
+    .kx-mm__promo:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(27, 58, 46, 0.18);
+      outline: none;
+    }
+    .kx-mm__promo-badge {
+      align-self: flex-start;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+    .kx-mm__promo-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #fff;
+      letter-spacing: -0.005em;
+    }
+    .kx-mm__promo-text {
+      margin: 0;
+      font-size: 12.5px;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    .kx-mm__promo-cta {
+      margin-top: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 12.5px;
       font-weight: 600;
-      color: #1B3A2E !important;
+      color: #fff;
+      letter-spacing: 0.02em;
     }
-    .kx-mm-panel__col-all a::after {
-      content: ' →';
-      display: inline-block;
-      transition: transform 160ms ease;
+    .kx-mm__promo-cta::after {
+      content: '→';
+      transition: transform 200ms var(--kx-ease);
     }
-    .kx-mm-panel__col-all a:hover::after {
+    .kx-mm__promo:hover .kx-mm__promo-cta::after,
+    .kx-mm__promo:focus-visible .kx-mm__promo-cta::after {
       transform: translateX(3px);
     }
 
-    /* === Responsive breakpoints === */
+    /* Secondary promo: light surface with brand accent */
+    .kx-mm__promo--alt::before {
+      background: linear-gradient(135deg, #f6faf8 0%, #ffffff 100%);
+    }
+    .kx-mm__promo--alt::after {
+      background: radial-gradient(circle at 20% 100%, rgba(27,58,46,.06), transparent 60%);
+    }
+    .kx-mm__promo--alt .kx-mm__promo-badge {
+      color: var(--kx-brand);
+      background: var(--kx-brand-soft);
+      backdrop-filter: none;
+    }
+    .kx-mm__promo--alt .kx-mm__promo-title { color: var(--kx-ink); }
+    .kx-mm__promo--alt .kx-mm__promo-text  { color: var(--kx-ink-muted); }
+    .kx-mm__promo--alt .kx-mm__promo-cta   { color: var(--kx-brand); }
+
+    /* === Responsive ===================================================== */
     @media (max-width: 1399px) {
-      .kx-mm-panel { gap: 1.75rem; }
-      .kx-mm-panel__content {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+      .kx-mm {
+        grid-template-columns: clamp(190px, 17vw, 220px) minmax(0, 1fr);
+      }
+      .kx-mm__featured {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.85rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--kx-line);
+        margin-top: 0.25rem;
+      }
+      .kx-mm__featured-heading { width: 100%; margin: 0; }
+      .kx-mm__promo {
+        flex: 1 1 280px;
+        min-width: 0;
       }
     }
     @media (max-width: 1199px) {
-      .kx-mm-panel {
+      .kx-mm {
         grid-template-columns: 1fr;
-        gap: 1.25rem;
         min-height: auto;
       }
-      .kx-mm-panel__sidebar {
+      .kx-mm__rail {
         border-right: 0;
-        border-bottom: 1px solid #ececec;
+        border-bottom: 1px solid var(--kx-line);
         padding-right: 0;
         padding-bottom: 1rem;
       }
-      .kx-mm-panel__sidebar-list {
+      .kx-mm__rail-list {
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 0.35rem 1.5rem;
+        gap: 0.25rem 0.5rem;
       }
-      .kx-mm-panel__content {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-    @media (max-width: 989px) {
-      .kx-mm-panel__content {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+      .kx-mm__rail-link {
+        padding: 0.45rem 0.65rem;
+        font-size: 13px;
       }
     }
   </style>
 
-  <li class="mega-menu__column kx-mm-panel-cell">
-    <div class="kx-mm-panel" role="region" aria-label="Software-Kategorien">
+  <li class="mega-menu__column kx-mm-cell">
+    <div class="kx-mm" role="region" aria-label="Software-Kategorien">
 
-      <aside class="kx-mm-panel__sidebar" aria-labelledby="kx-mm-sidebar-title">
-        <h3 class="kx-mm-panel__heading" id="kx-mm-sidebar-title">Menüpunkte</h3>
-        <ul class="kx-mm-panel__sidebar-list" role="list">
-          <li><a href="{{ _root }}collections/microsoft-office">Office für Windows</a></li>
-          <li><a href="{{ _root }}collections/microsoft-office-fur-mac">Office für Mac</a></li>
-          <li><a href="{{ _root }}collections/microsoft-365-abonnement">Microsoft 365</a></li>
-          <li><a href="{{ _root }}collections/windows">Windows</a></li>
-          <li><a href="{{ _root }}collections/windows-server">Windows Server</a></li>
-          <li><a href="{{ _root }}collections/microsoft-tools">Microsoft Tools</a></li>
-          <li><a href="{{ _root }}collections/sale" class="kx-mm-panel__sidebar-sale">SALE &amp; Bestseller</a></li>
+      <nav class="kx-mm__rail" aria-labelledby="kx-mm-rail-heading">
+        <h3 id="kx-mm-rail-heading" class="kx-mm__rail-heading">Kategorien</h3>
+        <ul class="kx-mm__rail-list" role="list">
+          <li><a href="{{ _root }}collections/microsoft-office" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_office }}</span>Office für Windows</a></li>
+          <li><a href="{{ _root }}collections/microsoft-office-fur-mac" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_mac }}</span>Office für Mac</a></li>
+          <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_365 }}</span>Microsoft 365</a></li>
+          <li><a href="{{ _root }}collections/windows" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_windows }}</span>Windows</a></li>
+          <li><a href="{{ _root }}collections/windows-server" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_server }}</span>Windows Server</a></li>
+          <li><a href="{{ _root }}collections/microsoft-tools" class="kx-mm__rail-link"><span class="kx-mm__rail-icon">{{ svg_tools }}</span>Microsoft Tools</a></li>
+          <li><a href="{{ _root }}collections/sale" class="kx-mm__rail-link kx-mm__rail-link--sale"><span class="kx-mm__rail-icon">{{ svg_sale }}</span>SALE &amp; Bestseller</a></li>
         </ul>
-      </aside>
+      </nav>
 
-      <div class="kx-mm-panel__content" role="list" aria-label="Produktkategorien">
+      <div class="kx-mm__grid" role="list" aria-label="Produktkategorien">
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Windows+11" class="kx-mm-panel__col-title">Windows 11</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Windows+11+Pro">Pro</a></li>
-            <li><a href="{{ _root }}search?q=Windows+11+Home">Home</a></li>
-            <li><a href="{{ _root }}search?q=Windows+11+Enterprise">Enterprise</a></li>
-            <li><a href="{{ _root }}search?q=Windows+11+Pro+Workstations">Pro Workstations</a></li>
-            <li><a href="{{ _root }}search?q=Windows+11+Pro+DVD">Pro DVD/OEM</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Windows+11" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_windows }}</span>
+          <h4 class="kx-mm__card-title">Windows 11</h4>
+          <p class="kx-mm__card-desc">Pro · Home · Enterprise · Workstations</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Windows+10" class="kx-mm-panel__col-title">Windows 10</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Windows+10+Pro">Pro</a></li>
-            <li><a href="{{ _root }}search?q=Windows+10+Home+OEM">Home OEM</a></li>
-            <li><a href="{{ _root }}search?q=Windows+10+Enterprise">Enterprise</a></li>
-            <li><a href="{{ _root }}search?q=Windows+10+Education">Education</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Windows+10" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_windows }}</span>
+          <h4 class="kx-mm__card-title">Windows 10</h4>
+          <p class="kx-mm__card-desc">Pro · Home OEM · Enterprise · Education</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Windows+8" class="kx-mm-panel__col-title">Windows 8</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Windows+8.1+Pro">8.1 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Windows+8+Pro">8 Pro</a></li>
-          </ul>
-          <div class="kx-mm-panel__col-all">
-            <a href="{{ _root }}collections/windows">Alle Windows</a>
-          </div>
-        </section>
+        <a href="{{ _root }}search?q=Windows+8" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_windows }}</span>
+          <h4 class="kx-mm__card-title">Windows 8 / 8.1</h4>
+          <p class="kx-mm__card-desc">8.1 Pro · 8 Pro · Alle Versionen</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Windows+7" class="kx-mm-panel__col-title">Windows 7 / XP</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Windows+7+Ultimate+OEM">7 Ultimate OEM</a></li>
-            <li><a href="{{ _root }}search?q=Windows+7+Home+Premium+OEM">7 Home Premium</a></li>
-            <li><a href="{{ _root }}search?q=Windows+XP">XP</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Windows+7" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_windows }}</span>
+          <h4 class="kx-mm__card-title">Windows 7 / XP</h4>
+          <p class="kx-mm__card-desc">7 Ultimate · 7 Home Premium · XP</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}collections/microsoft-office" class="kx-mm-panel__col-title">Microsoft Office</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Office+2024+Professional+Plus">2024 Pro Plus</a></li>
-            <li><a href="{{ _root }}search?q=Office+2021+Professional+Plus">2021 Pro Plus</a></li>
-            <li><a href="{{ _root }}search?q=Office+2019+Professional+Plus">2019 Pro Plus</a></li>
-          </ul>
-          <div class="kx-mm-panel__col-all">
-            <a href="{{ _root }}collections/microsoft-office">Alle Office-Lizenzen</a>
-          </div>
-        </section>
+        <a href="{{ _root }}collections/microsoft-office" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_office }}</span>
+          <h4 class="kx-mm__card-title">Microsoft Office</h4>
+          <p class="kx-mm__card-desc">2024 · 2021 · 2019 Professional Plus</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}collections/microsoft-office-fur-mac" class="kx-mm-panel__col-title">Office für Mac</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Office+2024+Mac">2024 für Mac</a></li>
-            <li><a href="{{ _root }}search?q=Office+2021+Mac">2021 für Mac</a></li>
-          </ul>
-          <div class="kx-mm-panel__col-all">
-            <a href="{{ _root }}collections/microsoft-office-fur-mac">Alle Mac-Lizenzen</a>
-          </div>
-        </section>
+        <a href="{{ _root }}collections/microsoft-office-fur-mac" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_mac }}</span>
+          <h4 class="kx-mm__card-title">Office für Mac</h4>
+          <p class="kx-mm__card-desc">2024 Mac · 2021 Mac · alle Mac-Lizenzen</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}collections/microsoft-365-abonnement" class="kx-mm-panel__col-title">Microsoft 365</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Microsoft+365+Personal">365 Personal</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Family">365 Family</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Business">365 Business</a></li>
-          </ul>
-          <div class="kx-mm-panel__col-all">
-            <a href="{{ _root }}collections/microsoft-365-abonnement">Alle 365-Abos</a>
-          </div>
-        </section>
+        <a href="{{ _root }}collections/microsoft-365-abonnement" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_365 }}</span>
+          <h4 class="kx-mm__card-title">Microsoft 365</h4>
+          <p class="kx-mm__card-desc">Personal · Family · Business Abos</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}collections/windows-server" class="kx-mm-panel__col-title">Windows Server</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Windows+Server+2022">Server 2022</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Server+2019">Server 2019</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Server+2016">Server 2016</a></li>
-          </ul>
-          <div class="kx-mm-panel__col-all">
-            <a href="{{ _root }}collections/windows-server">Alle Server</a>
-          </div>
-        </section>
+        <a href="{{ _root }}collections/windows-server" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_server }}</span>
+          <h4 class="kx-mm__card-title">Windows Server</h4>
+          <p class="kx-mm__card-desc">Server 2022 · 2019 · 2016 + CAL</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Visual+Studio" class="kx-mm-panel__col-title">Visual Studio</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Visual+Studio+2022+Professional">VS 2022 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Visual+Studio+2022+Enterprise">VS 2022 Enterprise</a></li>
-            <li><a href="{{ _root }}search?q=Visual+Studio+2019">VS 2019</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Visual+Studio" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_visualstudio }}</span>
+          <h4 class="kx-mm__card-title">Visual Studio</h4>
+          <p class="kx-mm__card-desc">VS 2022 Pro · Enterprise · 2019</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=SQL+Server" class="kx-mm-panel__col-title">SQL Server</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=SQL+Server+2022+Standard">SQL 2022 Std</a></li>
-            <li><a href="{{ _root }}search?q=SQL+Server+2019+Standard">SQL 2019 Std</a></li>
-            <li><a href="{{ _root }}search?q=SQL+Server+2017">SQL 2017</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=SQL+Server" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_sql }}</span>
+          <h4 class="kx-mm__card-title">SQL Server</h4>
+          <p class="kx-mm__card-desc">SQL 2022 · 2019 · 2017 Standard</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Microsoft+Project" class="kx-mm-panel__col-title">Project</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Project+2024+Professional">2024 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Project+2021+Professional">2021 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Project+2019+Professional">2019 Pro</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Microsoft+Project" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_project }}</span>
+          <h4 class="kx-mm__card-title">Microsoft Project</h4>
+          <p class="kx-mm__card-desc">2024 · 2021 · 2019 Professional</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
-        <section class="kx-mm-panel__col" role="listitem">
-          <a href="{{ _root }}search?q=Microsoft+Visio" class="kx-mm-panel__col-title">Visio</a>
-          <ul class="kx-mm-panel__col-list" role="list">
-            <li><a href="{{ _root }}search?q=Visio+2024+Professional">2024 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Visio+2021+Professional">2021 Pro</a></li>
-            <li><a href="{{ _root }}search?q=Visio+2019+Professional">2019 Pro</a></li>
-          </ul>
-        </section>
+        <a href="{{ _root }}search?q=Microsoft+Visio" class="kx-mm__card" role="listitem">
+          <span class="kx-mm__card-icon">{{ svg_visio }}</span>
+          <h4 class="kx-mm__card-title">Microsoft Visio</h4>
+          <p class="kx-mm__card-desc">2024 · 2021 · 2019 Professional</p>
+          <span class="kx-mm__card-arrow">{{ svg_arrow }}</span>
+        </a>
 
       </div>
+
+      <aside class="kx-mm__featured" aria-labelledby="kx-mm-featured-heading">
+        <h3 id="kx-mm-featured-heading" class="kx-mm__featured-heading">Empfehlungen</h3>
+
+        <a href="{{ _root }}search?q=Office+2024+Professional+Plus" class="kx-mm__promo">
+          <span class="kx-mm__promo-badge">−80% · Heute</span>
+          <h4 class="kx-mm__promo-title">Office 2024 Pro Plus</h4>
+          <p class="kx-mm__promo-text">Lebenslange Lizenz, Sofort-Download per E-Mail.</p>
+          <span class="kx-mm__promo-cta">Jetzt kaufen</span>
+        </a>
+
+        <a href="{{ _root }}search?q=Windows+11+Pro" class="kx-mm__promo kx-mm__promo--alt">
+          <span class="kx-mm__promo-badge">Bestseller</span>
+          <h4 class="kx-mm__promo-title">Windows 11 Pro</h4>
+          <p class="kx-mm__promo-text">Original-Key · 100 % legal · lebenslange Aktivierung.</p>
+          <span class="kx-mm__promo-cta">Mehr erfahren</span>
+        </a>
+      </aside>
+
     </div>
   </li>
 
