@@ -288,13 +288,9 @@
 <div class="kx-cookie-backdrop" id="kxCookieBackdrop" aria-hidden="true"></div>
 <aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
   <div class="kx-cookie__inner">
-    {%- if settings.logo -%}
-      <span class="kx-cookie__logo kx-cookie__logo--img" aria-label="{{ shop.name | escape }}">
-        <img src="{{ settings.logo | image_url: width: 480 }}" alt="{{ shop.name | escape }}" loading="lazy" width="160" height="32">
-      </span>
-    {%- else -%}
-      <span class="kx-cookie__logo" aria-label="Karinex">KARINEX</span>
-    {%- endif -%}
+    <span class="kx-cookie__logo kx-cookie__logo--img" aria-label="{{ shop.name | escape | default: 'Karinex' }}">
+      <img src="https://cdn.shopify.com/s/files/1/0917/5328/3851/files/karinex-software-store-logo..jpg?v=1778520099" alt="{{ shop.name | escape | default: 'Karinex' }}" loading="lazy" width="320" height="64">
+    </span>
     <h3 class="kx-cookie__title" id="kxCookieTitle">Helfen Sie uns, Ihr Karinex Erlebnis zu verbessern!</h3>
     <p class="kx-cookie__text" id="kxCookieDesc">
       Wir möchten Ihr Shopping-Erlebnis einzigartig und persönlich machen. Dafür verwenden wir und unsere Partner (auch Dritte) Cookies, Pixel und ähnliche Dienste („Services“), die Informationen und Daten speichern und/oder von Ihrem Endgerät abrufen.
