@@ -1060,6 +1060,7 @@ nav[aria-label="Breadcrumb"],
                       </div>
                     </div>
 
+                                        {%- if section.settings.show_price_alert != false -%}
                                         {%- assign _bell_variant = product.selected_or_first_available_variant -%}
                     {%- assign _bell_img = product.featured_image | image_url: width: 120 -%}
                     <button
@@ -1080,6 +1081,7 @@ nav[aria-label="Breadcrumb"],
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                       </svg>
                     </button>
+                    {%- endif -%}
 
                                         <button
                       type="button"
@@ -3772,7 +3774,9 @@ nav[aria-label="Breadcrumb"],
 })();
 </script>
 
+{%- if section.settings.show_price_alert != false -%}
 {{ 'price-alert-popup.js' | asset_url | script_tag }}
+{%- endif -%}
 
 {% render 'product-information-scripts-styles', is_digital: is_digital %}
 
@@ -6378,6 +6382,17 @@ function toggleDesc() {
       "id": "enable_hover_zoom",
       "label": "Zoom beim Überfahren des Produktbildes aktivieren",
       "info": "Aktiviert die Lupe (Inner-Drift Zoom) auf der Produktgalerie am Desktop.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Preisalarm (Preiswecker)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_alert",
+      "label": "Preisalarm-Button anzeigen",
+      "info": "Zeigt den Glocken-Button „Preisalarm“ neben dem Wunschliste-Button. Kunden werden benachrichtigt, sobald der gewünschte Preis erreicht ist.",
       "default": true
     },
     {
