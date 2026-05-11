@@ -5915,8 +5915,10 @@ function toggleDesc() {
 
   .header-section:has(.menu-open),
   .header-section:has(details[open]),
+  .header-section:has(.menu-list__list-item [aria-expanded='true']),
   #header-group:has(.menu-open),
-  #header-group:has(details[open]) {
+  #header-group:has(details[open]),
+  #header-group:has(.menu-list__list-item [aria-expanded='true']) {
     z-index: 2147483647 !important;
     position: relative;
   }
