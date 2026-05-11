@@ -99,6 +99,29 @@
   body.template-product product-recommendations.product-recommendations:not(:has(.product-card-gallery)):not(:has(.product-card)):not(:has(.resource-card)) {
     display: none !important;
   }
+
+  /*
+    Hide the custom-similar-products and product-reviews wrappers too when
+    they end up empty, then compress the gap between the product info block
+    and the first visible section after it (Zuletzt angesehene Artikel).
+  */
+  body.template-product .section-custom-similar-products:not(:has(.csp-card)):not(:has(.product-card)) {
+    display: none !important;
+  }
+  body.template-product .section-product-reviews:not(:has(.pdp-review)):not(:has(.product-review)) {
+    display: none !important;
+  }
+
+  /* Tighten the gap between the AboutYou product info and the next section */
+  body.template-product .ay-product__wrapper {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  body.template-product .section-product-recently-viewed,
+  body.template-product section[id*="product-recently-viewed"] {
+    padding-top: 16px;
+    margin-top: 0;
+  }
 </style>
 
 {%- comment -%} Per-template hide rules for product-card icons. {%- endcomment -%}
