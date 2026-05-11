@@ -3498,6 +3498,43 @@ nav[aria-label="Breadcrumb"],
         </button>
       </form>
     {%- endif -%}
+
+    {%- comment -%}
+      Dynamic Shopify checkout buttons (PayPal / Shop Pay / Apple Pay /
+      Google Pay / SEPA / Klarna …). Render automatically based on the
+      payment methods enabled in Shopify Admin → Settings → Payments.
+      The merchant can hide the whole block from the theme customizer
+      via section.settings.show_payment_buttons.
+    {%- endcomment -%}
+    {%- if section.settings.show_payment_buttons and product.selected_or_first_available_variant.available -%}
+      <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px;">
+        {%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id">
+          <input type="hidden" name="quantity" value="1">
+          {{ form | payment_button }}
+        {%- endform -%}
+      </div>
+      <script>
+        (function () {
+          var payInput = document.getElementById('kx-payment-variant-id');
+          var mainInput = document.querySelector('#add-to-cart-form input[name="id"]');
+          if (!payInput || !mainInput) return;
+          var sync = function () {
+            if (payInput.value !== mainInput.value) {
+              payInput.value = mainInput.value;
+            }
+          };
+          // 1) Programmatic value changes via the attribute
+          new MutationObserver(sync).observe(mainInput, { attributes: true, attributeFilter: ['value'] });
+          // 2) JS-driven .value changes (no attribute change) — poll briefly after any product-form interaction
+          document.addEventListener('change', function (e) {
+            if (e.target && e.target.closest && e.target.closest('product-form-component')) {
+              setTimeout(sync, 60);
+            }
+          });
+        })();
+      </script>
+    {%- endif -%}
     </div>
   </div>
 
@@ -6321,6 +6358,17 @@ function toggleDesc() {
       "id": "enable_hover_zoom",
       "label": "Zoom beim Überfahren des Produktbildes aktivieren",
       "info": "Aktiviert die Lupe (Inner-Drift Zoom) auf der Produktgalerie am Desktop.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Express-Zahlungs-Buttons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_buttons",
+      "label": "PayPal / SEPA / Apple Pay … anzeigen",
+      "info": "Zeigt die dynamischen Shopify-Checkout-Buttons unter dem Warenkorb-Button an. Die angezeigten Methoden hängen von den unter „Einstellungen → Zahlungen“ aktivierten Anbietern ab.",
       "default": true
     },
     {
