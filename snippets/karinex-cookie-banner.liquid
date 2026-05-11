@@ -533,7 +533,22 @@
     border-bottom: 1px solid var(--kx-c-line-soft);
   }
   .kx-cset__row:last-child { border-bottom: 0; }
-  .kx-cset__row-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .kx-cset__row-logo {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .kx-cset__row-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .kx-cset__row-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
   .kx-cset__row-title {
     font-size: 13.5px;
     font-weight: 600;
@@ -745,6 +760,9 @@
         </div>
         <p class="kx-cset__rows-label">Anbieter</p>
         <div class="kx-cset__row">
+          <span class="kx-cset__row-logo" aria-hidden="true">
+            <img src="https://www.vectorlogo.zone/logos/google_analytics/google_analytics-horizontal~old.svg" alt="" loading="lazy" width="56" height="28">
+          </span>
           <div class="kx-cset__row-text">
             <span class="kx-cset__row-title">Google Analytics 4</span>
             <span class="kx-cset__row-desc">Anonyme Nutzungsstatistiken zur Optimierung des Shops.</span>
