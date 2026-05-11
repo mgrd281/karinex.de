@@ -100,7 +100,7 @@
   %}
 
   {% if is_software_unified %}
-    {% render 'mega-menu-software-unified', _root: _root %}
+    {% render 'mega-menu-software-unified', _root: _root, parent_link: parent_link %}
   {% else %}
     {% for link in parent_link.links %}
       {% liquid
