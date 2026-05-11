@@ -1,21 +1,12 @@
 {%- doc -%}
-  Karinex Category Dropdown — best-software.de style.
+  Karinex Category Dropdown — wide horizontal panel per top-level item.
 
-  Each top-level Hauptmenü item opens its OWN compact dropdown that
-  shows only the sub-categories relevant to it. No unified panel, no
-  cross-category content. Width adapts to the content.
-
-  Category routing (parent_link.handle / parent_link.title):
-    · office-mac           → Office für Mac links
-    · 365                  → Microsoft 365 abos
-    · server               → Windows Server editions
-    · tools                → Visual Studio · SQL · Project · Visio
-    · sale / bestseller    → SALE & Bestseller list
-    · office               → Office (Windows) versions + apps
-    · windows              → Windows OS versions
+  Each Hauptmenü item opens its OWN multi-column panel centered under
+  the navbar. 600-1100px wide, 2-3 columns, white card, soft shadow,
+  16px radius. Content varies per category.
 
   @param {string} _root - Theme root URL prefix.
-  @param {object} parent_link - The hovered top-level Hauptmenü link.
+  @param {object} parent_link - The hovered top-level link.
   @param {string} [mode] - 'desktop' (default) | 'mobile'.
 {%- enddoc -%}
 
@@ -35,8 +26,6 @@
   assign p_handle = parent_link.handle | default: '' | downcase
   assign p_title  = parent_link.title  | default: '' | downcase | replace: 'ü', 'u' | replace: 'ö', 'o' | replace: 'ä', 'a' | replace: 'ß', 'ss'
 
-  # Order matters: mac before generic office, server before generic windows,
-  # sale/bestseller before any generic keyword.
   assign cat = 'default'
   if p_handle contains 'mac' or p_title contains 'mac'
     assign cat = 'office-mac'
@@ -64,20 +53,22 @@
         <li><a href="{{ _root }}search?q=Windows+10" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows 10</span></a></li>
         <li><a href="{{ _root }}search?q=Windows+8" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows 8 / 8.1</span></a></li>
         <li><a href="{{ _root }}search?q=Windows+7" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows 7</span></a></li>
-        <li><a href="{{ _root }}search?q=Windows+XP" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows XP</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Pro" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Pro</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Enterprise" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Enterprise</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Home" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Home</span></a></li>
         <li><a href="{{ _root }}collections/windows" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-cat-mobile__all"><span class="menu-drawer__menu-item-text wrap-text">Alle Windows-Versionen</span></a></li>
       {%- when 'office' -%}
         <li><a href="{{ _root }}search?q=Office+2024" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 2024</span></a></li>
         <li><a href="{{ _root }}search?q=Office+2021" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 2021</span></a></li>
         <li><a href="{{ _root }}search?q=Office+2019" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 2019</span></a></li>
         <li><a href="{{ _root }}search?q=Office+2016" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 2016</span></a></li>
-        <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 365</span></a></li>
         <li><a href="{{ _root }}search?q=Word" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Word</span></a></li>
         <li><a href="{{ _root }}search?q=Excel" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Excel</span></a></li>
         <li><a href="{{ _root }}search?q=Outlook" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Outlook</span></a></li>
         <li><a href="{{ _root }}search?q=PowerPoint" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">PowerPoint</span></a></li>
         <li><a href="{{ _root }}search?q=Access" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Access</span></a></li>
         <li><a href="{{ _root }}search?q=Publisher" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Publisher</span></a></li>
+        <li><a href="{{ _root }}search?q=Teams" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Teams</span></a></li>
         <li><a href="{{ _root }}collections/microsoft-office" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-cat-mobile__all"><span class="menu-drawer__menu-item-text wrap-text">Alle Office-Lizenzen</span></a></li>
       {%- when 'office-mac' -%}
         <li><a href="{{ _root }}search?q=Office+2024+Mac" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Office 2024 für Mac</span></a></li>
@@ -93,12 +84,12 @@
         <li><a href="{{ _root }}search?q=Microsoft+365+Apps" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">365 Apps</span></a></li>
         <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-cat-mobile__all"><span class="menu-drawer__menu-item-text wrap-text">Alle 365-Abos</span></a></li>
       {%- when 'server' -%}
-        <li><a href="{{ _root }}search?q=Windows+Server+2022" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows Server 2022</span></a></li>
-        <li><a href="{{ _root }}search?q=Windows+Server+2019" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows Server 2019</span></a></li>
-        <li><a href="{{ _root }}search?q=Windows+Server+2016" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows Server 2016</span></a></li>
-        <li><a href="{{ _root }}search?q=Windows+Server+2012" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Windows Server 2012</span></a></li>
-        <li><a href="{{ _root }}search?q=Server+CAL" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server CAL Lizenzen</span></a></li>
-        <li><a href="{{ _root }}collections/windows-server" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-cat-mobile__all"><span class="menu-drawer__menu-item-text wrap-text">Alle Server-Lizenzen</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Server+2022" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server 2022</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Server+2019" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server 2019</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Server+2016" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server 2016</span></a></li>
+        <li><a href="{{ _root }}search?q=Windows+Server+2012" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server 2012</span></a></li>
+        <li><a href="{{ _root }}search?q=Server+CAL" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Server CAL</span></a></li>
+        <li><a href="{{ _root }}collections/windows-server" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset kx-cat-mobile__all"><span class="menu-drawer__menu-item-text wrap-text">Alle Server</span></a></li>
       {%- when 'tools' -%}
         <li><a href="{{ _root }}search?q=Visual+Studio" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">Visual Studio</span></a></li>
         <li><a href="{{ _root }}search?q=SQL+Server" class="menu-drawer__menu-item menu-drawer__menu-item--child focus-inset"><span class="menu-drawer__menu-item-text wrap-text">SQL Server</span></a></li>
@@ -127,30 +118,20 @@
 {%- else -%}
 
   <style>
-    /* === Karinex Category Dropdown — compact, anchored under each item === */
+    /* === Karinex category dropdown — wide horizontal panel centered === */
 
-    /* Make each top-level item a positioning context for its dropdown */
-    .menu-list .menu-list__list-item:has(.kx-cat) {
-      position: relative;
-    }
-    /* Compact dropdown: width fits content, anchored under the hovered item */
+    /* Keep theme's full-width strip but make it transparent so only our
+       centered card is visible. Theme's clip-path animation still works. */
     .menu-list .menu-list__list-item:has(.kx-cat) > .menu-list__submenu,
     .overflow-menu::part(overflow):has(.kx-cat) {
-      width: auto !important;
-      min-width: 260px !important;
-      max-width: 360px !important;
-      left: 0 !important;
-      right: auto !important;
-      padding-inline: 0 !important;
       background: transparent !important;
       box-shadow: none !important;
-      grid-template-columns: 1fr !important;
+      padding-inline: 0 !important;
     }
-    /* Kill the full-width animated white strip behind the panel */
-    .overflow-menu:has(.kx-cat)::after {
-      display: none !important;
-    }
-    /* Strip the parent grid */
+    /* Hide the animated white strip behind the dropdown */
+    .overflow-menu:has(.kx-cat)::after { display: none !important; }
+
+    /* Flatten the parent grid so our card can be centered naturally */
     .mega-menu__grid:has(.kx-cat) {
       --menu-columns-desktop: 1 !important;
       --menu-columns-tablet: 1 !important;
@@ -164,34 +145,40 @@
       gap: 0 !important;
       overflow: visible;
     }
+    /* Center the card horizontally inside the full-width strip */
     .menu-list__submenu-inner:has(.kx-cat) {
-      padding: 0 !important;
       max-width: none !important;
       margin: 0 !important;
+      padding: 0.6rem 1.5rem 1.25rem !important;
+      display: flex !important;
+      justify-content: center !important;
     }
     .kx-cat-cell {
       grid-column: 1 / -1 !important;
       padding: 0 !important;
       min-width: 0;
       list-style: none;
+      display: flex;
+      justify-content: center;
+      width: 100%;
     }
 
-    /* === Compact dropdown card =========================================== */
+    /* === Card =========================================================== */
     .kx-cat {
       width: max-content;
-      min-width: 260px;
-      max-width: 360px;
+      min-width: 560px;
+      max-width: 1100px;
       background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04),
-                  0 12px 32px rgba(15, 25, 20, 0.10);
-      padding: 0.65rem 0;
-      margin-top: 0.35rem;
-      animation: kxCatIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
       border: 1px solid rgba(15, 25, 20, 0.04);
+      border-radius: 16px;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.04),
+        0 24px 60px rgba(15, 25, 20, 0.12);
+      padding: clamp(1.5rem, 2vw, 2rem) clamp(1.75rem, 2.5vw, 2.5rem);
+      animation: kxCatIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     @keyframes kxCatIn {
-      from { opacity: 0; transform: translateY(-4px); }
+      from { opacity: 0; transform: translateY(-6px); }
       to   { opacity: 1; transform: translateY(0);    }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -211,146 +198,406 @@
       padding: 0;
       margin: 0;
     }
-    .kx-cat a {
+
+    /* === Grid of columns ================================================ */
+    .kx-cat__grid {
+      display: grid;
+      gap: clamp(1.5rem, 2.5vw, 2.5rem);
+      align-items: start;
+    }
+    .kx-cat__grid--2 { grid-template-columns: repeat(2, minmax(170px, 1fr)); }
+    .kx-cat__grid--3 { grid-template-columns: repeat(3, minmax(170px, 1fr)); }
+
+    .kx-cat__col {
+      min-width: 0;
       display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .kx-cat__col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6e6e73;
+      margin: 0 0 0.35rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #ececec;
+    }
+    .kx-cat__col-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+    .kx-cat__col-list a {
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.55rem 1.1rem;
-      font-size: 14px;
+      padding: 0.4rem 0;
+      font-size: 14.5px;
       line-height: 1.3;
       font-weight: 500;
+      letter-spacing: -0.005em;
       color: #1d1d1f;
       text-decoration: none;
-      letter-spacing: -0.005em;
-      white-space: nowrap;
-      transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
-                  color 160ms cubic-bezier(0.16, 1, 0.3, 1),
-                  padding-left 160ms cubic-bezier(0.16, 1, 0.3, 1);
+      transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .kx-cat a:hover,
-    .kx-cat a:focus-visible {
-      background: #f4f7f5;
+    .kx-cat__col-list a:hover,
+    .kx-cat__col-list a:focus-visible {
       color: #1B3A2E;
-      padding-left: 1.3rem;
+      transform: translateX(3px);
       outline: none;
     }
-    .kx-cat a:focus-visible {
-      box-shadow: inset 3px 0 0 #1B3A2E;
+    .kx-cat__col-list a:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 4px;
     }
 
-    .kx-cat__divider {
-      height: 1px;
-      background: #ececec;
-      margin: 0.4rem 0.85rem;
+    /* "Alle X" footer link */
+    .kx-cat__all-row {
+      grid-column: 1 / -1;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ececec;
+      display: flex;
+      justify-content: flex-end;
     }
-
     .kx-cat__all {
-      font-weight: 600 !important;
-      color: #1B3A2E !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1B3A2E;
+      text-decoration: none;
+      transition: gap 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     .kx-cat__all::after {
       content: '→';
-      margin-left: auto;
-      padding-left: 0.5rem;
-      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     .kx-cat__all:hover::after,
     .kx-cat__all:focus-visible::after {
-      transform: translateX(3px);
+      transform: translateX(4px);
     }
 
-    .kx-cat__sale {
-      color: #E60000 !important;
-      font-weight: 600;
+    /* === SALE promo variant ============================================= */
+    .kx-cat--sale .kx-cat__col-list a {
+      color: #1d1d1f;
     }
-    .kx-cat__sale:hover,
-    .kx-cat__sale:focus-visible {
-      color: #E60000 !important;
-      background: rgba(230, 0, 0, 0.05);
+    .kx-cat--sale .kx-cat__col-list a:hover,
+    .kx-cat--sale .kx-cat__col-list a:focus-visible {
+      color: #E60000;
+    }
+    .kx-cat--sale .kx-cat__col-list .kx-cat__sale-pill {
+      color: #E60000;
+      font-weight: 700;
+    }
+    .kx-cat__promo {
+      grid-column: 1 / -1;
+      margin-top: 0.5rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1B3A2E 0%, #11261E 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .kx-cat__promo:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(27, 58, 46, 0.18);
+    }
+    .kx-cat__promo-text { display: flex; flex-direction: column; gap: 2px; }
+    .kx-cat__promo-eyebrow {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    .kx-cat__promo-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+    }
+    .kx-cat__promo-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      background: #fff;
+      color: #11261E;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .kx-cat__promo-cta::after {
+      content: '→';
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .kx-cat__promo:hover .kx-cat__promo-cta::after {
+      transform: translateX(4px);
+    }
+
+    /* === Responsive ===================================================== */
+    @media (max-width: 989px) {
+      .kx-cat {
+        min-width: 0;
+        width: 100%;
+      }
+      .kx-cat__grid--2,
+      .kx-cat__grid--3 {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
     }
   </style>
 
   <li class="mega-menu__column kx-cat-cell">
-    <nav class="kx-cat" role="navigation" aria-label="Unterkategorien">
-      <ul role="list">
-        {%- case cat -%}
+    {%- case cat -%}
 
-          {%- when 'windows' -%}
-            <li><a href="{{ _root }}search?q=Windows+11">Windows 11</a></li>
-            <li><a href="{{ _root }}search?q=Windows+10">Windows 10</a></li>
-            <li><a href="{{ _root }}search?q=Windows+8">Windows 8 / 8.1</a></li>
-            <li><a href="{{ _root }}search?q=Windows+7">Windows 7</a></li>
-            <li><a href="{{ _root }}search?q=Windows+XP">Windows XP</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/windows" class="kx-cat__all">Alle Windows-Versionen</a></li>
+      {%- when 'windows' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Windows">
+          <div class="kx-cat__grid kx-cat__grid--3">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Versionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Windows+11">Windows 11</a></li>
+                <li><a href="{{ _root }}search?q=Windows+10">Windows 10</a></li>
+                <li><a href="{{ _root }}search?q=Windows+8">Windows 8 / 8.1</a></li>
+                <li><a href="{{ _root }}search?q=Windows+7">Windows 7</a></li>
+                <li><a href="{{ _root }}search?q=Windows+XP">Windows XP</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Editionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Windows+Pro">Pro</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Enterprise">Enterprise</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Education">Education</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Home">Home</a></li>
+                <li><a href="{{ _root }}search?q=Windows+OEM">OEM</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Server</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}collections/windows-server">Windows Server</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Server+2022">Server 2022</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Server+2019">Server 2019</a></li>
+                <li><a href="{{ _root }}search?q=Server+CAL">Server CAL</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/windows" class="kx-cat__all">Alle Windows-Lizenzen</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when 'office' -%}
-            <li><a href="{{ _root }}search?q=Office+2024">Office 2024</a></li>
-            <li><a href="{{ _root }}search?q=Office+2021">Office 2021</a></li>
-            <li><a href="{{ _root }}search?q=Office+2019">Office 2019</a></li>
-            <li><a href="{{ _root }}search?q=Office+2016">Office 2016</a></li>
-            <li><a href="{{ _root }}collections/microsoft-365-abonnement">Office 365</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}search?q=Word">Word</a></li>
-            <li><a href="{{ _root }}search?q=Excel">Excel</a></li>
-            <li><a href="{{ _root }}search?q=Outlook">Outlook</a></li>
-            <li><a href="{{ _root }}search?q=PowerPoint">PowerPoint</a></li>
-            <li><a href="{{ _root }}search?q=Access">Access</a></li>
-            <li><a href="{{ _root }}search?q=Publisher">Publisher</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/microsoft-office" class="kx-cat__all">Alle Office-Lizenzen</a></li>
+      {%- when 'office' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Office für Windows">
+          <div class="kx-cat__grid kx-cat__grid--3">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Versionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+2024">Office 2024</a></li>
+                <li><a href="{{ _root }}search?q=Office+2021">Office 2021</a></li>
+                <li><a href="{{ _root }}search?q=Office+2019">Office 2019</a></li>
+                <li><a href="{{ _root }}search?q=Office+2016">Office 2016</a></li>
+                <li><a href="{{ _root }}collections/microsoft-365-abonnement">Office 365</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Anwendungen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Word">Word</a></li>
+                <li><a href="{{ _root }}search?q=Excel">Excel</a></li>
+                <li><a href="{{ _root }}search?q=Outlook">Outlook</a></li>
+                <li><a href="{{ _root }}search?q=PowerPoint">PowerPoint</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Weitere Tools</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Access">Access</a></li>
+                <li><a href="{{ _root }}search?q=Publisher">Publisher</a></li>
+                <li><a href="{{ _root }}search?q=Teams">Teams</a></li>
+                <li><a href="{{ _root }}search?q=OneNote">OneNote</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/microsoft-office" class="kx-cat__all">Alle Office-Lizenzen</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when 'office-mac' -%}
-            <li><a href="{{ _root }}search?q=Office+2024+Mac">Office 2024 für Mac</a></li>
-            <li><a href="{{ _root }}search?q=Office+2021+Mac">Office 2021 für Mac</a></li>
-            <li><a href="{{ _root }}search?q=Office+2019+Mac">Office 2019 für Mac</a></li>
-            <li><a href="{{ _root }}search?q=Office+2016+Mac">Office 2016 für Mac</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/microsoft-office-fur-mac" class="kx-cat__all">Alle Mac-Lizenzen</a></li>
+      {%- when 'office-mac' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Office für Mac">
+          <div class="kx-cat__grid kx-cat__grid--2">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Versionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+2024+Mac">Office 2024 für Mac</a></li>
+                <li><a href="{{ _root }}search?q=Office+2021+Mac">Office 2021 für Mac</a></li>
+                <li><a href="{{ _root }}search?q=Office+2019+Mac">Office 2019 für Mac</a></li>
+                <li><a href="{{ _root }}search?q=Office+2016+Mac">Office 2016 für Mac</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Editionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+Mac+Home+Student">Home &amp; Student</a></li>
+                <li><a href="{{ _root }}search?q=Office+Mac+Home+Business">Home &amp; Business</a></li>
+                <li><a href="{{ _root }}search?q=Office+Mac+Professional">Professional</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/microsoft-office-fur-mac" class="kx-cat__all">Alle Mac-Lizenzen</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when '365' -%}
-            <li><a href="{{ _root }}search?q=Microsoft+365+Personal">365 Personal</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Family">365 Family</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Business+Standard">365 Business Standard</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Business+Premium">365 Business Premium</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+365+Apps">365 Apps</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/microsoft-365-abonnement" class="kx-cat__all">Alle 365-Abos</a></li>
+      {%- when '365' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Microsoft 365">
+          <div class="kx-cat__grid kx-cat__grid--2">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Privat</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Microsoft+365+Personal">365 Personal</a></li>
+                <li><a href="{{ _root }}search?q=Microsoft+365+Family">365 Family</a></li>
+                <li><a href="{{ _root }}search?q=Microsoft+365+Home">365 Home</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Business</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Microsoft+365+Business+Standard">Business Standard</a></li>
+                <li><a href="{{ _root }}search?q=Microsoft+365+Business+Premium">Business Premium</a></li>
+                <li><a href="{{ _root }}search?q=Microsoft+365+Apps">365 Apps for Business</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/microsoft-365-abonnement" class="kx-cat__all">Alle 365-Abos</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when 'server' -%}
-            <li><a href="{{ _root }}search?q=Windows+Server+2022">Windows Server 2022</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Server+2019">Windows Server 2019</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Server+2016">Windows Server 2016</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Server+2012">Windows Server 2012</a></li>
-            <li><a href="{{ _root }}search?q=Server+CAL">Server CAL Lizenzen</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/windows-server" class="kx-cat__all">Alle Server-Lizenzen</a></li>
+      {%- when 'server' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Windows Server">
+          <div class="kx-cat__grid kx-cat__grid--3">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Versionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Windows+Server+2022">Server 2022</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Server+2019">Server 2019</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Server+2016">Server 2016</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Server+2012">Server 2012</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Editionen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Server+Standard">Standard</a></li>
+                <li><a href="{{ _root }}search?q=Server+Datacenter">Datacenter</a></li>
+                <li><a href="{{ _root }}search?q=Server+Essentials">Essentials</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">CAL Lizenzen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Server+User+CAL">User CAL</a></li>
+                <li><a href="{{ _root }}search?q=Server+Device+CAL">Device CAL</a></li>
+                <li><a href="{{ _root }}search?q=RDS+CAL">RDS CAL</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/windows-server" class="kx-cat__all">Alle Server-Lizenzen</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when 'tools' -%}
-            <li><a href="{{ _root }}search?q=Visual+Studio">Visual Studio</a></li>
-            <li><a href="{{ _root }}search?q=SQL+Server">SQL Server</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+Project">Microsoft Project</a></li>
-            <li><a href="{{ _root }}search?q=Microsoft+Visio">Microsoft Visio</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}collections/microsoft-tools" class="kx-cat__all">Alle Tools</a></li>
+      {%- when 'tools' -%}
+        <nav class="kx-cat" role="navigation" aria-label="Microsoft Tools">
+          <div class="kx-cat__grid kx-cat__grid--2">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Entwicklung</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Visual+Studio">Visual Studio</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2022+Professional">VS 2022 Professional</a></li>
+                <li><a href="{{ _root }}search?q=Visual+Studio+2022+Enterprise">VS 2022 Enterprise</a></li>
+                <li><a href="{{ _root }}search?q=SQL+Server">SQL Server</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Business Tools</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Microsoft+Project">Microsoft Project</a></li>
+                <li><a href="{{ _root }}search?q=Project+Professional">Project Professional</a></li>
+                <li><a href="{{ _root }}search?q=Microsoft+Visio">Microsoft Visio</a></li>
+                <li><a href="{{ _root }}search?q=Visio+Professional">Visio Professional</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__all-row">
+              <a href="{{ _root }}collections/microsoft-tools" class="kx-cat__all">Alle Tools</a>
+            </div>
+          </div>
+        </nav>
 
-          {%- when 'sale' -%}
-            <li><a href="{{ _root }}collections/bestseller" class="kx-cat__sale">Bestseller</a></li>
-            <li><a href="{{ _root }}collections/sale" class="kx-cat__sale">Sale</a></li>
-            <li><a href="{{ _root }}search?q=Angebote">Angebote</a></li>
-            <li class="kx-cat__divider" aria-hidden="true"></li>
-            <li><a href="{{ _root }}search?q=Office+Bestseller">Microsoft Office Bestseller</a></li>
-            <li><a href="{{ _root }}search?q=Windows+Bestseller">Windows Bestseller</a></li>
-            <li><a href="{{ _root }}search?q=Visual+Studio+Bestseller">Visual Studio Bestseller</a></li>
-            <li><a href="{{ _root }}search?q=Project+Bestseller">Project Bestseller</a></li>
-            <li><a href="{{ _root }}search?q=Visio+Bestseller">Visio Bestseller</a></li>
+      {%- when 'sale' -%}
+        <nav class="kx-cat kx-cat--sale" role="navigation" aria-label="SALE &amp; Bestseller">
+          <div class="kx-cat__grid kx-cat__grid--3">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Top Deals</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}collections/bestseller" class="kx-cat__sale-pill">Bestseller</a></li>
+                <li><a href="{{ _root }}collections/sale" class="kx-cat__sale-pill">Sale</a></li>
+                <li><a href="{{ _root }}search?q=Angebote">Angebote</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Bestseller Office</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Office+Bestseller">Microsoft Office</a></li>
+                <li><a href="{{ _root }}search?q=Office+365+Bestseller">Office 365</a></li>
+                <li><a href="{{ _root }}search?q=Windows+Bestseller">Windows</a></li>
+              </ul>
+            </div>
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Bestseller Tools</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}search?q=Visual+Studio+Bestseller">Visual Studio</a></li>
+                <li><a href="{{ _root }}search?q=Project+Bestseller">Project</a></li>
+                <li><a href="{{ _root }}search?q=Visio+Bestseller">Visio</a></li>
+              </ul>
+            </div>
+            <a href="{{ _root }}search?q=Office+2024+Professional+Plus" class="kx-cat__promo" aria-label="Office 2024 Pro Plus — Angebot des Tages">
+              <span class="kx-cat__promo-text">
+                <span class="kx-cat__promo-eyebrow">−80 % · Heute</span>
+                <span class="kx-cat__promo-title">Office 2024 Professional Plus</span>
+              </span>
+              <span class="kx-cat__promo-cta">Jetzt kaufen</span>
+            </a>
+          </div>
+        </nav>
 
-          {%- else -%}
-            <li><a href="{{ _root }}collections/all" class="kx-cat__all">Alle Produkte</a></li>
+      {%- else -%}
+        <nav class="kx-cat" role="navigation" aria-label="Kategorien">
+          <div class="kx-cat__grid kx-cat__grid--2">
+            <div class="kx-cat__col">
+              <h4 class="kx-cat__col-title">Alle Lizenzen</h4>
+              <ul class="kx-cat__col-list" role="list">
+                <li><a href="{{ _root }}collections/all">Alle Produkte</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
 
-        {%- endcase -%}
-      </ul>
-    </nav>
+    {%- endcase -%}
   </li>
 
 {%- endif -%}
