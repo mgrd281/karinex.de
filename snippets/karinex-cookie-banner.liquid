@@ -34,7 +34,7 @@
     background: var(--kx-c-surface);
     border-top: 1px solid var(--kx-c-line);
     box-shadow: 0 -8px 32px rgba(15, 25, 20, 0.12);
-    padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 5vw, 1.75rem);
+    padding: clamp(1rem, 3vw, 1.25rem) clamp(0.9rem, 4vw, 1.5rem) clamp(0.9rem, 2.5vw, 1.1rem);
     max-height: 88vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -63,30 +63,24 @@
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
+    gap: 0.6rem;
   }
 
   .kx-cookie__logo {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
     font-family: inherit;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 800;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--kx-c-ink);
     line-height: 1;
-  }
-  .kx-cookie__logo-mark {
-    width: 26px;
-    height: 26px;
-    color: var(--kx-c-brand);
-    flex-shrink: 0;
+    margin-bottom: 0.1rem;
   }
 
   .kx-cookie__title {
     margin: 0;
-    font-size: clamp(17px, 2.2vw, 19px);
+    font-size: clamp(15px, 2vw, 17px);
     font-weight: 700;
     color: var(--kx-c-ink);
     letter-spacing: -0.005em;
@@ -95,11 +89,11 @@
 
   .kx-cookie__text {
     margin: 0;
-    font-size: 13.5px;
-    line-height: 1.55;
+    font-size: 12.5px;
+    line-height: 1.5;
     color: var(--kx-c-ink-muted);
   }
-  .kx-cookie__text + .kx-cookie__text { margin-top: -0.15rem; }
+  .kx-cookie__text + .kx-cookie__text { margin-top: -0.05rem; }
 
   .kx-cookie__more {
     background: transparent;
@@ -147,19 +141,19 @@
   .kx-cookie__actions {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
-    margin-top: 0.15rem;
+    gap: 0.45rem;
+    margin-top: 0.1rem;
   }
   .kx-cookie__btn {
     appearance: none;
     border: 0;
     width: 100%;
-    min-height: 54px;
-    padding: 0.9rem 1.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.25rem;
     border-radius: 6px;
     font-family: inherit;
     font-weight: 700;
-    font-size: 14.5px;
+    font-size: 14px;
     letter-spacing: 0.005em;
     cursor: pointer;
     transition: background-color 180ms ease, transform 180ms ease;
@@ -202,12 +196,7 @@
 
 <aside class="kx-cookie" id="kxCookieBanner" role="dialog" aria-modal="false" aria-labelledby="kxCookieTitle" aria-describedby="kxCookieDesc">
   <div class="kx-cookie__inner">
-    <span class="kx-cookie__logo" aria-label="Karinex">
-      <svg class="kx-cookie__logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6M9 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm6 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
-      </svg>
-      KARINEX
-    </span>
+    <span class="kx-cookie__logo" aria-label="Karinex">KARINEX</span>
     <h3 class="kx-cookie__title" id="kxCookieTitle">Helfen Sie uns, Ihr Karinex Erlebnis zu verbessern!</h3>
     <p class="kx-cookie__text" id="kxCookieDesc">
       Wir möchten Ihr Shopping-Erlebnis einzigartig und persönlich machen. Dafür verwenden wir und unsere Partner (auch Dritte) Cookies, Pixel und ähnliche Dienste („Services“), die Informationen und Daten speichern und/oder von Ihrem Endgerät abrufen.
