@@ -3513,22 +3513,38 @@ nav[aria-label="Breadcrumb"],
       Shopify Admin (not a code issue).
     {%- endcomment -%}
     {%- unless section.settings.show_payment_buttons == false -%}
-      <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px; display: block;">
-        {%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id">
-          <input type="hidden" name="quantity" value="1">
-          {{ form | payment_button }}
-        {%- endform -%}
+      {%- capture _kx_pb_html -%}{%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}<input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id"><input type="hidden" name="quantity" value="1">{{ form | payment_button }}{%- endform -%}{%- endcapture -%}
+      <div class="kx-payment-buttons" data-shopify-payment-buttons data-pb-size="{{ _kx_pb_html | size }}" style="margin-top: 10px; display: block;">
+        {%- if _kx_pb_html contains 'shopify-payment-button__button' -%}
+          {{ _kx_pb_html }}
+        {%- else -%}
+          <a href="{{ product.url }}?variant={{ product.selected_or_first_available_variant.id }}&checkout=1" class="kx-payment-fallback-btn" onclick="this.closest('form,.kx-payment-buttons')?.querySelector?.('input[name=id]'); return true;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h11a4 4 0 0 1 0 8h-5l-1.5 6"/><path d="M9 13h5a4 4 0 0 0 0-8H8L6.5 1H3l3 12"/></svg>
+            Sofort mit PayPal bezahlen
+          </a>
+          <form method="post" action="/cart/add" id="kx-paypal-fallback-form" style="margin-top: 8px;">
+            <input type="hidden" name="id" id="kx-paypal-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="return_to" value="/checkout">
+            <button type="submit" class="kx-paypal-fallback-submit">
+              <span class="kx-paypal-fallback-logo">PayPal</span>
+              <span>Jetzt kaufen</span>
+            </button>
+          </form>
+          <p class="kx-payment-hint" data-admin-hint>
+            Hinweis (nur für den Shop-Betreiber sichtbar): Um die nativen Shopify-Express-Buttons (PayPal Express, Apple Pay, Google Pay, Shop Pay) anzuzeigen, aktiviere unter <strong>Shopify Admin → Einstellungen → Zahlungen → Express-Bezahlung</strong> mindestens einen Anbieter.
+          </p>
+        {%- endif -%}
       </div>
       <script>
         (function () {
           var payInput = document.getElementById('kx-payment-variant-id');
           var mainInput = document.querySelector('#add-to-cart-form input[name="id"]');
-          if (!payInput || !mainInput) return;
+          var ppFbInput = document.getElementById('kx-paypal-variant-id');
+          if (!mainInput) return;
           var sync = function () {
-            if (payInput.value !== mainInput.value) {
-              payInput.value = mainInput.value;
-            }
+            if (payInput && payInput.value !== mainInput.value) payInput.value = mainInput.value;
+            if (ppFbInput && ppFbInput.value !== mainInput.value) ppFbInput.value = mainInput.value;
           };
           new MutationObserver(sync).observe(mainInput, { attributes: true, attributeFilter: ['value'] });
           document.addEventListener('change', function (e) {
