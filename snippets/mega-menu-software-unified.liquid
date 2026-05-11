@@ -28,12 +28,12 @@
   assign col_titles = 'Windows 11|Windows 10|Windows 8|Windows 7 / XP|Microsoft Office|Office für Mac' | split: '|'
   assign col_hrefs = 'search?q=Windows+11|search?q=Windows+10|search?q=Windows+8|search?q=Windows+7|collections/microsoft-office|collections/microsoft-office-fur-mac' | split: '|'
 
-  assign sub_w11 = 'Windows 11 Pro~search?q=Windows+11+Pro;;Windows 11 Home~search?q=Windows+11+Home;;Windows 11 Enterprise~search?q=Windows+11+Enterprise;;Windows 11 Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Windows 11 Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
-  assign sub_w10 = 'Windows 10 Pro~search?q=Windows+10+Pro;;Windows 10 Home OEM~search?q=Windows+10+Home+OEM;;Windows 10 Enterprise~search?q=Windows+10+Enterprise;;Windows 10 Education~search?q=Windows+10+Education'
-  assign sub_w8 = 'Windows 8.1 Pro~search?q=Windows+8.1+Pro;;Windows 8 Pro~search?q=Windows+8+Pro;;Alle Windows-Versionen~collections/windows'
-  assign sub_w7 = 'Windows 7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;Windows 7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;Windows XP~search?q=Windows+XP'
-  assign sub_mso = 'Office 2024 Pro Plus~search?q=Office+2024+Professional+Plus;;Office 2021 Pro Plus~search?q=Office+2021+Professional+Plus;;Office 2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
-  assign sub_mac = 'Office 2024 für Mac~search?q=Office+2024+Mac;;Office 2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
+  assign sub_w11 = 'Pro~search?q=Windows+11+Pro;;Home~search?q=Windows+11+Home;;Enterprise~search?q=Windows+11+Enterprise;;Pro for Workstations~search?q=Windows+11+Pro+Workstations;;Pro DVD/OEM~search?q=Windows+11+Pro+DVD'
+  assign sub_w10 = 'Pro~search?q=Windows+10+Pro;;Home OEM~search?q=Windows+10+Home+OEM;;Enterprise~search?q=Windows+10+Enterprise;;Education~search?q=Windows+10+Education'
+  assign sub_w8 = '8.1 Pro~search?q=Windows+8.1+Pro;;8 Pro~search?q=Windows+8+Pro;;Alle Versionen~collections/windows'
+  assign sub_w7 = '7 Ultimate OEM~search?q=Windows+7+Ultimate+OEM;;7 Home Premium OEM~search?q=Windows+7+Home+Premium+OEM;;XP~search?q=Windows+XP'
+  assign sub_mso = '2024 Pro Plus~search?q=Office+2024+Professional+Plus;;2021 Pro Plus~search?q=Office+2021+Professional+Plus;;2019 Pro Plus~search?q=Office+2019+Professional+Plus;;Alle Office-Lizenzen~collections/microsoft-office'
+  assign sub_mac = '2024 für Mac~search?q=Office+2024+Mac;;2021 für Mac~search?q=Office+2021+Mac;;Alle Mac-Lizenzen~collections/microsoft-office-fur-mac'
 
   assign all_subs = sub_w11 | append: '@@' | append: sub_w10 | append: '@@' | append: sub_w8 | append: '@@' | append: sub_w7 | append: '@@' | append: sub_mso | append: '@@' | append: sub_mac
   assign cols_subs = all_subs | split: '@@'
@@ -103,11 +103,12 @@
     .mega-menu__grid:has(.mega-menu-software-unified) {
       --menu-columns-desktop: 7 !important;
       --menu-columns-tablet: 4 !important;
-      column-gap: 1.2rem !important;
+      column-gap: 0.85rem !important;
+      row-gap: 0.85rem !important;
     }
     .mega-menu__list:has(.mega-menu-software-unified) {
       grid-column: span 7 !important;
-      column-gap: 1.2rem !important;
+      column-gap: 0.85rem !important;
     }
 
     /* === Karinex unified mega-menu — visual polish === */
