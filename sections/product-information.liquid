@@ -57,7 +57,9 @@
     {%- endif -%}
 
     <link rel="stylesheet" href="{{ 'product-information.css' | asset_url | append: '?v=2' }}">
-    <link rel="stylesheet" href="{{ 'premium-image-zoom.css' | asset_url }}">
+    {%- if section.settings.enable_hover_zoom -%}
+      <link rel="stylesheet" href="{{ 'premium-image-zoom.css' | asset_url }}">
+    {%- endif -%}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap">
@@ -5771,7 +5773,9 @@ function toggleDesc() {
     </main>
 
         {% render 'product-gallery-script' %}
+{%- if section.settings.enable_hover_zoom -%}
 <script src="{{ 'premium-image-zoom.js' | asset_url }}" defer></script>
+{%- endif -%}
 <script>
   (function(){
     try{
@@ -6309,6 +6313,13 @@ function toggleDesc() {
       "label": "Gallery Background Color",
       "default": "#f7f7f7",
       "info": "Changes the background color of the main product image box."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_zoom",
+      "label": "Zoom beim Überfahren des Produktbildes aktivieren",
+      "info": "Aktiviert die Lupe (Inner-Drift Zoom) auf der Produktgalerie am Desktop.",
+      "default": true
     },
     {
       "type": "header",
