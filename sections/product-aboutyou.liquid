@@ -117,6 +117,7 @@
   @keyframes ay-sp-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
 
   .ay-gallery__main-img { object-fit: cover !important; }
+  {%- if section.settings.enable_hover_zoom -%}
   /* Zoom hint */
   @media (min-width: 990px) {
     .ay-gallery__cell { cursor: zoom-in; }
@@ -137,6 +138,7 @@
     }
     .ay-gallery__cell:hover::after { opacity: 0.35; }
   }
+  {%- endif -%}
 </style>
 
 <div class="ay-product" data-section-id="{{ section.id }}">
@@ -996,6 +998,7 @@
 (function () {
 
   /* ---- Premium Inner-Drift Zoom for Gallery Grid (Desktop) ---- */
+  {%- if section.settings.enable_hover_zoom -%}
   (function () {
     var ZOOM = 2.5;
     var BP = 990;
@@ -1088,6 +1091,7 @@
       }
     });
   })();
+  {%- endif -%}
 
   /* ---- Zoom Dialog (AboutYou-style: thumbs left, single image, prev/next) ---- */
   (function() {
@@ -2325,6 +2329,21 @@
   "tag": "section",
   "class": "section-aboutyou-product",
   "settings": [
+    {
+      "type": "header",
+      "content": "Bild-Zoom (Hover)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_zoom",
+      "label": "Zoom beim Überfahren des Produktbildes aktivieren",
+      "info": "Aktiviert die Lupe (Inner-Drift Zoom) auf der Produktgalerie am Desktop.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Back in stock"
+    },
     {
       "type": "text",
       "id": "backinstock_webapp_url",
