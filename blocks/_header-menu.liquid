@@ -89,10 +89,15 @@
           on:pointerenter="/activate"
           on:pointerleave="/deactivate"
         >
+          {%- assign _title_down = link.title | downcase -%}
+          {%- assign _is_sale_link = false -%}
+          {%- if _title_down contains 'sale' or _title_down contains 'bestseller' -%}
+            {%- assign _is_sale_link = true -%}
+          {%- endif -%}
           <a
             href="{{ link.url }}"
             data-skip-node-update="true"
-            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}{% if link.title == 'SALE' or link.title == 'Sale' %} menu-list__link--sale{% endif %}"
+            class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}{% if _is_sale_link %} menu-list__link--sale{% endif %}"
             {%- if link.links != blank -%}
               aria-controls="submenu-{{ forloop.index }}"
               aria-haspopup="true"
@@ -260,10 +265,22 @@
   }
 
   .menu-list {
-    --menu-horizontal-gap: 2.5rem;
+    --menu-horizontal-gap: 1.4rem;
     --menu-vertical-gap: var(--gap-xl);
 
     display: flex;
+  }
+
+  @media screen and (min-width: 1280px) {
+    .menu-list {
+      --menu-horizontal-gap: 1.75rem;
+    }
+  }
+
+  @media screen and (min-width: 1440px) {
+    .menu-list {
+      --menu-horizontal-gap: 2.25rem;
+    }
   }
 
   .menu-list__list {
@@ -284,8 +301,8 @@
     font-family: var(--menu-top-level-font-family) !important;
     font-style: var(--menu-top-level-font-style);
     font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.1em;
+    font-size: 12px;
+    letter-spacing: 0.06em;
     line-height: var(--menu-top-level-font-line-height);
     text-transform: uppercase;
     color: var(--menu-top-level-font-color);
@@ -295,6 +312,7 @@
     min-height: var(--minimum-touch-target);
     align-items: center;
     position: relative;
+    white-space: nowrap;
 
     &:hover,
     &:focus {
@@ -317,14 +335,51 @@
       width: 100%;
     }
 
-    @media screen and (min-width: 750px) {
+    @media screen and (min-width: 1280px) {
       font-size: 13px;
+      letter-spacing: 0.08em;
+    }
+
+    @media screen and (min-width: 1440px) {
+      font-size: 13px;
+      letter-spacing: 0.1em;
     }
   }
 
   .menu-list__link--sale {
-    color: #e60023 !important;
-    font-weight: 700 !important;
+    color: #E60000 !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .menu-list__link--sale .menu-list__link-title {
+    position: relative;
+    padding-inline-start: 14px;
+  }
+
+  .menu-list__link--sale .menu-list__link-title::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    background: #E60000;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(230, 0, 0, 0.6);
+    animation: kx-sale-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes kx-sale-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(230, 0, 0, 0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(230, 0, 0, 0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-list__link--sale .menu-list__link-title::before {
+      animation: none;
+    }
   }
 
   /*
@@ -352,6 +407,7 @@
     --focus-outline-size: calc(var(--focus-outline-offset) + var(--focus-outline-width));
 
     gap: 0 var(--menu-horizontal-gap);
+    flex-wrap: nowrap;
   }
 
   .overflow-menu {
