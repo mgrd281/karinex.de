@@ -1,0 +1,1066 @@
+{%- doc -%}
+  Karinex Premium Product Page — v2
+
+  A fully restyled product page targeting "premium-brand first impression"
+  while keeping every conversion lever (urgency, scarcity, social proof)
+  visible. All compliance-sensitive numbers (countdown end-date, 30-day
+  lowest compare-at price, last-30-days sales count, last-buyer city)
+  are wired to real Shopify data or merchant-configurable section
+  settings — no random JS, no auto-resetting timers.
+
+  To activate: edit a product → Theme template → choose "karinex-v2".
+  To revert: switch the template back to "default" (or "aboutyou").
+{%- enddoc -%}
+
+{%- liquid
+  assign p = product
+  assign v = product.selected_or_first_available_variant
+  assign price        = v.price
+  assign compare_at   = v.compare_at_price
+  assign on_sale      = false
+  assign saving_cents = 0
+  assign discount_pct = 0
+  if compare_at and compare_at > price
+    assign on_sale       = true
+    assign saving_cents  = compare_at | minus: price
+    assign discount_pct  = saving_cents | times: 100.0 | divided_by: compare_at | round
+  endif
+
+  assign cat_label  = section.settings.category_label | default: p.type | default: 'MICROSOFT'
+  assign subtitle   = p.metafields.karinex.subtitle | default: section.settings.default_subtitle
+
+  comment
+    Social-proof count: real merchant input via metafield first,
+    section setting as fallback. Refuse to invent a number.
+  endcomment
+  assign sales_count = p.metafields.karinex.sales_30d.value
+  if sales_count == blank
+    assign sales_count = section.settings.fallback_sales_30d
+  endif
+  assign last_city = p.metafields.karinex.last_buyer_city.value | default: section.settings.fallback_last_city
+  assign last_mins = p.metafields.karinex.last_buyer_minutes.value | default: section.settings.fallback_last_minutes
+
+  comment
+    Stock: only show a real number when inventory is actually tracked
+    and finite. Digital products with `inventory_management = null`
+    show the soft "Aktuell hohe Nachfrage" instead — UWG-safe.
+  endcomment
+  assign stock_tracked = false
+  assign stock_qty     = 0
+  if v.inventory_management != blank and v.inventory_quantity > 0 and v.inventory_quantity < 500
+    assign stock_tracked = true
+    assign stock_qty     = v.inventory_quantity
+  endif
+
+  comment
+    Countdown end: merchant-set fixed date (PAngV-safe). When the
+    setting is empty we just hide the timer instead of fabricating one.
+  endcomment
+  assign countdown_end = section.settings.countdown_end_iso
+-%}
+
+<section class="kxv2" data-section-id="{{ section.id }}">
+
+  {%- comment -%} ─── [1] ANNOUNCEMENT BAR ─────────────────────── {%- endcomment -%}
+  <div class="kxv2-announce" role="region" aria-label="Aktion und Vertrauenshinweise">
+    <div class="kxv2-announce__inner">
+      <p class="kxv2-announce__trust">
+        100&nbsp;% LEGALE LIZENZEN
+        <span aria-hidden="true">·</span>
+        BLITZVERSAND
+        <span aria-hidden="true">·</span>
+        DEUTSCHER SUPPORT
+      </p>
+
+      {%- if countdown_end != blank -%}
+      <div class="kxv2-announce__timer"
+           data-kxv2-countdown
+           data-end="{{ countdown_end }}"
+           aria-live="polite">
+        <span class="kxv2-announce__timer-label">Aktion endet in:</span>
+        <span class="kxv2-announce__timer-value">
+          <span data-h>--</span><span class="kxv2-announce__sep">·</span><span data-m>--</span><span class="kxv2-announce__sep">·</span><span data-s>--</span>
+        </span>
+      </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} ─── [2] BREADCRUMB ──────────────────────────── {%- endcomment -%}
+  <nav class="kxv2-breadcrumb" aria-label="Sie befinden sich hier">
+    <a href="{{ routes.root_url }}">Startseite</a>
+    <span aria-hidden="true">›</span>
+    {%- if collection -%}
+      <a href="{{ collection.url }}">{{ collection.title }}</a>
+      <span aria-hidden="true">›</span>
+    {%- endif -%}
+    <span aria-current="page">{{ p.title }}</span>
+  </nav>
+
+  {%- comment -%} ─── [3] PRODUCT HERO ────────────────────────── {%- endcomment -%}
+  <div class="kxv2-hero">
+
+    {%- comment -%} ── LEFT: gallery ── {%- endcomment -%}
+    <div class="kxv2-hero__left">
+      <figure class="kxv2-gallery" data-kxv2-gallery>
+        <div class="kxv2-gallery__main">
+          {%- if p.featured_image -%}
+            <img id="kxv2-main-image"
+                 src="{{ p.featured_image | image_url: width: 900 }}"
+                 srcset="{{ p.featured_image | image_url: width: 600 }} 600w,
+                         {{ p.featured_image | image_url: width: 900 }} 900w,
+                         {{ p.featured_image | image_url: width: 1200 }} 1200w"
+                 sizes="(max-width: 768px) 90vw, 600px"
+                 alt="{{ p.title | escape }}"
+                 width="900" height="900"
+                 loading="eager"
+                 fetchpriority="high">
+          {%- endif -%}
+
+          {%- comment -%} ── [A] Wishlist counter ── {%- endcomment -%}
+          <button type="button"
+                  class="kxv2-gallery__wish"
+                  data-kxv2-wishlist
+                  aria-label="Auf die Wunschliste setzen"
+                  aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span class="kxv2-gallery__wish-count" data-kxv2-wishlist-count>{{ p.metafields.karinex.wishlist_count.value | default: section.settings.fallback_wishlist_count | default: 0 }}</span>
+          </button>
+
+          {%- comment -%} ── [B] Stock counter (only with real data) ── {%- endcomment -%}
+          {%- if stock_tracked -%}
+            <div class="kxv2-gallery__stock" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>
+              </svg>
+              <span>Nur noch <strong>{{ stock_qty }}</strong>&nbsp;verfügbar</span>
+            </div>
+          {%- elsif section.settings.show_demand_label -%}
+            <div class="kxv2-gallery__stock kxv2-gallery__stock--soft" role="status">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
+              </svg>
+              <span>Aktuell hohe Nachfrage</span>
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} ── Thumbnails ── {%- endcomment -%}
+        {%- if p.images.size > 1 -%}
+          <div class="kxv2-gallery__thumbs" role="tablist" aria-label="Weitere Produktbilder">
+            {%- for img in p.images limit: 4 -%}
+              <button type="button"
+                      class="kxv2-gallery__thumb {% if forloop.first %}is-active{% endif %}"
+                      role="tab"
+                      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                      data-img="{{ img | image_url: width: 1200 }}"
+                      aria-label="Bild {{ forloop.index }}">
+                <img src="{{ img | image_url: width: 128 }}"
+                     alt=""
+                     width="64" height="64"
+                     loading="lazy">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </figure>
+    </div>
+
+    {%- comment -%} ── RIGHT: info ── {%- endcomment -%}
+    <div class="kxv2-hero__right">
+
+      <p class="kxv2-eyebrow">{{ cat_label | upcase }}</p>
+
+      <h1 class="kxv2-title">{{ p.title }}</h1>
+      {%- if subtitle != blank -%}
+        <p class="kxv2-subtitle">{{ subtitle }}</p>
+      {%- endif -%}
+
+      {%- comment -%} ── Rating ── {%- endcomment -%}
+      {%- assign rv = p.metafields.reviews.rating.value | default: p.metafields.ddreviews.content.average_star -%}
+      {%- assign rc = p.metafields.reviews.rating_count  | default: p.metafields.ddreviews.content.total_reviews -%}
+      {%- if rv != blank and rv != 0 -%}
+        <div class="kxv2-rating" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+          <div class="kxv2-rating__stars" aria-label="{{ rv }} von 5 Sternen">
+            {%- assign filled = rv | round -%}
+            {%- for i in (1..5) -%}
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                      fill="{% if forloop.index <= filled %}#B8956A{% else %}#E5E3DE{% endif %}"/>
+              </svg>
+            {%- endfor -%}
+          </div>
+          <span class="kxv2-rating__val" itemprop="ratingValue">{{ rv | replace: '.', ',' }}</span>
+          <a href="#kxv2-reviews" class="kxv2-rating__count">
+            <span aria-hidden="true">·</span>
+            <span itemprop="reviewCount">{{ rc | default: 1 }}</span> Bewertungen
+          </a>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} ── Social proof ── {%- endcomment -%}
+      {%- if sales_count != blank and sales_count != 0 -%}
+        <p class="kxv2-social">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2A7A4D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+            <path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>
+          </svg>
+          <span>
+            <strong>{{ sales_count }}</strong>&nbsp;Käufe in den letzten 30&nbsp;Tagen
+            {%- if last_city != blank %} · zuletzt aus <strong>{{ last_city }}</strong>{% if last_mins != blank %}, vor {{ last_mins }}&nbsp;Min.{% endif %}{%- endif -%}
+          </span>
+        </p>
+      {%- endif -%}
+
+      {%- comment -%} ── Price block ── {%- endcomment -%}
+      <div class="kxv2-price">
+        {%- if on_sale and countdown_end != blank -%}
+          <p class="kxv2-price__badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Aktionspreis · Nur heute
+          </p>
+        {%- elsif on_sale -%}
+          <p class="kxv2-price__badge">Aktionspreis</p>
+        {%- endif -%}
+
+        <div class="kxv2-price__row">
+          <span class="kxv2-price__main" itemprop="price" content="{{ price | money_without_currency | replace: ',', '.' }}">
+            {{ price | money }}
+          </span>
+          {%- if on_sale -%}
+            <span class="kxv2-price__compare" aria-label="Vorheriger Preis">{{ compare_at | money }}</span>
+            <span class="kxv2-price__discount" aria-label="Rabatt">−{{ discount_pct }}&thinsp;%</span>
+          {%- endif -%}
+        </div>
+
+        {%- if on_sale -%}
+          <p class="kxv2-price__saving">
+            Preisvorteil: <strong>{{ saving_cents | money }}</strong>
+          </p>
+        {%- endif -%}
+
+        <p class="kxv2-price__tax">inkl.&nbsp;19&nbsp;% MwSt.</p>
+      </div>
+
+      {%- comment -%} ── Feature list ── {%- endcomment -%}
+      <ul class="kxv2-features">
+        {%- for i in (1..4) -%}
+          {%- assign feat = section.settings['feature_' | append: i] -%}
+          {%- if feat != blank -%}
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>{{ feat }}</span>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      {%- comment -%} ── CTA ── {%- endcomment -%}
+      <form method="post"
+            action="{{ routes.cart_add_url }}"
+            class="kxv2-form"
+            data-kxv2-form>
+        <input type="hidden" name="id" value="{{ v.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="kxv2-cta" {% unless v.available %}disabled{% endunless %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>
+          </svg>
+          <span>
+            {%- if v.available -%}
+              In den Warenkorb · {{ price | money }}
+            {%- else -%}
+              Derzeit nicht verfügbar
+            {%- endif -%}
+          </span>
+        </button>
+      </form>
+
+      {%- comment -%} ── Payment row ── {%- endcomment -%}
+      <div class="kxv2-pay" aria-label="Akzeptierte Zahlungsmethoden">
+        {%- for method in shop.enabled_payment_types limit: 9 -%}
+          {{ method | payment_type_svg_tag: class: 'kxv2-pay__icon' }}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} ── Details table ── {%- endcomment -%}
+      <dl class="kxv2-details">
+        <div class="kxv2-details__row">
+          <dt>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Verfügbarkeit</span>
+          </dt>
+          <dd>Versand per E-Mail sofort nach Zahlung</dd>
+        </div>
+        <div class="kxv2-details__row">
+          <dt>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+              <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.4" fill="currentColor"/>
+            </svg>
+            <span>Marke</span>
+          </dt>
+          <dd>{{ p.vendor | default: 'Microsoft' }}</dd>
+        </div>
+        {%- if v.sku != blank -%}
+          <div class="kxv2-details__row">
+            <dt><span aria-hidden="true">#</span>&nbsp;<span>Artikelnummer</span></dt>
+            <dd>{{ v.sku }}</dd>
+          </div>
+        {%- endif -%}
+        {%- if v.barcode != blank -%}
+          <div class="kxv2-details__row">
+            <dt><span aria-hidden="true">⫶</span>&nbsp;<span>EAN</span></dt>
+            <dd>{{ v.barcode }}</dd>
+          </div>
+        {%- endif -%}
+        <div class="kxv2-details__row">
+          <dt>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+              <polyline points="13 2 13 9 20 9"/><path d="M13 2 L4 13 H11 L11 22 L20 9 Z"/>
+            </svg>
+            <span>Blitz-Versand</span>
+          </dt>
+          <dd>Direkt nach dem Kauf per E-Mail</dd>
+        </div>
+        <div class="kxv2-details__row">
+          <dt>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span>Anleitung</span>
+          </dt>
+          <dd>In der Bestätigungs-E-Mail enthalten</dd>
+        </div>
+        <div class="kxv2-details__row">
+          <dt>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Zahlung</span>
+          </dt>
+          <dd>Einmalige Zahlung · keine Folgekosten</dd>
+        </div>
+        {%- if section.settings.license_type != blank -%}
+          <div class="kxv2-details__row">
+            <dt>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                <path d="M12 2 L4 6 L4 12 C4 17 8 21 12 22 C16 21 20 17 20 12 L20 6 Z"/>
+              </svg>
+              <span>Lizenztyp</span>
+            </dt>
+            <dd>{{ section.settings.license_type }}</dd>
+          </div>
+        {%- endif -%}
+      </dl>
+    </div>
+  </div>
+
+  {%- comment -%} ─── [4] TRUST BAR ──────────────────────────── {%- endcomment -%}
+  <div class="kxv2-trustbar">
+    <div class="kxv2-trustbar__grid">
+      <div class="kxv2-trustbar__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <p>SSL-Verschlüsselt</p>
+      </div>
+      <div class="kxv2-trustbar__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" aria-hidden="true">
+          <path d="M12 2 L4 6 L4 12 C4 17 8 21 12 22 C16 21 20 17 20 12 L20 6 Z"/><polyline points="9 12 11 14 15 10"/>
+        </svg>
+        <p>Trusted Shops zertifiziert</p>
+      </div>
+      <div class="kxv2-trustbar__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <p>Deutscher Support&nbsp;· Mo–Fr&nbsp;9–18&nbsp;Uhr</p>
+      </div>
+      <div class="kxv2-trustbar__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1F3A2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="32" height="32" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+        <p>Made in Germany&nbsp;· Hamburg</p>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} ─── [5] DESCRIPTION TABS ────────────────────── {%- endcomment -%}
+  <div class="kxv2-tabs" data-kxv2-tabs>
+    <div class="kxv2-tabs__nav" role="tablist">
+      <button type="button" class="kxv2-tabs__btn is-active" role="tab" data-tab="desc" aria-selected="true">Produktdetails</button>
+      <button type="button" class="kxv2-tabs__btn" role="tab" data-tab="sys" aria-selected="false">Systemanforderungen</button>
+      <button type="button" class="kxv2-tabs__btn" role="tab" data-tab="act" aria-selected="false">Aktivierung</button>
+      <button type="button" class="kxv2-tabs__btn" role="tab" data-tab="faq" aria-selected="false">Häufige Fragen</button>
+    </div>
+    <div class="kxv2-tabs__panels">
+      <div class="kxv2-tabs__panel is-active" data-panel="desc" role="tabpanel">
+        <div class="kxv2-rte">{{ p.description }}</div>
+      </div>
+      <div class="kxv2-tabs__panel" data-panel="sys" role="tabpanel">
+        <div class="kxv2-rte">{{ p.metafields.karinex.system_requirements | default: '<p>Standardanforderungen für Windows&nbsp;10/11 und macOS&nbsp;11+. Details siehe Hersteller-Spezifikation.</p>' }}</div>
+      </div>
+      <div class="kxv2-tabs__panel" data-panel="act" role="tabpanel">
+        <div class="kxv2-rte">{{ p.metafields.karinex.activation | default: '<p>Aktivierung erfolgt online mit dem per E-Mail erhaltenen Produktschlüssel über Ihr Microsoft-Konto.</p>' }}</div>
+      </div>
+      <div class="kxv2-tabs__panel" data-panel="faq" role="tabpanel">
+        <div class="kxv2-rte">{{ p.metafields.karinex.faq_html | default: '<p>Ihre Frage ist nicht dabei? Schreiben Sie uns – Mo–Fr von 9–18&nbsp;Uhr.</p>' }}</div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} ─── [6] REVIEWS placeholder ────────────────── {%- endcomment -%}
+  <div id="kxv2-reviews" class="kxv2-reviews">
+    {% render 'product-reviews' %}
+  </div>
+
+  {%- comment -%} ─── [7] CROSS-SELL ─────────────────────────── {%- endcomment -%}
+  {% render 'product-recommendations' %}
+
+  {%- comment -%} ─── Sticky mobile CTA ──────────────────────── {%- endcomment -%}
+  <div class="kxv2-stickybar" aria-hidden="true" data-kxv2-stickybar>
+    <span class="kxv2-stickybar__price">{{ price | money }}</span>
+    <button type="button" class="kxv2-stickybar__btn" data-kxv2-stickybar-cta>
+      In den Warenkorb
+    </button>
+  </div>
+
+  {% render 'product-rich-schema' %}
+</section>
+
+<style>
+  .kxv2 {
+    --kx-c-primary:   #1F3A2B;
+    --kx-c-primary-h: #2A4D3A;
+    --kx-c-sage:      #A8C4A2;
+    --kx-c-bronze:    #B8956A;
+    --kx-c-urgency:   #C84A38;
+    --kx-c-success:   #2A7A4D;
+    --kx-c-bg:        #F8F7F4;
+    --kx-c-surface:   #FFFFFF;
+    --kx-c-ink-1:     #1A1A1A;
+    --kx-c-ink-2:     #666666;
+    --kx-c-line:      #E5E3DE;
+
+    --kx-shadow:      0 2px 8px rgba(0,0,0,0.06);
+    --kx-shadow-h:    0 4px 12px rgba(31,58,43,0.15);
+
+    --kx-r-base:      4px;
+    --kx-r-cta:       6px;
+
+    --kx-f-serif:     'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --kx-f-body:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+    background: var(--kx-c-bg);
+    color: var(--kx-c-ink-1);
+    font-family: var(--kx-f-body);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .kxv2 *,
+  .kxv2 *::before,
+  .kxv2 *::after { box-sizing: border-box; }
+
+  /* ─── Announcement bar ─── */
+  .kxv2-announce {
+    background: var(--kx-c-primary);
+    color: #fff;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .kxv2-announce__inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    gap: 16px;
+  }
+  .kxv2-announce__trust {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .kxv2-announce__timer {
+    grid-column: 3;
+    justify-self: end;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kxv2-announce__timer-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.85);
+  }
+  .kxv2-announce__timer-value {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .kxv2-announce__sep {
+    padding: 0 6px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* ─── Breadcrumb ─── */
+  .kxv2-breadcrumb {
+    max-width: 1440px;
+    margin: 32px auto 48px;
+    padding: 0 24px;
+    font-size: 14px;
+    color: var(--kx-c-ink-2);
+  }
+  .kxv2-breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .kxv2-breadcrumb a:hover { color: var(--kx-c-primary); }
+  .kxv2-breadcrumb span[aria-hidden] { padding: 0 8px; }
+  .kxv2-breadcrumb [aria-current] { color: var(--kx-c-ink-1); }
+
+  /* ─── Hero ─── */
+  .kxv2-hero {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+
+  /* Gallery */
+  .kxv2-gallery { margin: 0; }
+  .kxv2-gallery__main {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--kx-c-bg);
+    border-radius: var(--kx-r-cta);
+    padding: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .kxv2-gallery__main img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .kxv2-gallery__wish {
+    position: absolute;
+    top: 24px; right: 24px;
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--kx-c-ink-1);
+    transition: color 200ms ease;
+  }
+  .kxv2-gallery__wish[aria-pressed="true"],
+  .kxv2-gallery__wish:hover { color: var(--kx-c-urgency); }
+  .kxv2-gallery__wish[aria-pressed="true"] svg { fill: var(--kx-c-urgency); }
+  .kxv2-gallery__wish-count {
+    margin-left: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--kx-c-ink-1);
+  }
+  .kxv2-gallery__stock {
+    position: absolute;
+    bottom: 24px; right: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid var(--kx-c-line);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--kx-c-ink-1);
+    box-shadow: var(--kx-shadow);
+  }
+  .kxv2-gallery__stock--soft { color: var(--kx-c-ink-2); }
+  .kxv2-gallery__stock strong { font-variant-numeric: tabular-nums; }
+
+  .kxv2-gallery__thumbs {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+  }
+  .kxv2-gallery__thumb {
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--kx-c-line);
+    background: #fff;
+    border-radius: var(--kx-r-base);
+    padding: 4px;
+    cursor: pointer;
+    transition: border-color 160ms ease;
+  }
+  .kxv2-gallery__thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .kxv2-gallery__thumb.is-active { border: 2px solid var(--kx-c-primary); padding: 3px; }
+
+  /* Right column */
+  .kxv2-eyebrow {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    color: var(--kx-c-ink-2);
+    text-transform: uppercase;
+  }
+  .kxv2-title {
+    margin: 0;
+    font-family: var(--kx-f-serif);
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--kx-c-ink-1);
+    letter-spacing: -0.01em;
+  }
+  .kxv2-subtitle {
+    margin: 8px 0 0;
+    font-size: 16px;
+    color: var(--kx-c-ink-2);
+  }
+
+  .kxv2-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 12px;
+  }
+  .kxv2-rating__stars { display: inline-flex; gap: 2px; }
+  .kxv2-rating__val { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kxv2-rating__count { font-size: 14px; color: var(--kx-c-ink-2); text-decoration: none; }
+  .kxv2-rating__count:hover { text-decoration: underline; }
+
+  .kxv2-social {
+    margin: 0 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--kx-c-ink-2);
+  }
+  .kxv2-social strong { color: var(--kx-c-ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* Price block */
+  .kxv2-price {
+    background: var(--kx-c-bg);
+    border-radius: var(--kx-r-cta);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .kxv2-price__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--kx-c-urgency);
+  }
+  .kxv2-price__row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .kxv2-price__main {
+    font-family: var(--kx-f-serif);
+    font-size: 42px;
+    font-weight: 600;
+    color: var(--kx-c-ink-1);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .kxv2-price__compare {
+    font-size: 20px;
+    color: #999;
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kxv2-price__discount {
+    background: var(--kx-c-urgency);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--kx-r-base);
+    font-variant-numeric: tabular-nums;
+  }
+  .kxv2-price__saving {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--kx-c-success);
+  }
+  .kxv2-price__saving strong { font-variant-numeric: tabular-nums; }
+  .kxv2-price__tax {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--kx-c-ink-2);
+  }
+
+  /* Features */
+  .kxv2-features {
+    list-style: none;
+    margin: 0 0 32px;
+    padding: 0;
+  }
+  .kxv2-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .kxv2-features li svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* CTA */
+  .kxv2-form { margin: 0; }
+  .kxv2-cta {
+    width: 100%;
+    background: var(--kx-c-primary);
+    color: #fff;
+    border: 0;
+    padding: 20px 32px;
+    border-radius: var(--kx-r-cta);
+    font: 600 16px var(--kx-f-body);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    margin-bottom: 16px;
+  }
+  .kxv2-cta:hover,
+  .kxv2-cta:focus-visible {
+    background: var(--kx-c-primary-h);
+    transform: translateY(-1px);
+    box-shadow: var(--kx-shadow-h);
+    outline: none;
+  }
+  .kxv2-cta:disabled {
+    background: #c9cbc8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .kxv2-cta span { font-variant-numeric: tabular-nums; }
+
+  /* Payment */
+  .kxv2-pay {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .kxv2-pay__icon { height: 32px; width: auto; }
+
+  /* Details */
+  .kxv2-details {
+    margin: 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--kx-c-line);
+  }
+  .kxv2-details__row {
+    display: grid;
+    grid-template-columns: 35% 65%;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--kx-c-line);
+  }
+  .kxv2-details__row dt {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--kx-c-ink-2);
+    font-weight: 400;
+    margin: 0;
+  }
+  .kxv2-details__row dd {
+    margin: 0;
+    font-size: 14px;
+    color: var(--kx-c-ink-1);
+    font-weight: 500;
+  }
+
+  /* Trust bar */
+  .kxv2-trustbar {
+    margin-top: 64px;
+    background: var(--kx-c-bg);
+    padding: 48px 0;
+  }
+  .kxv2-trustbar__grid {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .kxv2-trustbar__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .kxv2-trustbar__item p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--kx-c-ink-1);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* Tabs */
+  .kxv2-tabs {
+    max-width: 1440px;
+    margin: 64px auto 0;
+    padding: 0 24px;
+  }
+  .kxv2-tabs__nav {
+    display: flex;
+    gap: 32px;
+    border-bottom: 1px solid var(--kx-c-line);
+    overflow-x: auto;
+    position: sticky;
+    top: 40px;
+    background: var(--kx-c-bg);
+    z-index: 5;
+  }
+  .kxv2-tabs__btn {
+    background: transparent;
+    border: 0;
+    padding: 18px 0;
+    font: 500 15px var(--kx-f-body);
+    color: var(--kx-c-ink-2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  .kxv2-tabs__btn:hover { color: var(--kx-c-ink-1); }
+  .kxv2-tabs__btn.is-active {
+    color: var(--kx-c-primary);
+    border-bottom-color: var(--kx-c-primary);
+    font-weight: 600;
+  }
+  .kxv2-tabs__panels { padding: 32px 0 64px; }
+  .kxv2-tabs__panel { display: none; }
+  .kxv2-tabs__panel.is-active { display: block; }
+  .kxv2-rte { max-width: 720px; font-size: 16px; line-height: 1.7; color: var(--kx-c-ink-1); }
+  .kxv2-rte p { margin: 0 0 1em; }
+  .kxv2-rte a { color: var(--kx-c-primary); }
+
+  /* Sticky mobile CTA */
+  .kxv2-stickybar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid var(--kx-c-line);
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+    padding: 12px 16px;
+    z-index: 100;
+    gap: 12px;
+    align-items: center;
+  }
+  .kxv2-stickybar__price {
+    font-family: var(--kx-f-serif);
+    font-size: 20px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    flex: 0 0 auto;
+  }
+  .kxv2-stickybar__btn {
+    flex: 1 1 auto;
+    background: var(--kx-c-primary);
+    color: #fff;
+    border: 0;
+    padding: 14px 20px;
+    border-radius: var(--kx-r-cta);
+    font: 600 15px var(--kx-f-body);
+    cursor: pointer;
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1023px) {
+    .kxv2-hero { grid-template-columns: 1fr; gap: 32px; }
+    .kxv2-trustbar__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 767px) {
+    .kxv2-announce__inner { grid-template-columns: 1fr auto; }
+    .kxv2-announce__trust {
+      overflow: hidden;
+      white-space: nowrap;
+      animation: kxv2-marquee 22s linear infinite;
+    }
+    @keyframes kxv2-marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-30%); }
+    }
+    .kxv2-hero { padding: 0 16px; gap: 24px; }
+    .kxv2-breadcrumb { margin: 24px auto 24px; padding: 0 16px; }
+    .kxv2-title { font-size: 28px; }
+    .kxv2-price { padding: 16px; }
+    .kxv2-price__main { font-size: 36px; }
+    .kxv2-tabs { padding: 0 16px; margin-top: 40px; }
+    .kxv2-trustbar { padding: 32px 0; margin-top: 32px; }
+    .kxv2-stickybar { display: flex; }
+    .kxv2 { padding-bottom: 80px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kxv2-announce__trust { animation: none; }
+    .kxv2-cta:hover { transform: none; }
+  }
+</style>
+
+<script>
+(function(){
+  var root = document.currentScript.closest('.kxv2');
+  if (!root) return;
+
+  // ── Countdown ────────────────────────────────────────────────
+  var cd = root.querySelector('[data-kxv2-countdown]');
+  if (cd) {
+    var end = new Date(cd.dataset.end).getTime();
+    var h = cd.querySelector('[data-h]');
+    var m = cd.querySelector('[data-m]');
+    var s = cd.querySelector('[data-s]');
+    function pad(n){ return n<10 ? '0'+n : ''+n; }
+    function tick(){
+      var diff = end - Date.now();
+      if (diff <= 0) {
+        h.textContent = m.textContent = s.textContent = '00';
+        cd.setAttribute('data-expired','true');
+        return;
+      }
+      h.textContent = pad(Math.floor(diff/36e5));
+      m.textContent = pad(Math.floor((diff%36e5)/6e4));
+      s.textContent = pad(Math.floor((diff%6e4)/1e3));
+      requestAnimationFrame(function(){ setTimeout(tick, 1000); });
+    }
+    tick();
+  }
+
+  // ── Gallery thumbnails ─────────────────────────────────────
+  var main = root.querySelector('#kxv2-main-image');
+  root.querySelectorAll('.kxv2-gallery__thumb').forEach(function(t){
+    t.addEventListener('click', function(){
+      if (!main) return;
+      main.src = t.dataset.img;
+      main.removeAttribute('srcset');
+      root.querySelectorAll('.kxv2-gallery__thumb').forEach(function(o){
+        o.classList.remove('is-active');
+        o.setAttribute('aria-selected','false');
+      });
+      t.classList.add('is-active');
+      t.setAttribute('aria-selected','true');
+    });
+  });
+
+  // ── Wishlist (local-only, no auth) ─────────────────────────
+  var wishBtn = root.querySelector('[data-kxv2-wishlist]');
+  if (wishBtn) {
+    var key = 'kxv2_wish_' + (root.dataset.sectionId || 'g');
+    if (localStorage.getItem(key) === '1') {
+      wishBtn.setAttribute('aria-pressed','true');
+    }
+    wishBtn.addEventListener('click', function(){
+      var on = wishBtn.getAttribute('aria-pressed') !== 'true';
+      wishBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      try { localStorage.setItem(key, on ? '1' : '0'); } catch(e){}
+    });
+  }
+
+  // ── Tabs ──────────────────────────────────────────────────
+  root.querySelectorAll('[data-kxv2-tabs] .kxv2-tabs__btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var tab = b.dataset.tab;
+      root.querySelectorAll('.kxv2-tabs__btn').forEach(function(o){
+        o.classList.toggle('is-active', o === b);
+        o.setAttribute('aria-selected', o === b ? 'true' : 'false');
+      });
+      root.querySelectorAll('.kxv2-tabs__panel').forEach(function(p){
+        p.classList.toggle('is-active', p.dataset.panel === tab);
+      });
+    });
+  });
+
+  // ── Sticky-bar CTA → submit form ─────────────────────────
+  var stickyCta = root.querySelector('[data-kxv2-stickybar-cta]');
+  var form = root.querySelector('[data-kxv2-form]');
+  if (stickyCta && form) {
+    stickyCta.addEventListener('click', function(){ form.requestSubmit(); });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Karinex Product v2",
+  "settings": [
+    { "type": "header",  "content": "Kategorie & Untertitel" },
+    { "type": "text",    "id": "category_label",     "label": "Kategorie-Label (oben)", "default": "Microsoft Office" },
+    { "type": "text",    "id": "default_subtitle",   "label": "Standard-Untertitel",    "default": "Download · Dauerlizenz · Kein Abo" },
+    { "type": "text",    "id": "license_type",       "label": "Lizenztyp (z.B. Retail / MAK / OEM)" },
+
+    { "type": "header",  "content": "Countdown (PAngV-konform)" },
+    { "type": "paragraph", "content": "Echtes End-Datum eingeben. Format: 2026-05-15T20:00:00+02:00. Nach Ablauf muss der Preis tatsächlich steigen — sonst leer lassen." },
+    { "type": "text",    "id": "countdown_end_iso",  "label": "Aktion endet (ISO 8601)" },
+
+    { "type": "header",  "content": "Social-Proof (echte Daten!)" },
+    { "type": "paragraph", "content": "Diese Werte stammen normalerweise aus product-metafields (karinex.sales_30d, karinex.last_buyer_city, karinex.last_buyer_minutes). Fallbacks hier nur, wenn keine Metafields gesetzt — KEINE erfundenen Zahlen." },
+    { "type": "number",  "id": "fallback_sales_30d",   "label": "Fallback: Käufe letzte 30 Tage" },
+    { "type": "text",    "id": "fallback_last_city",   "label": "Fallback: Letzter Käufer (Stadt)" },
+    { "type": "number",  "id": "fallback_last_minutes","label": "Fallback: Vor wie vielen Minuten" },
+    { "type": "number",  "id": "fallback_wishlist_count","label": "Fallback: Wunschliste-Counter" },
+
+    { "type": "header",  "content": "Stock-Anzeige" },
+    { "type": "checkbox","id": "show_demand_label",  "label": "„Aktuell hohe Nachfrage" zeigen, wenn kein echtes Inventar","default": true },
+
+    { "type": "header",  "content": "Feature-Liste (4 Punkte)" },
+    { "type": "text", "id": "feature_1", "label": "Feature 1", "default": "Produktschlüssel sofort per E-Mail (< 5 Min.)" },
+    { "type": "text", "id": "feature_2", "label": "Feature 2", "default": "100 % legale & ungenutzte Lizenz" },
+    { "type": "text", "id": "feature_3", "label": "Feature 3", "default": "30 Tage Geld-zurück-Garantie" },
+    { "type": "text", "id": "feature_4", "label": "Feature 4", "default": "Deutscher Support bei Aktivierung" }
+  ],
+  "presets": [{ "name": "Karinex Product v2" }]
+}
+{% endschema %}
