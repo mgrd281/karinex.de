@@ -419,12 +419,12 @@
   </div>
 
   {%- comment -%} ─── [6] REVIEWS placeholder ────────────────── {%- endcomment -%}
-  <div id="kxv2-reviews" class="kxv2-reviews">
-    {% render 'product-reviews' %}
-  </div>
-
-  {%- comment -%} ─── [7] CROSS-SELL ─────────────────────────── {%- endcomment -%}
-  {% render 'product-recommendations' %}
+  {%- comment -%}
+    Reviews + recommendations are rendered by their own template-level
+    sections (product_reviews, product_recommendations,
+    custom_similar_products_new) configured in templates/product.json —
+    so we don't duplicate them inline here.
+  {%- endcomment -%}
 
   {%- comment -%} ─── Sticky mobile CTA ──────────────────────── {%- endcomment -%}
   <div class="kxv2-stickybar" aria-hidden="true" data-kxv2-stickybar>
