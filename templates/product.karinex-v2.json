@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "product-karinex-v2",
+      "settings": {
+        "category_label": "Microsoft Office",
+        "default_subtitle": "Download · Dauerlizenz · Kein Abo",
+        "show_demand_label": true,
+        "feature_1": "Produktschlüssel sofort per E-Mail (< 5 Min.)",
+        "feature_2": "100 % legale & ungenutzte Lizenz",
+        "feature_3": "30 Tage Geld-zurück-Garantie",
+        "feature_4": "Deutscher Support bei Aktivierung"
+      }
+    }
+  },
+  "order": ["main"]
+}
