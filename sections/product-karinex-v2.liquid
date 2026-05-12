@@ -117,17 +117,8 @@
                  fetchpriority="high">
           {%- endif -%}
 
-          {%- comment -%} ── [A] Wishlist counter ── {%- endcomment -%}
-          <button type="button"
-                  class="kxv2-gallery__wish"
-                  data-kxv2-wishlist
-                  aria-label="Auf die Wunschliste setzen"
-                  aria-pressed="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            <span class="kxv2-gallery__wish-count" data-kxv2-wishlist-count>{{ p.metafields.karinex.wishlist_count.value | default: section.settings.fallback_wishlist_count | default: 0 }}</span>
-          </button>
+          {%- comment -%} ── [A] Wishlist (theme's <wishlist-heart> element) ── {%- endcomment -%}
+          <wishlist-heart class="kxv2-gallery__wish" data-product-handle="{{ p.handle }}"></wishlist-heart>
 
           {%- comment -%} ── [B] Stock counter (only with real data) ── {%- endcomment -%}
           {%- if stock_tracked -%}
@@ -179,9 +170,16 @@
       {%- endif -%}
 
       {%- comment -%} ── Rating ── {%- endcomment -%}
-      {%- assign rv = p.metafields.reviews.rating.value | default: p.metafields.ddreviews.content.average_star -%}
-      {%- assign rc = p.metafields.reviews.rating_count  | default: p.metafields.ddreviews.content.total_reviews -%}
-      {%- if rv != blank and rv != 0 -%}
+      {%- assign rv_raw = p.metafields.reviews.rating.value -%}
+      {%- if rv_raw.rating != blank -%}
+        {%- assign rv = rv_raw.rating | times: 1.0 -%}
+      {%- elsif p.metafields.ddreviews.content.average_star != blank -%}
+        {%- assign rv = p.metafields.ddreviews.content.average_star | times: 1.0 -%}
+      {%- else -%}
+        {%- assign rv = 0 -%}
+      {%- endif -%}
+      {%- assign rc = p.metafields.reviews.rating_count | default: p.metafields.ddreviews.content.total_reviews | default: 0 -%}
+      {%- if rv > 0 -%}
         <div class="kxv2-rating" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
           <div class="kxv2-rating__stars" aria-label="{{ rv }} von 5 Sternen">
             {%- assign filled = rv | round -%}
@@ -571,24 +569,23 @@
   }
   .kxv2-gallery__wish {
     position: absolute;
-    top: 24px; right: 24px;
-    display: inline-flex;
-    align-items: center;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    color: var(--kx-c-ink-1);
-    transition: color 200ms ease;
+    top: 16px; right: 16px;
+    z-index: 2;
   }
-  .kxv2-gallery__wish[aria-pressed="true"],
-  .kxv2-gallery__wish:hover { color: var(--kx-c-urgency); }
-  .kxv2-gallery__wish[aria-pressed="true"] svg { fill: var(--kx-c-urgency); }
-  .kxv2-gallery__wish-count {
-    margin-left: 8px;
-    font-size: 13px;
-    font-weight: 500;
+  .kxv2-gallery__wish .wishlist-heart__button {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--kx-c-line);
+    box-shadow: var(--kx-shadow);
     color: var(--kx-c-ink-1);
+  }
+  .kxv2-gallery__wish .wishlist-heart__button:hover { color: var(--kx-c-urgency); }
+  .kxv2-gallery__wish [saved] .wishlist-heart__button,
+  .kxv2-gallery__wish .wishlist-heart__button[saved],
+  .kxv2-gallery__wish wishlist-heart[saved] .wishlist-heart__button {
+    color: var(--kx-c-urgency);
   }
   .kxv2-gallery__stock {
     position: absolute;
@@ -997,19 +994,7 @@
     });
   });
 
-  // ── Wishlist (local-only, no auth) ─────────────────────────
-  var wishBtn = root.querySelector('[data-kxv2-wishlist]');
-  if (wishBtn) {
-    var key = 'kxv2_wish_' + (root.dataset.sectionId || 'g');
-    if (localStorage.getItem(key) === '1') {
-      wishBtn.setAttribute('aria-pressed','true');
-    }
-    wishBtn.addEventListener('click', function(){
-      var on = wishBtn.getAttribute('aria-pressed') !== 'true';
-      wishBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-      try { localStorage.setItem(key, on ? '1' : '0'); } catch(e){}
-    });
-  }
+  // Wishlist handled by <wishlist-heart> custom element (assets/wishlist-heart.js).
 
   // ── Tabs ──────────────────────────────────────────────────
   root.querySelectorAll('[data-kxv2-tabs] .kxv2-tabs__btn').forEach(function(b){
@@ -1025,11 +1010,57 @@
     });
   });
 
-  // ── Sticky-bar CTA → submit form ─────────────────────────
-  var stickyCta = root.querySelector('[data-kxv2-stickybar-cta]');
+  // ── AJAX add-to-cart + sticky CTA wiring ─────────────────
   var form = root.querySelector('[data-kxv2-form]');
-  if (stickyCta && form) {
-    stickyCta.addEventListener('click', function(){ form.requestSubmit(); });
+  var ctaBtn = root.querySelector('.kxv2-cta');
+  var stickyCta = root.querySelector('[data-kxv2-stickybar-cta]');
+
+  function ajaxAddToCart() {
+    if (!form) return;
+    var btn = ctaBtn;
+    var origLabel = btn ? btn.querySelector('span').textContent : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.querySelector('span').textContent = 'Wird hinzugefügt…';
+    }
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function(r){ return r.ok ? r.json() : Promise.reject(r); })
+      .then(function(){
+        document.dispatchEvent(new CustomEvent('cart:add'));
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+        document.querySelectorAll('cart-counter').forEach(function (el) {
+          if (typeof el.update === 'function') el.update();
+        });
+        if (btn) {
+          btn.querySelector('span').textContent = '✓ Im Warenkorb';
+          setTimeout(function(){
+            btn.disabled = false;
+            btn.querySelector('span').textContent = origLabel;
+          }, 1800);
+        }
+      })
+      .catch(function(){
+        if (btn) {
+          btn.disabled = false;
+          btn.querySelector('span').textContent = origLabel;
+        }
+        // Fallback: native submit to /cart/add
+        form.submit();
+      });
+  }
+
+  if (form) {
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      ajaxAddToCart();
+    });
+  }
+  if (stickyCta) {
+    stickyCta.addEventListener('click', ajaxAddToCart);
   }
 })();
 </script>
