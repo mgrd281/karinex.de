@@ -81,11 +81,17 @@
             document.head.appendChild(l);
           });
 
-          // 2. Usercentrics - Intercepted by manager
+          // 2. Usercentrics — engine only (UI hidden via CSS below).
+          //    AutoBlocker prevents 3rd-party scripts (GA, Pixel, …) from
+          //    firing until the visitor consents via the Karinex banner.
+          const ucBlocker = document.createElement('script');
+          ucBlocker.src = 'https://web.cmp.usercentrics.eu/modules/autoblocker.js';
+          document.head.appendChild(ucBlocker);
+
           const uc = document.createElement('script');
           uc.id = 'usercentrics-cmp';
           uc.src = 'https://web.cmp.usercentrics.eu/ui/loader.js';
-          uc.dataset.settingsId = 'DDgih5qHx1UO7E';
+          uc.dataset.rulesetId = 'WG2eNveYx1lK6D';
           uc.async = true;
           document.head.appendChild(uc);
         }
