@@ -16,7 +16,9 @@
         "gallery_bg_color": "#f7f7f7",
         "enable_hover_zoom": false,
         "show_price_alert": false,
-        "show_payment_buttons": true,
+        "show_card_wishlist_heart": true,
+        "show_card_quick_add": true,
+        "show_payment_buttons": false,
         "enable_badge": true,
         "enable_category_rules": true,
         "rating_star_color": "#1d4739"
