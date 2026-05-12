@@ -24,6 +24,12 @@
 {%- liquid
   assign current_variant   = product.selected_or_first_available_variant
   assign price_decimal     = current_variant.price | divided_by: 100.0
+  assign compare_at_raw    = current_variant.compare_at_price
+  assign has_compare_at    = false
+  if compare_at_raw and compare_at_raw > current_variant.price
+    assign has_compare_at = true
+    assign compare_at_decimal = compare_at_raw | divided_by: 100.0
+  endif
   assign price_valid_until = 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d'
   assign currency          = cart.currency.iso_code | default: 'EUR'
   assign in_stock          = current_variant.available
@@ -157,7 +163,21 @@
         "@id": {{ offer_id | json }},
         "url": {{ canonical | json }},
         "priceCurrency": {{ currency | json }},
-        "price": "{{ price_decimal | round: 2 }}",
+        "price": "{{ price_decimal | round: 2 }}",{% if has_compare_at %}
+        "priceSpecification": [
+          {
+            "@type": "UnitPriceSpecification",
+            "priceType": "https://schema.org/ListPrice",
+            "price": "{{ compare_at_decimal | round: 2 }}",
+            "priceCurrency": {{ currency | json }}
+          },
+          {
+            "@type": "UnitPriceSpecification",
+            "priceType": "https://schema.org/SalePrice",
+            "price": "{{ price_decimal | round: 2 }}",
+            "priceCurrency": {{ currency | json }}
+          }
+        ],{% endif %}
         "priceValidUntil": {{ price_valid_until | json }},
         "availability": "{% if in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
         "itemCondition": "https://schema.org/NewCondition",
