@@ -3,9 +3,9 @@
     "main": {
       "type": "karinex-collections",
       "settings": {
-        "heading": "Sortiment",
-        "subheading": "Microsoft-Lizenzen, sorgfältig kuratiert. Sofortversand per E-Mail.",
-        "cols": "2",
+        "heading": "Alle Kategorien",
+        "subheading": "",
+        "cols": "3",
         "hide_empty": true
       }
     }
