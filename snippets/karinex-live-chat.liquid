@@ -232,6 +232,33 @@
   .klc-header__close:hover { background: rgba(255,255,255,.18); transform: rotate(90deg); }
   .klc-header__close:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.55); }
 
+  /* Back button inside header — only shown in chat view */
+  .klc-header__back {
+    position: absolute;
+    top: 16px; left: 16px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.10);
+    color: #f8f3df;
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    transition: background .2s var(--klc-ease), transform .25s var(--klc-ease-spring);
+    opacity: 0;
+  }
+  .klc-header__back:hover { background: rgba(255,255,255,.18); }
+  .klc-header__back:hover svg { transform: translateX(-2px); }
+  .klc-header__back svg { transition: transform .25s var(--klc-ease-spring); }
+  .klc-header__back:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.55); }
+
+  .klc-panel.is-chat .klc-header__back { display: flex; opacity: 1; }
+  .klc-panel.is-chat .klc-header__row { padding-left: 40px; transition: padding .3s var(--klc-ease); }
+  .klc-panel.is-chat .klc-header { padding-bottom: 18px; transition: padding .3s var(--klc-ease); }
+  .klc-panel.is-chat .klc-header__welcome,
+  .klc-panel.is-chat .klc-chat-bar,
+  .klc-panel.is-chat .klc-divider { display: none; }
+
   .klc-header__welcome {
     margin: 18px 0 0;
     font-family: var(--klc-font-serif);
@@ -553,27 +580,48 @@
     padding: 20px 12px;
   }
   .klc-chat-empty__icon {
-    width: 64px; height: 64px;
-    margin: 0 auto 14px;
+    width: 52px; height: 52px;
+    margin: 0 auto 16px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--klc-gold-hi), var(--klc-gold) 60%, var(--klc-gold-deep));
-    color: #1a1a1a;
+    background: var(--klc-surface);
+    border: 1px solid var(--klc-line);
+    color: var(--klc-gold-dark);
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 10px 26px rgba(212,175,55,.30);
+    box-shadow: 0 8px 22px rgba(201,168,76,.14), inset 0 1px 0 rgba(255,255,255,.6);
+    position: relative;
+  }
+  .klc-chat-empty__icon::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid var(--klc-line);
+    opacity: .6;
   }
   .klc-chat-empty__title {
     font-family: var(--klc-font-serif);
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 500;
     color: var(--klc-ink);
-    margin: 0 0 6px;
+    margin: 0 0 8px;
+    letter-spacing: .005em;
+  }
+  .klc-chat-empty__title::after {
+    content: '';
+    display: block;
+    width: 28px; height: 1px;
+    margin: 12px auto 0;
+    background: linear-gradient(90deg, transparent, var(--klc-gold), transparent);
   }
   .klc-chat-empty__sub {
     font-family: var(--klc-font-serif);
     font-size: 13.5px;
     color: var(--klc-ink-soft);
-    margin: 0;
-    line-height: 1.5;
+    margin: 12px 0 0;
+    line-height: 1.55;
+    max-width: 240px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .klc-chat-input-wrap {
@@ -770,6 +818,9 @@
     aria-hidden="true"
   >
     <div class="klc-header">
+      <button type="button" class="klc-header__back" id="klcHeaderBack" aria-label="Zurück zum Menü">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <button type="button" class="klc-header__close" id="klcClose" aria-label="Schließen">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -866,9 +917,9 @@
       <div class="klc-chat-stream" id="klcChatStream" role="log" aria-live="polite" aria-atomic="false">
         <div class="klc-chat-empty" id="klcChatEmpty">
           <div class="klc-chat-empty__icon" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <p class="klc-chat-empty__title">Schreiben Sie uns!</p>
+          <p class="klc-chat-empty__title">Wir freuen uns auf Ihre Nachricht</p>
           <p class="klc-chat-empty__sub">Unser Team antwortet in der Regel innerhalb weniger Minuten.</p>
         </div>
       </div>
@@ -912,6 +963,7 @@
     var liveChatBtn = document.getElementById('klcLiveChatBtn');
     var ctaChat     = document.getElementById('klcCtaChat');
     var chatBack    = document.getElementById('klcChatBack');
+    var headerBack  = document.getElementById('klcHeaderBack');
     var chatStream  = document.getElementById('klcChatStream');
     var chatEmpty   = document.getElementById('klcChatEmpty');
     var chatInput   = document.getElementById('klcChatInput');
@@ -1174,6 +1226,7 @@
     if (liveChatBtn) liveChatBtn.addEventListener('click', openChatView);
     if (ctaChat)     ctaChat.addEventListener('click', openChatView);
     if (chatBack)    chatBack.addEventListener('click', closeChatView);
+    if (headerBack)  headerBack.addEventListener('click', closeChatView);
 
     if (chatInput) {
       chatInput.addEventListener('input', function () {
