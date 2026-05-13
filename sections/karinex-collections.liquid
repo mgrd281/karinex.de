@@ -1,70 +1,57 @@
 {%- doc -%}
-  Karinex Editorial Collection Index
+  Karinex Collections — practical e-commerce grid.
 
-  An editorial, magazine-style index for /collections. No cards, no
-  borders, no boxes — just generous whitespace, two large columns on
-  desktop, and serif typography. Cards are tile-style: large image,
-  numbered label, serif title, and a hairline-underlined name that
-  shifts subtly on hover.
-
-  Brand restraint: bronze used only as a numeric label accent and a
-  hairline that reveals on hover; everything else is monochrome.
+  Compact, conversion-oriented layout: 3–4 columns desktop with
+  small square cards, image + title + product count + thin "Ansehen"
+  link. Brand greens used sparingly. Matches mainstream software
+  reseller storefronts.
 {%- enddoc -%}
 
 {%- liquid
-  assign heading = section.settings.heading | default: 'Sortiment'
+  assign heading = section.settings.heading
   assign sub     = section.settings.subheading
-  assign cols    = section.settings.cols | default: 2
-
-  assign visible_collections = collections
-  if section.settings.hide_empty
-    assign visible_collections = collections | where: 'products_count', '>', 0
-  endif
+  assign cols    = section.settings.cols | default: '3'
 -%}
 
-<section class="kxc">
+<section class="kxc-list">
+  {%- if heading != blank or sub != blank -%}
+    <header class="kxc-list__head">
+      {%- if heading != blank -%}<h1>{{ heading }}</h1>{%- endif -%}
+      {%- if sub     != blank -%}<p>{{ sub }}</p>{%- endif -%}
+    </header>
+  {%- endif -%}
 
-  <header class="kxc-head">
-    <h1 class="kxc-head__title">{{ heading }}</h1>
-    {%- if sub != blank -%}
-      <p class="kxc-head__sub">{{ sub }}</p>
-    {%- endif -%}
-    <span class="kxc-head__rule" aria-hidden="true"></span>
-  </header>
-
-  <div class="kxc-grid" style="--kxc-cols: {{ cols }};">
+  <div class="kxc-list__grid" data-cols="{{ cols }}">
     {%- for c in collections -%}
       {%- if c.products_count == 0 and section.settings.hide_empty -%}{%- continue -%}{%- endif -%}
-      <a class="kxc-tile" href="{{ c.url }}">
-        <figure class="kxc-tile__media">
+      <a class="kxc-card" href="{{ c.url }}">
+        <div class="kxc-card__img">
           {%- if c.image -%}
-            <img src="{{ c.image | image_url: width: 1200 }}"
-                 srcset="{{ c.image | image_url: width: 720 }} 720w,
-                         {{ c.image | image_url: width: 1024 }} 1024w,
-                         {{ c.image | image_url: width: 1440 }} 1440w"
-                 sizes="(max-width: 767px) 100vw, 45vw"
+            <img src="{{ c.image | image_url: width: 480 }}"
+                 srcset="{{ c.image | image_url: width: 320 }} 320w,
+                         {{ c.image | image_url: width: 480 }} 480w,
+                         {{ c.image | image_url: width: 640 }} 640w"
+                 sizes="(max-width: 640px) 45vw, 280px"
                  alt="{{ c.title | escape }}"
-                 width="1200" height="1500"
+                 width="480" height="480"
                  loading="lazy">
           {%- elsif c.products.first.featured_image -%}
-            <img src="{{ c.products.first.featured_image | image_url: width: 1200 }}"
+            <img src="{{ c.products.first.featured_image | image_url: width: 480 }}"
                  alt="{{ c.title | escape }}"
-                 width="1200" height="1500"
+                 width="480" height="480"
                  loading="lazy">
-          {%- else -%}
-            <span class="kxc-tile__placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" width="56" height="56">
-                <path d="M12 3l9 5-9 5-9-5 9-5Z"/>
-                <path d="M3 13l9 5 9-5M3 17.5l9 5 9-5"/>
-              </svg>
-            </span>
           {%- endif -%}
-        </figure>
-        <div class="kxc-tile__info">
-          <span class="kxc-tile__num">{{ forloop.index | prepend: '00' | slice: -2, 2 }}</span>
-          <h2 class="kxc-tile__name">{{ c.title }}</h2>
-          <span class="kxc-tile__meta">
-            {{ c.products_count }}&thinsp;{% if c.products_count == 1 %}Lizenz{% else %}Lizenzen{% endif %}
+        </div>
+        <div class="kxc-card__body">
+          <h2 class="kxc-card__title">{{ c.title }}</h2>
+          <p class="kxc-card__count">
+            {{ c.products_count }}&nbsp;{% if c.products_count == 1 %}Produkt{% else %}Produkte{% endif %}
+          </p>
+          <span class="kxc-card__link">
+            Ansehen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
           </span>
         </div>
       </a>
@@ -73,170 +60,141 @@
 </section>
 
 <style>
-  .kxc {
-    --kx-bg:       #FAFAF7;
-    --kx-ink:      #1A1A1A;
-    --kx-ink-2:    #6B6B6B;
-    --kx-ink-3:    #B8B8B5;
-    --kx-bronze:   #B8956A;
-    --kx-primary:  #1F3A2B;
+  .kxc-list {
+    --c-brand: #1F3A2B;
+    --c-ink:   #1A1A1A;
+    --c-ink-2: #6B6B6B;
+    --c-line:  #E8E6E0;
+    --c-bg:    #FAFAF8;
 
-    --kx-serif:    'Cormorant Garamond', 'Playfair Display', Georgia, serif;
-    --kx-sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-    background: var(--kx-bg);
-    color: var(--kx-ink);
-    font-family: var(--kx-sans);
-    padding: 120px 56px 160px;
-    max-width: 1600px;
+    max-width: 1280px;
     margin: 0 auto;
-    -webkit-font-smoothing: antialiased;
+    padding: 40px 24px 80px;
+    font-family: inherit;
+    color: var(--c-ink);
   }
-  .kxc *,
-  .kxc *::before,
-  .kxc *::after { box-sizing: border-box; }
+  .kxc-list *,
+  .kxc-list *::before,
+  .kxc-list *::after { box-sizing: border-box; }
 
-  /* ─── Hero ─── */
-  .kxc-head {
-    text-align: center;
-    max-width: 720px;
-    margin: 0 auto 120px;
-    position: relative;
+  /* ── Header ── */
+  .kxc-list__head {
+    text-align: left;
+    margin: 0 0 28px;
   }
-  .kxc-head__title {
+  .kxc-list__head h1 {
     margin: 0;
-    font-family: var(--kx-serif);
-    font-weight: 400;
-    font-size: clamp(48px, 6vw, 88px);
-    line-height: 1;
-    letter-spacing: -0.015em;
-    color: var(--kx-ink);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--c-ink);
   }
-  .kxc-head__sub {
-    margin: 32px auto 0;
-    max-width: 480px;
+  .kxc-list__head p {
+    margin: 8px 0 0;
     font-size: 14px;
-    line-height: 1.7;
-    color: var(--kx-ink-2);
-    letter-spacing: 0.2px;
-  }
-  .kxc-head__rule {
-    display: block;
-    margin: 56px auto 0;
-    width: 48px;
-    height: 1px;
-    background: var(--kx-bronze);
+    color: var(--c-ink-2);
+    line-height: 1.5;
   }
 
-  /* ─── Grid ─── */
-  .kxc-grid {
+  /* ── Grid ── */
+  .kxc-list__grid {
     display: grid;
-    grid-template-columns: repeat(var(--kxc-cols, 2), minmax(0, 1fr));
-    gap: 88px 64px;
+    gap: 20px;
   }
+  .kxc-list__grid[data-cols="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kxc-list__grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .kxc-list__grid[data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-  /* ─── Tile ─── */
-  .kxc-tile {
+  /* ── Card ── */
+  .kxc-card {
     display: block;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    border-radius: 6px;
+    overflow: hidden;
     text-decoration: none;
     color: inherit;
-    cursor: pointer;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
   }
-  .kxc-tile__media {
-    margin: 0;
-    aspect-ratio: 4 / 5;
-    background: #EDEAE3;
-    overflow: hidden;
-    position: relative;
+  .kxc-card:hover,
+  .kxc-card:focus-visible {
+    border-color: var(--c-brand);
+    box-shadow: 0 4px 14px rgba(31,58,43,0.08);
+    transform: translateY(-2px);
+    outline: none;
   }
-  .kxc-tile__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1200ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: transform;
-  }
-  .kxc-tile:hover .kxc-tile__media img,
-  .kxc-tile:focus-visible .kxc-tile__media img {
-    transform: scale(1.03);
-  }
-  .kxc-tile__placeholder {
-    position: absolute;
-    inset: 0;
+
+  .kxc-card__img {
+    aspect-ratio: 1 / 1;
+    background: var(--c-bg);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(31, 58, 43, 0.18);
+    overflow: hidden;
   }
+  .kxc-card__img img {
+    width: 92%;
+    height: 92%;
+    object-fit: contain;
+    transition: transform 360ms ease;
+  }
+  .kxc-card:hover .kxc-card__img img { transform: scale(1.04); }
 
-  .kxc-tile__info {
-    margin-top: 24px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: baseline;
-    column-gap: 16px;
-    row-gap: 6px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid transparent;
-    transition: border-color 320ms ease;
+  .kxc-card__body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
-  .kxc-tile:hover .kxc-tile__info,
-  .kxc-tile:focus-visible .kxc-tile__info {
-    border-bottom-color: var(--kx-bronze);
-  }
-  .kxc-tile__num {
-    font-family: var(--kx-sans);
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--kx-bronze);
-    font-variant-numeric: tabular-nums;
-  }
-  .kxc-tile__name {
+  .kxc-card__title {
     margin: 0;
-    font-family: var(--kx-serif);
-    font-weight: 400;
-    font-size: clamp(24px, 2.2vw, 34px);
-    line-height: 1.15;
-    letter-spacing: -0.005em;
-    color: var(--kx-ink);
-    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--c-ink);
   }
-  .kxc-tile:hover .kxc-tile__name { transform: translateX(4px); }
-  .kxc-tile__meta {
-    font-size: 11px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-    color: var(--kx-ink-3);
+  .kxc-card__count {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--c-ink-2);
   }
+  .kxc-card__link {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--c-brand);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.2px;
+    transition: gap 200ms ease;
+  }
+  .kxc-card:hover .kxc-card__link { gap: 8px; }
 
-  /* ─── Responsive ─── */
-  @media (max-width: 1199px) {
-    .kxc { padding: 96px 40px 120px; }
-    .kxc-grid { gap: 64px 48px; }
+  /* ── Responsive ── */
+  @media (max-width: 1023px) {
+    .kxc-list__grid[data-cols="4"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .kxc-list__grid[data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media (max-width: 767px) {
-    .kxc { padding: 64px 20px 88px; }
-    .kxc-head { margin-bottom: 64px; }
-    .kxc-head__rule { margin-top: 32px; width: 36px; }
-    .kxc-grid {
-      grid-template-columns: 1fr;
-      gap: 48px;
+    .kxc-list { padding: 24px 16px 56px; }
+    .kxc-list__grid,
+    .kxc-list__grid[data-cols="4"],
+    .kxc-list__grid[data-cols="3"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
-    .kxc-tile__info {
-      margin-top: 18px;
-      grid-template-columns: auto 1fr auto;
-      column-gap: 12px;
-      padding-bottom: 12px;
-    }
-    .kxc-tile__name { font-size: 24px; }
+    .kxc-list__head h1 { font-size: 22px; }
+    .kxc-card__body { padding: 12px 12px 14px; }
+    .kxc-card__title { font-size: 14px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .kxc-tile__media img,
-    .kxc-tile__info,
-    .kxc-tile__name { transition: none; }
-    .kxc-tile:hover .kxc-tile__media img,
-    .kxc-tile:hover .kxc-tile__name { transform: none; }
+    .kxc-card,
+    .kxc-card__img img,
+    .kxc-card__link { transition: none; }
+    .kxc-card:hover { transform: none; }
+    .kxc-card:hover .kxc-card__img img { transform: none; }
   }
 </style>
 
@@ -244,12 +202,13 @@
 {
   "name": "Karinex Collections",
   "settings": [
-    { "type": "text",     "id": "heading",    "label": "Überschrift",        "default": "Sortiment" },
-    { "type": "text",     "id": "subheading", "label": "Unter-Text",         "default": "Microsoft-Lizenzen, sorgfältig kuratiert. Sofortversand per E-Mail." },
-    { "type": "select",   "id": "cols",       "label": "Spalten (Desktop)",  "default": "2",
+    { "type": "text",     "id": "heading",    "label": "Überschrift",   "default": "Alle Kategorien" },
+    { "type": "text",     "id": "subheading", "label": "Kurzer Untertitel" },
+    { "type": "select",   "id": "cols",       "label": "Spalten (Desktop)", "default": "3",
       "options": [
-        { "value": "2", "label": "2 Spalten" },
-        { "value": "3", "label": "3 Spalten" }
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
       ]
     },
     { "type": "checkbox", "id": "hide_empty", "label": "Leere Kollektionen ausblenden", "default": true }
