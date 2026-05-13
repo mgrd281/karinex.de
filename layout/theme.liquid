@@ -240,20 +240,10 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
   <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->
 
-  <!-- Ahrefs Web Analytics — Deferred to idle -->
-  <script>
-    (function() {
-      function loadAhrefs() {
-        var s = document.createElement('script');
-        s.src = 'https://analytics.ahrefs.com/analytics.js';
-        s.dataset.key = 'Hd/5JU2IbcEvQuSWT+u9dg';
-        s.async = true;
-        document.head.appendChild(s);
-      }
-      if ('requestIdleCallback' in window) { requestIdleCallback(loadAhrefs, { timeout: 5000 }); }
-      else { setTimeout(loadAhrefs, 5000); }
-    })();
-  </script>
+  <!-- Ahrefs Web Analytics — inline script tag (async). Rendered as
+       a literal element so Ahrefs' verifier (which only reads raw
+       HTML, never executes JS) can find data-key during validation. -->
+  <script src="https://analytics.ahrefs.com/analytics.js" data-key="Hd/5JU2IbcEvQuSWT+u9dg" async></script>
 
   <meta name="kundennote-verify" content="d008eb0340d27768b00d875b7b0f757b548520331" />
   </head>
