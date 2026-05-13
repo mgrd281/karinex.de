@@ -2,8 +2,21 @@
   Karinex Live Chat Widget
   Floating, brand-matched launcher + panel.
   Aesthetic: luxury ecommerce, gold gradient, Newsreader serif, soft gold shadows.
+  Backend: Crisp Chat (live chat) — default bubble hidden, opened via this widget.
   Render globally from layout/theme.liquid (before </body>).
 {%- endcomment -%}
+
+{%- assign klc_crisp_id = '3dc17a60-f1b3-4b84-9cb5-2998ab31396a' -%}
+
+<style>
+  /* Hide Crisp's default launcher — we use our own gold bubble */
+  .crisp-client .cc-1brb6,
+  .crisp-client .cc-kv6t,
+  .crisp-client .cc-1xry,
+  #crisp-chatbox .cc-1m2mf > a[role="button"]:not([data-visible]) { display: none !important; }
+  /* Push Crisp chatbox above our launcher (we hide ours when Crisp is open via JS) */
+  #crisp-chatbox { z-index: 9999 !important; }
+</style>
 
 <style>
   .klc {
@@ -453,13 +466,24 @@
     <div class="klc-body">
       <p class="klc-section-label">Wie können wir helfen?</p>
 
-      <a class="klc-row klc-row--accent" href="https://api.whatsapp.com/send?phone=4915227322222" target="_blank" rel="noopener">
+      <button type="button" class="klc-row klc-row--accent" id="klcLiveChatBtn">
+        <span class="klc-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="klc-row__txt">
+          <span class="klc-row__title">Live-Chat starten</span>
+          <span class="klc-row__meta">Sofort antwort · Mit unserem Team</span>
+        </span>
+        <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <a class="klc-row" href="https://api.whatsapp.com/send?phone=4915227322222" target="_blank" rel="noopener">
         <span class="klc-row__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5 0 1.5 1.1 2.9 1.2 3.1.1.2 2.1 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.3c1.4.8 3 1.3 4.7 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3c-.8-1.3-1.3-2.8-1.3-4.4 0-4.5 3.7-8.2 8.2-8.2 4.5 0 8.2 3.7 8.2 8.2 0 4.5-3.6 8.2-8.1 8.2z"/></svg>
         </span>
         <span class="klc-row__txt">
           <span class="klc-row__title">WhatsApp Business</span>
-          <span class="klc-row__meta">Sofort antwort · Mo-Fr 10-18</span>
+          <span class="klc-row__meta">Mo-Fr 10-18 Uhr</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -499,10 +523,10 @@
     </div>
 
     <div class="klc-foot">
-      <a class="klc-cta" href="https://api.whatsapp.com/send?phone=4915227322222&text=Hallo%20Karinex%2C%20ich%20habe%20eine%20Frage" target="_blank" rel="noopener">
+      <button type="button" class="klc-cta" id="klcCtaChat">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Chat jetzt starten
-      </a>
+      </button>
       <p class="klc-foot__legal">Powered by <b>Karinex</b> · Premium Service</p>
     </div>
   </aside>
@@ -510,33 +534,71 @@
 
 <script>
   (function () {
-    var launcher = document.getElementById('klcLauncher');
-    var panel    = document.getElementById('klcPanel');
-    var closeBtn = document.getElementById('klcClose');
-    var backdrop = document.getElementById('klcBackdrop');
+    var launcher    = document.getElementById('klcLauncher');
+    var panel       = document.getElementById('klcPanel');
+    var closeBtn    = document.getElementById('klcClose');
+    var backdrop    = document.getElementById('klcBackdrop');
+    var liveChatBtn = document.getElementById('klcLiveChatBtn');
+    var ctaChat     = document.getElementById('klcCtaChat');
     if (!launcher || !panel) return;
 
-    function open()  {
+    var CRISP_ID = {{ klc_crisp_id | json }};
+    var crispLoaded = false;
+
+    function loadCrisp(cb) {
+      if (crispLoaded) { cb && cb(); return; }
+      crispLoaded = true;
+      window.$crisp = [];
+      window.CRISP_WEBSITE_ID = CRISP_ID;
+      // Crisp's own launcher is hidden via CSS; we control visibility ourselves
+      window.$crisp.push(['safe', true]);
+      var s = document.createElement('script');
+      s.src = 'https://client.crisp.chat/l.js';
+      s.async = 1;
+      s.onload = function () { cb && cb(); };
+      document.head.appendChild(s);
+    }
+
+    function openCrisp() {
+      // Close our panel first, then open Crisp
+      closePanel();
+      loadCrisp(function () {
+        // wait until $crisp is ready
+        var tries = 0;
+        (function ping() {
+          if (window.$crisp && window.$crisp.push) {
+            window.$crisp.push(['do', 'chat:open']);
+            window.$crisp.push(['do', 'chat:show']);
+          } else if (tries++ < 40) {
+            setTimeout(ping, 100);
+          }
+        })();
+      });
+    }
+
+    function openPanel()  {
       panel.classList.add('is-open');
       backdrop.classList.add('is-open');
       launcher.setAttribute('aria-expanded', 'true');
       panel.setAttribute('aria-hidden', 'false');
     }
-    function close() {
+    function closePanel() {
       panel.classList.remove('is-open');
       backdrop.classList.remove('is-open');
       launcher.setAttribute('aria-expanded', 'false');
       panel.setAttribute('aria-hidden', 'true');
     }
-    function toggle() {
-      panel.classList.contains('is-open') ? close() : open();
+    function togglePanel() {
+      panel.classList.contains('is-open') ? closePanel() : openPanel();
     }
 
-    launcher.addEventListener('click', toggle);
-    closeBtn.addEventListener('click', close);
-    backdrop.addEventListener('click', close);
+    launcher.addEventListener('click', togglePanel);
+    closeBtn.addEventListener('click', closePanel);
+    backdrop.addEventListener('click', closePanel);
+    if (liveChatBtn) liveChatBtn.addEventListener('click', openCrisp);
+    if (ctaChat)     ctaChat.addEventListener('click', openCrisp);
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && panel.classList.contains('is-open')) close();
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
     });
 
     // Show teaser briefly after page load
@@ -547,7 +609,23 @@
       }
     }, 2500);
 
-    // Expose minimal API
-    window.KarinexChat = { open: open, close: close, toggle: toggle };
+    // Pre-warm Crisp after user idle (faster first-chat open)
+    var idlePrewarm = function () {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () { loadCrisp(); }, { timeout: 8000 });
+      } else {
+        setTimeout(function () { loadCrisp(); }, 6000);
+      }
+    };
+    if (document.readyState === 'complete') idlePrewarm();
+    else window.addEventListener('load', idlePrewarm);
+
+    // Public API
+    window.KarinexChat = {
+      open:    openPanel,
+      close:   closePanel,
+      toggle:  togglePanel,
+      openLiveChat: openCrisp
+    };
   })();
 </script>
