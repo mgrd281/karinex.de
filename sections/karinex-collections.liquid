@@ -246,7 +246,12 @@
   "settings": [
     { "type": "text",     "id": "heading",    "label": "Überschrift",        "default": "Sortiment" },
     { "type": "text",     "id": "subheading", "label": "Unter-Text",         "default": "Microsoft-Lizenzen, sorgfältig kuratiert. Sofortversand per E-Mail." },
-    { "type": "range",    "id": "cols",       "label": "Spalten (Desktop)",  "min": 2, "max": 3, "step": 1, "default": 2 },
+    { "type": "select",   "id": "cols",       "label": "Spalten (Desktop)",  "default": "2",
+      "options": [
+        { "value": "2", "label": "2 Spalten" },
+        { "value": "3", "label": "3 Spalten" }
+      ]
+    },
     { "type": "checkbox", "id": "hide_empty", "label": "Leere Kollektionen ausblenden", "default": true }
   ],
   "presets": [{ "name": "Karinex Collections" }]
