@@ -1,0 +1,254 @@
+{%- doc -%}
+  Karinex Editorial Collection Index
+
+  An editorial, magazine-style index for /collections. No cards, no
+  borders, no boxes — just generous whitespace, two large columns on
+  desktop, and serif typography. Cards are tile-style: large image,
+  numbered label, serif title, and a hairline-underlined name that
+  shifts subtly on hover.
+
+  Brand restraint: bronze used only as a numeric label accent and a
+  hairline that reveals on hover; everything else is monochrome.
+{%- enddoc -%}
+
+{%- liquid
+  assign heading = section.settings.heading | default: 'Sortiment'
+  assign sub     = section.settings.subheading
+  assign cols    = section.settings.cols | default: 2
+
+  assign visible_collections = collections
+  if section.settings.hide_empty
+    assign visible_collections = collections | where: 'products_count', '>', 0
+  endif
+-%}
+
+<section class="kxc">
+
+  <header class="kxc-head">
+    <h1 class="kxc-head__title">{{ heading }}</h1>
+    {%- if sub != blank -%}
+      <p class="kxc-head__sub">{{ sub }}</p>
+    {%- endif -%}
+    <span class="kxc-head__rule" aria-hidden="true"></span>
+  </header>
+
+  <div class="kxc-grid" style="--kxc-cols: {{ cols }};">
+    {%- for c in collections -%}
+      {%- if c.products_count == 0 and section.settings.hide_empty -%}{%- continue -%}{%- endif -%}
+      <a class="kxc-tile" href="{{ c.url }}">
+        <figure class="kxc-tile__media">
+          {%- if c.image -%}
+            <img src="{{ c.image | image_url: width: 1200 }}"
+                 srcset="{{ c.image | image_url: width: 720 }} 720w,
+                         {{ c.image | image_url: width: 1024 }} 1024w,
+                         {{ c.image | image_url: width: 1440 }} 1440w"
+                 sizes="(max-width: 767px) 100vw, 45vw"
+                 alt="{{ c.title | escape }}"
+                 width="1200" height="1500"
+                 loading="lazy">
+          {%- elsif c.products.first.featured_image -%}
+            <img src="{{ c.products.first.featured_image | image_url: width: 1200 }}"
+                 alt="{{ c.title | escape }}"
+                 width="1200" height="1500"
+                 loading="lazy">
+          {%- else -%}
+            <span class="kxc-tile__placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" width="56" height="56">
+                <path d="M12 3l9 5-9 5-9-5 9-5Z"/>
+                <path d="M3 13l9 5 9-5M3 17.5l9 5 9-5"/>
+              </svg>
+            </span>
+          {%- endif -%}
+        </figure>
+        <div class="kxc-tile__info">
+          <span class="kxc-tile__num">{{ forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+          <h2 class="kxc-tile__name">{{ c.title }}</h2>
+          <span class="kxc-tile__meta">
+            {{ c.products_count }}&thinsp;{% if c.products_count == 1 %}Lizenz{% else %}Lizenzen{% endif %}
+          </span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  .kxc {
+    --kx-bg:       #FAFAF7;
+    --kx-ink:      #1A1A1A;
+    --kx-ink-2:    #6B6B6B;
+    --kx-ink-3:    #B8B8B5;
+    --kx-bronze:   #B8956A;
+    --kx-primary:  #1F3A2B;
+
+    --kx-serif:    'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    --kx-sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+    background: var(--kx-bg);
+    color: var(--kx-ink);
+    font-family: var(--kx-sans);
+    padding: 120px 56px 160px;
+    max-width: 1600px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+  .kxc *,
+  .kxc *::before,
+  .kxc *::after { box-sizing: border-box; }
+
+  /* ─── Hero ─── */
+  .kxc-head {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 120px;
+    position: relative;
+  }
+  .kxc-head__title {
+    margin: 0;
+    font-family: var(--kx-serif);
+    font-weight: 400;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--kx-ink);
+  }
+  .kxc-head__sub {
+    margin: 32px auto 0;
+    max-width: 480px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--kx-ink-2);
+    letter-spacing: 0.2px;
+  }
+  .kxc-head__rule {
+    display: block;
+    margin: 56px auto 0;
+    width: 48px;
+    height: 1px;
+    background: var(--kx-bronze);
+  }
+
+  /* ─── Grid ─── */
+  .kxc-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--kxc-cols, 2), minmax(0, 1fr));
+    gap: 88px 64px;
+  }
+
+  /* ─── Tile ─── */
+  .kxc-tile {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .kxc-tile__media {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    background: #EDEAE3;
+    overflow: hidden;
+    position: relative;
+  }
+  .kxc-tile__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+  .kxc-tile:hover .kxc-tile__media img,
+  .kxc-tile:focus-visible .kxc-tile__media img {
+    transform: scale(1.03);
+  }
+  .kxc-tile__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(31, 58, 43, 0.18);
+  }
+
+  .kxc-tile__info {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    column-gap: 16px;
+    row-gap: 6px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 320ms ease;
+  }
+  .kxc-tile:hover .kxc-tile__info,
+  .kxc-tile:focus-visible .kxc-tile__info {
+    border-bottom-color: var(--kx-bronze);
+  }
+  .kxc-tile__num {
+    font-family: var(--kx-sans);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--kx-bronze);
+    font-variant-numeric: tabular-nums;
+  }
+  .kxc-tile__name {
+    margin: 0;
+    font-family: var(--kx-serif);
+    font-weight: 400;
+    font-size: clamp(24px, 2.2vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    color: var(--kx-ink);
+    transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .kxc-tile:hover .kxc-tile__name { transform: translateX(4px); }
+  .kxc-tile__meta {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--kx-ink-3);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 1199px) {
+    .kxc { padding: 96px 40px 120px; }
+    .kxc-grid { gap: 64px 48px; }
+  }
+  @media (max-width: 767px) {
+    .kxc { padding: 64px 20px 88px; }
+    .kxc-head { margin-bottom: 64px; }
+    .kxc-head__rule { margin-top: 32px; width: 36px; }
+    .kxc-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+    .kxc-tile__info {
+      margin-top: 18px;
+      grid-template-columns: auto 1fr auto;
+      column-gap: 12px;
+      padding-bottom: 12px;
+    }
+    .kxc-tile__name { font-size: 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kxc-tile__media img,
+    .kxc-tile__info,
+    .kxc-tile__name { transition: none; }
+    .kxc-tile:hover .kxc-tile__media img,
+    .kxc-tile:hover .kxc-tile__name { transform: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Karinex Editorial Collections",
+  "settings": [
+    { "type": "text",     "id": "heading",    "label": "Überschrift",        "default": "Sortiment" },
+    { "type": "text",     "id": "subheading", "label": "Unter-Text",         "default": "Microsoft-Lizenzen, sorgfältig kuratiert. Sofortversand per E-Mail." },
+    { "type": "range",    "id": "cols",       "label": "Spalten (Desktop)",  "min": 2, "max": 3, "step": 1, "default": 2 },
+    { "type": "checkbox", "id": "hide_empty", "label": "Leere Kollektionen ausblenden", "default": true }
+  ],
+  "presets": [{ "name": "Karinex Editorial Collections" }]
+}
+{% endschema %}
