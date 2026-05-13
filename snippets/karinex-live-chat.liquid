@@ -1,0 +1,553 @@
+{%- comment -%}
+  Karinex Live Chat Widget
+  Floating, brand-matched launcher + panel.
+  Aesthetic: luxury ecommerce, gold gradient, Newsreader serif, soft gold shadows.
+  Render globally from layout/theme.liquid (before </body>).
+{%- endcomment -%}
+
+<style>
+  .klc {
+    --klc-gold:        #D4AF37;
+    --klc-gold-hi:    #E8D48B;
+    --klc-gold-deep:  #b8953f;
+    --klc-gold-dark:  #8b6914;
+    --klc-cream:      #fffdf5;
+    --klc-surface:    #ffffff;
+    --klc-surface-2:  #faf7ef;
+    --klc-ink:        #1a1a1a;
+    --klc-ink-soft:   #4a4a4a;
+    --klc-ink-mute:   #8a8a8a;
+    --klc-line:       rgba(212,175,55,0.18);
+    --klc-line-soft:  rgba(26,26,26,0.06);
+    --klc-online:     #2e9c5c;
+    --klc-shadow-bubble: 0 10px 28px rgba(201,168,76,0.40), 0 4px 10px rgba(0,0,0,0.10);
+    --klc-shadow-panel:  0 24px 70px rgba(26,26,26,0.22), 0 6px 18px rgba(201,168,76,0.10);
+    --klc-radius-panel: 20px;
+    --klc-radius-row:   14px;
+    --klc-ease:         cubic-bezier(.22,.61,.36,1);
+    --klc-ease-spring:  cubic-bezier(.34,1.56,.64,1);
+    --klc-font-serif:   'Newsreader', Georgia, 'Times New Roman', serif;
+    --klc-font-accent:  'Red Hat Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* ── Launcher Bubble ────────────────────────────────────────── */
+  .klc-launcher {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 9998;
+    width: 62px;
+    height: 62px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--klc-gold-hi) 0%, var(--klc-gold) 45%, var(--klc-gold-deep) 100%);
+    box-shadow: var(--klc-shadow-bubble);
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .35s var(--klc-ease-spring), box-shadow .3s var(--klc-ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .klc-launcher::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(212,175,55,0.45), transparent 70%);
+    opacity: 0;
+    transition: opacity .35s var(--klc-ease);
+    z-index: -1;
+  }
+  .klc-launcher:hover { transform: translateY(-3px) scale(1.04); }
+  .klc-launcher:hover::after { opacity: 1; }
+  .klc-launcher:active { transform: translateY(-1px) scale(.98); }
+  .klc-launcher:focus-visible { outline: none; box-shadow: var(--klc-shadow-bubble), 0 0 0 4px rgba(212,175,55,0.45); }
+
+  .klc-launcher__icon { width: 26px; height: 26px; transition: transform .4s var(--klc-ease-spring); }
+  .klc-launcher[aria-expanded="true"] .klc-launcher__icon--chat { transform: scale(0) rotate(-45deg); position: absolute; }
+  .klc-launcher[aria-expanded="false"] .klc-launcher__icon--close { transform: scale(0) rotate(45deg); position: absolute; }
+  .klc-launcher__icon--close { transform: scale(0) rotate(45deg); position: absolute; }
+  .klc-launcher[aria-expanded="true"] .klc-launcher__icon--close { transform: scale(1) rotate(0); position: static; }
+
+  /* online pulse dot on launcher */
+  .klc-launcher__pulse {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--klc-online);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 0 rgba(46,156,92,.6);
+    animation: klc-pulse 2.2s ease-out infinite;
+  }
+  @keyframes klc-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(46,156,92,.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(46,156,92,0); }
+    100% { box-shadow: 0 0 0 0 rgba(46,156,92,0); }
+  }
+
+  /* tooltip teaser */
+  .klc-launcher__teaser {
+    position: absolute;
+    right: 72px;
+    top: 50%;
+    transform: translateY(-50%) translateX(8px);
+    background: var(--klc-ink);
+    color: #fff;
+    font-family: var(--klc-font-accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s var(--klc-ease), transform .35s var(--klc-ease-spring);
+    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  }
+  .klc-launcher__teaser::after {
+    content: '';
+    position: absolute;
+    right: -5px; top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px; height: 10px;
+    background: var(--klc-ink);
+  }
+  .klc-launcher:hover .klc-launcher__teaser,
+  .klc-show-teaser .klc-launcher__teaser { opacity: 1; transform: translateY(-50%) translateX(0); }
+  .klc-launcher[aria-expanded="true"] .klc-launcher__teaser { opacity: 0 !important; }
+
+  /* ── Panel ──────────────────────────────────────────────────── */
+  .klc-panel {
+    position: fixed;
+    right: 22px;
+    bottom: 100px;
+    z-index: 9999;
+    width: min(380px, calc(100vw - 32px));
+    max-height: min(640px, calc(100vh - 130px));
+    background: var(--klc-surface);
+    border-radius: var(--klc-radius-panel);
+    box-shadow: var(--klc-shadow-panel);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(16px) scale(.96);
+    transform-origin: bottom right;
+    pointer-events: none;
+    transition: opacity .28s var(--klc-ease), transform .35s var(--klc-ease-spring);
+    font-family: var(--klc-font-serif);
+    color: var(--klc-ink);
+  }
+  .klc-panel.is-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  /* Header */
+  .klc-header {
+    position: relative;
+    padding: 22px 22px 24px;
+    background:
+      radial-gradient(120% 80% at 100% 0%, rgba(232,212,139,.45) 0%, transparent 60%),
+      linear-gradient(135deg, #1a1a1a 0%, #2a2418 55%, #1a1a1a 100%);
+    color: #f8f3df;
+    overflow: hidden;
+  }
+  .klc-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,.10) 50%, transparent 100%);
+    pointer-events: none;
+  }
+  .klc-header__row {
+    display: flex; align-items: center; gap: 12px;
+    position: relative;
+  }
+  .klc-header__avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--klc-gold-hi), var(--klc-gold) 60%, var(--klc-gold-deep));
+    display: flex; align-items: center; justify-content: center;
+    color: #1a1a1a;
+    font-family: var(--klc-font-serif);
+    font-weight: 600;
+    font-size: 18px;
+    box-shadow: 0 6px 18px rgba(212,175,55,.35), inset 0 1px 0 rgba(255,255,255,.4);
+    flex-shrink: 0;
+  }
+  .klc-header__title {
+    margin: 0;
+    font-family: var(--klc-font-serif);
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: .005em;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .klc-header__sub {
+    margin: 3px 0 0;
+    font-family: var(--klc-font-accent);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--klc-gold-hi);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .klc-header__dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--klc-online);
+    box-shadow: 0 0 0 0 rgba(46,156,92,.6);
+    animation: klc-pulse 2.2s ease-out infinite;
+  }
+  .klc-header__close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,.10);
+    color: #f8f3df;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s var(--klc-ease), transform .25s var(--klc-ease-spring);
+  }
+  .klc-header__close:hover { background: rgba(255,255,255,.18); transform: rotate(90deg); }
+  .klc-header__close:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.55); }
+
+  .klc-header__welcome {
+    margin: 18px 0 0;
+    font-family: var(--klc-font-serif);
+    font-weight: 400;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: #ece5cf;
+    position: relative;
+  }
+
+  /* divider strip */
+  .klc-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--klc-gold) 50%, transparent);
+    opacity: .55;
+  }
+
+  /* Body */
+  .klc-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 8px;
+    background: linear-gradient(180deg, var(--klc-cream) 0%, var(--klc-surface) 35%);
+    scrollbar-width: thin;
+    scrollbar-color: var(--klc-gold-hi) transparent;
+  }
+  .klc-body::-webkit-scrollbar { width: 6px; }
+  .klc-body::-webkit-scrollbar-thumb { background: var(--klc-gold-hi); border-radius: 6px; }
+
+  .klc-section-label {
+    margin: 6px 4px 8px;
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+  }
+
+  /* Quick-action rows */
+  .klc-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 14px;
+    border-radius: var(--klc-radius-row);
+    background: var(--klc-surface);
+    border: 1px solid var(--klc-line-soft);
+    text-decoration: none;
+    color: var(--klc-ink);
+    cursor: pointer;
+    transition: transform .25s var(--klc-ease), border-color .25s var(--klc-ease), box-shadow .3s var(--klc-ease), background .25s var(--klc-ease);
+    margin-bottom: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .klc-row:hover {
+    transform: translateY(-1px);
+    border-color: var(--klc-gold);
+    background: var(--klc-cream);
+    box-shadow: 0 8px 22px rgba(201,168,76,.14);
+  }
+  .klc-row:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.45); }
+
+  .klc-row__icon {
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--klc-cream), #f4ecd1);
+    border: 1px solid var(--klc-line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--klc-gold-dark);
+    flex-shrink: 0;
+    transition: transform .3s var(--klc-ease-spring);
+  }
+  .klc-row:hover .klc-row__icon { transform: scale(1.06) rotate(-3deg); }
+  .klc-row__icon svg { width: 19px; height: 19px; }
+
+  .klc-row__txt { flex: 1; min-width: 0; }
+  .klc-row__title {
+    font-family: var(--klc-font-serif);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.25;
+    color: var(--klc-ink);
+    display: block;
+  }
+  .klc-row__meta {
+    font-family: var(--klc-font-accent);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+    margin-top: 3px;
+    display: block;
+  }
+  .klc-row__chev {
+    color: var(--klc-ink-mute);
+    transition: transform .3s var(--klc-ease-spring), color .25s var(--klc-ease);
+  }
+  .klc-row:hover .klc-row__chev { transform: translateX(4px); color: var(--klc-gold-dark); }
+
+  .klc-row--accent {
+    background: linear-gradient(135deg, #f5e6b8 0%, #fffdf5 60%);
+    border-color: var(--klc-gold);
+  }
+  .klc-row--accent .klc-row__icon { background: linear-gradient(135deg, var(--klc-gold), var(--klc-gold-deep)); color: #fff; border-color: transparent; }
+  .klc-row--accent:hover { box-shadow: 0 12px 28px rgba(201,168,76,.28); }
+
+  /* Footer CTA */
+  .klc-foot {
+    padding: 14px 16px 18px;
+    background: var(--klc-surface);
+    border-top: 1px solid var(--klc-line-soft);
+  }
+  .klc-cta {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--klc-gold-hi) 0%, var(--klc-gold) 50%, var(--klc-gold-deep) 100%);
+    color: #1a1a1a;
+    font-family: var(--klc-font-accent);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 10px 26px rgba(201,168,76,.38), inset 0 1px 0 rgba(255,255,255,.45);
+    transition: transform .25s var(--klc-ease-spring), box-shadow .3s var(--klc-ease), filter .25s var(--klc-ease);
+    text-decoration: none;
+  }
+  .klc-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(201,168,76,.50), inset 0 1px 0 rgba(255,255,255,.55); filter: brightness(1.03); }
+  .klc-cta:active { transform: translateY(0); }
+  .klc-cta:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(212,175,55,.55), 0 10px 26px rgba(201,168,76,.38); }
+  .klc-cta svg { width: 16px; height: 16px; }
+
+  .klc-foot__legal {
+    margin: 10px 0 0;
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+    text-align: center;
+  }
+  .klc-foot__legal b { color: var(--klc-gold-dark); font-weight: 700; }
+
+  /* Backdrop on mobile */
+  .klc-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,10,15,.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s var(--klc-ease);
+    z-index: 9997;
+  }
+  .klc-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+  /* Mobile responsive */
+  @media (max-width: 520px) {
+    .klc-launcher { right: 16px; bottom: 16px; width: 56px; height: 56px; }
+    .klc-panel {
+      right: 12px; left: 12px; bottom: 86px;
+      width: auto;
+      max-height: calc(100vh - 110px);
+    }
+    .klc-launcher__teaser { display: none; }
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .klc-launcher, .klc-panel, .klc-row, .klc-cta, .klc-header__close, .klc-row__chev, .klc-row__icon, .klc-launcher__icon { transition: none; animation: none; }
+    .klc-launcher__pulse, .klc-header__dot { animation: none; }
+  }
+
+  /* Hide entirely in theme editor section preview if needed */
+  .shopify-design-mode .klc-launcher { /* keep visible */ }
+</style>
+
+<div class="klc">
+  <button
+    type="button"
+    class="klc-launcher"
+    id="klcLauncher"
+    aria-expanded="false"
+    aria-controls="klcPanel"
+    aria-label="{{ 'general.live_chat.open' | t: default: 'Live-Chat öffnen' }}"
+  >
+    <span class="klc-launcher__pulse" aria-hidden="true"></span>
+    <span class="klc-launcher__teaser">Wir sind online</span>
+    <svg class="klc-launcher__icon klc-launcher__icon--chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </svg>
+    <svg class="klc-launcher__icon klc-launcher__icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+
+  <div class="klc-backdrop" id="klcBackdrop" aria-hidden="true"></div>
+
+  <aside
+    class="klc-panel"
+    id="klcPanel"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="klcTitle"
+    aria-hidden="true"
+  >
+    <div class="klc-header">
+      <button type="button" class="klc-header__close" id="klcClose" aria-label="Schließen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="klc-header__row">
+        <div class="klc-header__avatar" aria-hidden="true">K</div>
+        <div>
+          <h3 class="klc-header__title" id="klcTitle">Karinex Concierge</h3>
+          <p class="klc-header__sub"><span class="klc-header__dot" aria-hidden="true"></span> Online · Antwort in ~2 Min.</p>
+        </div>
+      </div>
+      <p class="klc-header__welcome">Willkommen bei Karinex. Unser Team beantwortet gerne Ihre Fragen zu Produkten, Lizenzen und Bestellungen.</p>
+    </div>
+
+    <div class="klc-divider" aria-hidden="true"></div>
+
+    <div class="klc-body">
+      <p class="klc-section-label">Wie können wir helfen?</p>
+
+      <a class="klc-row klc-row--accent" href="https://api.whatsapp.com/send?phone=4915227322222" target="_blank" rel="noopener">
+        <span class="klc-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5 0 1.5 1.1 2.9 1.2 3.1.1.2 2.1 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.3c1.4.8 3 1.3 4.7 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3c-.8-1.3-1.3-2.8-1.3-4.4 0-4.5 3.7-8.2 8.2-8.2 4.5 0 8.2 3.7 8.2 8.2 0 4.5-3.6 8.2-8.1 8.2z"/></svg>
+        </span>
+        <span class="klc-row__txt">
+          <span class="klc-row__title">WhatsApp Business</span>
+          <span class="klc-row__meta">Sofort antwort · Mo-Fr 10-18</span>
+        </span>
+        <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a class="klc-row" href="mailto:shop@karinex.de">
+        <span class="klc-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+        <span class="klc-row__txt">
+          <span class="klc-row__title">E-Mail schreiben</span>
+          <span class="klc-row__meta">shop@karinex.de</span>
+        </span>
+        <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a class="klc-row" href="tel:015563133956">
+        <span class="klc-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </span>
+        <span class="klc-row__txt">
+          <span class="klc-row__title">Anrufen</span>
+          <span class="klc-row__meta">01556 / 3133956</span>
+        </span>
+        <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+
+      <a class="klc-row" href="/pages/faq">
+        <span class="klc-row__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span class="klc-row__txt">
+          <span class="klc-row__title">Häufige Fragen</span>
+          <span class="klc-row__meta">Sofort Antworten finden</span>
+        </span>
+        <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </div>
+
+    <div class="klc-foot">
+      <a class="klc-cta" href="https://api.whatsapp.com/send?phone=4915227322222&text=Hallo%20Karinex%2C%20ich%20habe%20eine%20Frage" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Chat jetzt starten
+      </a>
+      <p class="klc-foot__legal">Powered by <b>Karinex</b> · Premium Service</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+  (function () {
+    var launcher = document.getElementById('klcLauncher');
+    var panel    = document.getElementById('klcPanel');
+    var closeBtn = document.getElementById('klcClose');
+    var backdrop = document.getElementById('klcBackdrop');
+    if (!launcher || !panel) return;
+
+    function open()  {
+      panel.classList.add('is-open');
+      backdrop.classList.add('is-open');
+      launcher.setAttribute('aria-expanded', 'true');
+      panel.setAttribute('aria-hidden', 'false');
+    }
+    function close() {
+      panel.classList.remove('is-open');
+      backdrop.classList.remove('is-open');
+      launcher.setAttribute('aria-expanded', 'false');
+      panel.setAttribute('aria-hidden', 'true');
+    }
+    function toggle() {
+      panel.classList.contains('is-open') ? close() : open();
+    }
+
+    launcher.addEventListener('click', toggle);
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) close();
+    });
+
+    // Show teaser briefly after page load
+    setTimeout(function () {
+      if (!panel.classList.contains('is-open')) {
+        launcher.classList.add('klc-show-teaser');
+        setTimeout(function () { launcher.classList.remove('klc-show-teaser'); }, 4200);
+      }
+    }, 2500);
+
+    // Expose minimal API
+    window.KarinexChat = { open: open, close: close, toggle: toggle };
+  })();
+</script>
