@@ -26,6 +26,12 @@
   if _root == blank
     assign _root = routes.root_url | default: '/'
   endif
+  unless _root == '/'
+    assign _root_last = _root | slice: -1
+    unless _root_last == '/'
+      assign _root = _root | append: '/'
+    endunless
+  endunless
 
   assign p_handle = parent_link.handle | default: '' | downcase
   assign p_title  = parent_link.title  | default: '' | downcase | replace: 'ü', 'u' | replace: 'ö', 'o' | replace: 'ä', 'a' | replace: 'ß', 'ss'
