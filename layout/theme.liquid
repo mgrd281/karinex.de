@@ -21,10 +21,19 @@
 
       {%- if _expected != _cur_locale -%}
         {%- assign _path = request.path -%}
-        {%- if _cur_locale == 'en' -%}
-          {%- assign _path = _path | remove_first: '/en' -%}
-        {%- elsif _cur_locale == 'pl' -%}
-          {%- assign _path = _path | remove_first: '/pl' -%}
+        {%- comment -%}
+          Strip ANY known locale prefix (en/pl/sv/da/nl/fr/it/es/cs/hu/ro/sk/fi/el/pt)
+          from the front of the path before re-prepending the expected one.
+          Without this, visiting /sv/products/x with _expected='en' produced
+          /en/sv/products/x (404 → flooded the Ahrefs broken-link report).
+        {%- endcomment -%}
+        {%- assign _path_first = _path | split: '/' | first | append: '|' -%}
+        {%- assign _path_seg = _path | split: '/' -%}
+        {%- assign _path_locale = _path_seg[1] | default: '' -%}
+        {%- assign _known_locales = 'en,pl,sv,da,nl,fr,it,es,cs,hu,ro,sk,fi,el,pt' | split: ',' -%}
+        {%- if _known_locales contains _path_locale -%}
+          {%- assign _strip = '/' | append: _path_locale -%}
+          {%- assign _path = _path | remove_first: _strip -%}
         {%- endif -%}
         {%- if _path == blank -%}{%- assign _path = '/' -%}{%- endif -%}
 
