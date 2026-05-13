@@ -5,7 +5,7 @@
       "settings": {
         "heading": "Sortiment",
         "subheading": "Microsoft-Lizenzen, sorgfältig kuratiert. Sofortversand per E-Mail.",
-        "cols": 2,
+        "cols": "2",
         "hide_empty": true
       }
     }
