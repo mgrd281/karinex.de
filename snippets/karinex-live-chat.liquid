@@ -9,13 +9,9 @@
 {%- assign klc_crisp_id = '3dc17a60-f1b3-4b84-9cb5-2998ab31396a' -%}
 
 <style>
-  /* Hide Crisp's default launcher — we use our own gold bubble */
-  .crisp-client .cc-1brb6,
-  .crisp-client .cc-kv6t,
-  .crisp-client .cc-1xry,
-  #crisp-chatbox .cc-1m2mf > a[role="button"]:not([data-visible]) { display: none !important; }
-  /* Push Crisp chatbox above our launcher (we hide ours when Crisp is open via JS) */
-  #crisp-chatbox { z-index: 9999 !important; }
+  /* Completely hide Crisp's UI — we use only our native gold panel as the chat surface */
+  #crisp-chatbox,
+  .crisp-client { display: none !important; visibility: hidden !important; pointer-events: none !important; }
 </style>
 
 <style>
@@ -415,6 +411,229 @@
 
   /* Hide entirely in theme editor section preview if needed */
   .shopify-design-mode .klc-launcher { /* keep visible */ }
+
+  /* ── Native Chat View (inside the same gold panel) ─────────── */
+  .klc-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .klc-view--chat { display: none; }
+  .klc-panel.is-chat .klc-view--menu { display: none; }
+  .klc-panel.is-chat .klc-view--chat { display: flex; }
+
+  .klc-chat-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: var(--klc-surface);
+    border-bottom: 1px solid var(--klc-line-soft);
+  }
+  .klc-chat-back {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--klc-line);
+    background: var(--klc-cream);
+    color: var(--klc-ink);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s var(--klc-ease), transform .25s var(--klc-ease-spring);
+  }
+  .klc-chat-back:hover { background: var(--klc-gold-hi); transform: translateX(-2px); }
+  .klc-chat-back:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.45); }
+
+  .klc-chat-bar__title {
+    font-family: var(--klc-font-serif);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--klc-ink);
+    flex: 1;
+  }
+  .klc-chat-bar__status {
+    font-family: var(--klc-font-accent);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--klc-gold-dark);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .klc-chat-bar__status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--klc-online);
+    box-shadow: 0 0 0 0 rgba(46,156,92,.6);
+    animation: klc-pulse 2.2s ease-out infinite;
+  }
+
+  .klc-chat-stream {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 16px 12px;
+    background: linear-gradient(180deg, var(--klc-cream) 0%, var(--klc-surface) 60%);
+    display: flex; flex-direction: column; gap: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--klc-gold-hi) transparent;
+  }
+  .klc-chat-stream::-webkit-scrollbar { width: 6px; }
+  .klc-chat-stream::-webkit-scrollbar-thumb { background: var(--klc-gold-hi); border-radius: 6px; }
+
+  .klc-msg {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-family: var(--klc-font-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    opacity: 0;
+    animation: klc-msg-in .35s var(--klc-ease-spring) forwards;
+  }
+  @keyframes klc-msg-in {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .klc-msg--agent {
+    align-self: flex-start;
+    background: var(--klc-surface);
+    color: var(--klc-ink);
+    border: 1px solid var(--klc-line);
+    border-bottom-left-radius: 6px;
+    box-shadow: 0 4px 14px rgba(201,168,76,.08);
+  }
+  .klc-msg--user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--klc-gold-hi) 0%, var(--klc-gold) 100%);
+    color: #1a1a1a;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 6px 18px rgba(212,175,55,.30);
+  }
+  .klc-msg--system {
+    align-self: center;
+    background: transparent;
+    color: var(--klc-ink-mute);
+    font-family: var(--klc-font-accent);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border: none;
+  }
+  .klc-msg__time {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--klc-font-accent);
+    font-size: 9.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: .7;
+  }
+  .klc-msg--user .klc-msg__time { color: rgba(26,26,26,.65); }
+  .klc-msg--agent .klc-msg__time { color: var(--klc-ink-mute); }
+
+  .klc-typing {
+    align-self: flex-start;
+    display: inline-flex; gap: 4px;
+    padding: 12px 14px;
+    background: var(--klc-surface);
+    border: 1px solid var(--klc-line);
+    border-radius: 16px;
+    border-bottom-left-radius: 6px;
+  }
+  .klc-typing span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--klc-gold);
+    animation: klc-bounce 1.4s ease-in-out infinite;
+  }
+  .klc-typing span:nth-child(2) { animation-delay: .15s; }
+  .klc-typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes klc-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  .klc-chat-empty {
+    margin: auto;
+    text-align: center;
+    padding: 20px 12px;
+  }
+  .klc-chat-empty__icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--klc-gold-hi), var(--klc-gold) 60%, var(--klc-gold-deep));
+    color: #1a1a1a;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 26px rgba(212,175,55,.30);
+  }
+  .klc-chat-empty__title {
+    font-family: var(--klc-font-serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--klc-ink);
+    margin: 0 0 6px;
+  }
+  .klc-chat-empty__sub {
+    font-family: var(--klc-font-serif);
+    font-size: 13.5px;
+    color: var(--klc-ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .klc-chat-input-wrap {
+    padding: 12px 14px 14px;
+    background: var(--klc-surface);
+    border-top: 1px solid var(--klc-line-soft);
+  }
+  .klc-chat-input-row {
+    display: flex; align-items: flex-end; gap: 8px;
+    background: var(--klc-cream);
+    border: 1px solid var(--klc-line);
+    border-radius: 14px;
+    padding: 6px 6px 6px 14px;
+    transition: border-color .2s var(--klc-ease), box-shadow .25s var(--klc-ease);
+  }
+  .klc-chat-input-row:focus-within {
+    border-color: var(--klc-gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,.18);
+  }
+  .klc-chat-input {
+    flex: 1;
+    border: none; background: transparent;
+    resize: none;
+    outline: none;
+    font-family: var(--klc-font-serif);
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--klc-ink);
+    padding: 8px 0;
+    max-height: 96px;
+    min-height: 22px;
+  }
+  .klc-chat-input::placeholder { color: var(--klc-ink-mute); }
+  .klc-chat-send {
+    width: 36px; height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--klc-gold-hi), var(--klc-gold) 55%, var(--klc-gold-deep));
+    color: #1a1a1a;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .25s var(--klc-ease-spring), box-shadow .3s var(--klc-ease), opacity .2s var(--klc-ease);
+    box-shadow: 0 6px 16px rgba(212,175,55,.35), inset 0 1px 0 rgba(255,255,255,.4);
+    flex-shrink: 0;
+  }
+  .klc-chat-send:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.55); }
+  .klc-chat-send:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .klc-chat-send:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,.55), 0 6px 16px rgba(212,175,55,.35); }
+  .klc-chat-send svg { width: 16px; height: 16px; transform: translateX(1px); }
+
+  .klc-chat-foot {
+    margin: 8px 0 0;
+    font-family: var(--klc-font-accent);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+    text-align: center;
+  }
 </style>
 
 <div class="klc">
@@ -463,6 +682,7 @@
 
     <div class="klc-divider" aria-hidden="true"></div>
 
+    <div class="klc-view klc-view--menu">
     <div class="klc-body">
       <p class="klc-section-label">Wie können wir helfen?</p>
 
@@ -529,6 +749,43 @@
       </button>
       <p class="klc-foot__legal">Powered by <b>Karinex</b> · Premium Service</p>
     </div>
+    </div>
+
+    <div class="klc-view klc-view--chat" aria-hidden="true">
+      <div class="klc-chat-bar">
+        <button type="button" class="klc-chat-back" id="klcChatBack" aria-label="Zurück zum Menü">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="klc-chat-bar__title">Karinex Concierge</span>
+        <span class="klc-chat-bar__status">Online</span>
+      </div>
+
+      <div class="klc-chat-stream" id="klcChatStream" role="log" aria-live="polite" aria-atomic="false">
+        <div class="klc-chat-empty" id="klcChatEmpty">
+          <div class="klc-chat-empty__icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <p class="klc-chat-empty__title">Schreiben Sie uns!</p>
+          <p class="klc-chat-empty__sub">Unser Team antwortet in der Regel innerhalb weniger Minuten.</p>
+        </div>
+      </div>
+
+      <div class="klc-chat-input-wrap">
+        <div class="klc-chat-input-row">
+          <textarea
+            id="klcChatInput"
+            class="klc-chat-input"
+            rows="1"
+            placeholder="Ihre Nachricht …"
+            aria-label="Nachricht eingeben"
+          ></textarea>
+          <button type="button" class="klc-chat-send" id="klcChatSend" aria-label="Nachricht senden" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <p class="klc-chat-foot">Verschlüsselt · GDPR-konform</p>
+      </div>
+    </div>
   </aside>
 </div>
 
@@ -540,42 +797,123 @@
     var backdrop    = document.getElementById('klcBackdrop');
     var liveChatBtn = document.getElementById('klcLiveChatBtn');
     var ctaChat     = document.getElementById('klcCtaChat');
+    var chatBack    = document.getElementById('klcChatBack');
+    var chatStream  = document.getElementById('klcChatStream');
+    var chatEmpty   = document.getElementById('klcChatEmpty');
+    var chatInput   = document.getElementById('klcChatInput');
+    var chatSend    = document.getElementById('klcChatSend');
     if (!launcher || !panel) return;
 
     var CRISP_ID = {{ klc_crisp_id | json }};
     var crispLoaded = false;
+    var crispReady  = false;
+    var typingEl    = null;
+    var hasMessages = false;
 
+    /* ── Helpers ─────────────────────────────────────────── */
+    function fmtTime(ts) {
+      try {
+        var d = ts ? new Date(ts) : new Date();
+        return d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      } catch (_) { return ''; }
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+      });
+    }
+    function appendMessage(from, text, ts) {
+      if (!chatStream) return;
+      if (!hasMessages && chatEmpty) { chatEmpty.remove(); hasMessages = true; }
+      removeTyping();
+      var div = document.createElement('div');
+      div.className = 'klc-msg klc-msg--' + from;
+      div.innerHTML = escapeHtml(text || '') +
+        '<span class="klc-msg__time">' + fmtTime(ts) + '</span>';
+      chatStream.appendChild(div);
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
+    function showTyping() {
+      if (typingEl || !chatStream) return;
+      typingEl = document.createElement('div');
+      typingEl.className = 'klc-typing';
+      typingEl.innerHTML = '<span></span><span></span><span></span>';
+      chatStream.appendChild(typingEl);
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
+    function removeTyping() {
+      if (typingEl) { typingEl.remove(); typingEl = null; }
+    }
+
+    /* ── Crisp loader (silent — UI hidden via CSS) ───────── */
     function loadCrisp(cb) {
       if (crispLoaded) { cb && cb(); return; }
       crispLoaded = true;
       window.$crisp = [];
       window.CRISP_WEBSITE_ID = CRISP_ID;
-      // Crisp's own launcher is hidden via CSS; we control visibility ourselves
+      // run before script loads — these get queued
       window.$crisp.push(['safe', true]);
+      window.$crisp.push(['do', 'chat:hide']);
+      // wire receive
+      window.$crisp.push(['on', 'message:received', function (msg) {
+        var content = (msg && typeof msg.content === 'string') ? msg.content
+                    : (msg && msg.content && msg.content.text) ? msg.content.text
+                    : '';
+        appendMessage('agent', content, msg && msg.timestamp);
+      }]);
+      window.$crisp.push(['on', 'message:composer:started', function () { showTyping(); }]);
+      window.$crisp.push(['on', 'message:composer:stopped', function () { removeTyping(); }]);
       var s = document.createElement('script');
       s.src = 'https://client.crisp.chat/l.js';
       s.async = 1;
-      s.onload = function () { cb && cb(); };
+      s.onload = function () {
+        crispReady = true;
+        // Always keep their UI hidden
+        try { window.$crisp.push(['do', 'chat:hide']); } catch (_) {}
+        cb && cb();
+      };
       document.head.appendChild(s);
     }
 
-    function openCrisp() {
-      // Close our panel first, then open Crisp
-      closePanel();
+    function openChatView() {
+      panel.classList.add('is-chat');
       loadCrisp(function () {
-        // wait until $crisp is ready
+        setTimeout(function () { chatInput && chatInput.focus(); }, 250);
+      });
+    }
+    function closeChatView() {
+      panel.classList.remove('is-chat');
+    }
+
+    function sendMessage() {
+      if (!chatInput) return;
+      var text = chatInput.value.trim();
+      if (!text) return;
+      appendMessage('user', text, Date.now());
+      chatInput.value = '';
+      autoSize();
+      chatSend.disabled = true;
+
+      loadCrisp(function () {
         var tries = 0;
-        (function ping() {
+        (function trySend() {
           if (window.$crisp && window.$crisp.push) {
-            window.$crisp.push(['do', 'chat:open']);
-            window.$crisp.push(['do', 'chat:show']);
+            try { window.$crisp.push(['do', 'message:send', ['text', text]]); }
+            catch (e) { console.warn('Crisp send failed', e); }
           } else if (tries++ < 40) {
-            setTimeout(ping, 100);
+            setTimeout(trySend, 100);
           }
         })();
       });
     }
 
+    function autoSize() {
+      if (!chatInput) return;
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 96) + 'px';
+    }
+
+    /* ── Panel open/close ────────────────────────────────── */
     function openPanel()  {
       panel.classList.add('is-open');
       backdrop.classList.add('is-open');
@@ -592,16 +930,36 @@
       panel.classList.contains('is-open') ? closePanel() : openPanel();
     }
 
+    /* ── Wiring ──────────────────────────────────────────── */
     launcher.addEventListener('click', togglePanel);
     closeBtn.addEventListener('click', closePanel);
     backdrop.addEventListener('click', closePanel);
-    if (liveChatBtn) liveChatBtn.addEventListener('click', openCrisp);
-    if (ctaChat)     ctaChat.addEventListener('click', openCrisp);
+    if (liveChatBtn) liveChatBtn.addEventListener('click', openChatView);
+    if (ctaChat)     ctaChat.addEventListener('click', openChatView);
+    if (chatBack)    chatBack.addEventListener('click', closeChatView);
+
+    if (chatInput) {
+      chatInput.addEventListener('input', function () {
+        chatSend.disabled = !chatInput.value.trim();
+        autoSize();
+      });
+      chatInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+    if (chatSend) chatSend.addEventListener('click', sendMessage);
+
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) {
+        if (panel.classList.contains('is-chat')) closeChatView();
+        else closePanel();
+      }
     });
 
-    // Show teaser briefly after page load
+    // Teaser briefly after load
     setTimeout(function () {
       if (!panel.classList.contains('is-open')) {
         launcher.classList.add('klc-show-teaser');
@@ -609,7 +967,7 @@
       }
     }, 2500);
 
-    // Pre-warm Crisp after user idle (faster first-chat open)
+    // Pre-warm Crisp on idle so first send is instant
     var idlePrewarm = function () {
       if ('requestIdleCallback' in window) {
         requestIdleCallback(function () { loadCrisp(); }, { timeout: 8000 });
@@ -620,12 +978,11 @@
     if (document.readyState === 'complete') idlePrewarm();
     else window.addEventListener('load', idlePrewarm);
 
-    // Public API
     window.KarinexChat = {
-      open:    openPanel,
-      close:   closePanel,
-      toggle:  togglePanel,
-      openLiveChat: openCrisp
+      open:         openPanel,
+      close:        closePanel,
+      toggle:       togglePanel,
+      openLiveChat: function () { openPanel(); openChatView(); }
     };
   })();
 </script>
