@@ -166,9 +166,9 @@
   /* Header */
   .klc-header {
     position: relative;
-    padding: 22px 22px 24px;
+    padding: 28px 22px 26px;
     background:
-      radial-gradient(120% 80% at 100% 0%, rgba(45,107,84,.45) 0%, transparent 60%),
+      radial-gradient(80% 90% at 50% 0%, rgba(45,107,84,.40) 0%, transparent 65%),
       linear-gradient(135deg, #0a2118 0%, #1D4739 55%, #0a2118 100%);
     color: #eef3f0;
     overflow: hidden;
@@ -180,46 +180,52 @@
     background: linear-gradient(90deg, transparent 0%, rgba(29,71,57,.10) 50%, transparent 100%);
     pointer-events: none;
   }
-  .klc-header__row {
-    display: flex; align-items: center; gap: 12px;
+  /* ── Wordmark header — minimal luxury concierge stationery ── */
+  .klc-header__brand {
     position: relative;
+    text-align: center;
+    padding: 4px 56px;
   }
-  .klc-header__avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--klc-green-hi), var(--klc-green) 60%, var(--klc-green-deep));
-    display: flex; align-items: center; justify-content: center;
-    color: #faf7f0;
-    font-family: var(--klc-font-serif);
-    font-weight: 600;
-    font-size: 18px;
-    box-shadow: 0 6px 18px rgba(29,71,57,.35), inset 0 1px 0 rgba(255,255,255,.4);
-    flex-shrink: 0;
-  }
-  .klc-header__title {
+  .klc-header__wordmark {
     margin: 0;
-    font-family: var(--klc-font-serif);
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: .005em;
-    color: #fff;
-    line-height: 1.2;
-  }
-  .klc-header__sub {
-    margin: 3px 0 0;
     font-family: var(--klc-font-accent);
-    font-size: 10.5px;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: .32em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1;
+    text-indent: .32em;
+    text-shadow:
+      0 0 18px rgba(201,168,76,.28),
+      0 0 40px rgba(201,168,76,.14),
+      0 2px 6px rgba(0,0,0,.35);
+  }
+  .klc-header__rule {
+    display: block;
+    width: 38px;
+    height: 1px;
+    margin: 11px auto 9px;
+    background: linear-gradient(90deg, transparent, var(--klc-accent), transparent);
+    opacity: .85;
+  }
+  .klc-header__tagline {
+    margin: 0;
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
     font-weight: 600;
-    letter-spacing: .18em;
+    letter-spacing: .26em;
     text-transform: uppercase;
     color: var(--klc-accent);
-    display: flex; align-items: center; gap: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
   .klc-header__dot {
-    width: 7px; height: 7px;
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--klc-online);
-    box-shadow: 0 0 0 0 rgba(46,156,92,.6);
+    box-shadow: 0 0 0 0 rgba(46,156,92,.6), 0 0 10px rgba(46,156,92,.55);
     animation: klc-pulse 2.2s ease-out infinite;
   }
   .klc-header__close {
@@ -258,19 +264,22 @@
   .klc-header__back:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(29,71,57,.55); }
 
   .klc-panel.is-chat .klc-header__back { display: flex; opacity: 1; }
-  .klc-panel.is-chat .klc-header__row { padding-left: 40px; transition: padding .3s var(--klc-ease); }
   .klc-panel.is-chat .klc-header { padding-bottom: 18px; transition: padding .3s var(--klc-ease); }
   .klc-panel.is-chat .klc-header__welcome,
   .klc-panel.is-chat .klc-chat-bar,
   .klc-panel.is-chat .klc-divider { display: none; }
 
   .klc-header__welcome {
-    margin: 18px 0 0;
+    margin: 22px 0 0;
     font-family: var(--klc-font-serif);
     font-weight: 400;
-    font-size: 14.5px;
-    line-height: 1.55;
-    color: #d8e3dd;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #c5d3cc;
+    text-align: center;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
     position: relative;
   }
 
@@ -829,14 +838,12 @@
       <button type="button" class="klc-header__close" id="klcClose" aria-label="Schließen">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <div class="klc-header__row">
-        <div class="klc-header__avatar" aria-hidden="true">K</div>
-        <div>
-          <h3 class="klc-header__title" id="klcTitle">Karinex Concierge</h3>
-          <p class="klc-header__sub"><span class="klc-header__dot" aria-hidden="true"></span> Online · Antwort in ~2 Min.</p>
-        </div>
+      <div class="klc-header__brand">
+        <h3 class="klc-header__wordmark" id="klcTitle">KARINEX</h3>
+        <span class="klc-header__rule" aria-hidden="true"></span>
+        <p class="klc-header__tagline"><span class="klc-header__dot" aria-hidden="true"></span> Premium Support · Online</p>
       </div>
-      <p class="klc-header__welcome">Willkommen bei Karinex. Unser Team beantwortet gerne Ihre Fragen zu Produkten, Lizenzen und Bestellungen.</p>
+      <p class="klc-header__welcome">Wir sind für Sie da. Unser Team beantwortet Ihre Fragen zu Produkten, Lizenzen und Bestellungen in wenigen Minuten.</p>
     </div>
 
     <div class="klc-divider" aria-hidden="true"></div>
