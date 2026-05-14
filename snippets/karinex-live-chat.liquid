@@ -718,6 +718,11 @@
     margin-top: 3px;
     display: block;
   }
+  .klc-row__meta--keep {
+    text-transform: none;
+    letter-spacing: .02em;
+    font-size: 12px;
+  }
   .klc-row__chev {
     color: var(--klc-ink-mute);
     transition: transform .3s var(--klc-ease-spring), color .25s var(--klc-ease);
@@ -1618,7 +1623,7 @@
         </span>
         <span class="klc-row__txt">
           <span class="klc-row__title">{{ T_row_mail }}</span>
-          <span class="klc-row__meta">shop@karinex.de</span>
+          <span class="klc-row__meta klc-row__meta--keep">shop@karinex.de</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
