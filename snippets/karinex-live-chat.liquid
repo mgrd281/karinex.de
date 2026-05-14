@@ -458,7 +458,8 @@
   /* Respect prefers-reduced-motion */
   @media (prefers-reduced-motion: reduce) {
     .klc-launcher, .klc-panel, .klc-row, .klc-cta, .klc-header__close, .klc-row__chev, .klc-row__icon, .klc-launcher__icon { transition: none; animation: none; }
-    .klc-launcher__pulse, .klc-header__dot { animation: none; }
+    .klc-launcher__pulse, .klc-header__dot,
+    .klc-pre__orn-glow, .klc-pre__orn-mark, .klc-pre__orn-mark::after { animation: none; }
   }
 
   /* Hide entirely in theme editor section preview if needed */
@@ -488,9 +489,75 @@
   .klc-view--prechat::-webkit-scrollbar { width: 6px; }
   .klc-view--prechat::-webkit-scrollbar-thumb { background: var(--klc-green); border-radius: 6px; }
 
-  /* Concierge signature footer (fills empty space gracefully) */
+  /* Animated concierge ornament (sits between content + signature) */
+  .klc-pre__ornament {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto 0; /* vertically centers in remaining flex space */
+    padding: 24px 0;
+    position: relative;
+  }
+  /* Hide ornament on form + connecting steps (they fill the space themselves) */
+  .klc-view--prechat .klc-pre[data-pre-step="form"].is-active ~ .klc-pre__ornament,
+  .klc-view--prechat .klc-pre[data-pre-step="connecting"].is-active ~ .klc-pre__ornament { display: none; }
+
+  .klc-pre__orn-glow {
+    position: absolute;
+    top: 6px; left: 50%;
+    width: 140px; height: 140px;
+    margin-left: -70px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(201,168,76,.22), transparent 70%);
+    pointer-events: none;
+    animation: klc-orn-glow 4.5s ease-in-out infinite;
+  }
+  @keyframes klc-orn-glow {
+    0%,100% { opacity: .55; transform: scale(.96); }
+    50%     { opacity: .95; transform: scale(1.08); }
+  }
+  .klc-pre__orn-mark {
+    position: relative;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--klc-surface);
+    border: 1px solid rgba(201,168,76,.55);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--klc-green);
+    box-shadow: 0 8px 22px rgba(29,71,57,.10);
+    animation: klc-orn-breathe 4.5s ease-in-out infinite;
+  }
+  .klc-pre__orn-mark::after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,.30);
+    pointer-events: none;
+    animation: klc-orn-ring 4.5s ease-in-out infinite;
+  }
+  .klc-pre__orn-mark svg { width: 28px; height: 28px; }
+  @keyframes klc-orn-breathe {
+    0%,100% { transform: scale(1); box-shadow: 0 8px 22px rgba(29,71,57,.10); }
+    50%     { transform: scale(1.04); box-shadow: 0 12px 30px rgba(29,71,57,.18); }
+  }
+  @keyframes klc-orn-ring {
+    0%,100% { transform: scale(1); opacity: .8; }
+    50%     { transform: scale(1.10); opacity: .35; }
+  }
+  .klc-pre__orn-promise {
+    margin: 16px 0 0;
+    font-family: var(--klc-font-serif);
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    text-align: center;
+    color: var(--klc-ink-soft);
+    max-width: 240px;
+  }
+
+  /* Concierge signature footer */
   .klc-pre__signature {
-    margin-top: auto;
     padding: 22px 0 20px;
     text-align: center;
   }
@@ -1382,6 +1449,19 @@
         <div class="klc-pre__loader" aria-hidden="true"><span></span><span></span><span></span></div>
         <h4 class="klc-pre__title">Danke!</h4>
         <p class="klc-pre__sub">Wir verbinden Sie mit unserem Support.</p>
+      </div>
+
+      <div class="klc-pre__ornament" aria-hidden="true">
+        <span class="klc-pre__orn-glow"></span>
+        <div class="klc-pre__orn-mark">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M40 24a16 16 0 0 1-23.5 14.1L8 40l1.9-8.5A16 16 0 1 1 40 24Z"/>
+            <circle cx="17" cy="24" r="1.4" fill="currentColor"/>
+            <circle cx="24" cy="24" r="1.4" fill="currentColor"/>
+            <circle cx="31" cy="24" r="1.4" fill="currentColor"/>
+          </svg>
+        </div>
+        <p class="klc-pre__orn-promise">Ein persönlicher Concierge —<br>bereit, wenn Sie es sind.</p>
       </div>
 
       <footer class="klc-pre__signature" aria-hidden="true">
