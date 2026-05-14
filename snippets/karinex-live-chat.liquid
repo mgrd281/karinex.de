@@ -634,6 +634,106 @@
     background: var(--klc-green); border-color: var(--klc-green); color: #faf7f0;
   }
 
+  /* Drop zone (form attachments) */
+  .klc-drop {
+    position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 18px 14px;
+    border: 1px dashed var(--klc-line);
+    border-radius: 10px;
+    background: var(--klc-cream);
+    color: var(--klc-ink-soft);
+    cursor: pointer;
+    transition: border-color .25s var(--klc-ease), background .25s var(--klc-ease), color .2s var(--klc-ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .klc-drop:hover,
+  .klc-drop.is-drag {
+    border-color: var(--klc-green);
+    background: var(--klc-green-soft);
+    color: var(--klc-green);
+  }
+  .klc-drop:focus-within { outline: none; box-shadow: 0 0 0 2px rgba(201,168,76,.45); }
+  .klc-drop__text {
+    font-family: var(--klc-font-accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .klc-drop__hint {
+    font-family: var(--klc-font-serif);
+    font-size: 12px;
+    color: var(--klc-ink-mute);
+  }
+
+  /* Attachment thumbnail grid */
+  .klc-attach-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .klc-attach-list[hidden] { display: none; }
+  .klc-attach-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--klc-surface-2);
+    border: 1px solid var(--klc-line);
+    animation: klc-msg-in .25s var(--klc-ease-spring);
+  }
+  .klc-attach-item img,
+  .klc-attach-item video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+  .klc-attach-item__badge {
+    position: absolute;
+    left: 4px; bottom: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0,0,0,.65);
+    color: #fff;
+    font-family: var(--klc-font-accent);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .klc-attach-item__remove {
+    position: absolute;
+    top: 3px; right: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,.65);
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    line-height: 1;
+    transition: background .2s var(--klc-ease);
+  }
+  .klc-attach-item__remove:hover { background: #c62828; }
+
+  /* Video bubble in chat stream */
+  .klc-msg--video {
+    padding: 6px;
+    max-width: 260px;
+  }
+  .klc-msg--video video {
+    display: block;
+    width: 100%;
+    border-radius: 10px;
+    background: #000;
+  }
+  .klc-msg--video .klc-msg__time { padding: 4px 6px 2px; margin-top: 0; }
+
   /* Consent */
   .klc-consent {
     display: flex; align-items: flex-start; gap: 9px;
@@ -1198,10 +1298,6 @@
             <label for="klcFieldOrder">Bestellnummer</label>
             <input id="klcFieldOrder" type="text" name="order_number" autocomplete="off" placeholder="z. B. #12345">
           </div>
-          <div class="klc-field klc-field--hidden" data-show-for="license">
-            <label for="klcFieldLic">Lizenzschlüssel <span class="klc-field__opt">optional</span></label>
-            <input id="klcFieldLic" type="text" name="license_key" autocomplete="off" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
-          </div>
           <div class="klc-field klc-field--hidden" data-show-for="consult">
             <label for="klcFieldSoftware">Welche Software benötigen Sie?</label>
             <input id="klcFieldSoftware" type="text" name="software" autocomplete="off" placeholder="z. B. Office 2024">
@@ -1224,6 +1320,16 @@
           <div class="klc-field">
             <label for="klcFieldMsg">Ihre Nachricht <span class="klc-field__opt">optional</span></label>
             <textarea id="klcFieldMsg" name="message" rows="3" placeholder="Beschreiben Sie kurz Ihr Anliegen …"></textarea>
+          </div>
+          <div class="klc-field">
+            <label>Anhänge <span class="klc-field__opt">Bilder oder Videos · beliebig viele</span></label>
+            <label class="klc-drop" for="klcFormFile" tabindex="0">
+              <input id="klcFormFile" type="file" accept="image/*,video/*" multiple style="position:absolute;opacity:0;width:0;height:0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <span class="klc-drop__text">Dateien wählen oder hierhin ziehen</span>
+              <span class="klc-drop__hint">JPG · PNG · WEBP · MP4 · MOV …</span>
+            </label>
+            <div class="klc-attach-list" id="klcFormAttachList" hidden></div>
           </div>
           <label class="klc-consent">
             <input type="checkbox" name="consent" required>
@@ -1264,7 +1370,7 @@
           <button type="button" class="klc-chat-attach" id="klcChatAttach" aria-label="Bild anhängen" title="Bild anhängen">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
-          <input type="file" id="klcChatFile" accept="image/*" style="display:none" aria-hidden="true">
+          <input type="file" id="klcChatFile" accept="image/*,video/*" multiple style="display:none" aria-hidden="true">
           <textarea
             id="klcChatInput"
             class="klc-chat-input"
@@ -1408,7 +1514,9 @@
       try {
         window.$crisp.push(['on', 'message:received', function (msg) {
           if (msg && msg.type === 'file' && msg.content && msg.content.url) {
-            appendImage('agent', msg.content.url, msg.timestamp);
+            var t = (msg.content.type || '').toLowerCase();
+            if (t.indexOf('video') === 0) appendVideo('agent', msg.content.url, msg.timestamp);
+            else                          appendImage('agent', msg.content.url, msg.timestamp);
           }
         }]);
       } catch (_) {}
@@ -1465,8 +1573,11 @@
       panel.classList.remove('is-chat');
       panel.classList.add('is-pre');
       klcContext = { customerType: '', topic: '', topicLabel: '' };
+      // Reset any previously-picked attachments
+      klcFormAttachments.forEach(function (a) { try { URL.revokeObjectURL(a.url); } catch (_) {} });
+      klcFormAttachments = [];
+      if (typeof renderFormAttachments === 'function') renderFormAttachments();
       showPreStep('welcome');
-      // Pre-load Crisp in the background while user fills the form
       loadCrisp();
     }
     function closePrechat() {
@@ -1504,6 +1615,126 @@
       return 'desktop';
     }
 
+    /* ── Form attachments (collected, then uploaded after submit) ── */
+    var klcFormAttachments = [];   // [{ file, url (local objectURL), type }]
+    var formFileInput   = document.getElementById('klcFormFile');
+    var formAttachList  = document.getElementById('klcFormAttachList');
+    var formDropZone    = formFileInput && formFileInput.closest('.klc-drop');
+
+    function renderFormAttachments() {
+      if (!formAttachList) return;
+      formAttachList.innerHTML = '';
+      formAttachList.hidden = klcFormAttachments.length === 0;
+      klcFormAttachments.forEach(function (a, idx) {
+        var item = document.createElement('div');
+        item.className = 'klc-attach-item';
+        var media;
+        if (/^video\//.test(a.file.type)) {
+          media = document.createElement('video');
+          media.muted = true; media.playsInline = true; media.preload = 'metadata';
+        } else {
+          media = document.createElement('img');
+          media.alt = a.file.name;
+        }
+        media.src = a.url;
+        item.appendChild(media);
+
+        if (/^video\//.test(a.file.type)) {
+          var badge = document.createElement('span');
+          badge.className = 'klc-attach-item__badge';
+          badge.textContent = 'Video';
+          item.appendChild(badge);
+        }
+
+        var rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'klc-attach-item__remove';
+        rm.setAttribute('aria-label', 'Entfernen');
+        rm.innerHTML = '&times;';
+        rm.addEventListener('click', function (e) {
+          e.stopPropagation();
+          URL.revokeObjectURL(a.url);
+          klcFormAttachments.splice(idx, 1);
+          renderFormAttachments();
+        });
+        item.appendChild(rm);
+
+        formAttachList.appendChild(item);
+      });
+    }
+
+    function addFormFiles(fileList) {
+      Array.prototype.forEach.call(fileList || [], function (f) {
+        if (!/^image\/|^video\//.test(f.type)) return;
+        klcFormAttachments.push({
+          file: f,
+          url: URL.createObjectURL(f),
+          type: f.type
+        });
+      });
+      renderFormAttachments();
+    }
+
+    if (formFileInput) {
+      formFileInput.addEventListener('change', function () {
+        addFormFiles(formFileInput.files);
+        formFileInput.value = '';
+      });
+    }
+    if (formDropZone) {
+      ['dragenter','dragover'].forEach(function (ev) {
+        formDropZone.addEventListener(ev, function (e) {
+          e.preventDefault(); e.stopPropagation();
+          formDropZone.classList.add('is-drag');
+        });
+      });
+      ['dragleave','drop'].forEach(function (ev) {
+        formDropZone.addEventListener(ev, function (e) {
+          e.preventDefault(); e.stopPropagation();
+          formDropZone.classList.remove('is-drag');
+        });
+      });
+      formDropZone.addEventListener('drop', function (e) {
+        var dt = e.dataTransfer;
+        if (dt && dt.files) addFormFiles(dt.files);
+      });
+    }
+
+    function uploadFormAttachments() {
+      if (!klcFormAttachments.length) return;
+      // Send each attachment as its own chat bubble + Crisp file message
+      klcFormAttachments.forEach(function (a) {
+        var isVideo = /^video\//.test(a.file.type);
+        var bubble = isVideo
+          ? appendVideo('user', a.url, Date.now())
+          : appendImage('user', a.url, Date.now());
+        if (bubble) bubble.classList.add('klc-msg--uploading');
+        uploadFile(a.file).then(function (info) {
+          if (bubble) bubble.classList.remove('klc-msg--uploading');
+          var tries = 0;
+          (function trySend() {
+            if (window.$crisp && window.$crisp.push) {
+              try {
+                window.$crisp.push(['do', 'message:send', ['file', {
+                  name: info.name, url: info.url, type: info.type
+                }]]);
+              } catch (e) { console.warn('Crisp file send failed', e); }
+            } else if (tries++ < 60) {
+              setTimeout(trySend, 100);
+            }
+          })();
+        }).catch(function () {
+          if (bubble) {
+            bubble.classList.remove('klc-msg--uploading');
+            bubble.classList.add('klc-msg--failed');
+          }
+        });
+      });
+      // clear collected list (object URLs are kept alive by the bubbles)
+      klcFormAttachments = [];
+      renderFormAttachments();
+    }
+
     function pushContextToCrisp(ctx) {
       loadCrisp(function () {
         var tries = 0;
@@ -1515,7 +1746,6 @@
               var data = [];
               if (ctx.topicLabel)   data.push(['topic', ctx.topicLabel]);
               if (ctx.orderNumber)  data.push(['order_number', ctx.orderNumber]);
-              if (ctx.licenseKey)   data.push(['license_key', ctx.licenseKey]);
               if (ctx.software)     data.push(['software', ctx.software]);
               if (ctx.platform)     data.push(['platform', ctx.platform]);
               if (ctx.usage)        data.push(['usage', ctx.usage]);
@@ -1532,7 +1762,6 @@
               if (ctx.topicLabel)   lines.push('Thema: '         + ctx.topicLabel);
               if (ctx.customerType) lines.push('Kundenstatus: '  + (ctx.customerType === 'returning' ? 'Bestandskunde' : 'Neu / Beratung'));
               if (ctx.orderNumber)  lines.push('Bestellnummer: ' + ctx.orderNumber);
-              if (ctx.licenseKey)   lines.push('Lizenzschlüssel: ' + ctx.licenseKey);
               if (ctx.software)     lines.push('Software: '      + ctx.software);
               if (ctx.platform)     lines.push('Plattform: '     + ctx.platform);
               if (ctx.usage)        lines.push('Nutzung: '       + ctx.usage);
@@ -1558,6 +1787,8 @@
       // tiny delay so the chat view is mounted before pushing the context bubble
       setTimeout(function () {
         pushContextToCrisp(klcContext);
+        // Send any pre-chat attachments shortly after the context message
+        setTimeout(uploadFormAttachments, 600);
         chatInput && chatInput.focus();
       }, 200);
     }
@@ -1623,7 +1854,6 @@
         klcContext.name        = name;
         klcContext.email       = email;
         klcContext.orderNumber = (fd.get('order_number') || '').toString().trim();
-        klcContext.licenseKey  = (fd.get('license_key')  || '').toString().trim();
         klcContext.software    = (fd.get('software')     || '').toString().trim();
         klcContext.platform    = (fd.get('platform')     || '').toString().trim();
         klcContext.usage       = (fd.get('usage')        || '').toString().trim();
@@ -1673,7 +1903,9 @@
              .then(r => r.json())   // { url, name, type }
          }
     */
-    var MAX_FILE_BYTES = 8 * 1024 * 1024; // 8 MB
+    /* tmpfiles.org tops out around 100 MB per file. We do NOT enforce a
+       client-side cap — files that exceed the host's limit will simply
+       fall into the failure path and the user will see "Upload fehlgeschlagen". */
     function defaultUploader(file) {
       var fd = new FormData();
       fd.append('file', file);
@@ -1697,19 +1929,40 @@
       return Promise.resolve().then(function () { return uploader(file); });
     }
 
+    function appendVideo(from, src, ts) {
+      if (!chatStream) return null;
+      if (!hasMessages && chatEmpty) { chatEmpty.remove(); hasMessages = true; }
+      removeTyping();
+      var div = document.createElement('div');
+      div.className = 'klc-msg klc-msg--' + from + ' klc-msg--video';
+      var v = document.createElement('video');
+      v.src = src;
+      v.controls = true;
+      v.playsInline = true;
+      v.preload = 'metadata';
+      div.appendChild(v);
+      var time = document.createElement('span');
+      time.className = 'klc-msg__time';
+      time.textContent = fmtTime(ts);
+      div.appendChild(time);
+      chatStream.appendChild(div);
+      chatStream.scrollTop = chatStream.scrollHeight;
+      return div;
+    }
+
     function handleFilePick(file) {
       if (!file || !chatStream) return;
-      if (!/^image\//.test(file.type)) {
-        alert('Bitte wählen Sie ein Bild aus.');
-        return;
-      }
-      if (file.size > MAX_FILE_BYTES) {
-        alert('Datei ist zu groß (max. 8 MB).');
+      var isImage = /^image\//.test(file.type);
+      var isVideo = /^video\//.test(file.type);
+      if (!isImage && !isVideo) {
+        alert('Bitte wählen Sie ein Bild oder Video aus.');
         return;
       }
       // optimistic preview
       var localUrl = URL.createObjectURL(file);
-      var bubble = appendImage('user', localUrl, Date.now());
+      var bubble = isVideo
+        ? appendVideo('user', localUrl, Date.now())
+        : appendImage('user', localUrl, Date.now());
       if (bubble) bubble.classList.add('klc-msg--uploading');
 
       loadCrisp(function () {
@@ -1786,9 +2039,9 @@
     if (chatAttach && chatFile) {
       chatAttach.addEventListener('click', function () { chatFile.click(); });
       chatFile.addEventListener('change', function () {
-        var f = chatFile.files && chatFile.files[0];
-        if (f) handleFilePick(f);
-        chatFile.value = ''; // allow re-select of same file
+        var files = chatFile.files ? Array.prototype.slice.call(chatFile.files) : [];
+        files.forEach(handleFilePick);
+        chatFile.value = ''; // allow re-select of same files
       });
     }
 
