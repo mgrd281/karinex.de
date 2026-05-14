@@ -480,13 +480,51 @@
   /* ── Pre-chat wizard ───────────────────────────────────────── */
   .klc-view--prechat {
     overflow-y: auto;
-    padding: 22px 22px 20px;
+    padding: 22px 22px 0;
     background: var(--klc-surface);
     scrollbar-width: thin;
     scrollbar-color: var(--klc-green) transparent;
   }
   .klc-view--prechat::-webkit-scrollbar { width: 6px; }
   .klc-view--prechat::-webkit-scrollbar-thumb { background: var(--klc-green); border-radius: 6px; }
+
+  /* Concierge signature footer (fills empty space gracefully) */
+  .klc-pre__signature {
+    margin-top: auto;
+    padding: 22px 0 20px;
+    text-align: center;
+  }
+  .klc-pre__sig-rule {
+    display: block;
+    width: 38px; height: 1px;
+    margin: 0 auto 14px;
+    background: linear-gradient(90deg, transparent, var(--klc-accent), transparent);
+  }
+  .klc-pre__sig-line {
+    margin: 0 0 6px;
+    font-family: var(--klc-font-accent);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--klc-ink);
+  }
+  .klc-pre__sig-meta {
+    margin: 0 0 8px;
+    font-family: var(--klc-font-serif);
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--klc-ink-soft);
+  }
+  .klc-pre__sig-contact {
+    margin: 0;
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+  }
 
   .klc-pre {
     display: none;
@@ -1345,6 +1383,13 @@
         <h4 class="klc-pre__title">Danke!</h4>
         <p class="klc-pre__sub">Wir verbinden Sie mit unserem Support.</p>
       </div>
+
+      <footer class="klc-pre__signature" aria-hidden="true">
+        <span class="klc-pre__sig-rule"></span>
+        <p class="klc-pre__sig-line">Karinex Premium Service</p>
+        <p class="klc-pre__sig-meta">Persönlich · Diskret · Verbindlich</p>
+        <p class="klc-pre__sig-contact">+49&nbsp;1556 / 3133956 · shop@karinex.de</p>
+      </footer>
     </div>
 
     <div class="klc-view klc-view--chat" aria-hidden="true">
