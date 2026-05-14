@@ -114,7 +114,10 @@
       assign cat_icon = svg_server
       assign cat_title = 'Windows Server'
       assign cat_all_label = 'Alle Server-Lizenzen'
-      assign cat_all_url = _root | append: 'collections/windows-server'
+      # /collections/windows-server does not exist on Shopify — land on
+      # /collections/windows (which holds the server SKUs too), matching the
+      # soft-redirect already configured in main-404.liquid line 786.
+      assign cat_all_url = _root | append: 'collections/windows'
     when 'tools'
       assign cat_icon = svg_code
       assign cat_title = 'Microsoft Tools'
