@@ -12,11 +12,22 @@
       {%- assign _geo_country = localization.country.iso_code -%}
       {%- assign _cur_locale = request.locale.iso_code | downcase -%}
 
+      {%- comment -%}
+        Geo → language map (IP-based, from Shopify Markets):
+        DE/AT/CH/LI/LU  → de   (German-speaking)
+        PL              → pl   (Polish)
+        SE              → sv   (Swedish)
+        anywhere else   → en   (default fallback, incl. English-speaking
+                                countries US/GB/IE/AU/NZ/CA + any country
+                                we don't have a localised version for yet)
+      {%- endcomment -%}
       {%- assign _expected = 'en' -%}
       {%- if _geo_country == 'DE' or _geo_country == 'AT' or _geo_country == 'CH' or _geo_country == 'LI' or _geo_country == 'LU' -%}
         {%- assign _expected = 'de' -%}
       {%- elsif _geo_country == 'PL' -%}
         {%- assign _expected = 'pl' -%}
+      {%- elsif _geo_country == 'SE' -%}
+        {%- assign _expected = 'sv' -%}
       {%- endif -%}
 
       {%- if _expected != _cur_locale -%}
