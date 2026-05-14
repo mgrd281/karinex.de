@@ -187,14 +187,67 @@
       %}
     </div>
   {% elsif show_country %}
-    {%- comment -%}
-      Karinex modal-based locale switcher (ABOUT YOU pattern).
-      Replaces the dropdown-localization-component. Keeps {% form 'localization' %}
-      so Shopify's native locale routing still handles the submits.
-    {%- endcomment -%}
-    <div class="dropdown-localization mobile:hidden">
-      {% render 'karinex-locale-switcher' %}
-    </div>
+    <dropdown-localization-component
+      class="dropdown-localization mobile:hidden"
+    >
+      <button
+        type="button"
+        class="button dropdown-localization__button localization-selector link link--text"
+        aria-expanded="false"
+        aria-controls="dropdown-localization-results"
+        aria-label="{{ 'accessibility.country_selector' | t }}"
+        ref="button"
+        on:click="/toggleSelector"
+        style="{{ localization_font }} {{ localization_font_size }}"
+      >
+        {% if show_country %}
+          {% if section.settings.country_selector_style == true %}
+            {% liquid
+              assign background_brightness = section.settings.color_scheme.settings.background | color_brightness
+              if background_brightness < 64
+                assign shadow_size = 4
+              else
+                assign shadow_size = 2
+              endif
+            %}
+            <span
+              class="icon-flag"
+              style="
+                background-image: url({{- localization.country | image_url: width: 32 }});
+                width: 13px; height: 10px; margin-right: 2px; border-radius: 2px;
+              "
+            ></span>
+          {% endif %}
+          <span
+            class="currency-code"
+            data-testid="localization-currency-code"
+            style="font-weight: 700; font-size: 9px; color: #222; margin-left: 2px; letter-spacing: 0.5px;"
+          >
+            {{- localization.country.iso_code }} | {{ localization.country.currency.iso_code -}}
+          </span>
+        {% endif %}
+        <span
+          class="visually-hidden"
+          data-testid="localization-visually-hidden"
+        >
+          {{- 'accessibility.localization_region_and_language' | t -}}
+        </span>
+      </button>
+
+      <div
+        class="localization-wrapper {{ section.settings.localization_position }}-bound color-{{ settings.popover_color_scheme }}"
+        hidden
+        ref="panel"
+      >
+        {% render 'localization-form',
+          show_country: show_country,
+          show_language: show_language,
+          localization_style: 'dropdown',
+          form_style: form_style,
+          block_id: block.id
+        %}
+      </div>
+    </dropdown-localization-component>
   {% endif %}
 {% endcapture %}
 
