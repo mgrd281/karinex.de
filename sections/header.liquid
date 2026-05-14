@@ -255,7 +255,7 @@
 
 
 {%- comment -%} ═══ ABOUTYOU-STYLE UTILITY BAR ═══ {%- endcomment -%}
-<div class="ay-utility-bar">
+<div class="ay-utility-bar{% if template.name == 'product' %} ay-utility-bar--product{% endif %}">
   <div class="ay-utility-bar__inner">
     <div class="ay-utility-bar__left">
       <a href="{{ _root }}pages/kontakt" class="ay-utility-bar__link">
@@ -284,6 +284,16 @@
     position: relative;
     z-index: 1001 !important; /* Raised above header (1000) to stop overlap */
     overflow: visible !important;
+  }
+  /* Product pages: a touch taller + more breathing room above the wider
+     product layout so the bar doesn't sit flush against the sale strip. */
+  .ay-utility-bar--product {
+    height: 34px;
+    margin-top: 4px;
+    border-top: 1px solid #e8e8e8;
+  }
+  .ay-utility-bar--product .ay-utility-bar__inner {
+    max-width: var(--page-width-product, 1440px);
   }
   .ay-utility-bar__inner {
     display: flex;
