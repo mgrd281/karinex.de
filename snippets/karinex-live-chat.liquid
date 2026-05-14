@@ -502,49 +502,19 @@
   .klc-view--prechat .klc-pre[data-pre-step="form"].is-active ~ .klc-pre__ornament,
   .klc-view--prechat .klc-pre[data-pre-step="connecting"].is-active ~ .klc-pre__ornament { display: none; }
 
-  .klc-pre__orn-glow {
-    position: absolute;
-    top: 6px; left: 50%;
-    width: 140px; height: 140px;
-    margin-left: -70px;
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(201,168,76,.22), transparent 70%);
-    pointer-events: none;
-    animation: klc-orn-glow 4.5s ease-in-out infinite;
-  }
-  @keyframes klc-orn-glow {
-    0%,100% { opacity: .55; transform: scale(.96); }
-    50%     { opacity: .95; transform: scale(1.08); }
-  }
+  .klc-pre__orn-glow { display: none; }
   .klc-pre__orn-mark {
     position: relative;
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: var(--klc-surface);
-    border: 1px solid rgba(201,168,76,.55);
+    width: auto; height: auto;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     display: flex; align-items: center; justify-content: center;
     color: var(--klc-green);
-    box-shadow: 0 8px 22px rgba(29,71,57,.10);
-    animation: klc-orn-breathe 4.5s ease-in-out infinite;
   }
-  .klc-pre__orn-mark::after {
-    content: '';
-    position: absolute;
-    inset: -7px;
-    border-radius: 50%;
-    border: 1px solid rgba(201,168,76,.30);
-    pointer-events: none;
-    animation: klc-orn-ring 4.5s ease-in-out infinite;
-  }
-  .klc-pre__orn-mark svg { width: 28px; height: 28px; }
-  @keyframes klc-orn-breathe {
-    0%,100% { transform: scale(1); box-shadow: 0 8px 22px rgba(29,71,57,.10); }
-    50%     { transform: scale(1.04); box-shadow: 0 12px 30px rgba(29,71,57,.18); }
-  }
-  @keyframes klc-orn-ring {
-    0%,100% { transform: scale(1); opacity: .8; }
-    50%     { transform: scale(1.10); opacity: .35; }
-  }
+  .klc-pre__orn-mark::after { content: none; }
+  .klc-pre__orn-mark svg { width: 36px; height: 36px; opacity: .9; }
   .klc-pre__orn-promise {
     margin: 16px 0 0;
     font-family: var(--klc-font-serif);
@@ -586,11 +556,12 @@
   .klc-pre__sig-contact {
     margin: 0;
     font-family: var(--klc-font-accent);
-    font-size: 8.5px;
+    font-size: 7px;
     font-weight: 500;
     letter-spacing: .14em;
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--klc-ink-mute);
+    opacity: .8;
   }
 
   .klc-pre {
