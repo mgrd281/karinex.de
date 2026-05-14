@@ -1943,44 +1943,75 @@
     }
 
     /* ── Crisp loader (silent — UI hidden via CSS) ───────── */
+    var KLC_DEBUG = false; // set true in console: window.KLC_DEBUG = true
+    var _seenFingerprints = {};
+    function _isSeen(fp) {
+      if (!fp) return false;
+      if (_seenFingerprints[fp]) return true;
+      _seenFingerprints[fp] = true;
+      return false;
+    }
+    function _handleOperatorMessage(msg) {
+      if (!msg) return;
+      var from = (msg.from || msg.user && msg.user.type || '').toString().toLowerCase();
+      // Skip our own outgoing
+      if (from === 'user' || from === 'visitor') return;
+      // De-dupe via Crisp fingerprint
+      if (_isSeen(msg.fingerprint)) return;
+      if (KLC_DEBUG) console.log('[KLC] operator message', msg);
+      var type = (msg.type || '').toLowerCase();
+      if (type === 'file' && msg.content && msg.content.url) {
+        var t = (msg.content.type || '').toLowerCase();
+        if (t.indexOf('video') === 0) appendVideo('agent', msg.content.url, msg.timestamp);
+        else                          appendImage('agent', msg.content.url, msg.timestamp);
+        return;
+      }
+      var content = (typeof msg.content === 'string') ? msg.content
+                  : (msg.content && msg.content.text) ? msg.content.text
+                  : '';
+      if (!content) return;
+      appendMessage('agent', content, msg.timestamp);
+    }
+
+    var _pollTimer = null;
+    function _startPollingFallback() {
+      if (_pollTimer) return;
+      _pollTimer = setInterval(function () {
+        if (!window.$crisp || !window.$crisp.get) return;
+        try {
+          var messages = window.$crisp.get('chat:messages');
+          if (!Array.isArray(messages)) return;
+          messages.forEach(_handleOperatorMessage);
+        } catch (e) {
+          if (KLC_DEBUG) console.warn('[KLC] poll failed', e);
+        }
+      }, 3500);
+    }
+
     function loadCrisp(cb) {
       if (crispLoaded) { cb && cb(); return; }
       crispLoaded = true;
       window.$crisp = [];
       window.CRISP_WEBSITE_ID = CRISP_ID;
-      // run before script loads — these get queued
       window.$crisp.push(['safe', true]);
-      // wire receive
-      window.$crisp.push(['on', 'message:received', function (msg) {
-        if (msg && msg.type === 'file') return; // handled by file listener below
-        var content = (msg && typeof msg.content === 'string') ? msg.content
-                    : (msg && msg.content && msg.content.text) ? msg.content.text
-                    : '';
-        if (!content) return;
-        appendMessage('agent', content, msg && msg.timestamp);
-      }]);
+      // Receive — register against multiple lifecycle hooks for robustness
+      window.$crisp.push(['on', 'message:received', _handleOperatorMessage]);
       window.$crisp.push(['on', 'message:composer:started', function () { showTyping(); }]);
       window.$crisp.push(['on', 'message:composer:stopped', function () { removeTyping(); }]);
-      // Agent-sent file
-      try {
-        window.$crisp.push(['on', 'message:received', function (msg) {
-          if (msg && msg.type === 'file' && msg.content && msg.content.url) {
-            var t = (msg.content.type || '').toLowerCase();
-            if (t.indexOf('video') === 0) appendVideo('agent', msg.content.url, msg.timestamp);
-            else                          appendImage('agent', msg.content.url, msg.timestamp);
-          }
-        }]);
-      } catch (_) {}
+      window.$crisp.push(['on', 'session:loaded', function () {
+        if (KLC_DEBUG) console.log('[KLC] crisp session:loaded');
+        // Re-register receive after session is loaded (defensive)
+        try { window.$crisp.push(['on', 'message:received', _handleOperatorMessage]); } catch (_) {}
+      }]);
       var s = document.createElement('script');
       s.src = 'https://client.crisp.chat/l.js';
       s.async = 1;
       s.onload = function () {
         crispReady = true;
-        // Force Crisp into "chat opened" state so message:received callbacks
-        // actually fire on operator replies. Crisp delivers messages to the
-        // listener queue only when it considers the chat "open" — even
-        // though our CSS keeps its UI hidden off-screen.
+        if (KLC_DEBUG) console.log('[KLC] crisp script loaded');
         try { window.$crisp.push(['do', 'chat:open']); } catch (_) {}
+        // Polling fallback in case events don't fire reliably
+        _startPollingFallback();
         cb && cb();
       };
       document.head.appendChild(s);
