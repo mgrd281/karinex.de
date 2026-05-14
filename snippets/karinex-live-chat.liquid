@@ -1976,6 +1976,11 @@
       s.async = 1;
       s.onload = function () {
         crispReady = true;
+        // Force Crisp into "chat opened" state so message:received callbacks
+        // actually fire on operator replies. Crisp delivers messages to the
+        // listener queue only when it considers the chat "open" — even
+        // though our CSS keeps its UI hidden off-screen.
+        try { window.$crisp.push(['do', 'chat:open']); } catch (_) {}
         cb && cb();
       };
       document.head.appendChild(s);
