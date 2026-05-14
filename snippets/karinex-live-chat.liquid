@@ -464,9 +464,223 @@
 
   /* ── Native Chat View (inside the same gold panel) ─────────── */
   .klc-view { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-  .klc-view--chat { display: none; }
-  .klc-panel.is-chat .klc-view--menu { display: none; }
+  .klc-view--chat,
+  .klc-view--prechat { display: none; }
+  .klc-panel.is-chat .klc-view--menu,
+  .klc-panel.is-pre  .klc-view--menu { display: none; }
   .klc-panel.is-chat .klc-view--chat { display: flex; }
+  .klc-panel.is-pre  .klc-view--prechat { display: flex; }
+  .klc-panel.is-pre  .klc-header__back { display: flex; opacity: 1; }
+  .klc-panel.is-pre  .klc-header__welcome,
+  .klc-panel.is-pre  .klc-divider { display: none; }
+  .klc-panel.is-pre  .klc-header { padding-bottom: 18px; }
+
+  /* ── Pre-chat wizard ───────────────────────────────────────── */
+  .klc-view--prechat {
+    overflow-y: auto;
+    padding: 22px 22px 20px;
+    background: var(--klc-surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--klc-green) transparent;
+  }
+  .klc-view--prechat::-webkit-scrollbar { width: 6px; }
+  .klc-view--prechat::-webkit-scrollbar-thumb { background: var(--klc-green); border-radius: 6px; }
+
+  .klc-pre {
+    display: none;
+    flex-direction: column;
+    animation: klc-pre-in .35s var(--klc-ease-spring);
+  }
+  .klc-pre.is-active { display: flex; }
+  @keyframes klc-pre-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .klc-pre__eyebrow {
+    margin: 0 0 6px;
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--klc-accent);
+  }
+  .klc-pre__title {
+    margin: 0 0 18px;
+    font-family: var(--klc-font-serif);
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1.3;
+    color: var(--klc-ink);
+    letter-spacing: .005em;
+  }
+  .klc-pre__sub {
+    margin: 4px 0 18px;
+    font-family: var(--klc-font-serif);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--klc-ink-soft);
+  }
+
+  /* Choice buttons */
+  .klc-pre__choices { display: flex; flex-direction: column; gap: 0; }
+  .klc-pre__choice {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-bottom: 1px solid var(--klc-line-soft);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--klc-font-serif);
+    transition: color .2s var(--klc-ease), padding .2s var(--klc-ease);
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+  }
+  .klc-pre__choice::after {
+    content: '›';
+    position: absolute;
+    right: 4px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--klc-ink-mute);
+    font-size: 22px;
+    line-height: 1;
+    transition: transform .25s var(--klc-ease-spring), color .2s var(--klc-ease);
+  }
+  .klc-pre__choice:hover { color: var(--klc-green); padding-left: 4px; }
+  .klc-pre__choice:hover::after { transform: translateY(-50%) translateX(4px); color: var(--klc-green); }
+  .klc-pre__choice:focus-visible { outline: none; box-shadow: inset 2px 0 0 var(--klc-green); padding-left: 8px; }
+  .klc-pre__choice:last-child { border-bottom: none; }
+  .klc-pre__choice-title {
+    font-size: 15.5px;
+    font-weight: 500;
+    color: inherit;
+    padding-right: 30px;
+  }
+  .klc-pre__choice-meta {
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+  }
+
+  /* Form */
+  .klc-pre__form { display: flex; flex-direction: column; gap: 14px; }
+  .klc-field {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .klc-field--hidden { display: none; }
+  .klc-field > label {
+    font-family: var(--klc-font-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--klc-ink-mute);
+  }
+  .klc-field__opt {
+    font-weight: 500;
+    color: var(--klc-ink-mute);
+    text-transform: none;
+    letter-spacing: .04em;
+    font-style: italic;
+    margin-left: 4px;
+  }
+  .klc-field input[type="text"],
+  .klc-field input[type="email"],
+  .klc-field textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--klc-line-soft);
+    background: transparent;
+    padding: 8px 0;
+    font-family: var(--klc-font-serif);
+    font-size: 15px;
+    color: var(--klc-ink);
+    outline: none;
+    transition: border-color .2s var(--klc-ease);
+    resize: none;
+  }
+  .klc-field input:focus,
+  .klc-field textarea:focus { border-bottom-color: var(--klc-green); }
+  .klc-field input::placeholder,
+  .klc-field textarea::placeholder { color: var(--klc-ink-mute); }
+  .klc-field--error input,
+  .klc-field--error textarea { border-bottom-color: #c62828; }
+
+  /* Chip-style radio rows */
+  .klc-chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .klc-chip {
+    display: inline-flex; align-items: center;
+    padding: 7px 14px;
+    border: 1px solid var(--klc-line-soft);
+    border-radius: 999px;
+    font-family: var(--klc-font-accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--klc-ink-soft);
+    cursor: pointer;
+    transition: border-color .2s var(--klc-ease), background .2s var(--klc-ease), color .2s var(--klc-ease);
+  }
+  .klc-chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .klc-chip:hover { border-color: var(--klc-green); color: var(--klc-green); }
+  .klc-chip:has(input:checked) {
+    background: var(--klc-green); border-color: var(--klc-green); color: #faf7f0;
+  }
+
+  /* Consent */
+  .klc-consent {
+    display: flex; align-items: flex-start; gap: 9px;
+    margin: 4px 0 8px;
+    font-family: var(--klc-font-serif);
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--klc-ink-soft);
+    cursor: pointer;
+  }
+  .klc-consent input { margin-top: 3px; accent-color: var(--klc-green); flex-shrink: 0; }
+  .klc-consent a { color: var(--klc-green); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Submit */
+  .klc-pre__submit {
+    margin-top: 4px;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 10px;
+    background: var(--klc-green);
+    color: #faf7f0;
+    font-family: var(--klc-font-accent);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .25s var(--klc-ease);
+  }
+  .klc-pre__submit:hover  { background: var(--klc-green-deep); }
+  .klc-pre__submit:disabled { opacity: .4; cursor: not-allowed; background: var(--klc-green); }
+  .klc-pre__submit:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(201,168,76,.55); }
+
+  /* Connecting state */
+  .klc-pre[data-pre-step="connecting"] { align-items: center; text-align: center; padding: 24px 8px; }
+  .klc-pre__loader {
+    display: inline-flex; gap: 8px;
+    margin: 0 auto 18px;
+  }
+  .klc-pre__loader span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--klc-green);
+    animation: klc-bounce 1.4s ease-in-out infinite;
+  }
+  .klc-pre__loader span:nth-child(2) { animation-delay: .15s; }
+  .klc-pre__loader span:nth-child(3) { animation-delay: .3s; }
 
   .klc-chat-bar {
     display: flex; align-items: center; gap: 10px;
@@ -925,6 +1139,107 @@
     </div>
     </div>
 
+    <div class="klc-view klc-view--prechat" aria-hidden="true">
+      <div class="klc-pre is-active" data-pre-step="welcome">
+        <p class="klc-pre__eyebrow">Willkommen bei Karinex</p>
+        <h4 class="klc-pre__title">Sind Sie bereits Kunde?</h4>
+        <div class="klc-pre__choices">
+          <button type="button" class="klc-pre__choice" data-pre-action="returning">
+            <span class="klc-pre__choice-title">Ja, ich habe bereits bestellt</span>
+            <span class="klc-pre__choice-meta">Bestellung · Lizenz · Rechnung</span>
+          </button>
+          <button type="button" class="klc-pre__choice" data-pre-action="new">
+            <span class="klc-pre__choice-title">Nein, ich brauche Beratung</span>
+            <span class="klc-pre__choice-meta">Produktberatung · Allgemeine Fragen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="klc-pre" data-pre-step="topic">
+        <p class="klc-pre__eyebrow">Womit können wir helfen?</p>
+        <h4 class="klc-pre__title">Wählen Sie ein Thema</h4>
+        <div class="klc-pre__choices">
+          <button type="button" class="klc-pre__choice" data-pre-topic="order">
+            <span class="klc-pre__choice-title">Frage zu meiner Bestellung</span>
+            <span class="klc-pre__choice-meta">Versand · Status · Änderungen</span>
+          </button>
+          <button type="button" class="klc-pre__choice" data-pre-topic="license">
+            <span class="klc-pre__choice-title">Aktivierung / Lizenzproblem</span>
+            <span class="klc-pre__choice-meta">Key · Installation · Fehler</span>
+          </button>
+          <button type="button" class="klc-pre__choice" data-pre-topic="invoice">
+            <span class="klc-pre__choice-title">Rechnung</span>
+            <span class="klc-pre__choice-meta">Beleg · Korrektur · Anfrage</span>
+          </button>
+          <button type="button" class="klc-pre__choice" data-pre-topic="consult">
+            <span class="klc-pre__choice-title">Produktberatung</span>
+            <span class="klc-pre__choice-meta">Software · Empfehlung · Vergleich</span>
+          </button>
+          <button type="button" class="klc-pre__choice" data-pre-topic="other">
+            <span class="klc-pre__choice-title">Sonstiges</span>
+            <span class="klc-pre__choice-meta">Allgemeine Anfrage</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="klc-pre" data-pre-step="form">
+        <p class="klc-pre__eyebrow" id="klcFormEyebrow">Ihre Angaben</p>
+        <h4 class="klc-pre__title" id="klcFormTitle">Ein paar kurze Angaben</h4>
+        <form class="klc-pre__form" id="klcPreForm" novalidate>
+          <div class="klc-field">
+            <label for="klcFieldName">Name</label>
+            <input id="klcFieldName" type="text" name="name" autocomplete="name" required>
+          </div>
+          <div class="klc-field">
+            <label for="klcFieldEmail">E-Mail</label>
+            <input id="klcFieldEmail" type="email" name="email" autocomplete="email" required>
+          </div>
+          <div class="klc-field klc-field--hidden" data-show-for="order,license,invoice">
+            <label for="klcFieldOrder">Bestellnummer</label>
+            <input id="klcFieldOrder" type="text" name="order_number" autocomplete="off" placeholder="z. B. #12345">
+          </div>
+          <div class="klc-field klc-field--hidden" data-show-for="license">
+            <label for="klcFieldLic">Lizenzschlüssel <span class="klc-field__opt">optional</span></label>
+            <input id="klcFieldLic" type="text" name="license_key" autocomplete="off" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX">
+          </div>
+          <div class="klc-field klc-field--hidden" data-show-for="consult">
+            <label for="klcFieldSoftware">Welche Software benötigen Sie?</label>
+            <input id="klcFieldSoftware" type="text" name="software" autocomplete="off" placeholder="z. B. Office 2024">
+          </div>
+          <div class="klc-field klc-field--hidden" data-show-for="consult">
+            <label>Plattform</label>
+            <div class="klc-chip-row">
+              <label class="klc-chip"><input type="radio" name="platform" value="Windows"> Windows</label>
+              <label class="klc-chip"><input type="radio" name="platform" value="Mac"> Mac</label>
+              <label class="klc-chip"><input type="radio" name="platform" value="Beide"> Beide</label>
+            </div>
+          </div>
+          <div class="klc-field klc-field--hidden" data-show-for="consult">
+            <label>Nutzung</label>
+            <div class="klc-chip-row">
+              <label class="klc-chip"><input type="radio" name="usage" value="Privat"> Privat</label>
+              <label class="klc-chip"><input type="radio" name="usage" value="Firma"> Firma</label>
+            </div>
+          </div>
+          <div class="klc-field">
+            <label for="klcFieldMsg">Ihre Nachricht <span class="klc-field__opt">optional</span></label>
+            <textarea id="klcFieldMsg" name="message" rows="3" placeholder="Beschreiben Sie kurz Ihr Anliegen …"></textarea>
+          </div>
+          <label class="klc-consent">
+            <input type="checkbox" name="consent" required>
+            <span>Ich akzeptiere die <a href="/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> und stimme der Verarbeitung meiner Angaben zur Beantwortung dieser Anfrage zu.</span>
+          </label>
+          <button type="submit" class="klc-pre__submit">Chat starten</button>
+        </form>
+      </div>
+
+      <div class="klc-pre" data-pre-step="connecting">
+        <div class="klc-pre__loader" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h4 class="klc-pre__title">Danke!</h4>
+        <p class="klc-pre__sub">Wir verbinden Sie mit unserem Support.</p>
+      </div>
+    </div>
+
     <div class="klc-view klc-view--chat" aria-hidden="true">
       <div class="klc-chat-bar">
         <button type="button" class="klc-chat-back" id="klcChatBack" aria-label="Zurück zum Menü">
@@ -1110,6 +1425,7 @@
     }
 
     function openChatView() {
+      panel.classList.remove('is-pre');
       panel.classList.add('is-chat');
       loadCrisp(function () {
         setTimeout(function () { chatInput && chatInput.focus(); }, 250);
@@ -1117,6 +1433,208 @@
     }
     function closeChatView() {
       panel.classList.remove('is-chat');
+    }
+
+    /* ── Pre-chat wizard ───────────────────────────────────── */
+    var TOPIC_LABEL = {
+      order:   'Frage zu meiner Bestellung',
+      license: 'Aktivierung / Lizenzproblem',
+      invoice: 'Rechnung',
+      consult: 'Produktberatung',
+      other:   'Sonstiges'
+    };
+    var klcContext = { customerType: '', topic: '', topicLabel: '' };
+
+    function getPreSteps() {
+      return document.querySelectorAll('.klc-view--prechat .klc-pre');
+    }
+    function showPreStep(name) {
+      getPreSteps().forEach(function (el) {
+        var match = el.getAttribute('data-pre-step') === name;
+        el.classList.toggle('is-active', match);
+        // Re-trigger entry animation
+        if (match) {
+          el.style.animation = 'none';
+          // eslint-disable-next-line no-unused-expressions
+          el.offsetHeight;
+          el.style.animation = '';
+        }
+      });
+    }
+    function openPrechat() {
+      panel.classList.remove('is-chat');
+      panel.classList.add('is-pre');
+      klcContext = { customerType: '', topic: '', topicLabel: '' };
+      showPreStep('welcome');
+      // Pre-load Crisp in the background while user fills the form
+      loadCrisp();
+    }
+    function closePrechat() {
+      panel.classList.remove('is-pre');
+    }
+    function preBack() {
+      var current = document.querySelector('.klc-view--prechat .klc-pre.is-active');
+      var step = current && current.getAttribute('data-pre-step');
+      if (step === 'form') {
+        // form → topic (or welcome if "new" path)
+        if (klcContext.customerType === 'new') showPreStep('welcome');
+        else showPreStep('topic');
+      } else if (step === 'topic') {
+        showPreStep('welcome');
+      } else {
+        closePrechat();
+      }
+    }
+
+    function applyFieldsForTopic(topic) {
+      var fields = document.querySelectorAll('.klc-view--prechat [data-show-for]');
+      fields.forEach(function (f) {
+        var topics = (f.getAttribute('data-show-for') || '').split(',');
+        var show = topics.indexOf(topic) !== -1;
+        f.classList.toggle('klc-field--hidden', !show);
+        // Required state on visible inputs (only Name + Email + consent are required)
+        var inp = f.querySelector('input,textarea');
+        if (inp) inp.required = false; // optional secondary fields
+      });
+    }
+
+    function getDeviceType() {
+      var ua = navigator.userAgent || '';
+      if (/Mobi|Android|iPhone|iPad/.test(ua)) return /iPad|Tablet/.test(ua) ? 'tablet' : 'mobile';
+      return 'desktop';
+    }
+
+    function pushContextToCrisp(ctx) {
+      loadCrisp(function () {
+        var tries = 0;
+        (function ready() {
+          if (window.$crisp && window.$crisp.push) {
+            try {
+              if (ctx.email) window.$crisp.push(['set', 'user:email', [ctx.email]]);
+              if (ctx.name)  window.$crisp.push(['set', 'user:nickname', [ctx.name]]);
+              var data = [];
+              if (ctx.topicLabel)   data.push(['topic', ctx.topicLabel]);
+              if (ctx.orderNumber)  data.push(['order_number', ctx.orderNumber]);
+              if (ctx.licenseKey)   data.push(['license_key', ctx.licenseKey]);
+              if (ctx.software)     data.push(['software', ctx.software]);
+              if (ctx.platform)     data.push(['platform', ctx.platform]);
+              if (ctx.usage)        data.push(['usage', ctx.usage]);
+              if (ctx.customerType) data.push(['customer_type', ctx.customerType]);
+              data.push(['page_url', ctx.pageUrl]);
+              data.push(['device',   ctx.device]);
+              data.push(['timestamp', ctx.timestamp]);
+              if (data.length) window.$crisp.push(['set', 'session:data', [data]]);
+              var seg = ctx.topic ? ['pre-chat', ctx.topic] : ['pre-chat'];
+              window.$crisp.push(['set', 'session:segments', [seg, false]]);
+              // Compose context message for the agent
+              var lines = [];
+              lines.push('— Vorab-Kontext —');
+              if (ctx.topicLabel)   lines.push('Thema: '         + ctx.topicLabel);
+              if (ctx.customerType) lines.push('Kundenstatus: '  + (ctx.customerType === 'returning' ? 'Bestandskunde' : 'Neu / Beratung'));
+              if (ctx.orderNumber)  lines.push('Bestellnummer: ' + ctx.orderNumber);
+              if (ctx.licenseKey)   lines.push('Lizenzschlüssel: ' + ctx.licenseKey);
+              if (ctx.software)     lines.push('Software: '      + ctx.software);
+              if (ctx.platform)     lines.push('Plattform: '     + ctx.platform);
+              if (ctx.usage)        lines.push('Nutzung: '       + ctx.usage);
+              lines.push('Seite: '   + ctx.pageUrl);
+              lines.push('Gerät: '   + ctx.device);
+              if (ctx.message) { lines.push(''); lines.push(ctx.message); }
+              var text = lines.join('\n');
+              // Show in our local chat as a "user" message, then send to Crisp
+              appendMessage('user', text, Date.now());
+              try { window.$crisp.push(['do', 'message:send', ['text', text]]); }
+              catch (e) { console.warn('Crisp context send failed', e); }
+            } catch (e) { console.warn('Crisp context push failed', e); }
+          } else if (tries++ < 60) {
+            setTimeout(ready, 100);
+          }
+        })();
+      });
+    }
+
+    function startChatFromContext() {
+      panel.classList.remove('is-pre');
+      panel.classList.add('is-chat');
+      // tiny delay so the chat view is mounted before pushing the context bubble
+      setTimeout(function () {
+        pushContextToCrisp(klcContext);
+        chatInput && chatInput.focus();
+      }, 200);
+    }
+
+    // Bind welcome step
+    document.querySelectorAll('.klc-view--prechat [data-pre-action]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        klcContext.customerType = btn.getAttribute('data-pre-action');
+        if (klcContext.customerType === 'new') {
+          // Skip topic step — straight into product consultation
+          klcContext.topic = 'consult';
+          klcContext.topicLabel = TOPIC_LABEL.consult;
+          applyFieldsForTopic('consult');
+          var eyebrow = document.getElementById('klcFormEyebrow');
+          var title   = document.getElementById('klcFormTitle');
+          if (eyebrow) eyebrow.textContent = TOPIC_LABEL.consult;
+          if (title)   title.textContent   = 'Wir beraten Sie gern';
+          showPreStep('form');
+        } else {
+          showPreStep('topic');
+        }
+      });
+    });
+
+    // Bind topic step
+    document.querySelectorAll('.klc-view--prechat [data-pre-topic]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var topic = btn.getAttribute('data-pre-topic');
+        klcContext.topic = topic;
+        klcContext.topicLabel = TOPIC_LABEL[topic] || topic;
+        applyFieldsForTopic(topic);
+        var eyebrow = document.getElementById('klcFormEyebrow');
+        var title   = document.getElementById('klcFormTitle');
+        if (eyebrow) eyebrow.textContent = klcContext.topicLabel;
+        if (title)   title.textContent   = topic === 'consult' ? 'Wir beraten Sie gern' : 'Ein paar kurze Angaben';
+        showPreStep('form');
+      });
+    });
+
+    // Bind form submit
+    var preForm = document.getElementById('klcPreForm');
+    if (preForm) {
+      preForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var fd = new FormData(preForm);
+        var name    = (fd.get('name')    || '').toString().trim();
+        var email   = (fd.get('email')   || '').toString().trim();
+        var consent = !!fd.get('consent');
+        var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        var fields = preForm.querySelectorAll('.klc-field');
+        fields.forEach(function (f) { f.classList.remove('klc-field--error'); });
+        var firstError = null;
+        if (!name)    { var nf = preForm.querySelector('#klcFieldName').closest('.klc-field'); nf.classList.add('klc-field--error'); firstError = firstError || nf; }
+        if (!emailOk) { var ef = preForm.querySelector('#klcFieldEmail').closest('.klc-field'); ef.classList.add('klc-field--error'); firstError = firstError || ef; }
+        if (!consent) {
+          var cl = preForm.querySelector('.klc-consent');
+          cl.style.color = '#c62828';
+          firstError = firstError || cl;
+        }
+        if (firstError) { firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
+        // Build context object
+        klcContext.name        = name;
+        klcContext.email       = email;
+        klcContext.orderNumber = (fd.get('order_number') || '').toString().trim();
+        klcContext.licenseKey  = (fd.get('license_key')  || '').toString().trim();
+        klcContext.software    = (fd.get('software')     || '').toString().trim();
+        klcContext.platform    = (fd.get('platform')     || '').toString().trim();
+        klcContext.usage       = (fd.get('usage')        || '').toString().trim();
+        klcContext.message     = (fd.get('message')      || '').toString().trim();
+        klcContext.pageUrl     = window.location.href;
+        klcContext.device      = getDeviceType();
+        klcContext.timestamp   = new Date().toISOString();
+
+        showPreStep('connecting');
+        setTimeout(startChatFromContext, 1100);
+      });
     }
 
     function sendMessage() {
@@ -1243,10 +1761,13 @@
     launcher.addEventListener('click', togglePanel);
     closeBtn.addEventListener('click', closePanel);
     backdrop.addEventListener('click', closePanel);
-    if (liveChatBtn) liveChatBtn.addEventListener('click', openChatView);
-    if (ctaChat)     ctaChat.addEventListener('click', openChatView);
+    if (liveChatBtn) liveChatBtn.addEventListener('click', openPrechat);
+    if (ctaChat)     ctaChat.addEventListener('click', openPrechat);
     if (chatBack)    chatBack.addEventListener('click', closeChatView);
-    if (headerBack)  headerBack.addEventListener('click', closeChatView);
+    if (headerBack)  headerBack.addEventListener('click', function () {
+      if (panel.classList.contains('is-pre')) preBack();
+      else closeChatView();
+    });
 
     if (chatInput) {
       chatInput.addEventListener('input', function () {
@@ -1281,7 +1802,8 @@
       if (e.key !== 'Escape') return;
       if (lightbox && lightbox.classList.contains('is-open')) { closeLightbox(); return; }
       if (panel.classList.contains('is-open')) {
-        if (panel.classList.contains('is-chat')) closeChatView();
+        if (panel.classList.contains('is-chat'))      closeChatView();
+        else if (panel.classList.contains('is-pre')) preBack();
         else closePanel();
       }
     });
@@ -1309,7 +1831,8 @@
       open:         openPanel,
       close:        closePanel,
       toggle:       togglePanel,
-      openLiveChat: function () { openPanel(); openChatView(); }
+      openLiveChat: function () { openPanel(); openPrechat(); },
+      openChatDirect: function () { openPanel(); openChatView(); }
     };
   })();
 </script>
