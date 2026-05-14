@@ -9,6 +9,179 @@
 
 {%- assign klc_crisp_id = '3dc17a60-f1b3-4b84-9cb5-2998ab31396a' -%}
 
+{%- comment -%} ── i18n: pick string set from Shopify locale ── {%- endcomment -%}
+{%- assign klc_lang = request.locale.iso_code | downcase | default: 'de' -%}
+{%- assign klc_is_en = false -%}
+{%- if klc_lang == 'en' -%}{%- assign klc_is_en = true -%}{%- endif -%}
+
+{%- if klc_is_en -%}
+  {%- assign T_aria_open      = 'Open live chat' -%}
+  {%- assign T_aria_close     = 'Close' -%}
+  {%- assign T_aria_back      = 'Back to menu' -%}
+  {%- assign T_teaser         = 'We are online' -%}
+  {%- assign T_brand_tagline  = 'PREMIUM SUPPORT · ONLINE' -%}
+  {%- assign T_welcome_para   = 'We are here for you. Our team replies to your questions about products, licences and orders within minutes.' -%}
+  {%- assign T_menu_section   = 'How can we help?' -%}
+  {%- assign T_row_chat       = 'Start live chat' -%}
+  {%- assign T_row_chat_meta  = 'Instant reply · With our team' -%}
+  {%- assign T_row_wa         = 'WhatsApp Business' -%}
+  {%- assign T_row_wa_meta    = 'Mon-Fri 10-18' -%}
+  {%- assign T_row_mail       = 'Send e-mail' -%}
+  {%- assign T_row_phone      = 'Call us' -%}
+  {%- assign T_row_phone_meta = '+49 1556 / 3133956' -%}
+  {%- assign T_row_faq        = 'Frequently Asked Questions' -%}
+  {%- assign T_row_faq_meta   = 'Find answers right away' -%}
+  {%- assign T_cta            = 'Start chat now' -%}
+  {%- assign T_foot_legal     = 'Powered by Karinex · Premium Service' -%}
+  {%- assign T_pre_eyebrow_w  = 'Welcome to Karinex' -%}
+  {%- assign T_pre_title_w    = 'Are you already a customer?' -%}
+  {%- assign T_pre_yes_title  = 'Yes, I have already ordered' -%}
+  {%- assign T_pre_yes_meta   = 'Order · Licence · Invoice' -%}
+  {%- assign T_pre_no_title   = 'No, I need advice' -%}
+  {%- assign T_pre_no_meta    = 'Product advice · General questions' -%}
+  {%- assign T_pre_eyebrow_t  = 'How can we help?' -%}
+  {%- assign T_pre_title_t    = 'Choose a topic' -%}
+  {%- assign T_topic_order    = 'Question about my order' -%}
+  {%- assign T_topic_order_m  = 'Shipping · Status · Changes' -%}
+  {%- assign T_topic_license  = 'Activation / licence problem' -%}
+  {%- assign T_topic_license_m= 'Key · Installation · Error' -%}
+  {%- assign T_topic_invoice  = 'Invoice' -%}
+  {%- assign T_topic_invoice_m= 'Receipt · Correction · Request' -%}
+  {%- assign T_topic_consult  = 'Product advice' -%}
+  {%- assign T_topic_consult_m= 'Software · Recommendation · Comparison' -%}
+  {%- assign T_topic_other    = 'Something else' -%}
+  {%- assign T_topic_other_m  = 'General enquiry' -%}
+  {%- assign T_form_eyebrow   = 'Your details' -%}
+  {%- assign T_form_title     = 'A few quick details' -%}
+  {%- assign T_form_title_c   = 'We are happy to advise you' -%}
+  {%- assign T_field_name     = 'Name' -%}
+  {%- assign T_field_email    = 'E-mail' -%}
+  {%- assign T_field_order    = 'Order number' -%}
+  {%- assign T_field_order_ph = 'e. g. #12345' -%}
+  {%- assign T_field_software = 'Which software do you need?' -%}
+  {%- assign T_field_sw_ph    = 'e. g. Office 2024' -%}
+  {%- assign T_field_platform = 'Platform' -%}
+  {%- assign T_field_usage    = 'Use case' -%}
+  {%- assign T_usage_private  = 'Private' -%}
+  {%- assign T_usage_business = 'Business' -%}
+  {%- assign T_field_message  = 'Your message' -%}
+  {%- assign T_field_message_ph = 'Briefly describe your enquiry …' -%}
+  {%- assign T_optional       = 'optional' -%}
+  {%- assign T_field_attach   = 'Attachments' -%}
+  {%- assign T_field_attach_m = 'Images or videos · unlimited' -%}
+  {%- assign T_attach_add     = 'Add attachment' -%}
+  {%- assign T_consent        = 'I accept the' -%}
+  {%- assign T_consent_link   = 'privacy policy' -%}
+  {%- assign T_consent_tail   = 'and agree to my data being processed to answer this enquiry.' -%}
+  {%- assign T_submit         = 'Start chat' -%}
+  {%- assign T_thanks         = 'Thank you!' -%}
+  {%- assign T_connecting     = 'Connecting you with our support team.' -%}
+  {%- assign T_orn_promise    = 'A personal concierge —<br>ready when you are.' -%}
+  {%- assign T_sig_line       = 'Karinex Premium Service' -%}
+  {%- assign T_sig_meta       = 'Personal · Discreet · Reliable' -%}
+  {%- assign T_chat_empty_t   = 'We look forward to your message' -%}
+  {%- assign T_chat_empty_s   = 'Our team usually replies within a few minutes.' -%}
+  {%- assign T_chat_ph        = 'Your message …' -%}
+  {%- assign T_chat_send_aria = 'Send message' -%}
+  {%- assign T_chat_attach_aria = 'Attach file' -%}
+  {%- assign T_secure_strip   = 'Encrypted · GDPR-compliant' -%}
+  {%- assign T_ctx_header     = '— Pre-chat context —' -%}
+  {%- assign T_ctx_topic      = 'Topic' -%}
+  {%- assign T_ctx_status     = 'Customer status' -%}
+  {%- assign T_ctx_returning  = 'Existing customer' -%}
+  {%- assign T_ctx_new        = 'New / Advice' -%}
+  {%- assign T_ctx_order      = 'Order number' -%}
+  {%- assign T_ctx_software   = 'Software' -%}
+  {%- assign T_ctx_platform   = 'Platform' -%}
+  {%- assign T_ctx_usage      = 'Use case' -%}
+  {%- assign T_ctx_page       = 'Page' -%}
+  {%- assign T_ctx_device     = 'Device' -%}
+  {%- assign T_err_image_video= 'Please choose an image or a video.' -%}
+{%- else -%}
+  {%- assign T_aria_open      = 'Live-Chat öffnen' -%}
+  {%- assign T_aria_close     = 'Schließen' -%}
+  {%- assign T_aria_back      = 'Zurück zum Menü' -%}
+  {%- assign T_teaser         = 'Wir sind online' -%}
+  {%- assign T_brand_tagline  = 'PREMIUM SUPPORT · ONLINE' -%}
+  {%- assign T_welcome_para   = 'Wir sind für Sie da. Unser Team beantwortet Ihre Fragen zu Produkten, Lizenzen und Bestellungen in wenigen Minuten.' -%}
+  {%- assign T_menu_section   = 'Wie können wir helfen?' -%}
+  {%- assign T_row_chat       = 'Live-Chat starten' -%}
+  {%- assign T_row_chat_meta  = 'Sofort antwort · Mit unserem Team' -%}
+  {%- assign T_row_wa         = 'WhatsApp Business' -%}
+  {%- assign T_row_wa_meta    = 'Mo-Fr 10-18 Uhr' -%}
+  {%- assign T_row_mail       = 'E-Mail schreiben' -%}
+  {%- assign T_row_phone      = 'Anrufen' -%}
+  {%- assign T_row_phone_meta = '01556 / 3133956' -%}
+  {%- assign T_row_faq        = 'Häufige Fragen' -%}
+  {%- assign T_row_faq_meta   = 'Sofort Antworten finden' -%}
+  {%- assign T_cta            = 'Chat jetzt starten' -%}
+  {%- assign T_foot_legal     = 'Powered by Karinex · Premium Service' -%}
+  {%- assign T_pre_eyebrow_w  = 'Willkommen bei Karinex' -%}
+  {%- assign T_pre_title_w    = 'Sind Sie bereits Kunde?' -%}
+  {%- assign T_pre_yes_title  = 'Ja, ich habe bereits bestellt' -%}
+  {%- assign T_pre_yes_meta   = 'Bestellung · Lizenz · Rechnung' -%}
+  {%- assign T_pre_no_title   = 'Nein, ich brauche Beratung' -%}
+  {%- assign T_pre_no_meta    = 'Produktberatung · Allgemeine Fragen' -%}
+  {%- assign T_pre_eyebrow_t  = 'Womit können wir helfen?' -%}
+  {%- assign T_pre_title_t    = 'Wählen Sie ein Thema' -%}
+  {%- assign T_topic_order    = 'Frage zu meiner Bestellung' -%}
+  {%- assign T_topic_order_m  = 'Versand · Status · Änderungen' -%}
+  {%- assign T_topic_license  = 'Aktivierung / Lizenzproblem' -%}
+  {%- assign T_topic_license_m= 'Key · Installation · Fehler' -%}
+  {%- assign T_topic_invoice  = 'Rechnung' -%}
+  {%- assign T_topic_invoice_m= 'Beleg · Korrektur · Anfrage' -%}
+  {%- assign T_topic_consult  = 'Produktberatung' -%}
+  {%- assign T_topic_consult_m= 'Software · Empfehlung · Vergleich' -%}
+  {%- assign T_topic_other    = 'Sonstiges' -%}
+  {%- assign T_topic_other_m  = 'Allgemeine Anfrage' -%}
+  {%- assign T_form_eyebrow   = 'Ihre Angaben' -%}
+  {%- assign T_form_title     = 'Ein paar kurze Angaben' -%}
+  {%- assign T_form_title_c   = 'Wir beraten Sie gern' -%}
+  {%- assign T_field_name     = 'Name' -%}
+  {%- assign T_field_email    = 'E-Mail' -%}
+  {%- assign T_field_order    = 'Bestellnummer' -%}
+  {%- assign T_field_order_ph = 'z. B. #12345' -%}
+  {%- assign T_field_software = 'Welche Software benötigen Sie?' -%}
+  {%- assign T_field_sw_ph    = 'z. B. Office 2024' -%}
+  {%- assign T_field_platform = 'Plattform' -%}
+  {%- assign T_field_usage    = 'Nutzung' -%}
+  {%- assign T_usage_private  = 'Privat' -%}
+  {%- assign T_usage_business = 'Firma' -%}
+  {%- assign T_field_message  = 'Ihre Nachricht' -%}
+  {%- assign T_field_message_ph = 'Beschreiben Sie kurz Ihr Anliegen …' -%}
+  {%- assign T_optional       = 'optional' -%}
+  {%- assign T_field_attach   = 'Anhänge' -%}
+  {%- assign T_field_attach_m = 'Bilder oder Videos · beliebig viele' -%}
+  {%- assign T_attach_add     = 'Anhang hinzufügen' -%}
+  {%- assign T_consent        = 'Ich akzeptiere die' -%}
+  {%- assign T_consent_link   = 'Datenschutzerklärung' -%}
+  {%- assign T_consent_tail   = 'und stimme der Verarbeitung meiner Angaben zur Beantwortung dieser Anfrage zu.' -%}
+  {%- assign T_submit         = 'Chat starten' -%}
+  {%- assign T_thanks         = 'Danke!' -%}
+  {%- assign T_connecting     = 'Wir verbinden Sie mit unserem Support.' -%}
+  {%- assign T_orn_promise    = 'Ein persönlicher Concierge —<br>bereit, wenn Sie es sind.' -%}
+  {%- assign T_sig_line       = 'Karinex Premium Service' -%}
+  {%- assign T_sig_meta       = 'Persönlich · Diskret · Verbindlich' -%}
+  {%- assign T_chat_empty_t   = 'Wir freuen uns auf Ihre Nachricht' -%}
+  {%- assign T_chat_empty_s   = 'Unser Team antwortet in der Regel innerhalb weniger Minuten.' -%}
+  {%- assign T_chat_ph        = 'Ihre Nachricht …' -%}
+  {%- assign T_chat_send_aria = 'Nachricht senden' -%}
+  {%- assign T_chat_attach_aria = 'Datei anhängen' -%}
+  {%- assign T_secure_strip   = 'Verschlüsselt · GDPR-konform' -%}
+  {%- assign T_ctx_header     = '— Vorab-Kontext —' -%}
+  {%- assign T_ctx_topic      = 'Thema' -%}
+  {%- assign T_ctx_status     = 'Kundenstatus' -%}
+  {%- assign T_ctx_returning  = 'Bestandskunde' -%}
+  {%- assign T_ctx_new        = 'Neu / Beratung' -%}
+  {%- assign T_ctx_order      = 'Bestellnummer' -%}
+  {%- assign T_ctx_software   = 'Software' -%}
+  {%- assign T_ctx_platform   = 'Plattform' -%}
+  {%- assign T_ctx_usage      = 'Nutzung' -%}
+  {%- assign T_ctx_page       = 'Seite' -%}
+  {%- assign T_ctx_device     = 'Gerät' -%}
+  {%- assign T_err_image_video= 'Bitte wählen Sie ein Bild oder Video aus.' -%}
+{%- endif -%}
+
 <style>
   /* Completely hide Crisp's UI — we use only our native Karinex green panel as the chat surface */
   #crisp-chatbox,
@@ -1209,9 +1382,9 @@
     id="klcLauncher"
     aria-expanded="false"
     aria-controls="klcPanel"
-    aria-label="{{ 'general.live_chat.open' | t: default: 'Live-Chat öffnen' }}"
+    aria-label="{{ T_aria_open }}"
   >
-    <span class="klc-launcher__teaser">Wir sind online</span>
+    <span class="klc-launcher__teaser">{{ T_teaser }}</span>
     <svg class="klc-launcher__icon klc-launcher__icon--chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
     </svg>
@@ -1232,33 +1405,33 @@
     aria-hidden="true"
   >
     <div class="klc-header">
-      <button type="button" class="klc-header__back" id="klcHeaderBack" aria-label="Zurück zum Menü">
+      <button type="button" class="klc-header__back" id="klcHeaderBack" aria-label="{{ T_aria_back }}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button type="button" class="klc-header__close" id="klcClose" aria-label="Schließen">
+      <button type="button" class="klc-header__close" id="klcClose" aria-label="{{ T_aria_close }}">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="klc-header__brand">
         <h3 class="klc-header__wordmark" id="klcTitle">KARINEX</h3>
         <span class="klc-header__rule" aria-hidden="true"></span>
-        <p class="klc-header__tagline">Premium Support · Online</p>
+        <p class="klc-header__tagline">{{ T_brand_tagline }}</p>
       </div>
-      <p class="klc-header__welcome">Wir sind für Sie da. Unser Team beantwortet Ihre Fragen zu Produkten, Lizenzen und Bestellungen in wenigen Minuten.</p>
+      <p class="klc-header__welcome">{{ T_welcome_para }}</p>
     </div>
 
     <div class="klc-divider" aria-hidden="true"></div>
 
     <div class="klc-view klc-view--menu">
     <div class="klc-body">
-      <p class="klc-section-label">Wie können wir helfen?</p>
+      <p class="klc-section-label">{{ T_menu_section }}</p>
 
       <button type="button" class="klc-row klc-row--accent" id="klcLiveChatBtn">
         <span class="klc-row__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </span>
         <span class="klc-row__txt">
-          <span class="klc-row__title">Live-Chat starten</span>
-          <span class="klc-row__meta">Sofort antwort · Mit unserem Team</span>
+          <span class="klc-row__title">{{ T_row_chat }}</span>
+          <span class="klc-row__meta">{{ T_row_chat_meta }}</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
@@ -1268,8 +1441,8 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5 0 1.5 1.1 2.9 1.2 3.1.1.2 2.1 3.3 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.5-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.3c1.4.8 3 1.3 4.7 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.5 0-3-.4-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3c-.8-1.3-1.3-2.8-1.3-4.4 0-4.5 3.7-8.2 8.2-8.2 4.5 0 8.2 3.7 8.2 8.2 0 4.5-3.6 8.2-8.1 8.2z"/></svg>
         </span>
         <span class="klc-row__txt">
-          <span class="klc-row__title">WhatsApp Business</span>
-          <span class="klc-row__meta">Mo-Fr 10-18 Uhr</span>
+          <span class="klc-row__title">{{ T_row_wa }}</span>
+          <span class="klc-row__meta">{{ T_row_wa_meta }}</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -1279,7 +1452,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         </span>
         <span class="klc-row__txt">
-          <span class="klc-row__title">E-Mail schreiben</span>
+          <span class="klc-row__title">{{ T_row_mail }}</span>
           <span class="klc-row__meta">shop@karinex.de</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1290,8 +1463,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </span>
         <span class="klc-row__txt">
-          <span class="klc-row__title">Anrufen</span>
-          <span class="klc-row__meta">01556 / 3133956</span>
+          <span class="klc-row__title">{{ T_row_phone }}</span>
+          <span class="klc-row__meta">{{ T_row_phone_meta }}</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -1301,8 +1474,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </span>
         <span class="klc-row__txt">
-          <span class="klc-row__title">Häufige Fragen</span>
-          <span class="klc-row__meta">Sofort Antworten finden</span>
+          <span class="klc-row__title">{{ T_row_faq }}</span>
+          <span class="klc-row__meta">{{ T_row_faq_meta }}</span>
         </span>
         <svg class="klc-row__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
@@ -1311,115 +1484,115 @@
     <div class="klc-foot">
       <button type="button" class="klc-cta" id="klcCtaChat">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Chat jetzt starten
+        {{ T_cta }}
       </button>
-      <p class="klc-foot__legal">Powered by <b>Karinex</b> · Premium Service</p>
+      <p class="klc-foot__legal">{{ T_foot_legal | replace: 'Karinex', '<b>Karinex</b>' }}</p>
     </div>
     </div>
 
     <div class="klc-view klc-view--prechat" aria-hidden="true">
       <div class="klc-pre is-active" data-pre-step="welcome">
-        <p class="klc-pre__eyebrow">Willkommen bei Karinex</p>
-        <h4 class="klc-pre__title">Sind Sie bereits Kunde?</h4>
+        <p class="klc-pre__eyebrow">{{ T_pre_eyebrow_w }}</p>
+        <h4 class="klc-pre__title">{{ T_pre_title_w }}</h4>
         <div class="klc-pre__choices">
           <button type="button" class="klc-pre__choice" data-pre-action="returning">
-            <span class="klc-pre__choice-title">Ja, ich habe bereits bestellt</span>
-            <span class="klc-pre__choice-meta">Bestellung · Lizenz · Rechnung</span>
+            <span class="klc-pre__choice-title">{{ T_pre_yes_title }}</span>
+            <span class="klc-pre__choice-meta">{{ T_pre_yes_meta }}</span>
           </button>
           <button type="button" class="klc-pre__choice" data-pre-action="new">
-            <span class="klc-pre__choice-title">Nein, ich brauche Beratung</span>
-            <span class="klc-pre__choice-meta">Produktberatung · Allgemeine Fragen</span>
+            <span class="klc-pre__choice-title">{{ T_pre_no_title }}</span>
+            <span class="klc-pre__choice-meta">{{ T_pre_no_meta }}</span>
           </button>
         </div>
       </div>
 
       <div class="klc-pre" data-pre-step="topic">
-        <p class="klc-pre__eyebrow">Womit können wir helfen?</p>
-        <h4 class="klc-pre__title">Wählen Sie ein Thema</h4>
+        <p class="klc-pre__eyebrow">{{ T_pre_eyebrow_t }}</p>
+        <h4 class="klc-pre__title">{{ T_pre_title_t }}</h4>
         <div class="klc-pre__choices">
           <button type="button" class="klc-pre__choice" data-pre-topic="order">
-            <span class="klc-pre__choice-title">Frage zu meiner Bestellung</span>
-            <span class="klc-pre__choice-meta">Versand · Status · Änderungen</span>
+            <span class="klc-pre__choice-title">{{ T_topic_order }}</span>
+            <span class="klc-pre__choice-meta">{{ T_topic_order_m }}</span>
           </button>
           <button type="button" class="klc-pre__choice" data-pre-topic="license">
-            <span class="klc-pre__choice-title">Aktivierung / Lizenzproblem</span>
-            <span class="klc-pre__choice-meta">Key · Installation · Fehler</span>
+            <span class="klc-pre__choice-title">{{ T_topic_license }}</span>
+            <span class="klc-pre__choice-meta">{{ T_topic_license_m }}</span>
           </button>
           <button type="button" class="klc-pre__choice" data-pre-topic="invoice">
-            <span class="klc-pre__choice-title">Rechnung</span>
-            <span class="klc-pre__choice-meta">Beleg · Korrektur · Anfrage</span>
+            <span class="klc-pre__choice-title">{{ T_topic_invoice }}</span>
+            <span class="klc-pre__choice-meta">{{ T_topic_invoice_m }}</span>
           </button>
           <button type="button" class="klc-pre__choice" data-pre-topic="consult">
-            <span class="klc-pre__choice-title">Produktberatung</span>
-            <span class="klc-pre__choice-meta">Software · Empfehlung · Vergleich</span>
+            <span class="klc-pre__choice-title">{{ T_topic_consult }}</span>
+            <span class="klc-pre__choice-meta">{{ T_topic_consult_m }}</span>
           </button>
           <button type="button" class="klc-pre__choice" data-pre-topic="other">
-            <span class="klc-pre__choice-title">Sonstiges</span>
-            <span class="klc-pre__choice-meta">Allgemeine Anfrage</span>
+            <span class="klc-pre__choice-title">{{ T_topic_other }}</span>
+            <span class="klc-pre__choice-meta">{{ T_topic_other_m }}</span>
           </button>
         </div>
       </div>
 
       <div class="klc-pre" data-pre-step="form">
-        <p class="klc-pre__eyebrow" id="klcFormEyebrow">Ihre Angaben</p>
-        <h4 class="klc-pre__title" id="klcFormTitle">Ein paar kurze Angaben</h4>
+        <p class="klc-pre__eyebrow" id="klcFormEyebrow">{{ T_form_eyebrow }}</p>
+        <h4 class="klc-pre__title" id="klcFormTitle">{{ T_form_title }}</h4>
         <form class="klc-pre__form" id="klcPreForm" novalidate>
           <div class="klc-field">
-            <label for="klcFieldName">Name</label>
+            <label for="klcFieldName">{{ T_field_name }}</label>
             <input id="klcFieldName" type="text" name="name" autocomplete="name" required>
           </div>
           <div class="klc-field">
-            <label for="klcFieldEmail">E-Mail</label>
+            <label for="klcFieldEmail">{{ T_field_email }}</label>
             <input id="klcFieldEmail" type="email" name="email" autocomplete="email" required>
           </div>
           <div class="klc-field klc-field--hidden" data-show-for="order,license,invoice">
-            <label for="klcFieldOrder">Bestellnummer</label>
-            <input id="klcFieldOrder" type="text" name="order_number" autocomplete="off" placeholder="z. B. #12345">
+            <label for="klcFieldOrder">{{ T_field_order }}</label>
+            <input id="klcFieldOrder" type="text" name="order_number" autocomplete="off" placeholder="{{ T_field_order_ph }}">
           </div>
           <div class="klc-field klc-field--hidden" data-show-for="consult">
-            <label for="klcFieldSoftware">Welche Software benötigen Sie?</label>
-            <input id="klcFieldSoftware" type="text" name="software" autocomplete="off" placeholder="z. B. Office 2024">
+            <label for="klcFieldSoftware">{{ T_field_software }}</label>
+            <input id="klcFieldSoftware" type="text" name="software" autocomplete="off" placeholder="{{ T_field_sw_ph }}">
           </div>
           <div class="klc-field klc-field--hidden" data-show-for="consult">
-            <label>Plattform</label>
+            <label>{{ T_field_platform }}</label>
             <div class="klc-chip-row">
               <label class="klc-chip"><input type="radio" name="platform" value="Windows"> Windows</label>
               <label class="klc-chip"><input type="radio" name="platform" value="Mac"> Mac</label>
-              <label class="klc-chip"><input type="radio" name="platform" value="Beide"> Beide</label>
+              <label class="klc-chip"><input type="radio" name="platform" value="Both">{% if klc_is_en %} Both{% else %} Beide{% endif %}</label>
             </div>
           </div>
           <div class="klc-field klc-field--hidden" data-show-for="consult">
-            <label>Nutzung</label>
+            <label>{{ T_field_usage }}</label>
             <div class="klc-chip-row">
-              <label class="klc-chip"><input type="radio" name="usage" value="Privat"> Privat</label>
-              <label class="klc-chip"><input type="radio" name="usage" value="Firma"> Firma</label>
+              <label class="klc-chip"><input type="radio" name="usage" value="Private"> {{ T_usage_private }}</label>
+              <label class="klc-chip"><input type="radio" name="usage" value="Business"> {{ T_usage_business }}</label>
             </div>
           </div>
           <div class="klc-field">
-            <label for="klcFieldMsg">Ihre Nachricht <span class="klc-field__opt">optional</span></label>
-            <textarea id="klcFieldMsg" name="message" rows="3" placeholder="Beschreiben Sie kurz Ihr Anliegen …"></textarea>
+            <label for="klcFieldMsg">{{ T_field_message }} <span class="klc-field__opt">{{ T_optional }}</span></label>
+            <textarea id="klcFieldMsg" name="message" rows="3" placeholder="{{ T_field_message_ph }}"></textarea>
           </div>
           <div class="klc-field">
-            <label>Anhänge <span class="klc-field__opt">Bilder oder Videos · beliebig viele</span></label>
+            <label>{{ T_field_attach }} <span class="klc-field__opt">{{ T_field_attach_m }}</span></label>
             <label class="klc-drop" for="klcFormFile" tabindex="0">
               <input id="klcFormFile" type="file" accept="image/*,video/*" multiple style="position:absolute;opacity:0;width:0;height:0;">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-              <span class="klc-drop__text">Anhang hinzufügen</span>
+              <span class="klc-drop__text">{{ T_attach_add }}</span>
             </label>
             <div class="klc-attach-list" id="klcFormAttachList" hidden></div>
           </div>
           <label class="klc-consent">
             <input type="checkbox" name="consent" required>
-            <span>Ich akzeptiere die <a href="/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> und stimme der Verarbeitung meiner Angaben zur Beantwortung dieser Anfrage zu.</span>
+            <span>{{ T_consent }} <a href="/policies/privacy-policy" target="_blank" rel="noopener">{{ T_consent_link }}</a> {{ T_consent_tail }}</span>
           </label>
-          <button type="submit" class="klc-pre__submit">Chat starten</button>
+          <button type="submit" class="klc-pre__submit">{{ T_submit }}</button>
         </form>
       </div>
 
       <div class="klc-pre" data-pre-step="connecting">
         <div class="klc-pre__loader" aria-hidden="true"><span></span><span></span><span></span></div>
-        <h4 class="klc-pre__title">Danke!</h4>
-        <p class="klc-pre__sub">Wir verbinden Sie mit unserem Support.</p>
+        <h4 class="klc-pre__title">{{ T_thanks }}</h4>
+        <p class="klc-pre__sub">{{ T_connecting }}</p>
       </div>
 
       <div class="klc-pre__ornament" aria-hidden="true">
@@ -1432,23 +1605,23 @@
             <circle cx="31" cy="24" r="1.4" fill="currentColor"/>
           </svg>
         </div>
-        <p class="klc-pre__orn-promise">Ein persönlicher Concierge —<br>bereit, wenn Sie es sind.</p>
+        <p class="klc-pre__orn-promise">{{ T_orn_promise }}</p>
       </div>
 
       <footer class="klc-pre__signature" aria-hidden="true">
         <span class="klc-pre__sig-rule"></span>
-        <p class="klc-pre__sig-line">Karinex Premium Service</p>
-        <p class="klc-pre__sig-meta">Persönlich · Diskret · Verbindlich</p>
+        <p class="klc-pre__sig-line">{{ T_sig_line }}</p>
+        <p class="klc-pre__sig-meta">{{ T_sig_meta }}</p>
         <p class="klc-pre__sig-contact">+49&nbsp;1556 / 3133956 · shop@karinex.de</p>
       </footer>
     </div>
 
     <div class="klc-view klc-view--chat" aria-hidden="true">
       <div class="klc-chat-bar">
-        <button type="button" class="klc-chat-back" id="klcChatBack" aria-label="Zurück zum Menü">
+        <button type="button" class="klc-chat-back" id="klcChatBack" aria-label="{{ T_aria_back }}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <span class="klc-chat-bar__title">Karinex Concierge</span>
+        <span class="klc-chat-bar__title">KARINEX</span>
         <span class="klc-chat-bar__status">Online</span>
       </div>
 
@@ -1457,14 +1630,14 @@
           <div class="klc-chat-empty__icon" aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <p class="klc-chat-empty__title">Wir freuen uns auf Ihre Nachricht</p>
-          <p class="klc-chat-empty__sub">Unser Team antwortet in der Regel innerhalb weniger Minuten.</p>
+          <p class="klc-chat-empty__title">{{ T_chat_empty_t }}</p>
+          <p class="klc-chat-empty__sub">{{ T_chat_empty_s }}</p>
         </div>
       </div>
 
       <div class="klc-chat-input-wrap">
         <div class="klc-chat-input-row">
-          <button type="button" class="klc-chat-attach" id="klcChatAttach" aria-label="Bild anhängen" title="Bild anhängen">
+          <button type="button" class="klc-chat-attach" id="klcChatAttach" aria-label="{{ T_chat_attach_aria }}" title="{{ T_chat_attach_aria }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </button>
           <input type="file" id="klcChatFile" accept="image/*,video/*" multiple style="display:none" aria-hidden="true">
@@ -1472,20 +1645,20 @@
             id="klcChatInput"
             class="klc-chat-input"
             rows="1"
-            placeholder="Ihre Nachricht …"
-            aria-label="Nachricht eingeben"
+            placeholder="{{ T_chat_ph }}"
+            aria-label="{{ T_chat_ph }}"
           ></textarea>
-          <button type="button" class="klc-chat-send" id="klcChatSend" aria-label="Nachricht senden" disabled>
+          <button type="button" class="klc-chat-send" id="klcChatSend" aria-label="{{ T_chat_send_aria }}" disabled>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
-        <p class="klc-chat-foot">Verschlüsselt · GDPR-konform</p>
+        <p class="klc-chat-foot">{{ T_secure_strip }}</p>
       </div>
     </div>
   </aside>
 
-  <div class="klc-lightbox" id="klcLightbox" role="dialog" aria-modal="true" aria-label="Bildvorschau" aria-hidden="true">
-    <button type="button" class="klc-lightbox__close" id="klcLightboxClose" aria-label="Schließen">
+  <div class="klc-lightbox" id="klcLightbox" role="dialog" aria-modal="true" aria-label="{{ T_aria_close }}" aria-hidden="true">
+    <button type="button" class="klc-lightbox__close" id="klcLightboxClose" aria-label="{{ T_aria_close }}">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <img id="klcLightboxImg" alt="">
@@ -1642,11 +1815,27 @@
 
     /* ── Pre-chat wizard ───────────────────────────────────── */
     var TOPIC_LABEL = {
-      order:   'Frage zu meiner Bestellung',
-      license: 'Aktivierung / Lizenzproblem',
-      invoice: 'Rechnung',
-      consult: 'Produktberatung',
-      other:   'Sonstiges'
+      order:   {{ T_topic_order   | json }},
+      license: {{ T_topic_license | json }},
+      invoice: {{ T_topic_invoice | json }},
+      consult: {{ T_topic_consult | json }},
+      other:   {{ T_topic_other   | json }}
+    };
+    var KLC_I18N = {
+      formTitle:     {{ T_form_title   | json }},
+      formTitleC:    {{ T_form_title_c | json }},
+      ctxHeader:     {{ T_ctx_header   | json }},
+      ctxTopic:      {{ T_ctx_topic    | json }},
+      ctxStatus:     {{ T_ctx_status   | json }},
+      ctxReturning:  {{ T_ctx_returning| json }},
+      ctxNew:        {{ T_ctx_new      | json }},
+      ctxOrder:      {{ T_ctx_order    | json }},
+      ctxSoftware:   {{ T_ctx_software | json }},
+      ctxPlatform:   {{ T_ctx_platform | json }},
+      ctxUsage:      {{ T_ctx_usage    | json }},
+      ctxPage:       {{ T_ctx_page     | json }},
+      ctxDevice:     {{ T_ctx_device   | json }},
+      errImageVideo: {{ T_err_image_video | json }}
     };
     var klcContext = { customerType: '', topic: '', topicLabel: '' };
 
@@ -1855,15 +2044,15 @@
               window.$crisp.push(['set', 'session:segments', [seg, false]]);
               // Compose context message for the agent
               var lines = [];
-              lines.push('— Vorab-Kontext —');
-              if (ctx.topicLabel)   lines.push('Thema: '         + ctx.topicLabel);
-              if (ctx.customerType) lines.push('Kundenstatus: '  + (ctx.customerType === 'returning' ? 'Bestandskunde' : 'Neu / Beratung'));
-              if (ctx.orderNumber)  lines.push('Bestellnummer: ' + ctx.orderNumber);
-              if (ctx.software)     lines.push('Software: '      + ctx.software);
-              if (ctx.platform)     lines.push('Plattform: '     + ctx.platform);
-              if (ctx.usage)        lines.push('Nutzung: '       + ctx.usage);
-              lines.push('Seite: '   + ctx.pageUrl);
-              lines.push('Gerät: '   + ctx.device);
+              lines.push(KLC_I18N.ctxHeader);
+              if (ctx.topicLabel)   lines.push(KLC_I18N.ctxTopic    + ': ' + ctx.topicLabel);
+              if (ctx.customerType) lines.push(KLC_I18N.ctxStatus   + ': ' + (ctx.customerType === 'returning' ? KLC_I18N.ctxReturning : KLC_I18N.ctxNew));
+              if (ctx.orderNumber)  lines.push(KLC_I18N.ctxOrder    + ': ' + ctx.orderNumber);
+              if (ctx.software)     lines.push(KLC_I18N.ctxSoftware + ': ' + ctx.software);
+              if (ctx.platform)     lines.push(KLC_I18N.ctxPlatform + ': ' + ctx.platform);
+              if (ctx.usage)        lines.push(KLC_I18N.ctxUsage    + ': ' + ctx.usage);
+              lines.push(KLC_I18N.ctxPage   + ': ' + ctx.pageUrl);
+              lines.push(KLC_I18N.ctxDevice + ': ' + ctx.device);
               if (ctx.message) { lines.push(''); lines.push(ctx.message); }
               var text = lines.join('\n');
               // Show in our local chat as a "user" message, then send to Crisp
@@ -1902,7 +2091,7 @@
           var eyebrow = document.getElementById('klcFormEyebrow');
           var title   = document.getElementById('klcFormTitle');
           if (eyebrow) eyebrow.textContent = TOPIC_LABEL.consult;
-          if (title)   title.textContent   = 'Wir beraten Sie gern';
+          if (title)   title.textContent   = KLC_I18N.formTitleC;
           showPreStep('form');
         } else {
           showPreStep('topic');
@@ -1920,7 +2109,7 @@
         var eyebrow = document.getElementById('klcFormEyebrow');
         var title   = document.getElementById('klcFormTitle');
         if (eyebrow) eyebrow.textContent = klcContext.topicLabel;
-        if (title)   title.textContent   = topic === 'consult' ? 'Wir beraten Sie gern' : 'Ein paar kurze Angaben';
+        if (title)   title.textContent   = topic === 'consult' ? KLC_I18N.formTitleC : KLC_I18N.formTitle;
         showPreStep('form');
       });
     });
@@ -2052,7 +2241,7 @@
       var isImage = /^image\//.test(file.type);
       var isVideo = /^video\//.test(file.type);
       if (!isImage && !isVideo) {
-        alert('Bitte wählen Sie ein Bild oder Video aus.');
+        alert(KLC_I18N.errImageVideo);
         return;
       }
       // optimistic preview
