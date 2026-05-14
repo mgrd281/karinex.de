@@ -151,6 +151,7 @@
                   <span class="svg-wrapper icon-checkmark">
                     {{- 'icon-checkmark.svg' | inline_asset_content -}}
                   </span>
+                  <span class="country-flag" data-klx-iso="{{ country.iso_code }}" aria-hidden="true"></span>
                   <span class="country">{{- country.name }}</span>
                   <span
                     class="localization-form__currency motion-reduce"
@@ -205,6 +206,7 @@
                 <span class="svg-wrapper icon-checkmark">
                   {{- 'icon-checkmark.svg' | inline_asset_content -}}
                 </span>
+                <span class="country-flag" data-klx-iso="{{ country.iso_code }}" aria-hidden="true"></span>
                 <span class="country">{{- country.name }}</span>
                 <span
                   class="localization-form__currency motion-reduce"
@@ -449,6 +451,16 @@
     text-align: start;
     cursor: pointer;
     transition: background-color var(--animation-speed) var(--animation-easing);
+
+    .country-flag {
+      display: inline-block;
+      font-size: 16px;
+      line-height: 1;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-right: 4px;
+    }
 
     .country {
       flex: 1;
@@ -813,6 +825,25 @@
 {% endstylesheet %}
 
 <script>
+(function() {
+  // Hydrate flag emoji from ISO via Unicode regional indicators
+  function _klxFlag(iso) {
+    if (!iso || iso.length !== 2) return '';
+    iso = iso.toUpperCase();
+    var a = iso.charCodeAt(0), b = iso.charCodeAt(1);
+    if (a < 65 || a > 90 || b < 65 || b > 90) return '';
+    return String.fromCodePoint(127397 + a) + String.fromCodePoint(127397 + b);
+  }
+  function _klxHydrateFlags(root) {
+    (root || document).querySelectorAll('.country-flag[data-klx-iso]').forEach(function (el) {
+      if (el.textContent) return; // already filled
+      el.textContent = _klxFlag(el.getAttribute('data-klx-iso'));
+    });
+  }
+  _klxHydrateFlags();
+  // Re-hydrate when the dropdown opens (DOM may have been built lazily)
+  document.addEventListener('click', function () { setTimeout(_klxHydrateFlags, 50); });
+})();
 (function() {
   // Map country ISO codes to Shopify locale prefixes
   var COUNTRY_LOCALE_MAP = {
