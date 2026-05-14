@@ -45,6 +45,46 @@
     return_to: back,
     aria-label: localization_label
   -%}
+    {%- comment -%}
+      Karinex UX fix: language selector rendered FIRST (above the country list)
+      so visitors don't have to scroll past 30+ countries to find their language.
+    {%- endcomment -%}
+    {% if show_language %}
+      <div class="language-selector language-selector--top{% if show_country == false %} language-selector--collapse-space{% endif %}{% if show_country == false and localization_style == 'drawer' %} h5{% endif %}">
+        <h2
+          class="visually-hidden"
+          id="{{ localization_style }}-LanguageLabel"
+        >
+          {{ 'content.language' | t }}
+        </h2>
+        {% if show_country == true %}
+          <span class="language-selector__label">{{ 'content.language' | t }}</span>
+        {% endif %}
+        <select
+          id="{{ localization_style }}Select"
+          class="localization-form__select"
+          name="language_code"
+          aria-label="{{ 'content.language' | t }}"
+          ref="languageInput"
+          on:change="/changeLanguage"
+        >
+          {%- for language in localization.available_languages -%}
+            <option
+              value="{{ language.iso_code }}"
+              lang="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}
+                selected
+              {% endif %}
+            >
+              {{ language.endonym_name | capitalize }}
+            </option>
+          {%- endfor -%}
+        </select>
+        <span class="svg-wrapper icon-caret">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </div>
+    {% endif %}
     {% if show_country %}
       {% if show_country_filter %}
         <div class="country-filter">
@@ -230,42 +270,6 @@
       </div>
     {% endif %}
 
-    {% if show_language %}
-      <div class="language-selector{% if show_country %} top-shadow{% else %} language-selector--collapse-space{% endif %}{% if show_country == false and localization_style == 'drawer' %} h5{% endif %}">
-        <h2
-          class="visually-hidden"
-          id="{{ localization_style }}-LanguageLabel"
-        >
-          {{ 'content.language' | t }}
-        </h2>
-        {% if show_country == true %}
-          <span class="language-selector__label">{{ 'content.language' | t }}</span>
-        {% endif %}
-        <select
-          id="{{ localization_style }}Select"
-          class="localization-form__select"
-          name="language_code"
-          aria-label="{{ 'content.language' | t }}"
-          ref="languageInput"
-          on:change="/changeLanguage"
-        >
-          {%- for language in localization.available_languages -%}
-            <option
-              value="{{ language.iso_code }}"
-              lang="{{ language.iso_code }}"
-              {% if language.iso_code == localization.language.iso_code %}
-                selected
-              {% endif %}
-            >
-              {{ language.endonym_name | capitalize }}
-            </option>
-          {%- endfor -%}
-        </select>
-        <span class="svg-wrapper icon-caret">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
-      </div>
-    {% endif %}
   {%- endform -%}
 </localization-form-component>
 
@@ -746,6 +750,17 @@
 
   .dropdown-localization .language-selector:where(:not(.top-shadow)) {
     font-weight: var(--menu-top-level-font-weight);
+  }
+
+  /* Karinex: language selector when rendered above the country list */
+  .dropdown-localization .language-selector--top {
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
+    box-shadow: none;
+    font-weight: var(--menu-top-level-font-weight);
+    padding: 12px 16px;
+  }
+  .dropdown-localization .language-selector--top .language-selector__label {
+    font-weight: 600;
   }
 
   .dropdown-localization:not(dropdown-localization-component) .language-selector,
