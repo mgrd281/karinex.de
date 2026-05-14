@@ -154,8 +154,9 @@
     right: 22px;
     bottom: 100px;
     z-index: 9999;
-    width: min(380px, calc(100vw - 32px));
-    max-height: min(640px, calc(100vh - 130px));
+    width: min(420px, calc(100vw - 32px));
+    height: min(720px, calc(100vh - 110px));
+    max-height: calc(100vh - 110px);
     background: var(--klc-surface);
     border-radius: var(--klc-radius-panel);
     box-shadow: var(--klc-shadow-panel);
@@ -448,6 +449,7 @@
     .klc-panel {
       right: 12px; left: 12px; bottom: 86px;
       width: auto;
+      height: calc(100vh - 110px);
       max-height: calc(100vh - 110px);
     }
     .klc-launcher__teaser { display: none; }
