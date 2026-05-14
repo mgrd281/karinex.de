@@ -348,9 +348,21 @@
 {%- endcase -%}
 
 <style>
-  /* Completely hide Crisp's UI — we use only our native Karinex green panel as the chat surface */
+  /* Hide Crisp's UI off-screen — we use only our native Karinex green panel
+     as the chat surface. We deliberately AVOID `display: none` because that
+     can stop Crisp from delivering operator replies (its DOM nodes must stay
+     in the layout for its WebSocket bindings to forward message:received). */
   #crisp-chatbox,
-  .crisp-client { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+  .crisp-client {
+    position: fixed !important;
+    left: -10000px !important;
+    top: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+  }
 </style>
 
 <style>
@@ -1938,7 +1950,6 @@
       window.CRISP_WEBSITE_ID = CRISP_ID;
       // run before script loads — these get queued
       window.$crisp.push(['safe', true]);
-      window.$crisp.push(['do', 'chat:hide']);
       // wire receive
       window.$crisp.push(['on', 'message:received', function (msg) {
         if (msg && msg.type === 'file') return; // handled by file listener below
@@ -1965,8 +1976,6 @@
       s.async = 1;
       s.onload = function () {
         crispReady = true;
-        // Always keep their UI hidden
-        try { window.$crisp.push(['do', 'chat:hide']); } catch (_) {}
         cb && cb();
       };
       document.head.appendChild(s);
