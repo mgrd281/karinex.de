@@ -798,7 +798,19 @@
   }
   .klc-backdrop.is-open { opacity: 1; pointer-events: auto; }
 
-  /* Mobile responsive */
+  /* Desktop only — hide widget + Crisp script wrapper on phones/tablets */
+  @media (max-width: 768px) {
+    .klc,
+    .klc-launcher,
+    .klc-panel,
+    .klc-backdrop,
+    .klc-lightbox,
+    #crisp-chatbox,
+    .crisp-client { display: none !important; }
+  }
+
+  /* Mobile responsive (legacy — kept only for sizes 521-768, the bar
+     above this breakpoint will now hide entirely) */
   @media (max-width: 520px) {
     .klc-launcher { right: 16px; bottom: 16px; width: 56px; height: 56px; }
     .klc-panel {
