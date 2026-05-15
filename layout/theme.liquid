@@ -195,6 +195,25 @@
     {%- render 'meta-tags' -%}
     {%- render 'critical-css' -%}
 
+    {%- comment -%}
+      Product page: dual main section (desktop = product-information,
+      mobile = product-aboutyou). Hide the wrong one via CSS so both
+      can co-exist without FOUC. Inline + early so it wins over any
+      later CSS.
+    {%- endcomment -%}
+    {%- if template.name == 'product' -%}
+      <style>
+        /* Mobile (≤768 px) → only the AboutYou section is visible */
+        @media (max-width: 768px) {
+          #shopify-section-main { display: none !important; }
+        }
+        /* Desktop (≥769 px) → only the Karinex section is visible */
+        @media (min-width: 769px) {
+          #shopify-section-main_mobile { display: none !important; }
+        }
+      </style>
+    {%- endif -%}
+
     <!-- Fix: Prevent FOUC (Flash of Unstyled Content) in Header -->
     <style>
       /* Hide header elements until Web Components are defined */
