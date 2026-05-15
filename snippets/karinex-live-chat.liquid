@@ -1861,6 +1861,16 @@
 
 <script>
   (function () {
+    // Desktop-only widget. On mobile/tablet we bail out entirely so neither
+    // our gold panel nor Crisp's full-screen chatbox can be injected.
+    // This also prevents the post-load "white page" issue some mobile
+    // visitors hit when Crisp's inline styles overrode our hide-CSS.
+    try {
+      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+        return;
+      }
+    } catch (_) {}
+
     var launcher    = document.getElementById('klcLauncher');
     var panel       = document.getElementById('klcPanel');
     var closeBtn    = document.getElementById('klcClose');
