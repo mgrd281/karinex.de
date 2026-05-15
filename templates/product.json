@@ -411,22 +411,10 @@
         "question": "Haben Sie alle Informationen gefunden, die Sie benötigen?",
         "service_url": ""
       }
-    },
-    "main_mobile": {
-      "type": "product-aboutyou",
-      "settings": {
-        "enable_hover_zoom": false,
-        "show_payment_buttons": false,
-        "show_card_wishlist_heart": true,
-        "show_card_quick_add": true,
-        "backinstock_webapp_url": "https://script.google.com/macros/s/AKfycbzJPrYFa_QE6rpG5GPmySgxQA_HM-wpuJCmNIZ3EX5qcbuje03Au2zd2mGKlYfnFEg1/exec",
-        "backinstock_seller_email": ""
-      }
     }
   },
   "order": [
     "main",
-    "main_mobile",
     "product_faq",
     "product_recommendations_xmXAhw",
     "media_with_content_9rDKpN",

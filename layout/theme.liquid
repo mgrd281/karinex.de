@@ -195,29 +195,6 @@
     {%- render 'meta-tags' -%}
     {%- render 'critical-css' -%}
 
-    {%- comment -%}
-      Product page: dual main section (desktop = product-information,
-      mobile = product-aboutyou). Hide the wrong one via CSS so both
-      can co-exist without FOUC. Inline + early so it wins over any
-      later CSS.
-    {%- endcomment -%}
-    {%- if template.name == 'product' -%}
-      <style>
-        /* Shopify wraps JSON-template sections with IDs like
-           #shopify-section-template--XXXX__main and ...__main_mobile,
-           so we use attribute selectors (ends-with) to match both
-           the bare and templated formats. */
-        @media (max-width: 768px) {
-          [id$="__main"][class*="shopify-section"],
-          #shopify-section-main { display: none !important; }
-        }
-        @media (min-width: 769px) {
-          [id$="__main_mobile"][class*="shopify-section"],
-          #shopify-section-main_mobile { display: none !important; }
-        }
-      </style>
-    {%- endif -%}
-
     <!-- Fix: Prevent FOUC (Flash of Unstyled Content) in Header -->
     <style>
       /* Hide header elements until Web Components are defined */
