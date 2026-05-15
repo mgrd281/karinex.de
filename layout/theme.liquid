@@ -203,16 +203,12 @@
     {%- endcomment -%}
     {%- if template.name == 'product' -%}
       <style>
-        /* Shopify wraps JSON-template sections with IDs like
-           #shopify-section-template--XXXX__main and ...__main_mobile,
-           so we use attribute selectors (ends-with) to match both
-           the bare and templated formats. */
+        /* Mobile (≤768 px) → only the AboutYou section is visible */
         @media (max-width: 768px) {
-          [id$="__main"][class*="shopify-section"],
           #shopify-section-main { display: none !important; }
         }
+        /* Desktop (≥769 px) → only the Karinex section is visible */
         @media (min-width: 769px) {
-          [id$="__main_mobile"][class*="shopify-section"],
           #shopify-section-main_mobile { display: none !important; }
         }
       </style>
