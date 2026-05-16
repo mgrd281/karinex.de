@@ -1,0 +1,194 @@
+{%- comment -%}
+  Complementary products ("Das brauchst du auch") — cross-sell widget
+  for the PDP. Suggests 3 products from a complementary collection
+  based on the current product's category.
+
+  Inputs:
+    product — the current product (required)
+
+  Logic:
+    - Office product → suggest top 3 Windows licenses
+    - Windows product → suggest top 3 Office licenses
+    - Server product → suggest top 3 Windows licenses
+    - Microsoft 365 → suggest top 3 Office Dauer / Mac titles
+    - Tools → suggest top 3 Office titles
+    - default → suggest top 3 bestsellers
+
+  Hides itself silently if the matched complementary collection is empty
+  or every candidate equals the current product.
+{%- endcomment -%}
+
+{%- liquid
+  assign p_collections = product.collections | map: 'handle' | join: ','
+  assign p_tags = product.tags | join: ',' | downcase
+  assign p_title = product.title | downcase
+
+  assign comp_handle = 'bestseller'
+  if p_collections contains 'microsoft-office' or p_collections contains 'microsoft-office-fur-mac' or p_title contains 'office'
+    assign comp_handle = 'windows'
+  elsif p_collections contains 'windows-server' or p_title contains 'server' or p_title contains 'sql' or p_title contains 'exchange'
+    assign comp_handle = 'windows'
+  elsif p_collections contains 'windows' or p_title contains 'windows'
+    assign comp_handle = 'microsoft-office'
+  elsif p_collections contains 'microsoft-365-abonnement' or p_title contains '365'
+    assign comp_handle = 'microsoft-office'
+  elsif p_collections contains 'microsoft-tools' or p_title contains 'visio' or p_title contains 'project' or p_title contains 'visual studio'
+    assign comp_handle = 'microsoft-office'
+  endif
+
+  assign comp = collections[comp_handle]
+  assign comp_products = comp.products
+-%}
+
+{%- if comp_products and comp_products.size > 0 -%}
+  {%- assign _shown = 0 -%}
+  {%- assign _candidates = '' -%}
+  {%- for p in comp_products limit: 6 -%}
+    {%- unless p.handle == product.handle -%}
+      {%- if _shown < 3 -%}
+        {%- assign _candidates = _candidates | append: p.id | append: ',' -%}
+        {%- assign _shown = _shown | plus: 1 -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+
+  {%- if _shown > 0 -%}
+    <aside class="kx-comp" aria-label="{{ 'karinex.related.complementary_heading' | t }}">
+      <div class="kx-comp__head">
+        <span class="kx-comp__title">{{ 'karinex.related.complementary_heading' | t }}</span>
+        <a href="{{ comp.url }}" class="kx-comp__view-all">{{ 'karinex.related.view_all' | t }} →</a>
+      </div>
+      <ul class="kx-comp__grid" role="list">
+        {%- assign _i = 0 -%}
+        {%- for p in comp_products limit: 6 -%}
+          {%- unless p.handle == product.handle -%}
+            {%- if _i < 3 -%}
+              {%- assign _i = _i | plus: 1 -%}
+              {%- assign _full = p.title -%}
+              {%- assign _short = _full | split: ' – ' | first | split: ' | ' | first | truncatewords: 5, '…' -%}
+              <li class="kx-comp__item">
+                <a href="{{ p.url }}" class="kx-comp__link" title="{{ _full | escape }}">
+                  {%- if p.featured_image -%}
+                    <img class="kx-comp__img"
+                         src="{{ p.featured_image | image_url: width: 120 }}"
+                         alt="{{ p.title | escape }}"
+                         loading="lazy"
+                         width="60" height="60">
+                  {%- endif -%}
+                  <span class="kx-comp__body">
+                    <span class="kx-comp__name">{{ _short }}</span>
+                    {%- if p.compare_at_price > p.price -%}
+                      <span class="kx-comp__price">
+                        <s class="kx-comp__old">{{ p.compare_at_price | money }}</s>
+                        <strong class="kx-comp__new">{{ p.price | money }}</strong>
+                      </span>
+                    {%- else -%}
+                      <strong class="kx-comp__price">{{ p.price | money }}</strong>
+                    {%- endif -%}
+                  </span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </aside>
+
+    <style>
+      .kx-comp {
+        margin: 16px 0 24px;
+        padding: 18px 18px 14px;
+        background: #ffffff;
+        border: 1px solid #ece6d6;
+        border-radius: 12px;
+      }
+      .kx-comp__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .kx-comp__title {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #1B3A2E;
+      }
+      .kx-comp__view-all {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1B3A2E;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .kx-comp__view-all:hover { text-decoration: underline; }
+      .kx-comp__grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      @media (max-width: 640px) {
+        .kx-comp__grid { grid-template-columns: 1fr; }
+      }
+      .kx-comp__link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #f0eadb;
+        background: #faf7f0;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+        height: 100%;
+      }
+      .kx-comp__link:hover,
+      .kx-comp__link:focus-visible {
+        border-color: #c9a84c;
+        background: #fff;
+        transform: translateY(-1px);
+      }
+      .kx-comp__img {
+        flex: 0 0 60px;
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .kx-comp__body {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+      }
+      .kx-comp__name {
+        font-size: 13px;
+        font-weight: 500;
+        color: #1a1a1a;
+        line-height: 1.3;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .kx-comp__price {
+        font-size: 13px;
+        font-weight: 700;
+        color: #E30613;
+      }
+      .kx-comp__old {
+        font-weight: 400;
+        font-size: 11px;
+        color: #999;
+        margin-right: 5px;
+      }
+      .kx-comp__new { color: #E30613; }
+    </style>
+  {%- endif -%}
+{%- endif -%}

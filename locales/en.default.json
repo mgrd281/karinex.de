@@ -392,6 +392,11 @@
       "pay_now_paypal": "Pay now with PayPal",
       "lightning_email": "Lightning delivery via email"
     },
+    "related": {
+      "categories_heading": "Related categories",
+      "complementary_heading": "You'll also need this",
+      "view_all": "View all"
+    },
     "trust": {
       "authorized_dealer": "Verified original goods – shipped from Germany",
       "original_and_authenticity": "Verified original & authenticity guarantee",
@@ -494,7 +499,8 @@
       "seals_certificates": "Certificates & seals",
       "cookie_policy": "Cookie policy",
       "cookies": "Cookies",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "popular_products": "Popular products"
     },
     "header": {
       "contact_help": "Contact & help"
