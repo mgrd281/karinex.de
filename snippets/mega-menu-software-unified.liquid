@@ -521,10 +521,22 @@
 
       {%- if render_mode == 'nested' -%}
 
-        {%- assign nested_count = parent_link.links.size -%}
+        {%- comment -%}
+          Count only groups that actually have sub-links so empty
+          category headers (e.g. "WINDOWS 8" with no products yet)
+          don't reserve a whole grid column.
+        {%- endcomment -%}
+        {%- assign nested_count = 0 -%}
+        {%- for group in parent_link.links -%}
+          {%- if group.links.size > 0 -%}
+            {%- assign nested_count = nested_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if nested_count == 0 -%}{%- assign nested_count = parent_link.links.size -%}{%- endif -%}
         {%- assign nested_cols = nested_count | at_most: 4 -%}
         <div class="kx-cat__grid kx-cat__grid--{{ nested_cols }}">
           {%- for group in parent_link.links -%}
+            {%- if group.links.size == 0 -%}{%- continue -%}{%- endif -%}
             <div class="kx-cat__col">
               <h4 class="kx-cat__col-title">
                 {% case forloop.index0 | modulo: 4 %}{% when 0 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_layers }}</span>{% when 1 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_doc }}</span>{% when 2 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_chart }}</span>{% else %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_nodes }}</span>{% endcase %}
