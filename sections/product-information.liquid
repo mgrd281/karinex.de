@@ -2802,10 +2802,10 @@ nav[aria-label="Breadcrumb"],
   </div>
   <span class="kx-psp-text">
     <strong class="kx-psp-highlight">{{ _sold_count }}x</strong>
-    <span class="kx-psp-muted">in den letzten 30 Tagen verkauft</span>
+    <span class="kx-psp-muted">{{ 'karinex.meta.sold_last_30_days' | t }}</span>
     {%- if _sold_city and _sold_city != blank -%}
       <span class="kx-psp-sep"> · </span>
-      <span class="kx-psp-city">Letzter Kauf aus <strong>{{ _sold_city }}</strong></span>
+      <span class="kx-psp-city">{{ 'karinex.meta.last_purchase_from' | t }} <strong>{{ _sold_city }}</strong></span>
     {%- endif -%}
   </span>
 </div>
@@ -3215,7 +3215,7 @@ nav[aria-label="Breadcrumb"],
         <div class="price-sub-row">
           <span class="old-price">{{ cap | money }}</span>
           <span class="price-sep">•</span>
-          <span class="savings-text">Preisvorteil: <strong>{{ cap | minus: cur | money }}</strong></span>
+          <span class="savings-text">{{ 'karinex.meta.price_savings_label' | t }} <strong>{{ cap | minus: cur | money }}</strong></span>
         </div>
       {% endif %}
     </div>
@@ -3506,7 +3506,8 @@ nav[aria-label="Breadcrumb"],
         <input type="hidden" name="id" ref="variantId" value="{{ product.selected_or_first_available_variant.id }}">
         <input type="hidden" name="quantity" value="1">
         <div class="atc-wrapper">
-          {% render 'add-to-cart-button', can_add_to_cart: true, add_to_cart_text: 'karinex.product.add_to_cart' | t, class: 'buy-btn kx-atc-btn', product: product %}
+          {%- assign _kx_atc_text = 'karinex.product.add_to_cart' | t -%}
+          {% render 'add-to-cart-button', can_add_to_cart: true, add_to_cart_text: _kx_atc_text, class: 'buy-btn kx-atc-btn', product: product %}
         </div>
       </form>
     </product-form-component>
@@ -3618,28 +3619,28 @@ nav[aria-label="Breadcrumb"],
     </li>
     <li class="meta-list-item">
       <i class="fa-solid fa-file-invoice"></i>
-      <span class="meta-text"><span class="meta-label">Download-Anleitung:</span> <span class="meta-value">in der Bestätigungs-E-Mail enthalten</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.download_guide_label' | t }}</span> <span class="meta-value">{{ 'karinex.meta.download_guide_value' | t }}</span></span>
     </li>
     <li class="meta-list-item">
       <i class="fa-solid fa-check-circle"></i>
-      <span class="meta-text"><span class="meta-label">Einmalige Zahlung:</span> <span class="meta-value">keine Folgekosten</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.one_time_payment_label' | t }}</span> <span class="meta-value">{{ 'karinex.meta.one_time_payment_value' | t }}</span></span>
     </li>
 
 <li class="meta-list-item">
       <i class="fa-solid fa-shield-alt"></i>
-      <span class="meta-text"><span class="meta-label">Rechtlich geprüft:</span> <span class="meta-value">DSGVO-konform &amp; deutsche AGB</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.legally_verified_label' | t }}</span> <span class="meta-value">{{ 'karinex.meta.legally_verified_value' | t }}</span></span>
     </li>
     <li class="meta-list-item">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--primary,#1D4739);">
         <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>
       </svg>
-      <span class="meta-text"><span class="meta-label">Kundenservice:</span> <span class="meta-value">Deutsch · 24/7 erreichbar</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.customer_service_label' | t }}</span> <span class="meta-value">{{ 'karinex.meta.customer_service_value' | t }}</span></span>
     </li>
     <li class="meta-list-item meta-list-action">
       <i class="fa-solid fa-circle-question"></i>
       <span class="meta-text">
         <button type="button" class="frage-trigger-btn" onclick="if(window.openSmartAssistant) window.openSmartAssistant()" aria-haspopup="dialog" aria-controls="smart-assistant-modal">
-          <span>Frage zum Artikel</span>
+          <span>{{ 'karinex.meta.question_about_article' | t }}</span>
           <span class="frage-chevron" aria-hidden="true">›</span>
         </button>
       </span>
@@ -3665,7 +3666,7 @@ nav[aria-label="Breadcrumb"],
       <i class="fa-solid fa-circle-question benefit-icon-fa"></i>
       <span class="meta-text">
         <button type="button" class="frage-trigger-btn" onclick="if(window.openSmartAssistant) window.openSmartAssistant()" aria-haspopup="dialog" aria-controls="smart-assistant-modal">
-          <span>Frage zum Artikel</span>
+          <span>{{ 'karinex.meta.question_about_article' | t }}</span>
         </button>
       </span>
     </li>
