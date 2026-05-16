@@ -191,30 +191,6 @@
       {%- comment -%} ====== LEVEL 1 ====== {%- endcomment -%}
       <section class="kx-menu__panel kx-menu__panel--l1" data-level="1">
 
-        {%- comment -%} ----- Bestsellers grid (no overline) ----- {%- endcomment -%}
-        <div class="kx-menu__stage" data-stage="1">
-          <div class="kx-menu__bestseller-grid">
-            {%- if use_collection -%}
-              {%- for product in source_collection.products limit: 6 -%}
-                {% render 'kx-bs-card', product: product %}
-              {%- endfor -%}
-            {%- else -%}
-              {%- assign rendered = 0 -%}
-              {%- for h in handle_array -%}
-                {%- if rendered >= 6 -%}{%- break -%}{%- endif -%}
-                {%- assign t = h | strip -%}
-                {%- if t != blank -%}
-                  {%- assign product = all_products[t] -%}
-                  {%- if product != blank and product.handle != blank -%}
-                    {% render 'kx-bs-card', product: product %}
-                    {%- assign rendered = rendered | plus: 1 -%}
-                  {%- endif -%}
-                {%- endif -%}
-              {%- endfor -%}
-            {%- endif -%}
-          </div>
-        </div>
-
         {%- comment -%} ----- Categories grid (drillable) ----- {%- endcomment -%}
         <div class="kx-menu__stage kx-menu__cat-block" data-stage="2">
           <div class="kx-menu__cat-grid">
