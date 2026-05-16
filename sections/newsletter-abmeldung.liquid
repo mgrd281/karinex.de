@@ -1,0 +1,341 @@
+{%- comment -%}
+  Karinex Newsletter Unsubscribe (Abmeldung) — success page.
+
+  Designed to feel like a polished e-commerce confirmation
+  (Sovendus / Shopify Email style) instead of Shopify's bare
+  default unsubscribe screen. Karinex green hero + check icon
+  + reassuring copy + soft CTA to re-engage.
+
+  Wire-up: merchant points their unsubscribe link to
+  /pages/newsletter-abmeldung (Shopify Admin → Pages → create a
+  page with handle `newsletter-abmeldung` → Theme template
+  "Newsletter Abmeldung").
+{%- endcomment -%}
+
+{%- assign _root = routes.root_url | default: '/' -%}
+{%- unless _root == '/' -%}{%- assign _root = _root | append: '/' -%}{%- endunless -%}
+
+{%- liquid
+  case request.locale.iso_code
+    when 'en'
+      assign T_title  = 'You have been unsubscribed.'
+      assign T_sub    = 'You will no longer receive marketing emails from Karinex.'
+      assign T_changed_mind = 'Changed your mind?'
+      assign T_re_sub = 'Subscribe again'
+      assign T_continue = 'Continue shopping'
+      assign T_deals_h  = 'Latest offers — without a newsletter'
+      assign T_deals_s  = 'You can always find our current software deals below. No email required.'
+    when 'pl'
+      assign T_title  = 'Wypisanie zakończone sukcesem.'
+      assign T_sub    = 'Nie będziesz już otrzymywać wiadomości marketingowych od Karinex.'
+      assign T_changed_mind = 'Zmieniasz zdanie?'
+      assign T_re_sub = 'Subskrybuj ponownie'
+      assign T_continue = 'Kontynuuj zakupy'
+      assign T_deals_h  = 'Aktualne oferty — bez newslettera'
+      assign T_deals_s  = 'Nasze aktualne oferty oprogramowania zawsze znajdziesz poniżej. Bez konieczności podawania e-maila.'
+    when 'sv'
+      assign T_title  = 'Du har avregistrerats.'
+      assign T_sub    = 'Du kommer inte längre att få marknadsföringsmail från Karinex.'
+      assign T_changed_mind = 'Ändrat dig?'
+      assign T_re_sub = 'Prenumerera igen'
+      assign T_continue = 'Fortsätt handla'
+      assign T_deals_h  = 'Senaste erbjudanden — utan nyhetsbrev'
+      assign T_deals_s  = 'Du hittar alltid våra aktuella mjukvaruerbjudanden nedan. Inget e-postmeddelande krävs.'
+    else
+      assign T_title  = 'Deine Abmeldung war erfolgreich.'
+      assign T_sub    = 'Du erhältst nun keine Newsletter-Mails mehr von Karinex.'
+      assign T_changed_mind = 'Versehentlich abgemeldet?'
+      assign T_re_sub = 'Newsletter erneut abonnieren'
+      assign T_continue = 'Weiter einkaufen'
+      assign T_deals_h  = 'Aktuelle Angebote — auch ohne Newsletter'
+      assign T_deals_s  = 'Unsere aktuellen Software-Angebote findest du jederzeit unten. Ohne E-Mail-Eingabe.'
+  endcase
+-%}
+
+<div class="kx-abm">
+  <header class="kx-abm__hero">
+    <div class="kx-abm__hero-inner">
+      <div class="kx-abm__brand">KARINEX</div>
+      <div class="kx-abm__rule" aria-hidden="true"></div>
+      <p class="kx-abm__brand-sub">Premium Service</p>
+    </div>
+  </header>
+
+  <main class="kx-abm__body">
+    <div class="kx-abm__check" aria-hidden="true">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="32" cy="32" r="29" fill="rgba(46, 156, 92, 0.12)" stroke="#2e9c5c" stroke-width="2"/>
+        <polyline points="20 33 28 41 45 24" stroke="#2e9c5c"/>
+      </svg>
+    </div>
+
+    <h1 class="kx-abm__title">{{ T_title }}</h1>
+    <p class="kx-abm__sub">{{ T_sub }}</p>
+
+    <div class="kx-abm__actions">
+      <a href="{{ _root }}pages/newsletter" class="kx-abm__btn kx-abm__btn--ghost">
+        <span class="kx-abm__btn-line">{{ T_changed_mind }}</span>
+        <span class="kx-abm__btn-cta">{{ T_re_sub }} →</span>
+      </a>
+      <a href="{{ _root }}" class="kx-abm__btn kx-abm__btn--primary">{{ T_continue }}</a>
+    </div>
+  </main>
+
+  <section class="kx-abm__deals">
+    <h2 class="kx-abm__deals-title">{{ T_deals_h }}</h2>
+    <p class="kx-abm__deals-sub">{{ T_deals_s }}</p>
+
+    <div class="kx-abm__deal-grid">
+      <a href="{{ _root }}collections/microsoft-office" class="kx-abm__deal">
+        <span class="kx-abm__deal-eyebrow">Office</span>
+        <span class="kx-abm__deal-title">Microsoft Office 2024</span>
+        <span class="kx-abm__deal-cta">Angebote ansehen →</span>
+      </a>
+      <a href="{{ _root }}collections/windows" class="kx-abm__deal">
+        <span class="kx-abm__deal-eyebrow">Windows</span>
+        <span class="kx-abm__deal-title">Windows 11 Pro</span>
+        <span class="kx-abm__deal-cta">Angebote ansehen →</span>
+      </a>
+      <a href="{{ _root }}collections/microsoft-tools" class="kx-abm__deal">
+        <span class="kx-abm__deal-eyebrow">Tools</span>
+        <span class="kx-abm__deal-title">Visual Studio &amp; Tools</span>
+        <span class="kx-abm__deal-cta">Angebote ansehen →</span>
+      </a>
+    </div>
+  </section>
+</div>
+
+<style>
+  .kx-abm {
+    --kx-abm-green:      #1D4739;
+    --kx-abm-green-deep: #0a2118;
+    --kx-abm-gold:       #c9a84c;
+    --kx-abm-cream:      #faf7f0;
+    --kx-abm-ink:        #0d2e22;
+    --kx-abm-ink-soft:   #4a4a4a;
+    --kx-abm-ink-mute:   #888;
+    --kx-abm-line:       rgba(0,0,0,0.08);
+    font-family: 'Newsreader', Georgia, serif;
+    color: var(--kx-abm-ink);
+    background: #fff;
+  }
+
+  /* Hero band */
+  .kx-abm__hero {
+    background:
+      radial-gradient(80% 90% at 50% 0%, rgba(45,107,84,.35) 0%, transparent 65%),
+      linear-gradient(135deg, var(--kx-abm-green-deep) 0%, var(--kx-abm-green) 55%, var(--kx-abm-green-deep) 100%);
+    color: #fff;
+    padding: 56px 24px 60px;
+    text-align: center;
+  }
+  .kx-abm__hero-inner { max-width: 720px; margin: 0 auto; }
+  .kx-abm__brand {
+    font-family: 'Red Hat Display', -apple-system, sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 0.32em;
+    text-indent: 0.32em;
+    text-shadow:
+      0 0 18px rgba(201,168,76,.28),
+      0 2px 8px rgba(0,0,0,.35);
+  }
+  .kx-abm__rule {
+    display: block;
+    width: 38px; height: 1px;
+    margin: 14px auto 10px;
+    background: linear-gradient(90deg, transparent, var(--kx-abm-gold), transparent);
+    opacity: .9;
+  }
+  .kx-abm__brand-sub {
+    margin: 0;
+    font-family: 'Red Hat Display', -apple-system, sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--kx-abm-gold);
+  }
+
+  /* Confirmation body */
+  .kx-abm__body {
+    max-width: 560px;
+    margin: -32px auto 0;
+    padding: 36px 28px 16px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(13,46,34,.10);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .kx-abm__check {
+    width: 64px; height: 64px;
+    margin: 0 auto 18px;
+    color: #2e9c5c;
+  }
+  .kx-abm__title {
+    margin: 0 0 10px;
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: .005em;
+    color: var(--kx-abm-ink);
+  }
+  .kx-abm__sub {
+    margin: 0 0 28px;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: var(--kx-abm-ink-soft);
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Actions */
+  .kx-abm__actions {
+    display: flex; flex-direction: column;
+    gap: 12px;
+    max-width: 360px;
+    margin: 0 auto 6px;
+  }
+  .kx-abm__btn {
+    display: block;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Red Hat Display', -apple-system, sans-serif;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .kx-abm__btn--primary {
+    padding: 14px 18px;
+    background: var(--kx-abm-green);
+    color: #faf7f0;
+    font-size: 12px;
+    text-align: center;
+  }
+  .kx-abm__btn--primary:hover { background: var(--kx-abm-green-deep); }
+  .kx-abm__btn--ghost {
+    padding: 12px 16px;
+    background: var(--kx-abm-cream);
+    color: var(--kx-abm-ink);
+    border: 1px solid var(--kx-abm-line);
+    text-align: left;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .kx-abm__btn--ghost .kx-abm__btn-line {
+    font-family: 'Newsreader', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: .005em;
+    text-transform: none;
+    font-size: 13px;
+    color: var(--kx-abm-ink-mute);
+  }
+  .kx-abm__btn--ghost .kx-abm__btn-cta {
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    color: var(--kx-abm-green);
+  }
+  .kx-abm__btn--ghost:hover {
+    background: #fff;
+    border-color: var(--kx-abm-green);
+  }
+
+  /* Deals strip */
+  .kx-abm__deals {
+    max-width: 1080px;
+    margin: 56px auto 80px;
+    padding: 0 24px;
+    text-align: center;
+  }
+  .kx-abm__deals-title {
+    margin: 0 0 6px;
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--kx-abm-ink);
+    letter-spacing: .005em;
+  }
+  .kx-abm__deals-sub {
+    margin: 0 auto 28px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--kx-abm-ink-soft);
+    max-width: 520px;
+  }
+  .kx-abm__deal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .kx-abm__deal {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 22px 22px 18px;
+    background: var(--kx-abm-cream);
+    border: 1px solid var(--kx-abm-line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--kx-abm-ink);
+    text-align: left;
+    transition: border-color .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
+  }
+  .kx-abm__deal:hover {
+    border-color: var(--kx-abm-green);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(29,71,57,.10);
+  }
+  .kx-abm__deal-eyebrow {
+    font-family: 'Red Hat Display', -apple-system, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--kx-abm-green);
+  }
+  .kx-abm__deal-title {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--kx-abm-ink);
+  }
+  .kx-abm__deal-cta {
+    margin-top: 4px;
+    font-family: 'Red Hat Display', -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--kx-abm-ink-mute);
+    transition: color .2s ease;
+  }
+  .kx-abm__deal:hover .kx-abm__deal-cta { color: var(--kx-abm-green); }
+
+  /* Mobile */
+  @media (max-width: 520px) {
+    .kx-abm__hero { padding: 44px 20px 56px; }
+    .kx-abm__brand { font-size: 22px; }
+    .kx-abm__body { margin-inline: 16px; padding: 30px 22px 14px; border-radius: 14px; }
+    .kx-abm__title { font-size: 22px; }
+    .kx-abm__deals { margin: 44px auto 60px; padding: 0 20px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kx-abm__deal { transition: none; }
+    .kx-abm__deal:hover { transform: none; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Newsletter Abmeldung",
+  "settings": [],
+  "presets": [
+    { "name": "Newsletter Abmeldung" }
+  ]
+}
+{% endschema %}
