@@ -56,7 +56,7 @@
       {% render 'schema-howto' %}
     {%- endif -%}
 
-    <link rel="stylesheet" href="{{ 'product-information.css' | asset_url | append: '?v=3' }}">
+    <link rel="stylesheet" href="{{ 'product-information.css' | asset_url | append: '?v=4' }}">
 
     {%- comment -%} Per-template hide rules for product-card icons. {%- endcomment -%}
     {%- if section.settings.show_card_wishlist_heart == false or section.settings.show_card_quick_add == false -%}
@@ -5131,10 +5131,7 @@ function toggleDesc() {
 
     <button class="read-more-btn" id="read-more-toggle" aria-expanded="false" style="display: none;">
       <span class="read-more-text">{{ 'karinex.tabs.read_more' | t }}</span>
-      <svg class="read-more-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
+      <i class="fa-solid fa-chevron-down read-more-icon"></i>
     </button>
   </div>
 
@@ -5187,9 +5184,7 @@ function toggleDesc() {
 
       function checkContentHeight() {
         var isDesktop = window.innerWidth >= 990;
-        /* Thalia-style: mobile shows ~4 lines, desktop ~half */
-        var minThreshold = isDesktop ? 400 : 120;
-        var collapsedHeight = isDesktop ? 380 : 112;
+        var minThreshold = isDesktop ? 400 : 350;
 
         // Temporarily reset to measure
         var prevMaskStyle = mask.style.maxHeight;
@@ -5198,9 +5193,10 @@ function toggleDesc() {
         mask.style.maxHeight = prevMaskStyle;
 
         if(actualHeight > minThreshold) {
-          btn.style.display = 'flex';
+          var halfHeight = Math.round(actualHeight * 0.5);
+          btn.style.display = 'inline-flex';
           if(expandState === 0) {
-            mask.style.maxHeight = collapsedHeight + 'px';
+            mask.style.maxHeight = halfHeight + 'px';
           }
         } else {
           mask.classList.add('is-expanded');
@@ -5220,9 +5216,6 @@ function toggleDesc() {
       window.addEventListener('resize', checkContentHeight);
 
       btn.addEventListener('click', function() {
-        var isDesktop = window.innerWidth >= 990;
-        var collapsedHeight = isDesktop ? 380 : 112;
-
         // Measure true content height
         var prevMax = mask.style.maxHeight;
         var prevOverflow = mask.style.overflow;
@@ -5231,6 +5224,8 @@ function toggleDesc() {
         var fullHeight = desc.scrollHeight;
         mask.style.maxHeight = prevMax;
         mask.style.overflow = prevOverflow;
+
+        var halfHeight = Math.round(fullHeight * 0.5);
 
         if(expandState === 0) {
           // First click → full
@@ -5241,10 +5236,10 @@ function toggleDesc() {
           txt.textContent = {{ 'karinex.tabs.read_less' | t | json }};
           setTimeout(function() { if(expandState === 2) mask.style.maxHeight = 'none'; }, 550);
         } else {
-          // Collapse back to preview
+          // Collapse back to 50%
           expandState = 0;
           mask.classList.remove('is-expanded');
-          mask.style.maxHeight = collapsedHeight + 'px';
+          mask.style.maxHeight = halfHeight + 'px';
           btn.setAttribute('aria-expanded', 'false');
           txt.textContent = {{ 'karinex.tabs.read_more' | t | json }};
           mask.closest('.tab-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
