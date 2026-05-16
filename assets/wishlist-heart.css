@@ -52,15 +52,15 @@ wishlist-heart {
     transition: fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
 }
 
-/* Saved State */
+/* Saved State — champagne gold (matches rating stars) */
 wishlist-heart[saved] .wishlist-heart__button {
-    color: #1d4739;
+    color: #c9a84c;
     background: rgba(255, 255, 255, 0.95);
 }
 
 wishlist-heart[saved] .wishlist-heart__button svg {
-    fill: #1d4739;
-    stroke: #1d4739;
+    fill: #c9a84c;
+    stroke: #c9a84c;
     animation: elegantHeartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -172,6 +172,10 @@ wishlist-heart[saved] .wishlist-heart__button svg {
 
     .pdp-mobile-wishlist[saved] .wishlist-heart__button {
         background: rgba(255, 255, 255, 0.93) !important;
-        color: #1d4739 !important;
+        color: #c9a84c !important;
+    }
+    .pdp-mobile-wishlist[saved] .wishlist-heart__button svg {
+        fill: #c9a84c !important;
+        stroke: #c9a84c !important;
     }
 }
