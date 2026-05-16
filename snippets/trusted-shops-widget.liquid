@@ -4,17 +4,23 @@
   Lazy: div injected only when user scrolls into view → prevents
   TS script from making API calls on initial load / bot crawl.
 {%- endcomment -%}
-<div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; min-height: 120px;">
+<div class="ts-reviews-karussell" style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
   <div class="ts-widget-placeholder" data-ts-widget-id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>
 </div>
 <script>
 (function() {
   var el = document.querySelector('.ts-widget-placeholder[data-ts-widget-id]');
   if (!el) return;
+  var parent = el.parentNode;
   var io = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
         io.disconnect();
+        /* Reserve space + add margin only when the widget is about to
+           load, so the empty placeholder doesn't leave a visible gap
+           on pages where the visitor never scrolls that far. */
+        parent.style.margin = '2rem auto';
+        parent.style.minHeight = '120px';
         var w = document.createElement('div');
         w.id = el.getAttribute('data-ts-widget-id');
         el.parentNode.replaceChild(w, el);
