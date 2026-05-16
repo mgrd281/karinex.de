@@ -342,5 +342,57 @@
       "default_title": "Tytuł domyślny",
       "sticky_add_to_cart": "Pasek szybkiego dodawania do koszyka"
     }
+  },
+  "karinex": {
+    "product": {
+      "add_to_cart": "Do koszyka",
+      "buy_now": "Kup teraz",
+      "notify_when_available": "Powiadom o dostępności",
+      "notify_description": "Możemy Cię powiadomić, gdy produkt znów będzie dostępny.",
+      "notify_back_in_stock_body": "Proszę powiadomić, gdy znów dostępne:",
+      "tax_incl": "z VAT",
+      "tax_shipping_incl": "z VAT, plus koszty wysyłki",
+      "lightning_shipping_label": "Błyskawiczna wysyłka:",
+      "delivery_email": "Bezpośrednio po zakupie e-mailem",
+      "fast_free_shipping_de": "Szybka i bezpłatna wysyłka z DE",
+      "instant_download": "Natychmiastowe pobieranie",
+      "available_after_purchase": "Dostępne od razu po zakupie",
+      "available_after_payment": "Dostępne natychmiast po zaksięgowaniu płatności.",
+      "free_shipping": "Bezpłatna wysyłka",
+      "fast_digital_delivery": "Szybka cyfrowa dostawa e-mailem",
+      "free_shipping_and_returns": "Bezpłatna wysyłka i zwrot",
+      "shipping_description": "Twoje zamówienie zostanie bezpiecznie zapakowane i wysłane ubezpieczoną przesyłką DHL. Czas dostawy to zazwyczaj 1–3 dni robocze.",
+      "days_returns": "{{ days }} dni na zwrot",
+      "free_returns_until": "Bezpłatny zwrot możliwy do:",
+      "free_returns_within": "Bezpłatny zwrot w ciągu {{ days }} dni",
+      "returns_within": "Zwrot w ciągu {{ days }} dni",
+      "free_delivery_by": "Bezpłatna dostawa",
+      "system_requirements": "Wymagania systemowe",
+      "delivery_and_returns": "Dostawa i zwrot",
+      "delivery_tab": "Dostawa",
+      "warranty": "Gwarancja",
+      "buy_now_alt_suffix": "Kup teraz w",
+      "color_sold_out": "Twój kolor jest wyprzedany",
+      "your_email": "Twój adres e-mail",
+      "please_enter_email": "Wpisz swój adres e-mail",
+      "buy_now_instant": "Kup natychmiast",
+      "pay_now_paypal": "Zapłać teraz przez PayPal",
+      "lightning_email": "Błyskawiczna wysyłka e-mailem"
+    },
+    "trust": {
+      "authorized_dealer": "Sprawdzony oryginalny towar – wysyłka z Niemiec",
+      "original_and_authenticity": "Sprawdzony oryginał i gwarancja autentyczności",
+      "official_invoice": "Oficjalna faktura producenta z VAT",
+      "shipping_1_3_days": "Wysyłka w 1–3 dni robocze z DE",
+      "secure_shipping_de": "Bezpieczna wysyłka z Niemiec",
+      "legal_license": "100% legalna i nieużywana licencja",
+      "activation_support": "Gwarancja wsparcia przy aktywacji",
+      "express_insured_de": "Ubezpieczona przesyłka ekspresowa z DE",
+      "new_in_ovp": "100% nowy towar w oryginalnym opakowaniu",
+      "collector_protection": "Ochrona kolekcjonerska: bezpieczne pakowanie",
+      "factory_sealed": "Fabrycznie nowy i zapieczętowany",
+      "german_version_usk": "Niemiecka wersja handlowa (USK)",
+      "key_via_email": "Klucz produktu natychmiast e-mailem"
+    }
   }
 }

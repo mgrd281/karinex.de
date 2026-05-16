@@ -355,5 +355,57 @@
       "default_title": "Default Title",
       "sticky_add_to_cart": "Quick add to cart bar"
     }
+  },
+  "karinex": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "buy_now": "Buy now",
+      "notify_when_available": "Notify when available",
+      "notify_description": "We can notify you as soon as the product is back in stock.",
+      "notify_back_in_stock_body": "Please notify me when back in stock:",
+      "tax_incl": "incl. VAT",
+      "tax_shipping_incl": "incl. VAT, plus shipping",
+      "lightning_shipping_label": "Express delivery:",
+      "delivery_email": "Directly after purchase via email",
+      "fast_free_shipping_de": "Fast & free shipping from DE",
+      "instant_download": "Instant download",
+      "available_after_purchase": "Available immediately after purchase",
+      "available_after_payment": "Available immediately after payment.",
+      "free_shipping": "Free shipping",
+      "fast_digital_delivery": "Fast digital delivery via email",
+      "free_shipping_and_returns": "Free shipping & returns",
+      "shipping_description": "Your order will be carefully packaged and shipped insured with DHL. Delivery usually takes 1–3 business days.",
+      "days_returns": "{{ days }}-day returns",
+      "free_returns_until": "Free return possible until:",
+      "free_returns_within": "Free returns within {{ days }} days",
+      "returns_within": "Returns within {{ days }} days",
+      "free_delivery_by": "Free delivery",
+      "system_requirements": "System requirements",
+      "delivery_and_returns": "Delivery & returns",
+      "delivery_tab": "Delivery",
+      "warranty": "Warranty",
+      "buy_now_alt_suffix": "Buy now at",
+      "color_sold_out": "Your color is sold out",
+      "your_email": "Your email address",
+      "please_enter_email": "Please enter your email address",
+      "buy_now_instant": "Buy instantly",
+      "pay_now_paypal": "Pay now with PayPal",
+      "lightning_email": "Lightning delivery via email"
+    },
+    "trust": {
+      "authorized_dealer": "Verified original goods – shipped from Germany",
+      "original_and_authenticity": "Verified original & authenticity guarantee",
+      "official_invoice": "Official manufacturer invoice with VAT",
+      "shipping_1_3_days": "Shipping in 1–3 business days from DE",
+      "secure_shipping_de": "Secure shipping from Germany",
+      "legal_license": "100% legal & unused license",
+      "activation_support": "Support guarantee on activation",
+      "express_insured_de": "Insured express shipping from DE",
+      "new_in_ovp": "100% new in sealed original packaging",
+      "collector_protection": "Collector protection: securely packaged",
+      "factory_sealed": "Factory new & sealed",
+      "german_version_usk": "German retail version (USK)",
+      "key_via_email": "Product key instantly via email"
+    }
   }
 }

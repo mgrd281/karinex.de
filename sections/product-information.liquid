@@ -362,9 +362,9 @@
       <i class="fa-solid fa-download" aria-hidden="true"></i>
     </span>
     <span class="text">
-      <strong class="ship-claim">Blitzversand per E-Mail</strong>
+      <strong class="ship-claim">{{ 'karinex.product.lightning_email' | t }}</strong>
       <div class="delivery-date">
-        Direkt nach Zahlungseingang verfügbar.
+        {{ 'karinex.product.available_after_payment' | t }}
         <br>
         <span class="return-line">
           <span class="return-icon" aria-hidden="true">
@@ -377,9 +377,9 @@
             </svg>
           </span>
           <small>
-            Kostenlose Rückgabe möglich bis:
+            {{ 'karinex.product.free_returns_until' | t }}
             <time datetime="{{ return_date_bis_iso }}">{{ return_date_bis_human }}</time> •
-            <span class="return-claim">Rückgabe innerhalb von {% if is_digital %}100{% else %}14{% endif %} Tagen</span>
+            <span class="return-claim">{% if is_digital %}{{ 'karinex.product.returns_within' | t: days: 100 }}{% else %}{{ 'karinex.product.returns_within' | t: days: 14 }}{% endif %}</span>
           </small>
         </span>
       </div>
@@ -433,9 +433,9 @@
       <i class="fa-solid fa-truck" aria-hidden="true"></i>
     </span>
     <span class="text">
-      <strong class="return-claim">Kostenlose Rückgabe innerhalb von {% if is_digital %}100{% else %}14{% endif %} Tagen</strong>
+      <strong class="return-claim">{% if is_digital %}{{ 'karinex.product.free_returns_within' | t: days: 100 }}{% else %}{{ 'karinex.product.free_returns_within' | t: days: 14 }}{% endif %}</strong>
       <div class="delivery-date">
-        Gratis Lieferung <time datetime="{{ delivery_iso }}"><strong>{{ delivery_date }}</strong></time>.
+        {{ 'karinex.product.free_delivery_by' | t }} <time datetime="{{ delivery_iso }}"><strong>{{ delivery_date }}</strong></time>.
         <br>
         <span class="return-line">
           <span class="return-icon" aria-hidden="true">
@@ -448,7 +448,7 @@
             </svg>
           </span>
           <small>
-            Kostenlose Rückgabe möglich bis:
+            {{ 'karinex.product.free_returns_until' | t }}
             <time datetime="{{ return_date_bis_iso }}">{{ return_date_bis_human }}</time>
           </small>
         </span>
@@ -997,8 +997,8 @@ nav[aria-label="Breadcrumb"],
                         {%- endif -%}
                         <img class="main-image"
                              src="{{ _main_src | strip }}"
-                             alt="{{ product.title | escape }} - {{ product.vendor | escape }} | Jetzt kaufen bei {{ shop.name | escape }}"
-                             title="{{ product.title | escape }} - Produktbild"
+                             alt="{{ product.title | escape }} - {{ product.vendor | escape }} | {{ 'karinex.product.buy_now_alt_suffix' | t }} {{ shop.name | escape }}"
+                             title="{{ product.title | escape }}"
                              loading="eager"
                              decoding="async"
                              fetchpriority="high"
@@ -2757,7 +2757,7 @@ nav[aria-label="Breadcrumb"],
                 </div>
 
 {%- unless is_digital -%}
-<p class="trust-authorized-dealer">Geprüfte Originalware – Versand aus Deutschland</p>
+<p class="trust-authorized-dealer">{{ 'karinex.trust.authorized_dealer' | t }}</p>
 {%- endunless -%}
 <div class="product-rating" id="pdp-product-rating" style="margin-bottom: 12px; display: none;">
   <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
@@ -3222,37 +3222,37 @@ nav[aria-label="Breadcrumb"],
   </div>
 
   {% if is_digital %}
-    <div class="price-meta" style="margin-top:-6px; padding-bottom: 4px;">inkl. MwSt.</div>
+    <div class="price-meta" style="margin-top:-6px; padding-bottom: 4px;">{{ 'karinex.product.tax_incl' | t }}</div>
   {% else %}
-    <div class="price-meta" style="margin-top:-6px; padding-bottom: 4px;">inkl. MwSt. zzgl. Versandkosten</div>
+    <div class="price-meta" style="margin-top:-6px; padding-bottom: 4px;">{{ 'karinex.product.tax_shipping_incl' | t }}</div>
   {% endif %}
 
   {%- if is_watch -%}
   <div class="trust-reassurance-block" style="margin-top: 15px; margin-bottom: -5px;">
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Geprüfte Originalware & Echtheits-Garantie</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Offizielle Markenrechnung mit MwSt.</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Versicherter Expressversand aus DE</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.original_and_authenticity' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.official_invoice' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.express_insured_de' | t }}</div>
     <div class="trust-reassurance-item trust-countdown-inline"><span class="trust-check" style="color: #E30613;"><i class="fa-solid fa-clock"></i></span>{%- render 'shipping-countdown', is_digital: is_digital, product: product -%}</div>
   </div>
   {%- elsif is_lego -%}
   <div class="trust-reassurance-block" style="margin-top: 15px; margin-bottom: -5px;">
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> 100% Neuware in versiegelter OVP</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Sammlerschutz: Sicher verpackt</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Versand in 1–3 Werktagen aus DE</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.new_in_ovp' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.collector_protection' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.shipping_1_3_days' | t }}</div>
     <div class="trust-reassurance-item trust-countdown-inline"><span class="trust-check" style="color: #E30613;"><i class="fa-solid fa-clock"></i></span>{%- render 'shipping-countdown', is_digital: is_digital, product: product -%}</div>
   </div>
   {%- elsif is_game -%}
   <div class="trust-reassurance-block" style="margin-top: 15px; margin-bottom: -5px;">
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Fabrikneu & werkseitig versiegelt</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Deutsche Handelsversion (USK)</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Sicherer Versand aus Deutschland</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.factory_sealed' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.german_version_usk' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.secure_shipping_de' | t }}</div>
     <div class="trust-reassurance-item trust-countdown-inline"><span class="trust-check" style="color: #E30613;"><i class="fa-solid fa-clock"></i></span>{%- render 'shipping-countdown', is_digital: is_digital, product: product -%}</div>
   </div>
   {%- elsif is_digital -%}
   <div class="trust-reassurance-block" style="margin-top: 15px; margin-bottom: -5px;">
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Produktschlüssel sofort per E-Mail</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> 100% Legale & ungenutzte Lizenz</div>
-    <div class="trust-reassurance-item"><span class="trust-check">✔</span> Support-Garantie bei Aktivierung</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.key_via_email' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.legal_license' | t }}</div>
+    <div class="trust-reassurance-item"><span class="trust-check">✔</span> {{ 'karinex.trust.activation_support' | t }}</div>
   </div>
   {%- endif -%}
 
@@ -3432,18 +3432,18 @@ nav[aria-label="Breadcrumb"],
     {%- endfor -%}
 
         <div class="kx-back-in-stock-form" id="backInStockForm" style="margin-top: 15px; {% if product.selected_or_first_available_variant.available %}display: none;{% endif %}">
-      <div class="kx-bis-title" id="kx-bis-title">Deine Farbe ist ausverkauft</div>
-      <div class="kx-bis-desc" id="kx-bis-desc">Wir können Dich benachrichtigen, sobald das Produkt wieder verfügbar ist.</div>
+      <div class="kx-bis-title" id="kx-bis-title">{{ 'karinex.product.color_sold_out' | t }}</div>
+      <div class="kx-bis-desc" id="kx-bis-desc">{{ 'karinex.product.notify_description' | t }}</div>
 
       {%- form 'contact', id: 'back-in-stock-contact-form' -%}
         <div id="kx-bis-form-group">
-          <input type="hidden" name="contact[body]" id="kx-bis-body" value="Bitte benachrichtigen, wenn wieder verfügbar: {{ product.title }} - {{ product.selected_or_first_available_variant.title }}">
+          <input type="hidden" name="contact[body]" id="kx-bis-body" value="{{ 'karinex.product.notify_back_in_stock_body' | t }} {{ product.title }} - {{ product.selected_or_first_available_variant.title }}">
           <div class="kx-bis-input-wrapper">
             <input type="email" id="kx-bis-email" name="contact[email]" class="kx-bis-input" placeholder=" " required autocomplete="email">
-            <label for="kx-bis-email" class="kx-bis-label">Deine E-Mail-Adresse</label>
+            <label for="kx-bis-email" class="kx-bis-label">{{ 'karinex.product.your_email' | t }}</label>
             <div class="kx-bis-error-icon">!</div>
           </div>
-          <div id="kx-bis-error-msg" class="kx-bis-error-text">Bitte gib Deine E-Mail-Adresse an</div>
+          <div id="kx-bis-error-msg" class="kx-bis-error-text">{{ 'karinex.product.please_enter_email' | t }}</div>
           <button type="button" class="kx-bis-btn" id="kx-bis-submit-btn" onclick="
             var wrapper = document.querySelector('.kx-bis-input-wrapper');
             var input = document.getElementById('kx-bis-email');
@@ -3479,7 +3479,7 @@ nav[aria-label="Breadcrumb"],
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
               <polyline points="22,6 12,13 2,6"></polyline>
             </svg>
-            Bei Verfügbarkeit erinnern
+            {{ 'karinex.product.notify_when_available' | t }}
           </button>
         </div>
       {%- endform -%}
@@ -3506,7 +3506,7 @@ nav[aria-label="Breadcrumb"],
         <input type="hidden" name="id" ref="variantId" value="{{ product.selected_or_first_available_variant.id }}">
         <input type="hidden" name="quantity" value="1">
         <div class="atc-wrapper">
-          {% render 'add-to-cart-button', can_add_to_cart: true, add_to_cart_text: 'In den Warenkorb', class: 'buy-btn kx-atc-btn', product: product %}
+          {% render 'add-to-cart-button', can_add_to_cart: true, add_to_cart_text: 'karinex.product.add_to_cart' | t, class: 'buy-btn kx-atc-btn', product: product %}
         </div>
       </form>
     </product-form-component>
@@ -3517,7 +3517,7 @@ nav[aria-label="Breadcrumb"],
         <input type="hidden" name="quantity" value="1">
         <input type="hidden" name="return_to" value="/checkout">
         <button type="submit" class="buy-btn kx-buynow-btn secondary-btn">
-          <span class="btn-text">Sofort kaufen</span>
+          <span class="btn-text">{{ 'karinex.product.buy_now_instant' | t }}</span>
         </button>
       </form>
     {%- endif -%}
@@ -3543,7 +3543,7 @@ nav[aria-label="Breadcrumb"],
         {%- else -%}
           <a href="{{ product.url }}?variant={{ product.selected_or_first_available_variant.id }}&checkout=1" class="kx-payment-fallback-btn" onclick="this.closest('form,.kx-payment-buttons')?.querySelector?.('input[name=id]'); return true;">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h11a4 4 0 0 1 0 8h-5l-1.5 6"/><path d="M9 13h5a4 4 0 0 0 0-8H8L6.5 1H3l3 12"/></svg>
-            Sofort mit PayPal bezahlen
+            {{ 'karinex.product.pay_now_paypal' | t }}
           </a>
           <form method="post" action="/cart/add" id="kx-paypal-fallback-form" style="margin-top: 8px;">
             <input type="hidden" name="id" id="kx-paypal-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
@@ -3551,7 +3551,7 @@ nav[aria-label="Breadcrumb"],
             <input type="hidden" name="return_to" value="/checkout">
             <button type="submit" class="kx-paypal-fallback-submit">
               <span class="kx-paypal-fallback-logo">PayPal</span>
-              <span>Jetzt kaufen</span>
+              <span>{{ 'karinex.product.buy_now' | t }}</span>
             </button>
           </form>
           <p class="kx-payment-hint" data-admin-hint>
@@ -3614,7 +3614,7 @@ nav[aria-label="Breadcrumb"],
   {%- if is_digital -%}
 <li class="meta-list-item">
       <i class="fa-solid fa-bolt"></i>
-      <span class="meta-text"><span class="meta-label">Blitz-Versand:</span> <span class="meta-value">Direkt nach dem Kauf per E-Mail</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.product.lightning_shipping_label' | t }}</span> <span class="meta-value">{{ 'karinex.product.delivery_email' | t }}</span></span>
     </li>
     <li class="meta-list-item">
       <i class="fa-solid fa-file-invoice"></i>
@@ -3647,7 +3647,7 @@ nav[aria-label="Breadcrumb"],
   {%- else -%}
     <li class="meta-list-item">
       <i class="fa-solid fa-shipping-fast benefit-icon-fa"></i>
-      <span class="meta-text">Schneller & kostenloser Versand aus DE</span>
+      <span class="meta-text">{{ 'karinex.product.fast_free_shipping_de' | t }}</span>
     </li>
     <li class="meta-list-item">
       <svg class="benefit-icon-svg benefit-icon-return" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
@@ -4274,7 +4274,7 @@ nav[aria-label="Breadcrumb"],
       {% endif %}
       <div class="watch-tab-nav only-desktop">
         <button class="w-tab-btn active" onclick="openWatchTab(event, 'tab-specs')">Zusatzinformation</button>
-        <button class="w-tab-btn" onclick="openWatchTab(event, 'tab-delivery')">Lieferung</button>
+        <button class="w-tab-btn" onclick="openWatchTab(event, 'tab-delivery')">{{ 'karinex.product.delivery_tab' | t }}</button>
         <button class="w-tab-btn" onclick="openWatchTab(event, 'tab-brand')">Über die Marke</button>
       </div>
     </div>
@@ -4593,7 +4593,7 @@ function toggleDesc() {
           <div class="accordion-specs">
             <div class="spec-row"><strong>Marke</strong><span>{{ final_marke }}</span></div>
             <div class="spec-row"><strong>Referenz-Nr.</strong><span>{{ final_ref_nr }}</span></div>
-            <div class="spec-row"><strong>Garantie</strong><span>{{ final_warranty }}</span></div>
+            <div class="spec-row"><strong>{{ 'karinex.product.warranty' | t }}</strong><span>{{ final_warranty }}</span></div>
           </div>
         </div>
       </div>
@@ -4815,7 +4815,7 @@ function toggleDesc() {
               <span class="s-value">{{ final_functions }}</span>
             </div>
             <div class="spec-cell">
-              <span class="s-label">Garantie</span>
+              <span class="s-label">{{ 'karinex.product.warranty' | t }}</span>
               <span class="s-value">{{ final_warranty }}</span>
             </div>
                         <div class="spec-cell trust-spec-cell">
@@ -4837,8 +4837,8 @@ function toggleDesc() {
 
             <div id="tab-delivery" class="w-tab-content">
         <div class="rte" style="padding: 20px;" data-nosnippet>
-          <p class="delivery-highlight">Kostenloser Versand & Rückversand</p>
-          <p>Ihre Bestellung wird sicher verpackt und versichert mit DHL versendet. Die Lieferzeit beträgt in der Regel 1–3 Werktage.</p>
+          <p class="delivery-highlight">{{ 'karinex.product.free_shipping_and_returns' | t }}</p>
+          <p>{{ 'karinex.product.shipping_description' | t }}</p>
         </div>
       </div>
 
@@ -5374,7 +5374,7 @@ function toggleDesc() {
     {%- if is_digital -%}Funktionen{%- else -%}Produktdetails{%- endif -%}
   </button>
   <button type="button" class="tab-btn" data-tab="requirements-panel" onclick="window.switchTab(this)">
-    {%- if is_digital -%}Systemanforderungen{%- else -%}Lieferung &amp; Rückgabe{%- endif -%}
+    {%- if is_digital -%}{{ 'karinex.product.system_requirements' | t }}{%- else -%}{{ 'karinex.product.delivery_and_returns' | t }}{%- endif -%}
   </button>
 </div>
 <div id="description-panel" class="tab-content active">
@@ -5405,22 +5405,22 @@ function toggleDesc() {
       <div class="benefit-item">
         <i class="fa-solid fa-download"></i>
         <div>
-          <h4>Sofortiger Download</h4>
-          <p>Direkt nach Kauf verfügbar</p>
+          <h4>{{ 'karinex.product.instant_download' | t }}</h4>
+          <p>{{ 'karinex.product.available_after_purchase' | t }}</p>
         </div>
       </div>
     {%- else -%}
       <div class="benefit-item">
         <i class="fa-solid fa-truck"></i>
         <div>
-          <h4>Kostenloser Versand</h4>
-          <p>Schnelle &amp; digitale Lieferung per E-Mail</p>
+          <h4>{{ 'karinex.product.free_shipping' | t }}</h4>
+          <p>{{ 'karinex.product.fast_digital_delivery' | t }}</p>
         </div>
       </div>
       <div class="benefit-item">
         <i class="fa-solid fa-rotate-left"></i>
         <div>
-          <h4>{% if is_digital %}100{% else %}14{% endif %} Tage Rückgabe</h4>
+          <h4>{% if is_digital %}{{ 'karinex.product.days_returns' | t: days: 100 }}{% else %}{{ 'karinex.product.days_returns' | t: days: 14 }}{% endif %}</h4>
           <p>Widerrufsrecht & einfacher Rückversand</p>
         </div>
       </div>
@@ -6361,7 +6361,7 @@ function toggleDesc() {
 
           setTimeout(function() {
 
-            textEl.textContent = 'In den Warenkorb';
+            textEl.textContent = {{ 'karinex.product.add_to_cart' | t | json }};
             btn.classList.remove('kx-atc--added');
             if (iconWrap) {
               iconWrap.style.cssText = '';

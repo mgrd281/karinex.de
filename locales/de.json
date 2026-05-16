@@ -328,5 +328,57 @@
       "success_moderated": "Kommentar gepostet, Moderation ausstehend",
       "success": "Kommentar gepostet"
     }
+  },
+  "karinex": {
+    "product": {
+      "add_to_cart": "In den Warenkorb",
+      "buy_now": "Jetzt kaufen",
+      "notify_when_available": "Bei Verfügbarkeit erinnern",
+      "notify_description": "Wir können Dich benachrichtigen, sobald das Produkt wieder verfügbar ist.",
+      "notify_back_in_stock_body": "Bitte benachrichtigen, wenn wieder verfügbar:",
+      "tax_incl": "inkl. MwSt.",
+      "tax_shipping_incl": "inkl. MwSt. zzgl. Versandkosten",
+      "lightning_shipping_label": "Blitz-Versand:",
+      "delivery_email": "Direkt nach dem Kauf per E-Mail",
+      "fast_free_shipping_de": "Schneller & kostenloser Versand aus DE",
+      "instant_download": "Sofortiger Download",
+      "available_after_purchase": "Direkt nach Kauf verfügbar",
+      "available_after_payment": "Direkt nach Zahlungseingang verfügbar.",
+      "free_shipping": "Kostenloser Versand",
+      "fast_digital_delivery": "Schnelle & digitale Lieferung per E-Mail",
+      "free_shipping_and_returns": "Kostenloser Versand & Rückversand",
+      "shipping_description": "Ihre Bestellung wird sicher verpackt und versichert mit DHL versendet. Die Lieferzeit beträgt in der Regel 1–3 Werktage.",
+      "days_returns": "{{ days }} Tage Rückgabe",
+      "free_returns_until": "Kostenlose Rückgabe möglich bis:",
+      "free_returns_within": "Kostenlose Rückgabe innerhalb von {{ days }} Tagen",
+      "returns_within": "Rückgabe innerhalb von {{ days }} Tagen",
+      "free_delivery_by": "Gratis Lieferung",
+      "system_requirements": "Systemanforderungen",
+      "delivery_and_returns": "Lieferung & Rückgabe",
+      "delivery_tab": "Lieferung",
+      "warranty": "Garantie",
+      "buy_now_alt_suffix": "Jetzt kaufen bei",
+      "color_sold_out": "Deine Farbe ist ausverkauft",
+      "your_email": "Deine E-Mail-Adresse",
+      "please_enter_email": "Bitte gib Deine E-Mail-Adresse an",
+      "buy_now_instant": "Sofort kaufen",
+      "pay_now_paypal": "Sofort mit PayPal bezahlen",
+      "lightning_email": "Blitzversand per E-Mail"
+    },
+    "trust": {
+      "authorized_dealer": "Geprüfte Originalware – Versand aus Deutschland",
+      "original_and_authenticity": "Geprüfte Originalware & Echtheits-Garantie",
+      "official_invoice": "Offizielle Markenrechnung mit MwSt.",
+      "shipping_1_3_days": "Versand in 1–3 Werktagen aus DE",
+      "secure_shipping_de": "Sicherer Versand aus Deutschland",
+      "legal_license": "100% Legale & ungenutzte Lizenz",
+      "activation_support": "Support-Garantie bei Aktivierung",
+      "express_insured_de": "Versicherter Expressversand aus DE",
+      "new_in_ovp": "100% Neuware in versiegelter OVP",
+      "collector_protection": "Sammlerschutz: Sicher verpackt",
+      "factory_sealed": "Fabrikneu & werkseitig versiegelt",
+      "german_version_usk": "Deutsche Handelsversion (USK)",
+      "key_via_email": "Produktschlüssel sofort per E-Mail"
+    }
   }
 }
