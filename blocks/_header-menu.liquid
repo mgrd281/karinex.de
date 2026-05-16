@@ -352,34 +352,10 @@
     letter-spacing: 0.08em !important;
   }
 
-  .menu-list__link--sale .menu-list__link-title {
-    position: relative;
-    padding-inline-start: 14px;
-  }
-
+  /* Pulsing red dot before "SALE & BESTSELLER" removed per user request */
   .menu-list__link--sale .menu-list__link-title::before {
-    content: '';
-    position: absolute;
-    inset-inline-start: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 7px;
-    height: 7px;
-    background: #E60000;
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(230, 0, 0, 0.6);
-    animation: kx-sale-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  @keyframes kx-sale-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(230, 0, 0, 0.55); }
-    70% { box-shadow: 0 0 0 8px rgba(230, 0, 0, 0); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .menu-list__link--sale .menu-list__link-title::before {
-      animation: none;
-    }
+    content: none !important;
+    display: none !important;
   }
 
   /*
