@@ -599,6 +599,21 @@
       "days_business": "{{ days }} Werktage",
       "fast_delivery": "Schnelle Lieferung",
       "days_return": "{{ days }} Tage Rückgaberecht"
+    },
+    "accordion": {
+      "product_description": "Produktbeschreibung",
+      "faq": "Häufig gestellte Fragen",
+      "shipping_returns": "Versand & Rückgabe",
+      "delivery_notes": "Lieferung & Hinweise"
+    },
+    "reviews_widget": {
+      "customer": "Kunde",
+      "verified_purchase": "Verifizierter Kauf",
+      "was_helpful": "War diese Bewertung hilfreich?",
+      "ago_days": "vor {{ n }} Tagen",
+      "ago_weeks": "vor {{ n }} Wochen",
+      "ago_months": "vor {{ n }} Monaten",
+      "ago_years": "vor {{ n }} Jahren"
     }
   }
 }

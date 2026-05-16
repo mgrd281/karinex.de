@@ -950,7 +950,7 @@
         {%- if ay_market_description != blank -%}
           <details class="ay-accordion">
             <summary class="ay-accordion__trigger">
-              Produktbeschreibung
+              {{ 'karinex.accordion.product_description' | t }}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </summary>
             <div class="ay-accordion__content">
@@ -985,7 +985,7 @@
 
         <details class="ay-accordion">
           <summary class="ay-accordion__trigger">
-            Häufig gestellte Fragen
+            {{ 'karinex.accordion.faq' | t }}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="ay-accordion__content">
@@ -1007,7 +1007,7 @@
 
         <details class="ay-accordion">
           <summary class="ay-accordion__trigger">
-            {%- if _is_digital -%}Lieferung & Hinweise{%- else -%}Versand & Rückgabe{%- endif -%}
+            {%- if _is_digital -%}{{ 'karinex.accordion.delivery_notes' | t }}{%- else -%}{{ 'karinex.accordion.shipping_returns' | t }}{%- endif -%}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="ay-accordion__content">

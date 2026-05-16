@@ -613,6 +613,21 @@
       "days_business": "{{ days }} dni robocze",
       "fast_delivery": "Szybka dostawa",
       "days_return": "{{ days }} dni na zwrot"
+    },
+    "accordion": {
+      "product_description": "Opis produktu",
+      "faq": "Najczęściej zadawane pytania",
+      "shipping_returns": "Wysyłka i zwroty",
+      "delivery_notes": "Dostawa i informacje"
+    },
+    "reviews_widget": {
+      "customer": "Klient",
+      "verified_purchase": "Zakup zweryfikowany",
+      "was_helpful": "Czy ta opinia była pomocna?",
+      "ago_days": "{{ n }} dni temu",
+      "ago_weeks": "{{ n }} tyg. temu",
+      "ago_months": "{{ n }} mies. temu",
+      "ago_years": "{{ n }} lat temu"
     }
   }
 }

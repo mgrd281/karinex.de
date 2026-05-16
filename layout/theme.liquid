@@ -430,12 +430,26 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       {%- assign _kx_word_write_review = 'karinex.reviews.write_review_btn' | t -%}
       {%- assign _kx_word_reviews_tab = 'karinex.reviews.tab_reviews' | t -%}
       {%- assign _kx_word_gallery_tab = 'karinex.reviews.tab_gallery' | t -%}
+      {%- assign _kx_word_customer = 'karinex.reviews_widget.customer' | t -%}
+      {%- assign _kx_word_verified = 'karinex.reviews_widget.verified_purchase' | t -%}
+      {%- assign _kx_word_helpful = 'karinex.reviews_widget.was_helpful' | t -%}
+      {%- assign _kx_word_ago_days = 'karinex.reviews_widget.ago_days' | t: n: '__N__' -%}
+      {%- assign _kx_word_ago_weeks = 'karinex.reviews_widget.ago_weeks' | t: n: '__N__' -%}
+      {%- assign _kx_word_ago_months = 'karinex.reviews_widget.ago_months' | t: n: '__N__' -%}
+      {%- assign _kx_word_ago_years = 'karinex.reviews_widget.ago_years' | t: n: '__N__' -%}
       <script>
         (function() {
           var pluralWord = {{ _kx_word_review_plural | json }};
           var writeWord  = {{ _kx_word_write_review | json }};
           var reviewsTab = {{ _kx_word_reviews_tab | json }};
           var galleryTab = {{ _kx_word_gallery_tab | json }};
+          var customerWord = {{ _kx_word_customer | json }};
+          var verifiedWord = {{ _kx_word_verified | json }};
+          var helpfulWord = {{ _kx_word_helpful | json }};
+          var agoDaysTpl = {{ _kx_word_ago_days | json }};
+          var agoWeeksTpl = {{ _kx_word_ago_weeks | json }};
+          var agoMonthsTpl = {{ _kx_word_ago_months | json }};
+          var agoYearsTpl = {{ _kx_word_ago_years | json }};
           function patch(root) {
             if (!root || !root.querySelectorAll) return;
             root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *, #rechnung-profi-reviews-widget, #rechnung-profi-reviews-widget *, .rp-widget, .rp-widget *').forEach(function(el) {
@@ -446,7 +460,14 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
                 .replace(/Bewertung schreiben/g, writeWord)
                 .replace(/(\d+)\s*Bewertungen/g, '$1 ' + pluralWord)
                 .replace(/\bBewertungen\b/g, reviewsTab)
-                .replace(/\bGalerie\b/g, galleryTab);
+                .replace(/\bGalerie\b/g, galleryTab)
+                .replace(/Verifizierter Kauf/g, verifiedWord)
+                .replace(/War diese Bewertung hilfreich\?/g, helpfulWord)
+                .replace(/vor (\d+) Tagen?/g, function(_, n){ return agoDaysTpl.replace('__N__', n); })
+                .replace(/vor (\d+) Wochen?/g, function(_, n){ return agoWeeksTpl.replace('__N__', n); })
+                .replace(/vor (\d+) Monaten?/g, function(_, n){ return agoMonthsTpl.replace('__N__', n); })
+                .replace(/vor (\d+) Jahren?/g, function(_, n){ return agoYearsTpl.replace('__N__', n); })
+                .replace(/\bKunde\b/g, customerWord);
               if (nt !== t) el.textContent = nt;
             });
           }
