@@ -4,19 +4,14 @@
   Lazy: div injected only when user scrolls into view → prevents
   TS script from making API calls on initial load / bot crawl.
 
-  Hidden on mobile (≤768px): the carousel itself looked great on
-  desktop but inserted a tall reserved band on phones, leaving an
-  empty gap between sections before the widget had loaded. Mobile
-  users still see Trusted Shops trust via the footer badge.
+  Used only by the standalone `trusted-shops-reviews` section
+  (e.g. on the homepage and dedicated reviews page). The product
+  page no longer renders it — the reserved-height placeholder was
+  leaving an empty band between the CTA and the FAQ section.
 {%- endcomment -%}
 <div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; min-height: 120px;">
   <div class="ts-widget-placeholder" data-ts-widget-id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>
 </div>
-<style>
-  @media (max-width: 768px) {
-    .ts-reviews-karussell { display: none !important; }
-  }
-</style>
 <script>
 (function() {
   var el = document.querySelector('.ts-widget-placeholder[data-ts-widget-id]');

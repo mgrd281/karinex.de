@@ -3673,12 +3673,12 @@ nav[aria-label="Breadcrumb"],
 </ul>
 <style>
   .product-info__faq-wrapper {
-    margin-top: 40px;
+    margin-top: 24px;
     margin-bottom: 8px !important;
   }
 
   @media (max-width: 768px) {
-    .product-info__faq-wrapper { margin-top: 16px; }
+    .product-info__faq-wrapper { margin-top: 12px; }
   }
 
   /* Unified typography for product meta + benefits list */
@@ -6378,7 +6378,13 @@ function toggleDesc() {
 })();
 </script>
 
-{% render 'trusted-shops-widget' %}
+{%- comment -%}
+  Trusted Shops carousel removed from the product page — its lazy
+  placeholder reserved a tall empty band between the CTA and the
+  FAQ section on both desktop and mobile. Reviews remain available
+  via the standalone `trusted-shops-reviews` section and the
+  Trusted Shops badge in the footer.
+{%- endcomment -%}
 
 {% schema %}
 {
