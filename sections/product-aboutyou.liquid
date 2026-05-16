@@ -360,7 +360,7 @@
                       {%- if has_unisex_tag -%}
                         <span class="ay-badge-fast ay-badge-fast--white">Unisex</span>
                       {%- endif -%}
-                      <span class="ay-badge-fast ay-badge-fast--cart" id="ay-cart-badge" data-product-id="{{ product.id }}" {% unless ay_is_in_cart %}style="display:none"{% endunless %}>Im Warenkorb</span>
+                      <span class="ay-badge-fast ay-badge-fast--cart" id="ay-cart-badge" data-product-id="{{ product.id }}" {% unless ay_is_in_cart %}style="display:none"{% endunless %}>{{ 'karinex.cart.in_cart' | t }}</span>
                     </div>
                 {%- endif -%}
               </div>

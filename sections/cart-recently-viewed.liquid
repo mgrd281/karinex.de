@@ -189,7 +189,7 @@
 </style>
 
 <div class="rv-wrapper">
-  <p class="rv-header">Zuletzt angesehen</p>
+  <p class="rv-header">{{ 'karinex.cart.recently_viewed' | t }}</p>
   <div class="rv-scroll">
     {%- for product in viewed_products limit: 30 -%}
       {%- assign rv_variant = product.selected_or_first_available_variant -%}

@@ -975,9 +975,9 @@ nav[aria-label="Breadcrumb"],
                           {% endif %}
 
                           {% if is_in_cart %}
-                            <div class="badge badge-cart" id="product-in-cart-badge">Im Warenkorb</div>
+                            <div class="badge badge-cart" id="product-in-cart-badge">{{ 'karinex.cart.in_cart' | t }}</div>
                           {% else %}
-                            <div class="badge badge-cart" id="product-in-cart-badge" style="display: none;">Im Warenkorb</div>
+                            <div class="badge badge-cart" id="product-in-cart-badge" style="display: none;">{{ 'karinex.cart.in_cart' | t }}</div>
                           {% endif %}
 
                           {%- if is_sold_out -%}
