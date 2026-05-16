@@ -561,40 +561,36 @@
         {%- endcomment -%}
 
         {%- assign _has_collection_children = false -%}
+        {%- assign _populated_count = 0 -%}
         {%- for link in parent_link.links -%}
           {%- if link.type == 'collection_link' and link.object.products_count > 0 -%}
             {%- assign _has_collection_children = true -%}
-            {%- break -%}
+            {%- assign _populated_count = _populated_count | plus: 1 -%}
           {%- endif -%}
         {%- endfor -%}
 
         {%- if _has_collection_children -%}
-          {%- assign _coll_cols = child_count | at_most: 4 -%}
+          {%- assign _coll_cols = _populated_count | at_most: 4 -%}
           <div class="kx-cat__grid kx-cat__grid--{{ _coll_cols }}">
             {%- for link in parent_link.links -%}
-              {%- if link.type == 'collection_link' and link.object.products_count > 0 -%}
-                <div class="kx-cat__col">
-                  <h4 class="kx-cat__col-title">
-                    {% case forloop.index0 | modulo: 4 %}{% when 0 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_layers }}</span>{% when 1 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_doc }}</span>{% when 2 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_chart }}</span>{% else %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_nodes }}</span>{% endcase %}
-                    <a href="{{ link.url }}" style="color:inherit;text-decoration:none;">{{ link.title }}</a>
-                  </h4>
-                  <ul class="kx-cat__col-list" role="list">
-                    {%- for product in link.object.products limit: 7 -%}
-                      <li><a href="{{ product.url }}">{{ product.title }}</a></li>
-                    {%- endfor -%}
-                    {%- if link.object.products_count > 7 -%}
-                      <li><a href="{{ link.url }}" style="font-weight:600;color:#1B3A2E;">{{ link.title }} →</a></li>
-                    {%- endif -%}
-                  </ul>
-                </div>
-              {%- else -%}
-                <div class="kx-cat__col">
-                  <h4 class="kx-cat__col-title">
-                    {% case forloop.index0 | modulo: 4 %}{% when 0 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_layers }}</span>{% when 1 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_doc }}</span>{% when 2 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_chart }}</span>{% else %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_nodes }}</span>{% endcase %}
-                    <a href="{{ link.url }}" style="color:inherit;text-decoration:none;">{{ link.title }}</a>
-                  </h4>
-                </div>
-              {%- endif -%}
+              {%- comment -%} Skip non-collection links AND empty collections so e.g. WINDOWS 8 with 0 products does not reserve a column. {%- endcomment -%}
+              {%- unless link.type == 'collection_link' and link.object.products_count > 0 -%}{%- continue -%}{%- endunless -%}
+              <div class="kx-cat__col">
+                <h4 class="kx-cat__col-title">
+                  {% case forloop.index0 | modulo: 4 %}{% when 0 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_layers }}</span>{% when 1 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_doc }}</span>{% when 2 %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_chart }}</span>{% else %}<span class="kx-cat__col-icon" aria-hidden="true" style="color:#1B3A2E;display:inline-flex;width:16px;height:16px;">{{ svg_nodes }}</span>{% endcase %}
+                  <a href="{{ link.url }}" style="color:inherit;text-decoration:none;">{{ link.title }}</a>
+                </h4>
+                <ul class="kx-cat__col-list" role="list">
+                  {%- for product in link.object.products limit: 7 -%}
+                    {%- assign _full = product.title -%}
+                    {%- assign _short = _full | split: ' – ' | first | split: ' | ' | first | truncatewords: 5, '…' -%}
+                    <li><a href="{{ product.url }}" title="{{ _full | escape }}">{{ _short }}</a></li>
+                  {%- endfor -%}
+                  {%- if link.object.products_count > 7 -%}
+                    <li><a href="{{ link.url }}" style="font-weight:600;color:#1B3A2E;">{{ link.title }} →</a></li>
+                  {%- endif -%}
+                </ul>
+              </div>
             {%- endfor -%}
           </div>
         {%- elsif parent_link.links.size > 0 -%}
