@@ -511,6 +511,18 @@
       "heading": "Aktuelle Deals für dich",
       "subheading": "Unsere besten Preise für Sie",
       "price_from": "ab"
+    },
+    "panels": {
+      "instant_download_after_purchase": "Sofortiger Download nach Kauf",
+      "legal_original_key": "100 % legaler & originaler Lizenzschlüssel",
+      "perpetual_no_subscription": "Dauerlizenz – kein Abo, keine monatlichen Kosten",
+      "easy_online_activation": "Einfache Online-Aktivierung mit Anleitung",
+      "manufacturer_label": "Hersteller:",
+      "article_type_label": "Artikeltyp:"
+    },
+    "sale_banner": {
+      "top_text": "Super Sale: Bis zu 60% Rabatt",
+      "hero_label": "MAI SALE"
     }
   }
 }

@@ -1189,14 +1189,14 @@ button.frage-trigger-btn span {
           return diffDays > 15;
         })();
         if(isDigital){
-          availEl.innerHTML = '<span class="in-stock">Versand per E-Mail sofort nach Zahlung</span>';
+          availEl.innerHTML = '<span class="in-stock">' + {{ 'karinex.meta.ship_email_after_payment' | t | json }} + '</span>';
         }else if(!variant.available){
-          availEl.innerHTML = '<span class="out-of-stock">Zurzeit nicht verfügbar</span>';
+          availEl.innerHTML = '<span class="out-of-stock">' + {{ 'karinex.meta.not_available' | t | json }} + '</span>';
         }else if(isFutureDate && shipRaw){
-          const preorderPrefix = isPreorder ? '<span style="font-weight:700;">Vorbestellung</span> ' : '';
-          availEl.innerHTML = '<span class="status-delayed" id="shipping-date-display">' + preorderPrefix + 'Versand am ' + shipTxt + '</span>';
+          const preorderPrefix = isPreorder ? '<span style="font-weight:700;">' + {{ 'karinex.meta.preorder' | t | json }} + '</span> ' : '';
+          availEl.innerHTML = '<span class="status-delayed" id="shipping-date-display">' + preorderPrefix + {{ 'karinex.meta.ship_on' | t | json }} + ' ' + shipTxt + '</span>';
         }else{
-          availEl.innerHTML = '<span class="in-stock" id="delivery-status-text">in 1–3 Werktagen bei dir</span>';
+          availEl.innerHTML = '<span class="in-stock" id="delivery-status-text">' + {{ 'karinex.meta.in_1_3_days' | t | json }} + '</span>';
         }
       }
       if(window.history && window.history.replaceState){

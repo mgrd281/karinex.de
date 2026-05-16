@@ -538,6 +538,18 @@
       "heading": "Current deals for you",
       "subheading": "Our best prices for you",
       "price_from": "from"
+    },
+    "panels": {
+      "instant_download_after_purchase": "Instant download after purchase",
+      "legal_original_key": "100% legal & original license key",
+      "perpetual_no_subscription": "Perpetual license – no subscription, no monthly fees",
+      "easy_online_activation": "Easy online activation with guide",
+      "manufacturer_label": "Manufacturer:",
+      "article_type_label": "Product type:"
+    },
+    "sale_banner": {
+      "top_text": "Super sale: up to 60% off",
+      "hero_label": "MAY SALE"
     }
   }
 }

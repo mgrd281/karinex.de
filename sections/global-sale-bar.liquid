@@ -67,7 +67,7 @@
           {% endfor %}
         {% else %}
           <div class="announcement-message active">
-            <span class="announcement-text">{{ section.settings.sale_bar_text | default: 'Kompromisslose Qualität. Garantierte Originale. Trusted in DACH.' }}</span>
+            <span class="announcement-text">{%- if request.locale.iso_code == 'de' -%}{{ section.settings.sale_bar_text | default: 'Kompromisslose Qualität. Garantierte Originale. Trusted in DACH.' }}{%- else -%}{{ 'karinex.sale_banner.top_text' | t }}{%- endif -%}</span>
           </div>
         {% endif %}
       {%- endif -%}
