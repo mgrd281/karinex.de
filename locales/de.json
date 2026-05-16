@@ -468,6 +468,35 @@
       "cookie_policy": "Cookie-Richtlinie",
       "cookies": "Cookies",
       "newsletter": "Newsletter"
+    },
+    "header": {
+      "contact_help": "Kontakt & Hilfe"
+    },
+    "announcement": {
+      "watches": "Geprüfte Echtheit. Volle Garantie. Versicherter Wertversand.",
+      "digital": "100 % legale Lizenzen. Blitzversand & deutscher Support."
+    },
+    "countdown": {
+      "days": "TAGE",
+      "hours": "STD",
+      "minutes": "MIN",
+      "seconds": "SEK"
+    },
+    "tabs": {
+      "description": "Beschreibung",
+      "functions": "Funktionen",
+      "product_details": "Produktdetails",
+      "read_more": "Mehr anzeigen",
+      "read_less": "Weniger anzeigen"
+    },
+    "cta": {
+      "no_subscription": "KEIN ABO",
+      "no_subscription_desc": "Einmalige Zahlung, keine versteckten Kosten",
+      "instant_download_title": "NATYCHMIASTOWE POBIERANIE",
+      "ready_to_go_heading": "Sofort startklar.",
+      "ready_to_go_text": "100% legale Lizenzschlüssel per E-Mail in wenigen Sekunden. Sofort-Download & Aktivierung inklusive deutschem Support. Rechtlich geprüft.",
+      "download_now_btn": "Jetzt herunterladen",
+      "write_review": "Bewertung schreiben"
     }
   }
 }

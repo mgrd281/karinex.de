@@ -420,5 +420,49 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
     {%- render 'referral-popup' -%}
     {%- render 'karinex-live-chat' -%}
+
+    {%- comment -%}
+      External rating widget (rechnung-profi-stars) injects German "Bewertungen"
+      text at runtime. Patch it for non-German locales via MutationObserver.
+    {%- endcomment -%}
+    {%- if request.locale.iso_code != 'de' -%}
+      {%- assign _kx_word_review_plural = 'karinex.meta.reviews_suffix' | t -%}
+      {%- assign _kx_word_write_review = 'karinex.cta.write_review' | t -%}
+      <script>
+        (function() {
+          var pluralWord = {{ _kx_word_review_plural | json }};
+          var writeWord  = {{ _kx_word_write_review | json }};
+          function patch(root) {
+            if (!root || !root.querySelectorAll) return;
+            root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *').forEach(function(el) {
+              if (el.children && el.children.length > 0) return;
+              var t = el.textContent;
+              if (!t) return;
+              var nt = t.replace(/Bewertungen/g, pluralWord).replace(/Bewertung schreiben/g, writeWord);
+              if (nt !== t) el.textContent = nt;
+            });
+          }
+          function init() {
+            patch(document);
+            var mo = new MutationObserver(function(muts) {
+              for (var i = 0; i < muts.length; i++) {
+                var m = muts[i];
+                if (m.type === 'childList') {
+                  for (var j = 0; j < m.addedNodes.length; j++) patch(m.addedNodes[j]);
+                } else if (m.type === 'characterData' && m.target && m.target.parentElement) {
+                  patch(m.target.parentElement);
+                }
+              }
+            });
+            mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+          }
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+          } else {
+            init();
+          }
+        })();
+      </script>
+    {%- endif -%}
   </body>
 </html>

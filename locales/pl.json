@@ -482,6 +482,35 @@
       "cookie_policy": "Polityka plików cookie",
       "cookies": "Pliki cookie",
       "newsletter": "Newsletter"
+    },
+    "header": {
+      "contact_help": "Kontakt i pomoc"
+    },
+    "announcement": {
+      "watches": "Sprawdzona autentyczność. Pełna gwarancja. Ubezpieczona przesyłka wartościowa.",
+      "digital": "100 % legalne licencje. Błyskawiczna wysyłka i niemieckie wsparcie."
+    },
+    "countdown": {
+      "days": "DNI",
+      "hours": "GODZ",
+      "minutes": "MIN",
+      "seconds": "SEK"
+    },
+    "tabs": {
+      "description": "Opis",
+      "functions": "Funkcje",
+      "product_details": "Szczegóły produktu",
+      "read_more": "Pokaż więcej",
+      "read_less": "Pokaż mniej"
+    },
+    "cta": {
+      "no_subscription": "BEZ ABONAMENTU",
+      "no_subscription_desc": "Jednorazowa płatność, brak ukrytych kosztów",
+      "instant_download_title": "NATYCHMIASTOWE POBIERANIE",
+      "ready_to_go_heading": "Gotowe od razu.",
+      "ready_to_go_text": "100% legalne klucze licencyjne e-mailem w kilka sekund. Natychmiastowe pobieranie i aktywacja z niemieckim wsparciem. Sprawdzone prawnie.",
+      "download_now_btn": "Pobierz teraz",
+      "write_review": "Napisz recenzję"
     }
   }
 }

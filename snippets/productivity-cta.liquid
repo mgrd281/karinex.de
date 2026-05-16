@@ -112,9 +112,9 @@
                 
                 {% comment %} DIGITAL - Technical/Instant tone {% endcomment %}
                 {% elsif cta_category == 'digital' %}
-                  <h2>Sofort startklar.</h2>
-                  <p>100% legale Lizenzschlüssel per E-Mail in wenigen Sekunden. Sofort-Download & Aktivierung inklusive deutschem Support. Rechtlich geprüft.</p>
-                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">Jetzt herunterladen</button></form>
+                  <h2>{{ 'karinex.cta.ready_to_go_heading' | t }}</h2>
+                  <p>{{ 'karinex.cta.ready_to_go_text' | t }}</p>
+                  <form method="post" action="/cart/add" class="buy-form"><input type="hidden" name="id" value="{{ product.variants.first.id }}"><input type="hidden" name="quantity" value="1"><button type="submit" class="buy-btn">{{ 'karinex.cta.download_now_btn' | t }}</button></form>
                 
                 {% comment %} LEGO/TOYS - Emotional/Gift tone {% endcomment %}
                 {% elsif cta_category == 'lego' %}

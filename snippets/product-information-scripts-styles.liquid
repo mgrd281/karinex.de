@@ -1279,7 +1279,7 @@ button.frage-trigger-btn span {
         if(subRow) subRow.style.display = 'flex';
         if(oldEl) oldEl.textContent = moneyFormat(cap);
         var save = cap - price;
-        if(saveFullTextEl) saveFullTextEl.textContent = 'Preisvorteil: ' + moneyFormat(save);
+        if(saveFullTextEl) saveFullTextEl.textContent = {{ 'karinex.meta.price_savings_label' | t | json }} + ' ' + moneyFormat(save);
         if(pillEl){
           var pct = Math.round(((cap - price) / cap) * 100);
           pillEl.textContent = '-' + pct + '%';
@@ -1332,7 +1332,7 @@ function toggleDesc() {
     t.style.maxHeight = maxHeight + 'px';
     g.classList.remove('hide');
     b.classList.remove('open');
-    b.innerHTML = 'Mehr anzeigen <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+    b.innerHTML = {{ 'karinex.tabs.read_more' | t | json }} + ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
     t.closest('.watch-layout').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     t.classList.add('open');

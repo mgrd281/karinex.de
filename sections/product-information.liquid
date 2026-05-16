@@ -2763,7 +2763,7 @@ nav[aria-label="Breadcrumb"],
   <div class="rechnung-profi-stars" data-product-id="{{ product.id }}"></div>
 </div>
 <div class="product-write-review" id="pdp-write-review" style="display: none; margin-bottom: 12px;">
-  <a href="#bewertung" style="color: #1D4739; font-size: 14px; text-decoration: underline;">Bewertung schreiben</a>
+  <a href="#bewertung" style="color: #1D4739; font-size: 14px; text-decoration: underline;">{{ 'karinex.cta.write_review' | t }}</a>
 </div>
 {% assign product_collections = product.collections | map: 'handle' %}
 {% assign digital = false %}
@@ -5370,9 +5370,9 @@ function toggleDesc() {
   </style>
 {%- else -%}
   <div class="tab-nav">
-  <button type="button" class="tab-btn active" data-tab="description-panel" onclick="window.switchTab(this)">Beschreibung</button>
+  <button type="button" class="tab-btn active" data-tab="description-panel" onclick="window.switchTab(this)">{{ 'karinex.tabs.description' | t }}</button>
   <button type="button" class="tab-btn" data-tab="features-panel" onclick="window.switchTab(this)">
-    {%- if is_digital -%}Funktionen{%- else -%}Produktdetails{%- endif -%}
+    {%- if is_digital -%}{{ 'karinex.tabs.functions' | t }}{%- else -%}{{ 'karinex.tabs.product_details' | t }}{%- endif -%}
   </button>
   <button type="button" class="tab-btn" data-tab="requirements-panel" onclick="window.switchTab(this)">
     {%- if is_digital -%}{{ 'karinex.product.system_requirements' | t }}{%- else -%}{{ 'karinex.product.delivery_and_returns' | t }}{%- endif -%}
@@ -5389,7 +5389,7 @@ function toggleDesc() {
     </div>
 
     <button class="read-more-btn" id="read-more-toggle" aria-expanded="false" style="display: none;">
-      <span class="read-more-text">Mehr anzeigen</span>
+      <span class="read-more-text">{{ 'karinex.tabs.read_more' | t }}</span>
       <i class="fa-solid fa-chevron-down read-more-icon"></i>
     </button>
   </div>
@@ -5399,8 +5399,8 @@ function toggleDesc() {
       <div class="benefit-item">
         <i class="fa-solid fa-money-bill-wave"></i>
         <div>
-          <h4>Kein Abo</h4>
-          <p>Einmalige Zahlung, keine versteckten Kosten</p>
+          <h4>{{ 'karinex.cta.no_subscription' | t }}</h4>
+          <p>{{ 'karinex.cta.no_subscription_desc' | t }}</p>
         </div>
       </div>
       <div class="benefit-item">
@@ -5492,7 +5492,7 @@ function toggleDesc() {
           mask.classList.add('is-expanded');
           mask.style.maxHeight = fullHeight + 'px';
           btn.setAttribute('aria-expanded', 'true');
-          txt.textContent = "Weniger anzeigen";
+          txt.textContent = {{ 'karinex.tabs.read_less' | t | json }};
           setTimeout(function() { if(expandState === 2) mask.style.maxHeight = 'none'; }, 550);
         } else {
           // Collapse back to 50%
@@ -5500,7 +5500,7 @@ function toggleDesc() {
           mask.classList.remove('is-expanded');
           mask.style.maxHeight = halfHeight + 'px';
           btn.setAttribute('aria-expanded', 'false');
-          txt.textContent = "Mehr anzeigen";
+          txt.textContent = {{ 'karinex.tabs.read_more' | t | json }};
           mask.closest('.tab-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
