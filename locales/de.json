@@ -564,7 +564,9 @@
     },
     "badge": {
       "sale_price": "Aktionspreis",
-      "only_today": "Nur heute"
+      "only_today": "Nur heute",
+      "mega": "MEGA",
+      "sale": "SALE"
     }
   }
 }

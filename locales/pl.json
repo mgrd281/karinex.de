@@ -578,7 +578,9 @@
     },
     "badge": {
       "sale_price": "Cena promocyjna",
-      "only_today": "Tylko dzisiaj"
+      "only_today": "Tylko dzisiaj",
+      "mega": "MEGA",
+      "sale": "WYPRZEDAŻ"
     }
   }
 }

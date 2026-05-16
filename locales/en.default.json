@@ -591,7 +591,9 @@
     },
     "badge": {
       "sale_price": "Sale price",
-      "only_today": "Today only"
+      "only_today": "Today only",
+      "mega": "MEGA",
+      "sale": "SALE"
     }
   }
 }
