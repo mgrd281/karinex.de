@@ -445,11 +445,11 @@
 <div class="wl-page">
   <div class="wl-layout">
     <aside class="wl-sidebar">
-      <p class="wl-sidebar__title">Kategorien</p>
+      <p class="wl-sidebar__title">{{ 'karinex.wishlist.categories' | t }}</p>
       <ul class="wl-sidebar__list">
-        <li class="wl-sidebar__item"><a href="#" class="wl-sidebar__link is-active" data-filter="all" aria-label="Alle Wunschliste-Artikel anzeigen">Wunschliste <span class="wl-sidebar__link-count" id="wl-sidebar-count"></span></a></li>
+        <li class="wl-sidebar__item"><a href="#" class="wl-sidebar__link is-active" data-filter="all" aria-label="{{ 'karinex.wishlist.aria_show_all' | t }}">{{ 'karinex.wishlist.title' | t }} <span class="wl-sidebar__link-count" id="wl-sidebar-count"></span></a></li>
         <li class="wl-sidebar__item"><a href="{{ _root }}collections/unsere-bestseller" class="wl-sidebar__link">Bestseller</a></li>
-        <li class="wl-sidebar__item"><a href="{{ _root }}collections/sale" class="wl-sidebar__link">Sale</a></li>
+        <li class="wl-sidebar__item"><a href="{{ _root }}collections/sale" class="wl-sidebar__link">{{ 'karinex.wishlist.sale' | t }}</a></li>
         <li class="wl-sidebar__item"><a href="{{ _root }}collections/microsoft-office" class="wl-sidebar__link">Microsoft Office</a></li>
         <li class="wl-sidebar__item"><a href="{{ _root }}collections/windows" class="wl-sidebar__link">Windows</a></li>
         <li class="wl-sidebar__item"><a href="{{ _root }}collections/microsoft-tools" class="wl-sidebar__link">Microsoft Tools</a></li>
@@ -458,35 +458,35 @@
 
     <div class="wl-main">
       <div class="wl-page__header">
-        <h1 class="wl-page__title">Wunschliste <span class="wl-page__count" id="wl-count"></span></h1>
+        <h1 class="wl-page__title">{{ 'karinex.wishlist.title' | t }} <span class="wl-page__count" id="wl-count"></span></h1>
         <div class="wl-sort-wrap">
           <button class="wl-page__sort" id="wl-sort" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h12M3 18h6"/></svg>
-            Sortierung
+            {{ 'karinex.wishlist.sort' | t }}
           </button>
           <div class="wl-sort-dropdown" id="wl-sort-dropdown">
-            <button class="wl-sort-dropdown__item is-active" data-sort="newest" type="button">Neueste zuerst</button>
-            <button class="wl-sort-dropdown__item" data-sort="popular" type="button">Beliebteste</button>
-            <button class="wl-sort-dropdown__item" data-sort="price-asc" type="button">Preis aufsteigend</button>
-            <button class="wl-sort-dropdown__item" data-sort="price-desc" type="button">Preis absteigend</button>
-            <button class="wl-sort-dropdown__item" data-sort="brand-az" type="button">Marke A–Z</button>
+            <button class="wl-sort-dropdown__item is-active" data-sort="newest" type="button">{{ 'karinex.wishlist.sort_newest' | t }}</button>
+            <button class="wl-sort-dropdown__item" data-sort="popular" type="button">{{ 'karinex.wishlist.sort_popular' | t }}</button>
+            <button class="wl-sort-dropdown__item" data-sort="price-asc" type="button">{{ 'karinex.wishlist.sort_price_asc' | t }}</button>
+            <button class="wl-sort-dropdown__item" data-sort="price-desc" type="button">{{ 'karinex.wishlist.sort_price_desc' | t }}</button>
+            <button class="wl-sort-dropdown__item" data-sort="brand-az" type="button">{{ 'karinex.wishlist.sort_brand' | t }}</button>
           </div>
         </div>
       </div>
 
       <div class="wl-grid" id="wl-grid">
-        <div class="wl-loading" id="wl-loading">Laden...</div>
+        <div class="wl-loading" id="wl-loading">{{ 'karinex.wishlist.loading' | t }}</div>
         <div class="wl-empty" id="wl-empty">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="0.8" stroke="currentColor" class="wl-empty__icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
-          <h2 class="wl-empty__title">Deine Wunschliste ist noch leer.</h2>
-          <p class="wl-empty__text">Speichere deine Lieblingsprodukte für später.</p>
-          <a href="{{ _root }}collections/all" class="wl-empty__cta">Jetzt einkaufen</a>
+          <h2 class="wl-empty__title">{{ 'karinex.wishlist.empty_title' | t }}</h2>
+          <p class="wl-empty__text">{{ 'karinex.wishlist.empty_text' | t }}</p>
+          <a href="{{ _root }}collections/all" class="wl-empty__cta">{{ 'karinex.wishlist.shop_now' | t }}</a>
           <div class="wl-empty__links">
             <a href="{{ _root }}collections/unsere-bestseller">Bestseller</a>
-            <a href="{{ _root }}collections/sale">Sale</a>
-            <a href="{{ _root }}collections/all">Alle Produkte</a>
+            <a href="{{ _root }}collections/sale">{{ 'karinex.wishlist.sale' | t }}</a>
+            <a href="{{ _root }}collections/all">{{ 'karinex.wishlist.all_products' | t }}</a>
           </div>
         </div>
       </div>
@@ -586,7 +586,7 @@
 
       var cardHtml =
         '<a href="' + url + '" class="wl-card__link" aria-label="' + escapeAttr(title) + '"></a>' +
-        '<button type="button" class="wl-card__delete" data-handle="' + handle + '" aria-label="Entfernen">' +
+        '<button type="button" class="wl-card__delete" data-handle="' + handle + '" aria-label="' + {{ 'karinex.wishlist.remove' | t | json }} + '">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
         '</button>' +
         '<div class="wl-card__img-wrap">' +
@@ -760,7 +760,7 @@
 
       } catch(err) {
         btn.classList.remove('is-adding');
-        btn.textContent = 'Fehler';
+        btn.textContent = {{ 'karinex.wishlist.error' | t | json }};
         setTimeout(function() {
           btn.innerHTML = '<span class="wl-atc__text">' + {{ 'karinex.product.add_to_cart' | t | json }} + '</span><span class="wl-atc__check"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="wl-atc__adding"><svg class="wl-atc__spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg></span>';
           if (card) card.classList.remove('is-atc-active');

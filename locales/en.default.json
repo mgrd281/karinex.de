@@ -597,6 +597,25 @@
     },
     "location": {
       "hamburg_germany": "Hamburg, Germany"
+    },
+    "wishlist": {
+      "categories": "Categories",
+      "title": "Wishlist",
+      "aria_show_all": "Show all wishlist items",
+      "sort": "Sort",
+      "sort_newest": "Newest first",
+      "sort_popular": "Most popular",
+      "sort_price_asc": "Price ascending",
+      "sort_price_desc": "Price descending",
+      "sort_brand": "Brand A–Z",
+      "loading": "Loading...",
+      "empty_title": "Your wishlist is empty.",
+      "empty_text": "Save your favorite products for later.",
+      "shop_now": "Shop now",
+      "all_products": "All products",
+      "remove": "Remove",
+      "error": "Error",
+      "sale": "Sale"
     }
   }
 }
