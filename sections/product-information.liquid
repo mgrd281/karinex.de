@@ -3348,10 +3348,6 @@
 
 {% render 'product-meta-compact', is_digital: is_digital, long_shipping: long_shipping, ship_dt: ship_dt %}
 
-{%- comment -%} Internal-linking widgets — Verwandte Kategorien + Cross-sell {%- endcomment -%}
-{% render 'complementary-products', product: product %}
-{% render 'related-categories', product: product %}
-
 <ul class="product-meta-list benefits-list" data-nosnippet>
   {%- if is_digital -%}
 <li class="meta-list-item">
