@@ -597,6 +597,23 @@
       "back_to_home": "Back to home",
       "back": "Back to home"
     },
+    "p404": {
+      "title": "Oops! This page doesn't exist",
+      "text": "The page you're looking for was moved or no longer exists. No worries – we'll help you out!",
+      "search_placeholder": "What are you looking for? e.g. Windows 11, Office 2024…",
+      "search_aria": "Search",
+      "search_btn_aria": "Search",
+      "all_products": "All products",
+      "popular_categories": "Popular categories",
+      "popular_products": "Popular products",
+      "popular_products_subtitle": "You might be interested in these",
+      "help_heading": "Need help?",
+      "help_text": "Our German-speaking support team will gladly help you out.",
+      "help_chat": "Live chat",
+      "help_email": "Send email",
+      "help_faq": "View FAQ",
+      "contact": "Contact"
+    },
     "badge": {
       "sale_price": "Sale price",
       "only_today": "Today only",

@@ -1087,11 +1087,10 @@
     <!-- Animated 404 Number -->
     <div class="template-404-number">404</div>
 
-    <h1 class="template-404-title">Oops! Diese Seite existiert nicht</h1>
-    
+    <h1 class="template-404-title">{{ 'karinex.p404.title' | t }}</h1>
+
     <p class="template-404-text">
-      Die gewünschte Seite wurde verschoben oder existiert nicht mehr. 
-      Kein Problem – wir helfen Ihnen weiter!
+      {{ 'karinex.p404.text' | t }}
     </p>
 
     <form action="{{ routes.search_url }}" method="get" role="search" class="template-404-search">
@@ -1099,11 +1098,11 @@
         type="search"
         name="q"
         value="{{ search.terms | escape }}"
-        placeholder="Was suchen Sie? z.B. Windows 11, Office 2024..."
-        aria-label="Suche"
+        placeholder="{{ 'karinex.p404.search_placeholder' | t }}"
+        aria-label="{{ 'karinex.p404.search_aria' | t }}"
       >
       <input type="hidden" name="type" value="product">
-      <button type="submit" aria-label="Suchen">
+      <button type="submit" aria-label="{{ 'karinex.p404.search_btn_aria' | t }}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -1126,13 +1125,13 @@
           <rect x="14" y="14" width="7" height="7"></rect>
           <rect x="3" y="14" width="7" height="7"></rect>
         </svg>
-        Alle Produkte
+        {{ 'karinex.p404.all_products' | t }}
       </a>
     </div>
-    
+
     <!-- Quick Links Section -->
     <div class="template-404-quick-links">
-      <h3>Beliebte Kategorien</h3>
+      <h3>{{ 'karinex.p404.popular_categories' | t }}</h3>
       <div class="template-404-quick-links-grid">
         <a href="{{ _root }}collections/windows" class="quick-link">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
@@ -1156,10 +1155,191 @@
         </a>
         <a href="{{ _root }}pages/kontakt" class="quick-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-          Kontakt
+          {{ 'karinex.p404.contact' | t }}
         </a>
       </div>
     </div>
+
+    {%- comment -%}
+      Popular Products — internal-linking + recovery surface. Pulls
+      the first 6 products from the bestseller collection so a visitor
+      who landed on a dead URL still sees real, clickable inventory.
+    {%- endcomment -%}
+    {%- assign _popular = collections.bestseller.products | default: collections['unsere-bestseller'].products -%}
+    {%- if _popular and _popular.size > 0 -%}
+    <section class="template-404-popular">
+      <header class="template-404-popular__head">
+        <h2>{{ 'karinex.p404.popular_products' | t }}</h2>
+        <p>{{ 'karinex.p404.popular_products_subtitle' | t }}</p>
+      </header>
+      <ul class="template-404-popular__grid" role="list">
+        {%- for product in _popular limit: 6 -%}
+          {%- assign _full = product.title -%}
+          {%- assign _short = _full | split: ' – ' | first | split: ' | ' | first | truncatewords: 5, '…' -%}
+          <li class="template-404-popular__item">
+            <a href="{{ product.url }}" class="template-404-popular__link" title="{{ _full | escape }}">
+              {%- if product.featured_image -%}
+                <img class="template-404-popular__img"
+                     src="{{ product.featured_image | image_url: width: 200 }}"
+                     alt="{{ product.title | escape }}"
+                     loading="lazy"
+                     width="100" height="100">
+              {%- endif -%}
+              <span class="template-404-popular__body">
+                <span class="template-404-popular__name">{{ _short }}</span>
+                {%- if product.compare_at_price > product.price -%}
+                  <span class="template-404-popular__price">
+                    <s class="template-404-popular__old">{{ product.compare_at_price | money }}</s>
+                    <strong class="template-404-popular__new">{{ product.price | money }}</strong>
+                  </span>
+                {%- else -%}
+                  <strong class="template-404-popular__price">{{ product.price | money }}</strong>
+                {%- endif -%}
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </section>
+    {%- endif -%}
+
+    {%- comment -%} Help & Support section — recovery CTAs {%- endcomment -%}
+    <section class="template-404-help">
+      <h2>{{ 'karinex.p404.help_heading' | t }}</h2>
+      <p>{{ 'karinex.p404.help_text' | t }}</p>
+      <div class="template-404-help__actions">
+        <a href="{{ _root }}pages/live-chat" class="template-404-help__btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          {{ 'karinex.p404.help_chat' | t }}
+        </a>
+        <a href="mailto:shop@karinex.de" class="template-404-help__btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          {{ 'karinex.p404.help_email' | t }}
+        </a>
+        <a href="{{ _root }}pages/faq" class="template-404-help__btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          {{ 'karinex.p404.help_faq' | t }}
+        </a>
+      </div>
+    </section>
+
+    <style>
+      .template-404-popular {
+        max-width: 1100px;
+        margin: 48px auto 32px;
+        padding: 0 16px;
+      }
+      .template-404-popular__head { text-align: center; margin-bottom: 24px; }
+      .template-404-popular__head h2 {
+        font-size: clamp(22px, 3vw, 28px);
+        font-weight: 700;
+        color: #1B3A2E;
+        margin: 0 0 6px;
+      }
+      .template-404-popular__head p {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+      }
+      .template-404-popular__grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+      }
+      .template-404-popular__link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 14px;
+        background: #faf7f0;
+        border: 1px solid #ece6d6;
+        border-radius: 10px;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 200ms ease, background-color 200ms ease, transform 200ms ease;
+        height: 100%;
+      }
+      .template-404-popular__link:hover,
+      .template-404-popular__link:focus-visible {
+        border-color: #c9a84c;
+        background: #fff;
+        transform: translateY(-2px);
+      }
+      .template-404-popular__img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 6px;
+      }
+      .template-404-popular__body {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+      }
+      .template-404-popular__name {
+        font-size: 13px;
+        font-weight: 500;
+        color: #1a1a1a;
+        line-height: 1.3;
+      }
+      .template-404-popular__price { font-size: 14px; font-weight: 700; color: #E30613; }
+      .template-404-popular__old { font-weight: 400; color: #999; margin-right: 5px; font-size: 11px; }
+      .template-404-popular__new { color: #E30613; }
+
+      .template-404-help {
+        max-width: 720px;
+        margin: 32px auto 56px;
+        padding: 28px 24px;
+        background: #1B3A2E;
+        color: #fff;
+        border-radius: 14px;
+        text-align: center;
+      }
+      .template-404-help h2 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 8px;
+        color: #fff;
+      }
+      .template-404-help p {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.85);
+        margin: 0 0 18px;
+      }
+      .template-404-help__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+      .template-404-help__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(201, 168, 76, 0.4);
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 200ms ease, border-color 200ms ease, transform 200ms ease;
+      }
+      .template-404-help__btn:hover,
+      .template-404-help__btn:focus-visible {
+        background: #c9a84c;
+        border-color: #c9a84c;
+        color: #1B3A2E;
+        transform: translateY(-1px);
+      }
+    </style>
   {% endif %}
 </div>
 
