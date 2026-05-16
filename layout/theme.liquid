@@ -86,22 +86,24 @@
     <!-- Sync Trigger: Retry at 18:25 -->
 
     {%- comment -%}
-    Third-party scripts (Usercentrics, GTM, Tidio, etc.) are managed
-    by smart-script-manager.liquid to optimize TBT.
+      Font Awesome — loaded synchronously so icons (e.g. `<i class="fab fa-whatsapp">`)
+      do NOT cause a layout shift ~1 s after page paint when the lazy
+      stylesheet finally arrives. CDN-cached so cost is minimal after
+      the first hit. (Previous lazy-loader via requestIdleCallback was
+      the source of the "1-second jump" users felt on mobile.)
+    {%- endcomment -%}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css">
+
+    {%- comment -%}
+      Third-party scripts (Usercentrics, GTM, Tidio, etc.) are still
+      managed by smart-script-manager.liquid to optimise TBT.
     {%- endcomment -%}
     <script>
       (function() {
         function loadThemeBasics() {
-          // 1. Font Awesome — load only fontawesome-svg-core + solid + brands (~18KB vs 60KB full)
-          var faBase = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/';
-          ['fontawesome.min.css', 'solid.min.css', 'brands.min.css'].forEach(function(f) {
-            var l = document.createElement('link');
-            l.href = faBase + f;
-            l.rel = 'stylesheet';
-            document.head.appendChild(l);
-          });
-
-          // 2. Usercentrics - Intercepted by manager
+          // Usercentrics - Intercepted by smart-script-manager
           const uc = document.createElement('script');
           uc.id = 'usercentrics-cmp';
           uc.src = 'https://web.cmp.usercentrics.eu/ui/loader.js';
@@ -110,7 +112,6 @@
           document.head.appendChild(uc);
         }
 
-        // Load basics after a short idle
         if ('requestIdleCallback' in window) {
            requestIdleCallback(loadThemeBasics, { timeout: 2000 });
         } else {
