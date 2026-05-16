@@ -26,7 +26,7 @@
   {% if usk_age == '18' %}
     <li class="meta-list-item">
       <i class="fa-solid fa-exclamation-triangle usk-warning"></i>
-      <span class="meta-text"><span class="meta-label">Altersprüfung:</span> <span class="meta-value usk-warning">Erforderlich (ab 18)</span></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.age_check_label' | t }}</span> <span class="meta-value usk-warning">{{ 'karinex.meta.age_check_value' | t }}</span></span>
     </li>
   {% endif %}
 
@@ -63,12 +63,12 @@
   <li class="meta-list-item">
     <i class="fa-solid {% if is_digital %}fa-download{% else %}fa-box-open{% endif %}"></i>
     <span class="meta-text">
-      <span class="meta-label">{% if is_digital %}Verfügbarkeit:{% else %}Lieferbar:{% endif %}</span> 
+      <span class="meta-label">{% if is_digital %}{{ 'karinex.meta.availability_label' | t }}{% else %}{{ 'karinex.meta.deliverable_label' | t }}{% endif %}</span>
       <span class="meta-value" id="availabilityValue">
         <!-- DBG: is_digital={{ is_digital }} avail={{ current_variant.available }} -->
         {% if current_variant.available %}
           {% if is_digital %}
-            <span class="status-available">Versand per E-Mail sofort nach Zahlung</span>
+            <span class="status-available">{{ 'karinex.meta.ship_email_after_payment' | t }}</span>
           {% elsif is_future_date and ship_date_raw != blank %}
             {%- assign ship_month_num = ship_date_raw | date: "%-m" | plus: 0 -%}
             {%- case ship_month_num -%}
@@ -86,13 +86,13 @@
               {%- when 12 -%}{%- assign ship_month_de = "Dezember" -%}
             {%- endcase -%}
             <span class="status-delayed" id="shipping-date-display">
-              {% if is_preorder %}<span style="font-weight:700;">Vorbestellung</span> {% endif %}Versand am {{ ship_date_raw | date: "%-d" }}. {{ ship_month_de }}
+              {% if is_preorder %}<span style="font-weight:700;">{{ 'karinex.meta.preorder' | t }}</span> {% endif %}{{ 'karinex.meta.ship_on' | t }} {{ ship_date_raw | date: "%-d" }}. {{ ship_month_de }}
             </span>
           {% else %}
-            <span class="status-available" id="delivery-status-text">in 1–3 Werktagen bei dir</span>
+            <span class="status-available" id="delivery-status-text">{{ 'karinex.meta.in_1_3_days' | t }}</span>
           {% endif %}
         {% else %}
-          <span class="status-unavailable">Nicht verfügbar</span>
+          <span class="status-unavailable">{{ 'karinex.meta.not_available' | t }}</span>
         {% endif %}
       </span>
     </span>
@@ -102,14 +102,14 @@
   {% if product.vendor != blank %}
     <li class="meta-list-item">
       <i class="fa-solid fa-tag"></i>
-      <span class="meta-text"><span class="meta-label">Marke:</span> <a href="{{ product.vendor | url_for_vendor }}" class="meta-value meta-link" aria-label="Alle Produkte von {{ product.vendor }} ansehen">{{ product.vendor }}</a></span>
+      <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.brand_label' | t }}</span> <a href="{{ product.vendor | url_for_vendor }}" class="meta-value meta-link" aria-label="{{ 'karinex.meta.see_all_from_vendor' | t: vendor: product.vendor }}">{{ product.vendor }}</a></span>
     </li>
   {% endif %}
 
   <!-- Artikelnummer -->
   <li class="meta-list-item">
     <i class="fa-solid fa-hashtag"></i>
-    <span class="meta-text"><span class="meta-label">Artikelnummer:</span> <span class="meta-value" id="custom-sku">
+    <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.article_number_label' | t }}</span> <span class="meta-value" id="custom-sku">
       {%- if product.metafields.custom.artikelnummer -%}
         {{ product.metafields.custom.artikelnummer }}
       {%- else -%}
@@ -129,7 +129,7 @@
   {%- if _barcode != blank and _barcode != '—' and _barcode != '-' -%}
   <li class="meta-list-item">
     <i class="fa-solid fa-barcode"></i>
-    <span class="meta-text"><span class="meta-label">EAN:</span> <span class="meta-value" id="eanValue">{{ _barcode }}</span></span>
+    <span class="meta-text"><span class="meta-label">{{ 'karinex.meta.ean_label' | t }}</span> <span class="meta-value" id="eanValue">{{ _barcode }}</span></span>
   </li>
   {%- endif -%}
 
@@ -145,21 +145,23 @@
     const christmas = new Date(yr + '-12-24');
     const dec22 = new Date(yr + '-12-22');
     
-    let text = 'in 1–3 Werktagen bei dir';
-    
+    let text = {{ 'karinex.meta.in_1_3_days' | t | json }};
+    const beforeXmas = {{ 'karinex.meta.before_christmas' | t | json }};
+    const afterXmas = {{ 'karinex.meta.after_christmas' | t | json }};
+
     if (today >= dec22 && today <= christmas) {
-      text += ' (nach Weihnachten)';
+      text += ' ' + afterXmas;
     }
     else if (today < christmas) {
       let deliveryDate = new Date(today);
-      deliveryDate.setDate(deliveryDate.getDate() + 1); 
+      deliveryDate.setDate(deliveryDate.getDate() + 1);
       if (deliveryDate.getDay() === 0) {
         deliveryDate.setDate(deliveryDate.getDate() + 1);
       }
       if (deliveryDate < christmas) {
-        text += ' (vor Weihnachten)';
+        text += ' ' + beforeXmas;
       } else {
-        text += ' (nach Weihnachten)';
+        text += ' ' + afterXmas;
       }
     }
     

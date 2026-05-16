@@ -43,8 +43,8 @@
 
     {%- comment -%} ── Step 1: emoji question ── {%- endcomment -%}
     <div class="kx-feedback__step kx-feedback__step--ask" id="kx-fb-ask-{{ section.id }}">
-      <p class="kx-feedback__heading">{{ section.settings.heading }}</p>
-      <p class="kx-feedback__question">{{ section.settings.question }}</p>
+      <p class="kx-feedback__heading">{{ 'karinex.feedback.heading' | t }}</p>
+      <p class="kx-feedback__question">{{ 'karinex.feedback.subheading' | t }}</p>
       <div class="kx-feedback__faces">
         <button type="button" class="kx-feedback__face" data-score="1" aria-label="Sehr unzufrieden">
           <svg viewBox="0 0 36 36" width="36" height="36"><circle cx="18" cy="18" r="17" fill="none" stroke="#999" stroke-width="1.4"/><circle cx="12" cy="14" r="1.4" fill="#999"/><circle cx="24" cy="14" r="1.4" fill="#999"/><path d="M11 25c1.5-3 5-5 7-5s5.5 2 7 5" fill="none" stroke="#999" stroke-width="1.4" stroke-linecap="round"/><line x1="9" y1="11" x2="14" y2="12" stroke="#999" stroke-width="1.2" stroke-linecap="round"/><line x1="27" y1="11" x2="22" y2="12" stroke="#999" stroke-width="1.2" stroke-linecap="round"/></svg>
