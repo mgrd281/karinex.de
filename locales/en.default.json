@@ -642,7 +642,8 @@
       "ago_days": "{{ n }} days ago",
       "ago_weeks": "{{ n }} weeks ago",
       "ago_months": "{{ n }} months ago",
-      "ago_years": "{{ n }} years ago"
+      "ago_years": "{{ n }} years ago",
+      "just_now": "just now"
     }
   }
 }

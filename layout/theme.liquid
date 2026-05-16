@@ -422,9 +422,16 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- render 'karinex-live-chat' -%}
 
     {%- comment -%}
-      External rating widget (rechnung-profi-stars) injects German "Bewertungen"
-      text at runtime. Patch it for non-German locales via MutationObserver.
+      External rating widget (rechnung-profi-stars / rechnung-profi-reviews-widget)
+      is loaded as a third-party script. It:
+        a) injects German strings on every locale ("Bewertungen", "Galerie",
+           "Bewertung schreiben", "Verifizierter Kauf", "vor N Sekunden|Tagen|…").
+           → On non-German locales we rewrite those.
+        b) has a bug where a stale or future-dated review renders as
+           "vor -17132843 Sekunden" — a negative-second age. We patch this
+           on EVERY locale to "gerade eben" / "przed chwilą" / "just now".
     {%- endcomment -%}
+    {%- assign _kx_word_just_now = 'karinex.reviews_widget.just_now' | t -%}
     {%- if request.locale.iso_code != 'de' -%}
       {%- assign _kx_word_review_plural = 'karinex.reviews.reviews_count_suffix' | t -%}
       {%- assign _kx_word_write_review = 'karinex.reviews.write_review_btn' | t -%}
@@ -437,61 +444,70 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       {%- assign _kx_word_ago_weeks = 'karinex.reviews_widget.ago_weeks' | t: n: '__N__' -%}
       {%- assign _kx_word_ago_months = 'karinex.reviews_widget.ago_months' | t: n: '__N__' -%}
       {%- assign _kx_word_ago_years = 'karinex.reviews_widget.ago_years' | t: n: '__N__' -%}
-      <script>
-        (function() {
-          var pluralWord = {{ _kx_word_review_plural | json }};
-          var writeWord  = {{ _kx_word_write_review | json }};
-          var reviewsTab = {{ _kx_word_reviews_tab | json }};
-          var galleryTab = {{ _kx_word_gallery_tab | json }};
-          var customerWord = {{ _kx_word_customer | json }};
-          var verifiedWord = {{ _kx_word_verified | json }};
-          var helpfulWord = {{ _kx_word_helpful | json }};
-          var agoDaysTpl = {{ _kx_word_ago_days | json }};
-          var agoWeeksTpl = {{ _kx_word_ago_weeks | json }};
-          var agoMonthsTpl = {{ _kx_word_ago_months | json }};
-          var agoYearsTpl = {{ _kx_word_ago_years | json }};
-          function patch(root) {
-            if (!root || !root.querySelectorAll) return;
-            root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *, #rechnung-profi-reviews-widget, #rechnung-profi-reviews-widget *, .rp-widget, .rp-widget *').forEach(function(el) {
-              if (el.children && el.children.length > 0) return;
-              var t = el.textContent;
-              if (!t) return;
-              var nt = t
-                .replace(/Bewertung schreiben/g, writeWord)
-                .replace(/(\d+)\s*Bewertungen/g, '$1 ' + pluralWord)
-                .replace(/\bBewertungen\b/g, reviewsTab)
-                .replace(/\bGalerie\b/g, galleryTab)
-                .replace(/Verifizierter Kauf/g, verifiedWord)
-                .replace(/War diese Bewertung hilfreich\?/g, helpfulWord)
-                .replace(/vor (\d+) Tagen?/g, function(_, n){ return agoDaysTpl.replace('__N__', n); })
-                .replace(/vor (\d+) Wochen?/g, function(_, n){ return agoWeeksTpl.replace('__N__', n); })
-                .replace(/vor (\d+) Monaten?/g, function(_, n){ return agoMonthsTpl.replace('__N__', n); })
-                .replace(/vor (\d+) Jahren?/g, function(_, n){ return agoYearsTpl.replace('__N__', n); })
-                .replace(/\bKunde\b/g, customerWord);
-              if (nt !== t) el.textContent = nt;
-            });
-          }
-          function init() {
-            patch(document);
-            var mo = new MutationObserver(function(muts) {
-              for (var i = 0; i < muts.length; i++) {
-                var m = muts[i];
-                if (m.type === 'childList') {
-                  for (var j = 0; j < m.addedNodes.length; j++) patch(m.addedNodes[j]);
-                } else if (m.type === 'characterData' && m.target && m.target.parentElement) {
-                  patch(m.target.parentElement);
-                }
-              }
-            });
-            mo.observe(document.body, { childList: true, subtree: true, characterData: true });
-          }
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-          } else {
-            init();
-          }
-        })();
-      </script>
     {%- endif -%}
+    <script>
+      (function() {
+        var IS_DE = {{ request.locale.iso_code | json }} === 'de';
+        var justNow = {{ _kx_word_just_now | json }};
+        {%- if request.locale.iso_code != 'de' -%}
+        var pluralWord = {{ _kx_word_review_plural | json }};
+        var writeWord  = {{ _kx_word_write_review | json }};
+        var reviewsTab = {{ _kx_word_reviews_tab | json }};
+        var galleryTab = {{ _kx_word_gallery_tab | json }};
+        var customerWord = {{ _kx_word_customer | json }};
+        var verifiedWord = {{ _kx_word_verified | json }};
+        var helpfulWord = {{ _kx_word_helpful | json }};
+        var agoDaysTpl = {{ _kx_word_ago_days | json }};
+        var agoWeeksTpl = {{ _kx_word_ago_weeks | json }};
+        var agoMonthsTpl = {{ _kx_word_ago_months | json }};
+        var agoYearsTpl = {{ _kx_word_ago_years | json }};
+        {%- endif -%}
+        function patch(root) {
+          if (!root || !root.querySelectorAll) return;
+          root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *, #rechnung-profi-reviews-widget, #rechnung-profi-reviews-widget *, .rp-widget, .rp-widget *').forEach(function(el) {
+            if (el.children && el.children.length > 0) return;
+            var t = el.textContent;
+            if (!t) return;
+            var nt = t
+              // Negative-age bug fix — applies on every locale
+              .replace(/vor\s*-\d+\s*(Sekunden?|Minuten?|Stunden?|Tagen?|Wochen?|Monaten?|Jahren?)/g, justNow);
+            {%- if request.locale.iso_code != 'de' -%}
+            nt = nt
+              .replace(/Bewertung schreiben/g, writeWord)
+              .replace(/(\d+)\s*Bewertungen/g, '$1 ' + pluralWord)
+              .replace(/\bBewertungen\b/g, reviewsTab)
+              .replace(/\bGalerie\b/g, galleryTab)
+              .replace(/Verifizierter Kauf/g, verifiedWord)
+              .replace(/War diese Bewertung hilfreich\?/g, helpfulWord)
+              .replace(/vor (\d+) Tagen?/g, function(_, n){ return agoDaysTpl.replace('__N__', n); })
+              .replace(/vor (\d+) Wochen?/g, function(_, n){ return agoWeeksTpl.replace('__N__', n); })
+              .replace(/vor (\d+) Monaten?/g, function(_, n){ return agoMonthsTpl.replace('__N__', n); })
+              .replace(/vor (\d+) Jahren?/g, function(_, n){ return agoYearsTpl.replace('__N__', n); })
+              .replace(/\bKunde\b/g, customerWord);
+            {%- endif -%}
+            if (nt !== t) el.textContent = nt;
+          });
+        }
+        function init() {
+          patch(document);
+          var mo = new MutationObserver(function(muts) {
+            for (var i = 0; i < muts.length; i++) {
+              var m = muts[i];
+              if (m.type === 'childList') {
+                for (var j = 0; j < m.addedNodes.length; j++) patch(m.addedNodes[j]);
+              } else if (m.type === 'characterData' && m.target && m.target.parentElement) {
+                patch(m.target.parentElement);
+              }
+            }
+          });
+          mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
   </body>
 </html>
