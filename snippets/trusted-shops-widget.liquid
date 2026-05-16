@@ -3,6 +3,11 @@
   Widget-ID: wdg-ae302a93-2542-4539-a12a-1f44a36fd96a
   Lazy: div injected only when user scrolls into view → prevents
   TS script from making API calls on initial load / bot crawl.
+
+  Used only by the standalone `trusted-shops-reviews` section
+  (e.g. on the homepage and dedicated reviews page). The product
+  page no longer renders it — the reserved-height placeholder was
+  leaving an empty band between the CTA and the FAQ section.
 {%- endcomment -%}
 <div class="ts-reviews-karussell" style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; min-height: 120px;">
   <div class="ts-widget-placeholder" data-ts-widget-id="wdg-ae302a93-2542-4539-a12a-1f44a36fd96a"></div>

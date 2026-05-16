@@ -2417,7 +2417,12 @@
 })();
 </script>
 
-{% render 'trusted-shops-widget' %}
+{%- comment -%}
+  Trusted Shops carousel removed from the product page — its lazy
+  placeholder reserved a tall empty band between the CTA and the
+  FAQ section. Reviews remain available via the standalone
+  `trusted-shops-reviews` section and the footer badge.
+{%- endcomment -%}
 
 {% schema %}
 {

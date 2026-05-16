@@ -25,6 +25,10 @@ html body .kx-faq {
     color: var(--faq-clr);
 }
 
+@media (max-width: 768px) {
+    html body .kx-faq { margin: 12px 0 0 !important; }
+}
+
 /* ── Header ─────────────────────────────────────────────── */
 html body .kx-faq .kx-faq__header {
     margin: 0 0 28px !important;
