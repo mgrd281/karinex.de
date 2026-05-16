@@ -316,70 +316,59 @@ document.addEventListener('DOMContentLoaded', function() {
   const desc = document.getElementById('chat-desc');
   const alternatives = document.getElementById('offline-alternatives');
   
-  // Set State
+  // Set State (visual badge + offline alternatives — main chat button stays active either way)
   if (isOnline) {
-    // Online State
     badge.className = 'chat-status-badge online';
     badgeLabel.textContent = 'Online';
-    // Use default texts from liquid
   } else {
-    // Offline State
     badge.className = 'chat-status-badge offline';
     badgeLabel.textContent = 'Offline';
     title.textContent = '{{ section.settings.heading_offline }}';
     desc.textContent = '{{ section.settings.description_offline }}';
-    
-    // Disable main button or change its look
-    btn.disabled = true;
-    btn.style.display = 'none'; // Hide main button to show only alternatives OR keep generic 'Leave Message'
-    
-    // Show alternatives
+    // Surface email/WhatsApp as supplementary options. Chat button stays
+    // clickable — Crisp accepts offline messages just fine.
     alternatives.style.display = 'flex';
   }
-  
-  // Button Click Handler (Only when online)
-  if (btn && !btn.disabled) {
-    btn.addEventListener('click', function() {
-       const originalText = btn.innerHTML;
-       btn.innerHTML = '<span>Verbinde...</span>';
-       
-       setTimeout(() => {
-          let opened = false;
-          // Attempt various chat widgets
-          if (window.ShopifyChat) { window.ShopifyChat.show(); opened = true; }
-          // 2. Tidio
-          else if (window.tidioChatApi) {
-              // We must use 'important' to override the global CSS that hides it
-              const hiddenElements = document.querySelectorAll('#tidio-chat, #tidio-chat-iframe, .tidio-chat-widget');
-              hiddenElements.forEach(el => {
-                  el.style.setProperty('display', 'block', 'important');
-                  el.style.setProperty('opacity', '1', 'important');
-                  el.style.setProperty('z-index', '999999999', 'important');
-              });
-              
-              window.tidioChatApi.open();
-              opened = true;
-          }else if (window.Tawk_API) { window.Tawk_API.maximize(); opened = true; }
-          else if (window.GorgiasChat) { window.GorgiasChat.open(); opened = true; }
-          else if (window.zE) { window.zE.activate(); opened = true; }
-          
-          if(!opened) {
-             // Fallback UX: Switch to "Alternatives" view instead of Alert
-             // 1. Change visual state
-             badge.className = 'chat-status-badge offline';
-             badgeLabel.textContent = 'Offline';
-             title.textContent = '{{ section.settings.heading_offline }}';
-             desc.textContent = '{{ section.settings.description_offline }}';
-             
-             // 2. Hide chat button, show alternatives
-             btn.style.display = 'none';
-             alternatives.style.display = 'flex';
-             
-             // 3. Optional: Add a small note why (inline) - logic: just show alternatives is cleaner
-          } else {
-             btn.innerHTML = originalText;
-          }
-       }, 500);
+
+  // Wait for the global Karinex live-chat widget (Crisp) to be in the DOM.
+  function waitForLauncher(cb, tries) {
+    tries = tries == null ? 20 : tries;
+    var el = document.getElementById('klcLauncher');
+    if (el || tries <= 0) return cb(el);
+    setTimeout(function () { waitForLauncher(cb, tries - 1); }, 150);
+  }
+
+  // Button Click Handler — always attached; opens Crisp via Karinex widget.
+  if (btn) {
+    btn.addEventListener('click', function () {
+      var originalText = btn.innerHTML;
+      btn.innerHTML = '<span>Verbinde...</span>';
+
+      waitForLauncher(function (launcher) {
+        var opened = false;
+
+        // 1. Karinex Live Chat panel (Crisp) — same widget as the rest of the site.
+        if (launcher) {
+          launcher.click();
+          opened = true;
+        }
+        // 2. Direct Crisp fallback if widget snippet failed to render.
+        else if (window.$crisp && window.$crisp.push) {
+          try { window.$crisp.push(['do', 'chat:open']); opened = true; } catch (_) {}
+        }
+        // 3. Legacy fallbacks kept for safety.
+        else if (window.ShopifyChat) { window.ShopifyChat.show(); opened = true; }
+        else if (window.tidioChatApi) { window.tidioChatApi.open(); opened = true; }
+        else if (window.Tawk_API) { window.Tawk_API.maximize(); opened = true; }
+        else if (window.GorgiasChat) { window.GorgiasChat.open(); opened = true; }
+        else if (window.zE) { window.zE.activate(); opened = true; }
+
+        if (!opened) {
+          // No chat backend reachable — fall back to email/WhatsApp.
+          alternatives.style.display = 'flex';
+        }
+        btn.innerHTML = originalText;
+      });
     });
   }
 });
