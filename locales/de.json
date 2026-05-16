@@ -561,6 +561,10 @@
       "home": "Startseite",
       "back_to_home": "Zur Startseite",
       "back": "Zurück zur Startseite"
+    },
+    "badge": {
+      "sale_price": "Aktionspreis",
+      "only_today": "Nur heute"
     }
   }
 }

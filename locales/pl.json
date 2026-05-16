@@ -575,6 +575,10 @@
       "home": "Strona główna",
       "back_to_home": "Do strony głównej",
       "back": "Powrót do strony głównej"
+    },
+    "badge": {
+      "sale_price": "Cena promocyjna",
+      "only_today": "Tylko dzisiaj"
     }
   }
 }
