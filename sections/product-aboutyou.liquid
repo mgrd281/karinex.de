@@ -578,7 +578,7 @@
           {%- endif -%}
           <div class="ay-price__line">
             <span class="ay-price__current ay-price__current--sale">{{ current_variant.price | money }}</span>
-            <span class="ay-price__tax">inkl. MwSt.</span>
+            <span class="ay-price__tax">{{ 'karinex.product.tax_incl' | t }}</span>
           </div>
           {%- assign _saved_pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price -%}
           <span class="ay-price__compare">
@@ -591,7 +591,7 @@
           {%- endif -%}
           <div class="ay-price__line">
             <span class="ay-price__current">{{ current_variant.price | money }}</span>
-            <span class="ay-price__tax">inkl. MwSt.</span>
+            <span class="ay-price__tax">{{ 'karinex.product.tax_incl' | t }}</span>
           </div>
         {%- endif -%}
       </div>
@@ -903,43 +903,43 @@
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <strong>Sofortiger Download</strong>
+            <strong>{{ 'karinex.product.instant_download' | t }}</strong>
           </span>
-          <span class="ay-shipping__badge ay-shipping__badge--fast">Direkt per E-Mail</span>
+          <span class="ay-shipping__badge ay-shipping__badge--fast">{{ 'karinex.shipping_card.direct_email' | t }}</span>
         </div>
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <strong>Lizenzschlüssel per E-Mail</strong>
+            <strong>{{ 'karinex.shipping_card.license_via_email' | t }}</strong>
           </span>
-          <span class="ay-shipping__badge ay-shipping__badge--fast">Sofort verfügbar</span>
+          <span class="ay-shipping__badge ay-shipping__badge--fast">{{ 'karinex.shipping_card.instantly_available' | t }}</span>
         </div>
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <strong>100 Tage Rückgaberecht</strong>
+            <strong>{{ 'karinex.shipping_card.days_return' | t: days: 100 }}</strong>
           </span>
-          <span class="ay-shipping__badge">bis Key-Zustellung</span>
+          <span class="ay-shipping__badge">{{ 'karinex.shipping_card.until_key_delivery' | t }}</span>
         </div>
         {%- else -%}
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <strong>Kostenloser Versand</strong>
+            <strong>{{ 'karinex.product.free_shipping' | t }}</strong>
           </span>
-          <span class="ay-shipping__badge ay-shipping__badge--free">Kostenlos</span>
+          <span class="ay-shipping__badge ay-shipping__badge--free">{{ 'karinex.shipping_card.free_badge' | t }}</span>
         </div>
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
-            <strong>1–3 Werktage</strong>
+            <strong>{{ 'karinex.shipping_card.days_business' | t: days: '1–3' }}</strong>
           </span>
-          <span class="ay-shipping__badge ay-shipping__badge--fast">Schnelle Lieferung</span>
+          <span class="ay-shipping__badge ay-shipping__badge--fast">{{ 'karinex.shipping_card.fast_delivery' | t }}</span>
         </div>
         <div class="ay-shipping__row">
           <span class="ay-shipping__left">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
-            <strong>14 Tage Rückgaberecht</strong>
+            <strong>{{ 'karinex.shipping_card.days_return' | t: days: 14 }}</strong>
           </span>
         </div>
         {%- endif -%}
