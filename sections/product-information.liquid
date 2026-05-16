@@ -5394,7 +5394,10 @@ function toggleDesc() {
 
     <button class="read-more-btn" id="read-more-toggle" aria-expanded="false" style="display: none;">
       <span class="read-more-text">{{ 'karinex.tabs.read_more' | t }}</span>
-      <i class="fa-solid fa-chevron-down read-more-icon"></i>
+      <svg class="read-more-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
     </button>
   </div>
 
@@ -5447,7 +5450,9 @@ function toggleDesc() {
 
       function checkContentHeight() {
         var isDesktop = window.innerWidth >= 990;
-        var minThreshold = isDesktop ? 400 : 350;
+        /* Thalia-style: mobile shows ~4 lines, desktop ~half */
+        var minThreshold = isDesktop ? 400 : 120;
+        var collapsedHeight = isDesktop ? 380 : 112;
 
         // Temporarily reset to measure
         var prevMaskStyle = mask.style.maxHeight;
@@ -5456,10 +5461,9 @@ function toggleDesc() {
         mask.style.maxHeight = prevMaskStyle;
 
         if(actualHeight > minThreshold) {
-          var halfHeight = Math.round(actualHeight * 0.5);
-          btn.style.display = 'inline-flex';
+          btn.style.display = 'flex';
           if(expandState === 0) {
-            mask.style.maxHeight = halfHeight + 'px';
+            mask.style.maxHeight = collapsedHeight + 'px';
           }
         } else {
           mask.classList.add('is-expanded');
@@ -5479,6 +5483,9 @@ function toggleDesc() {
       window.addEventListener('resize', checkContentHeight);
 
       btn.addEventListener('click', function() {
+        var isDesktop = window.innerWidth >= 990;
+        var collapsedHeight = isDesktop ? 380 : 112;
+
         // Measure true content height
         var prevMax = mask.style.maxHeight;
         var prevOverflow = mask.style.overflow;
@@ -5487,8 +5494,6 @@ function toggleDesc() {
         var fullHeight = desc.scrollHeight;
         mask.style.maxHeight = prevMax;
         mask.style.overflow = prevOverflow;
-
-        var halfHeight = Math.round(fullHeight * 0.5);
 
         if(expandState === 0) {
           // First click → full
@@ -5499,10 +5504,10 @@ function toggleDesc() {
           txt.textContent = {{ 'karinex.tabs.read_less' | t | json }};
           setTimeout(function() { if(expandState === 2) mask.style.maxHeight = 'none'; }, 550);
         } else {
-          // Collapse back to 50%
+          // Collapse back to preview
           expandState = 0;
           mask.classList.remove('is-expanded');
-          mask.style.maxHeight = halfHeight + 'px';
+          mask.style.maxHeight = collapsedHeight + 'px';
           btn.setAttribute('aria-expanded', 'false');
           txt.textContent = {{ 'karinex.tabs.read_more' | t | json }};
           mask.closest('.tab-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -5666,28 +5671,35 @@ function toggleDesc() {
 
   .desc-mask {
     position: relative;
-    max-height: 250px;
+    /* Mobile: ~4 lines (Thalia-style preview) */
+    max-height: 112px;
     overflow: hidden;
     transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
   @media (min-width: 990px) {
+    /* Desktop: more breathing room */
     .desc-mask {
       max-height: 380px;
     }
   }
   .desc-mask.is-expanded {
     overflow: visible;
+    max-height: none;
   }
   .desc-fade-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100px;
+    /* Tighter fade on mobile so the preview doesn't look chopped */
+    height: 56px;
     background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
     pointer-events: none;
     transition: opacity 0.3s, visibility 0.3s;
     z-index: 2;
+  }
+  @media (min-width: 990px) {
+    .desc-fade-overlay { height: 100px; }
   }
   .desc-mask.is-expanded .desc-fade-overlay {
     opacity: 0;
@@ -5700,36 +5712,36 @@ function toggleDesc() {
     }
   }
 
+  /* Thalia-style "Weiterlesen" row: full-width, top border, right arrow */
   .read-more-btn {
     display: none;
-    position: relative;
+    width: 100%;
     align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    padding: 10px 0 12px;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    padding: 14px 0 14px;
     background: transparent;
     border: none;
-    color: var(--primary);
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+    color: #1a1a1a;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    transition: color 0.3s ease, letter-spacing 0.3s ease;
     text-decoration: none;
+    transition: color 0.2s ease;
+    text-align: left;
   }
-  .read-more-btn::after {
-    content: '';
-    position: absolute;
-    bottom: 6px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: currentColor;
-    border-radius: 1px;
-    transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  .read-more-btn:hover,
+  .read-more-btn:focus-visible { color: var(--primary, #1B3A2E); }
+  .read-more-icon {
+    /* Right-pointing arrow that flips when expanded */
+    font-size: 16px;
+    line-height: 1;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
   }
-  .read-more-btn:hover { color: #111; letter-spacing: 0.3px; }
-  .read-more-btn:hover::after { width: 100%; }
-  .read-more-icon { transition: transform 0.3s ease; font-size: 12px; }
   .read-more-btn[aria-expanded="true"] .read-more-icon { transform: rotate(180deg); }
 
   #features-panel {
