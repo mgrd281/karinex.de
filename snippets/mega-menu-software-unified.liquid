@@ -343,7 +343,7 @@
       display: flex;
       align-items: center;
       gap: 0.55rem;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       color: #1B3A2E;
       letter-spacing: 0.04em;
@@ -351,17 +351,15 @@
       margin: 0 0 0.5rem;
       padding-bottom: 0.45rem;
       border-bottom: 1px solid #ececec;
-      /* single-line column heading — never wrap */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      /* show full title — wrap onto a second line if needed instead of being clipped */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       min-width: 0;
     }
     .kx-cat__col-title > span:not(.kx-cat__col-icon) {
       min-width: 0;
       flex: 1 1 auto;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .kx-cat__col-list {
       display: flex;
@@ -386,23 +384,27 @@
     /* === Link with chevron =============================================== */
     .kx-cat__col-list a {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.4rem;
       padding: 0.32rem 0.45rem;
       border-radius: 6px;
       font-size: 12.5px;
-      line-height: 1.35;
+      line-height: 1.4;
       font-weight: 500;
       letter-spacing: -0.005em;
       color: #2a2a2a;
       text-decoration: none;
-      /* single-line link labels — match best-software.de style */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      /* show FULL label — wrap onto a second line when too long instead of being clipped with "…" */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       min-width: 0;
       transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
                   color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .kx-cat__col-list a::before,
+    .kx-cat__col-list a::after {
+      align-self: center;
     }
     .kx-cat__col-list a > span,
     .kx-cat__col-list a {
