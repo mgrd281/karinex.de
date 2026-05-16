@@ -570,6 +570,25 @@
     },
     "location": {
       "hamburg_germany": "Hamburg Deutschland"
+    },
+    "wishlist": {
+      "categories": "Kategorien",
+      "title": "Wunschliste",
+      "aria_show_all": "Alle Wunschliste-Artikel anzeigen",
+      "sort": "Sortierung",
+      "sort_newest": "Neueste zuerst",
+      "sort_popular": "Beliebteste",
+      "sort_price_asc": "Preis aufsteigend",
+      "sort_price_desc": "Preis absteigend",
+      "sort_brand": "Marke A–Z",
+      "loading": "Laden...",
+      "empty_title": "Deine Wunschliste ist noch leer.",
+      "empty_text": "Speichere deine Lieblingsprodukte für später.",
+      "shop_now": "Jetzt einkaufen",
+      "all_products": "Alle Produkte",
+      "remove": "Entfernen",
+      "error": "Fehler",
+      "sale": "Sale"
     }
   }
 }

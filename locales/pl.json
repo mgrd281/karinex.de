@@ -584,6 +584,25 @@
     },
     "location": {
       "hamburg_germany": "Hamburg, Niemcy"
+    },
+    "wishlist": {
+      "categories": "Kategorie",
+      "title": "Lista życzeń",
+      "aria_show_all": "Pokaż wszystkie produkty z listy życzeń",
+      "sort": "Sortowanie",
+      "sort_newest": "Najnowsze",
+      "sort_popular": "Najpopularniejsze",
+      "sort_price_asc": "Cena rosnąco",
+      "sort_price_desc": "Cena malejąco",
+      "sort_brand": "Marka A–Z",
+      "loading": "Ładowanie...",
+      "empty_title": "Twoja lista życzeń jest pusta.",
+      "empty_text": "Zapisz swoje ulubione produkty na później.",
+      "shop_now": "Zacznij zakupy",
+      "all_products": "Wszystkie produkty",
+      "remove": "Usuń",
+      "error": "Błąd",
+      "sale": "Wyprzedaż"
     }
   }
 }
