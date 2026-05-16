@@ -1,0 +1,265 @@
+{%- comment -%}
+  HTML Sitemap — full internal-link surface for SEO.
+
+  Renders every public collection, every product (grouped by collection),
+  every CMS page and blog article on one URL. One of the strongest
+  internal-linking signals you can give Google.
+
+  Use: assign this section to /pages/sitemap via templates/page.sitemap.json
+{%- endcomment -%}
+
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+
+  # Ordered list of collection handles we want first. Anything else
+  # falls through to "Weitere Kategorien" at the bottom.
+  assign _featured_handles = 'microsoft-office,microsoft-office-fur-mac,windows,windows-server,microsoft-365-abonnement,microsoft-tools,bestseller,sale' | split: ','
+-%}
+
+<section class="kx-sitemap">
+  <header class="kx-sitemap__head">
+    <h1 class="kx-sitemap__title">{{ section.settings.heading | default: 'Sitemap' }}</h1>
+    {%- if section.settings.intro != blank -%}
+      <p class="kx-sitemap__intro">{{ section.settings.intro }}</p>
+    {%- endif -%}
+  </header>
+
+  {%- comment -%} ── Featured collections (in defined order) ── {%- endcomment -%}
+  <div class="kx-sitemap__cols">
+    {%- for handle in _featured_handles -%}
+      {%- assign coll = collections[handle] -%}
+      {%- if coll and coll.products_count > 0 -%}
+        <section class="kx-sitemap__col">
+          <h2 class="kx-sitemap__col-title">
+            <a href="{{ coll.url }}">{{ coll.title }}</a>
+            <span class="kx-sitemap__count">({{ coll.products_count }})</span>
+          </h2>
+          <ul class="kx-sitemap__list">
+            {%- for product in coll.products limit: 30 -%}
+              {%- assign _full = product.title -%}
+              {%- assign _short = _full | split: ' – ' | first | split: ' | ' | first | truncatewords: 6, '…' -%}
+              <li><a href="{{ product.url }}" title="{{ _full | escape }}">{{ _short }}</a></li>
+            {%- endfor -%}
+            {%- if coll.products_count > 30 -%}
+              <li class="kx-sitemap__more"><a href="{{ coll.url }}">+ {{ coll.products_count | minus: 30 }} weitere →</a></li>
+            {%- endif -%}
+          </ul>
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%} ── Other collections (anything not in the featured list) ── {%- endcomment -%}
+  {%- assign _other_collections = '' -%}
+  {%- for coll in collections -%}
+    {%- assign _is_featured = false -%}
+    {%- for fh in _featured_handles -%}
+      {%- if fh == coll.handle -%}{%- assign _is_featured = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- unless _is_featured -%}
+      {%- if coll.products_count > 0 -%}
+        {%- assign _other_collections = _other_collections | append: coll.handle | append: ',' -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- assign _other_list = _other_collections | split: ',' -%}
+
+  {%- if _other_list.size > 0 -%}
+    <section class="kx-sitemap__more-cats">
+      <h2 class="kx-sitemap__col-title">{{ section.settings.more_cats_heading | default: 'Weitere Kategorien' }}</h2>
+      <ul class="kx-sitemap__chips">
+        {%- for handle in _other_list -%}
+          {%- assign coll = collections[handle] -%}
+          {%- if coll -%}
+            <li><a href="{{ coll.url }}">{{ coll.title }} <span>({{ coll.products_count }})</span></a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </section>
+  {%- endif -%}
+
+  {%- comment -%} ── CMS pages ── {%- endcomment -%}
+  <section class="kx-sitemap__pages">
+    <h2 class="kx-sitemap__col-title">{{ section.settings.pages_heading | default: 'Informationsseiten' }}</h2>
+    <ul class="kx-sitemap__chips">
+      <li><a href="{{ _root }}pages/uber-uns">Über uns</a></li>
+      <li><a href="{{ _root }}pages/faq">FAQ</a></li>
+      <li><a href="{{ _root }}pages/kontakt">Kontakt</a></li>
+      <li><a href="{{ _root }}pages/versand">Versand & Lieferung</a></li>
+      <li><a href="{{ _root }}pages/zahlungsarten">Zahlungsarten</a></li>
+      <li><a href="{{ _root }}pages/retouren-umtausch">Retouren & Umtausch</a></li>
+      <li><a href="{{ _root }}pages/garantie">Garantie</a></li>
+      <li><a href="{{ _root }}pages/zertifikate-siegel">Zertifikate & Siegel</a></li>
+      <li><a href="{{ _root }}pages/newsletter">Newsletter</a></li>
+      <li><a href="{{ _root }}pages/kundenberatung">Kostenlose Beratung</a></li>
+      <li><a href="{{ _root }}pages/live-chat">Live-Chat Support</a></li>
+      <li><a href="{{ _root }}pages/partnerprogramm">Partnerprogramm</a></li>
+      <li><a href="{{ _root }}pages/rewards">Rewards-Programm</a></li>
+      <li><a href="/policies/terms-of-service">AGB</a></li>
+      <li><a href="/policies/refund-policy">Widerrufsrecht</a></li>
+      <li><a href="/policies/privacy-policy">Datenschutz</a></li>
+      <li><a href="/policies/legal-notice">Impressum</a></li>
+      <li><a href="{{ _root }}pages/rechtliche-hinweise">Rechtliche Hinweise</a></li>
+      <li><a href="{{ _root }}pages/cookie-policy">Cookie-Richtlinie</a></li>
+    </ul>
+  </section>
+
+  {%- comment -%} ── Blog articles (latest 30) ── {%- endcomment -%}
+  {%- assign _news = blogs.news.articles -%}
+  {%- if _news and _news.size > 0 -%}
+    <section class="kx-sitemap__pages">
+      <h2 class="kx-sitemap__col-title">
+        <a href="/blogs/news">{{ section.settings.blog_heading | default: 'Blog & News' }}</a>
+        <span class="kx-sitemap__count">({{ _news.size }})</span>
+      </h2>
+      <ul class="kx-sitemap__chips">
+        {%- for article in _news limit: 30 -%}
+          <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    </section>
+  {%- endif -%}
+</section>
+
+<style>
+  .kx-sitemap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 40px);
+    color: #1a1a1a;
+  }
+  .kx-sitemap__head {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #1B3A2E;
+  }
+  .kx-sitemap__title {
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    color: #1B3A2E;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .kx-sitemap__intro {
+    font-size: 15px;
+    color: #555;
+    margin: 0;
+    max-width: 70ch;
+    line-height: 1.5;
+  }
+  .kx-sitemap__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px 32px;
+    margin-bottom: 40px;
+  }
+  .kx-sitemap__col,
+  .kx-sitemap__more-cats,
+  .kx-sitemap__pages {
+    background: #faf7f0;
+    border: 1px solid #ece6d6;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .kx-sitemap__col { margin-bottom: 0; }
+  .kx-sitemap__col-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1B3A2E;
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0d8c4;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .kx-sitemap__col-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .kx-sitemap__col-title a:hover { text-decoration: underline; }
+  .kx-sitemap__count {
+    font-size: 12px;
+    font-weight: 500;
+    color: #777;
+  }
+  .kx-sitemap__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .kx-sitemap__list a {
+    display: block;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #2a2a2a;
+    text-decoration: none;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .kx-sitemap__list a:hover,
+  .kx-sitemap__list a:focus-visible {
+    background: #fff;
+    color: #1B3A2E;
+  }
+  .kx-sitemap__more a {
+    font-weight: 600;
+    color: #1B3A2E;
+    margin-top: 4px;
+  }
+  .kx-sitemap__chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .kx-sitemap__chips a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #d8d0bb;
+    font-size: 13px;
+    color: #1B3A2E;
+    text-decoration: none;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+  .kx-sitemap__chips a:hover,
+  .kx-sitemap__chips a:focus-visible {
+    background: #1B3A2E;
+    border-color: #1B3A2E;
+    color: #fff;
+  }
+  .kx-sitemap__chips a span { color: #888; font-size: 11px; }
+  .kx-sitemap__chips a:hover span,
+  .kx-sitemap__chips a:focus-visible span { color: #c9a84c; }
+</style>
+
+{% schema %}
+{
+  "name": "HTML Sitemap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Page heading", "default": "Sitemap" },
+    { "type": "textarea", "id": "intro", "label": "Intro text", "default": "Alle Produkte, Kategorien und Informationsseiten von karinex auf einen Blick." },
+    { "type": "text", "id": "more_cats_heading", "label": "Other categories heading", "default": "Weitere Kategorien" },
+    { "type": "text", "id": "pages_heading", "label": "Pages heading", "default": "Informationsseiten" },
+    { "type": "text", "id": "blog_heading", "label": "Blog heading", "default": "Blog & News" }
+  ],
+  "presets": [
+    { "name": "HTML Sitemap" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-sitemap",
+      "settings": {
+        "heading": "Sitemap",
+        "intro": "Alle Produkte, Kategorien und Informationsseiten von karinex auf einen Blick.",
+        "more_cats_heading": "Weitere Kategorien",
+        "pages_heading": "Informationsseiten",
+        "blog_heading": "Blog & News"
+      }
+    }
+  },
+  "order": ["main"]
+}

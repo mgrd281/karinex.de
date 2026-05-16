@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-use-case-landing",
+      "settings": {
+        "kicker": "Use-Case",
+        "heading": "",
+        "intro": "<p>Diese Seite hilft dir, die passende Software für dein Anwendungsfall zu finden. Wähle aus unseren empfohlenen Produkten oder durchstöbere die passenden Kategorien.</p>",
+        "picks_heading": "Empfohlen für dich",
+        "curated_product_handles": "",
+        "cats_heading": "Passende Kategorien",
+        "featured_collection_handles": "microsoft-office,windows,microsoft-365-abonnement,microsoft-tools"
+      },
+      "blocks": {},
+      "block_order": []
+    }
+  },
+  "order": ["main"]
+}
