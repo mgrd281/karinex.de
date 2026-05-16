@@ -522,7 +522,7 @@
                 class="cart-drawer__heading h4"
                 id="cart-drawer-heading-empty"
               >
-                Warenkorb
+                {{ 'karinex.cart.heading' | t }}
               </h2>
 
               <button
@@ -554,7 +554,7 @@
                 class="cart-drawer__heading h4"
                 id="cart-drawer-heading"
               >
-                Warenkorb
+                {{ 'karinex.cart.heading' | t }}
                 {%- unless cart == empty -%}
                   <span class="cart-drawer__count">{{ cart.item_count }}</span>
                 {%- endunless -%}

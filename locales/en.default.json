@@ -575,6 +575,14 @@
     },
     "cards": {
       "coupon": "Coupon"
+    },
+    "cart": {
+      "heading": "Cart",
+      "reserved_for": "Cart reserved for",
+      "instant_delivery_email": "Instantly delivered by email",
+      "recently_viewed": "Recently viewed",
+      "checkout": "Checkout",
+      "in_cart": "In cart"
     }
   }
 }

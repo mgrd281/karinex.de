@@ -548,6 +548,14 @@
     },
     "cards": {
       "coupon": "Coupon"
+    },
+    "cart": {
+      "heading": "Warenkorb",
+      "reserved_for": "Warenkorb reserviert für",
+      "instant_delivery_email": "Sofort lieferbar per E-Mail",
+      "recently_viewed": "Zuletzt angesehen",
+      "checkout": "Zur Kasse",
+      "in_cart": "Im Warenkorb"
     }
   }
 }
