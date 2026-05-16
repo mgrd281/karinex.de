@@ -746,17 +746,16 @@
               <p class="hero-slider__sub">{{ item.metafields.custom.subtitle | default: item.type }}</p>
               <p class="hero-slider__price">
                 {% if item.compare_at_price > item.price %}
-                  <span class="price-prefix">Ab</span> <s>{{ item.compare_at_price | money }}</s>
+                  <span class="price-prefix">{{ 'karinex.cta.price_from' | t }}</span> <s>{{ item.compare_at_price | money }}</s>
                 {% endif %}
                 {{ item.price | money }}
               </p>
               {%- liquid
-                assign cta_label = section.settings.button_text
                 assign type_lc = item.type | downcase
                 if type_lc contains 'software' or type_lc contains 'game' or type_lc contains 'spiele'
-                  assign cta_label = 'Sofort herunterladen'
-                elsif cta_label == blank
-                  assign cta_label = 'Jetzt ansehen'
+                  assign cta_label = 'karinex.cta.download_now_btn' | t
+                else
+                  assign cta_label = 'karinex.cta.view_offer' | t
                 endif
               -%}
               <a class="hero-slider__cta" href="{{ item.url }}">{{ cta_label }}</a>
@@ -833,28 +832,28 @@
           <div class="hero-slider__block" data-timer-block="days">
             <div class="hero-slider__unit">
               <div class="hero-slider__num" data-countdown-days>00</div>
-              <div class="hero-slider__label">{{ section.settings.days_label | default: 'TAGE' }}</div>
+              <div class="hero-slider__label">{{ 'karinex.countdown_long.days' | t }}</div>
             </div>
             <div class="hero-slider__sep">:</div>
           </div>
           <div class="hero-slider__block" data-timer-block="hours">
             <div class="hero-slider__unit">
               <div class="hero-slider__num" data-countdown-hours>00</div>
-              <div class="hero-slider__label">{{ section.settings.hours_label | default: 'STUNDEN' }}</div>
+              <div class="hero-slider__label">{{ 'karinex.countdown_long.hours' | t }}</div>
             </div>
             <div class="hero-slider__sep">:</div>
           </div>
           <div class="hero-slider__block" data-timer-block="minutes">
             <div class="hero-slider__unit">
               <div class="hero-slider__num" data-countdown-minutes>00</div>
-              <div class="hero-slider__label">{{ section.settings.minutes_label | default: 'MINUTEN' }}</div>
+              <div class="hero-slider__label">{{ 'karinex.countdown_long.minutes' | t }}</div>
             </div>
             <div class="hero-slider__sep">:</div>
           </div>
           <div class="hero-slider__block" data-timer-block="seconds">
             <div class="hero-slider__unit">
               <div class="hero-slider__num" data-countdown-seconds>00</div>
-              <div class="hero-slider__label">{{ section.settings.seconds_label | default: 'SEKUNDEN' }}</div>
+              <div class="hero-slider__label">{{ 'karinex.countdown_long.seconds' | t }}</div>
             </div>
           </div>
         </div>
@@ -876,7 +875,7 @@
       {% endif %}
 
       <a class="hero-slider__buy" id="hero-buy-btn-{{ section.id }}" href="{{ section.settings.buy_button_link | default: slider_products.first.url }}" data-current-slide="0">
-        {{ section.settings.buy_button_text | default: 'JETZT KAUFEN' }}
+        {{ 'karinex.cta.buy_now' | t }}
       </a>
     </div>
   {% endif %}

@@ -523,7 +523,21 @@
       "ready_to_go_heading": "Ready to go.",
       "ready_to_go_text": "100% legal license keys delivered by email within seconds. Instant download & activation with German support. Legally verified.",
       "download_now_btn": "Download now",
-      "write_review": "Write a review"
+      "write_review": "Write a review",
+      "view_offer": "View offer",
+      "buy_now": "Buy now",
+      "price_from": "From"
+    },
+    "countdown_long": {
+      "days": "DAYS",
+      "hours": "HOURS",
+      "minutes": "MINUTES",
+      "seconds": "SECONDS"
+    },
+    "deals": {
+      "heading": "Current deals for you",
+      "subheading": "Our best prices for you",
+      "price_from": "from"
     }
   }
 }
