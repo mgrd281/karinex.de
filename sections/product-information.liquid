@@ -89,7 +89,7 @@
     <script src="{{ 'cart-counter.js' | asset_url }}" defer></script>
     <style>
       :root {
-        {%- assign g_rating_color = section.settings.rating_star_color | default: settings.global_rating_star_color | default: '#1D4739' -%}
+        {%- assign g_rating_color = section.settings.rating_star_color | default: settings.global_rating_star_color | default: '#c9a84c' -%}
         {%- assign g_rating_shadow = g_rating_color | color_modify: 'alpha', 0.40 -%}
         --rating-star-color: {{ g_rating_color }};
         --rating-star-shadow: 0 1px 3px {{ g_rating_shadow }};
@@ -6047,8 +6047,8 @@ function toggleDesc() {
 
 (function() {
   function styleStars(root) {
-    var gold = getComputedStyle(document.documentElement).getPropertyValue('--rating-star-color').trim() || '{{ settings.global_rating_star_color | default: "#D4A017" }}';
-    var shadow = getComputedStyle(document.documentElement).getPropertyValue('--rating-star-shadow').trim() || '0 1px 3px rgba(212,160,23,0.4)';
+    var gold = getComputedStyle(document.documentElement).getPropertyValue('--rating-star-color').trim() || '{{ settings.global_rating_star_color | default: "#c9a84c" }}';
+    var shadow = getComputedStyle(document.documentElement).getPropertyValue('--rating-star-shadow').trim() || '0 1px 3px rgba(201,168,76,0.4)';
 
     root = root || document;
     var containers = root.querySelectorAll('.rechnung-profi-stars, .ts-rating-stars, .ts-stars, .jdgm-prev-badge, .loox-rating, .spr-starrating');
