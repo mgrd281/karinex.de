@@ -581,6 +581,9 @@
       "only_today": "Tylko dzisiaj",
       "mega": "MEGA",
       "sale": "WYPRZEDAŻ"
+    },
+    "location": {
+      "hamburg_germany": "Hamburg, Niemcy"
     }
   }
 }

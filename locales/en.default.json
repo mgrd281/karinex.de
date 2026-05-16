@@ -594,6 +594,9 @@
       "only_today": "Today only",
       "mega": "MEGA",
       "sale": "SALE"
+    },
+    "location": {
+      "hamburg_germany": "Hamburg, Germany"
     }
   }
 }
