@@ -202,7 +202,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-2": {
@@ -242,7 +242,7 @@
           "selected_variant_hover_background_color": "#54352e",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#54352e",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-3": {
@@ -282,7 +282,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-4": {
@@ -322,7 +322,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-5": {
@@ -362,7 +362,7 @@
           "selected_variant_hover_background_color": "#ffffff26",
           "selected_variant_hover_text_color": "#3e4539",
           "selected_variant_hover_border_color": "#3e4539",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-6": {
@@ -402,7 +402,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-7": {
@@ -442,7 +442,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       },
       "scheme-b585e57c-6eda-451e-b0f0-06d6fbeb5c3e": {
@@ -482,7 +482,7 @@
           "selected_variant_hover_background_color": "#1a1a1a",
           "selected_variant_hover_text_color": "#ffffff",
           "selected_variant_hover_border_color": "#1a1a1a",
-          "global_rating_star_color": "#1d4739"
+          "global_rating_star_color": "#c9a84c"
         }
       }
     }

@@ -15,7 +15,7 @@
             --error: #E74C3C;
             --white: #FFFFFF;
             /* Star Rating Colors */
-            --rating-star-color: #C9962A;
+            --rating-star-color: #c9a84c;
             --rating-star-shadow: rgba(201,150,42,0.35);
             /* Schatten */
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
@@ -94,7 +94,7 @@
         .rechnung-profi-stars i,
         .rating-stars i,
         .fa-star {
-            color: var(--rating-star-color, #C9962A) !important;
+            color: var(--rating-star-color, #c9a84c) !important;
             font-weight: 900 !important;
             font-family: "Font Awesome 6 Free" !important;
             -webkit-text-stroke: 0 !important;
@@ -113,7 +113,7 @@
         /* Half-star & empty star */
         .rechnung-profi-stars .fa-star-half-stroke,
         .rechnung-profi-stars .fa-star-half {
-            color: var(--rating-star-color, #C9962A) !important;
+            color: var(--rating-star-color, #c9a84c) !important;
         }
         .rechnung-profi-stars .fa-star.empty,
         .rechnung-profi-stars [class*="fa-star"]:not(.fa-star):not(.fa-star-half) {
