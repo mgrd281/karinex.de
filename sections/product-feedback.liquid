@@ -67,14 +67,14 @@
     {%- comment -%} ── Step 2: follow-up textarea ── {%- endcomment -%}
     <div class="kx-feedback__step kx-feedback__step--followup" id="kx-fb-followup-{{ section.id }}" style="display:none;">
       <p class="kx-feedback__followup-title" id="kx-fb-followup-title-{{ section.id }}"></p>
-      <textarea class="kx-feedback__textarea" id="kx-fb-text-{{ section.id }}" rows="4" maxlength="1000" aria-label="Ihr Feedback" placeholder="Bitte hinterlassen Sie hier Ihr Feedback..."></textarea>
-      <button type="button" class="kx-feedback__submit" id="kx-fb-submit-{{ section.id }}">Absenden</button>
+      <textarea class="kx-feedback__textarea" id="kx-fb-text-{{ section.id }}" rows="4" maxlength="1000" aria-label="{{ 'karinex.feedback_form.aria_textarea' | t }}" placeholder="{{ 'karinex.feedback_form.placeholder' | t }}"></textarea>
+      <button type="button" class="kx-feedback__submit" id="kx-fb-submit-{{ section.id }}">{{ 'karinex.feedback_form.submit' | t }}</button>
       <p class="kx-feedback__disclaimer">
-        Wir nutzen Ihr Feedback, um unsere Produktseiten zu verbessern. Bitte haben Sie Verständnis, dass wir Ihnen keine Rückmeldung geben können. Falls Sie Kontakt mit uns aufnehmen möchten, können Sie sich aber gerne an unseren Kund*innenservice wenden.
+        {{ 'karinex.feedback_form.explanation' | t }}
       </p>
       <a href="{{ section.settings.service_url | default: '/pages/kontakt' }}" class="kx-feedback__service-link">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        zum Kundenservice
+        {{ 'karinex.feedback_form.to_customer_service' | t }}
       </a>
     </div>
 
@@ -252,12 +252,10 @@
   }
 
   var positiveTitles = [
-    'Das freut uns! Haben Sie noch weitere Anregungen?',
-    'Schön, dass Sie zufrieden sind! Möchten Sie uns noch etwas mitteilen?'
+    {{ 'karinex.feedback_form.title_happy' | t | json }}
   ];
   var negativeTitles = [
-    'Das tut uns leid. Was können wir besser machen?',
-    'Schade! Was hat Ihnen gefehlt?'
+    {{ 'karinex.feedback_form.title_sad' | t | json }}
   ];
 
   askStep.addEventListener('click', function(e) {

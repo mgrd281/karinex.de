@@ -426,19 +426,27 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       text at runtime. Patch it for non-German locales via MutationObserver.
     {%- endcomment -%}
     {%- if request.locale.iso_code != 'de' -%}
-      {%- assign _kx_word_review_plural = 'karinex.meta.reviews_suffix' | t -%}
-      {%- assign _kx_word_write_review = 'karinex.cta.write_review' | t -%}
+      {%- assign _kx_word_review_plural = 'karinex.reviews.reviews_count_suffix' | t -%}
+      {%- assign _kx_word_write_review = 'karinex.reviews.write_review_btn' | t -%}
+      {%- assign _kx_word_reviews_tab = 'karinex.reviews.tab_reviews' | t -%}
+      {%- assign _kx_word_gallery_tab = 'karinex.reviews.tab_gallery' | t -%}
       <script>
         (function() {
           var pluralWord = {{ _kx_word_review_plural | json }};
           var writeWord  = {{ _kx_word_write_review | json }};
+          var reviewsTab = {{ _kx_word_reviews_tab | json }};
+          var galleryTab = {{ _kx_word_gallery_tab | json }};
           function patch(root) {
             if (!root || !root.querySelectorAll) return;
-            root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *').forEach(function(el) {
+            root.querySelectorAll('.rechnung-profi-stars, .rechnung-profi-stars *, #rechnung-profi-reviews-widget, #rechnung-profi-reviews-widget *, .rp-widget, .rp-widget *').forEach(function(el) {
               if (el.children && el.children.length > 0) return;
               var t = el.textContent;
               if (!t) return;
-              var nt = t.replace(/Bewertungen/g, pluralWord).replace(/Bewertung schreiben/g, writeWord);
+              var nt = t
+                .replace(/Bewertung schreiben/g, writeWord)
+                .replace(/(\d+)\s*Bewertungen/g, '$1 ' + pluralWord)
+                .replace(/\bBewertungen\b/g, reviewsTab)
+                .replace(/\bGalerie\b/g, galleryTab);
               if (nt !== t) el.textContent = nt;
             });
           }
