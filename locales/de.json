@@ -615,7 +615,8 @@
       "ago_days": "vor {{ n }} Tagen",
       "ago_weeks": "vor {{ n }} Wochen",
       "ago_months": "vor {{ n }} Monaten",
-      "ago_years": "vor {{ n }} Jahren"
+      "ago_years": "vor {{ n }} Jahren",
+      "just_now": "gerade eben"
     }
   }
 }

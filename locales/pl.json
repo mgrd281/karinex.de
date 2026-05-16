@@ -629,7 +629,8 @@
       "ago_days": "{{ n }} dni temu",
       "ago_weeks": "{{ n }} tyg. temu",
       "ago_months": "{{ n }} mies. temu",
-      "ago_years": "{{ n }} lat temu"
+      "ago_years": "{{ n }} lat temu",
+      "just_now": "przed chwilą"
     }
   }
 }
