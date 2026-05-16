@@ -514,9 +514,6 @@
         <span class="kx-cat__head-icon">{{ cat_icon }}</span>
         <h3 class="kx-cat__head-title">{{ cat_title }}</h3>
         {%- if cat == 'sale' -%}<span class="kx-cat__head-hot">HOT</span>{%- endif -%}
-        {%- if cat_all_url != blank and cat != 'sale' -%}
-          <a href="{{ cat_all_url }}" class="kx-cat__head-all">{{ cat_all_label }}</a>
-        {%- endif -%}
       </div>
 
       {%- if render_mode == 'nested' -%}
@@ -607,13 +604,18 @@
       {%- endif -%}
 
       {%- comment -%}
-        Footer "Alle X →" CTA moved up into the head row to free the
-        full grid width for the actual column links. Sale category still
-        shows the prominent sale CTA in the footer.
+        Footer "Alle X →" CTA. Lives at the bottom of every category
+        dropdown so the head row stays purely a title and the product
+        columns get the full horizontal width.
+        Sale category keeps its distinctive red pill CTA.
       {%- endcomment -%}
-      {%- if cat == 'sale' -%}
+      {%- if cat_all_url != blank -%}
         <div class="kx-cat__footer">
-          <a href="{{ cat_all_url }}" class="kx-cat__sale-cta">{{ cat_all_label }}</a>
+          {%- if cat == 'sale' -%}
+            <a href="{{ cat_all_url }}" class="kx-cat__sale-cta">{{ cat_all_label }}</a>
+          {%- else -%}
+            <a href="{{ cat_all_url }}" class="kx-cat__all">{{ cat_all_label }}</a>
+          {%- endif -%}
         </div>
       {%- endif -%}
 
