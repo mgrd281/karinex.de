@@ -583,6 +583,11 @@
       "recently_viewed": "Recently viewed",
       "checkout": "Checkout",
       "in_cart": "In cart"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "back_to_home": "Back to home",
+      "back": "Back to home"
     }
   }
 }

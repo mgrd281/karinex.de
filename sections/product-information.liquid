@@ -489,7 +489,7 @@
   <div class="container">
     <nav aria-label="Breadcrumb">
       <ol class="breadcrumbs">
-        <li><a href="{{ routes.root_url }}">Startseite</a></li>
+        <li><a href="{{ routes.root_url }}">{{ 'karinex.breadcrumb.home' | t }}</a></li>
         {%- if bc_active_collection -%}
           <li><a href="{{ bc_active_collection.url }}">{{ bc_active_collection.title }}</a></li>
         {%- endif -%}
@@ -512,9 +512,9 @@
       <span>{{ bc_active_collection.title }}</span>
     </a>
   {%- else -%}
-    <a href="{{ routes.root_url }}" class="mobile-back-btn" aria-label="Zurück zur Startseite">
+    <a href="{{ routes.root_url }}" class="mobile-back-btn" aria-label="{{ 'karinex.breadcrumb.back' | t }}">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-      <span>Startseite</span>
+      <span>{{ 'karinex.breadcrumb.home' | t }}</span>
     </a>
   {%- endif -%}
 </div>
