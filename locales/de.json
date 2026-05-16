@@ -529,6 +529,22 @@
       "heading": "Zuletzt angesehene Artikel",
       "previous": "Zurück",
       "next": "Weiter"
+    },
+    "reviews": {
+      "heading": "Kundenbewertungen",
+      "tab_reviews": "Bewertungen",
+      "tab_gallery": "Galerie",
+      "reviews_count_suffix": "Bewertungen",
+      "write_review_btn": "Bewertung schreiben"
+    },
+    "feedback_form": {
+      "title_sad": "Das tut uns leid. Was können wir besser machen?",
+      "placeholder": "Bitte hinterlassen Sie hier Ihr Feedback...",
+      "submit": "Absenden",
+      "explanation": "Wir nutzen Ihr Feedback, um unsere Produktseiten zu verbessern. Bitte haben Sie Verständnis, dass wir Ihnen keine Rückmeldung geben können. Falls Sie Kontakt mit uns aufnehmen möchten, können Sie sich aber gerne an unseren Kund*innenservice wenden.",
+      "to_customer_service": "zum Kundenservice",
+      "aria_textarea": "Ihr Feedback",
+      "title_happy": "Das freut uns! Haben Sie noch weitere Anregungen?"
     }
   }
 }

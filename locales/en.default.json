@@ -556,6 +556,22 @@
       "heading": "Recently viewed items",
       "previous": "Previous",
       "next": "Next"
+    },
+    "reviews": {
+      "heading": "Customer reviews",
+      "tab_reviews": "Reviews",
+      "tab_gallery": "Gallery",
+      "reviews_count_suffix": "reviews",
+      "write_review_btn": "Write a review"
+    },
+    "feedback_form": {
+      "title_sad": "We're sorry. What can we improve?",
+      "placeholder": "Please leave your feedback here...",
+      "submit": "Submit",
+      "explanation": "We use your feedback to improve our product pages. Please understand that we cannot reply individually. If you'd like to contact us, please reach out to our customer service.",
+      "to_customer_service": "to customer service",
+      "aria_textarea": "Your feedback",
+      "title_happy": "We're glad! Do you have any other suggestions?"
     }
   }
 }

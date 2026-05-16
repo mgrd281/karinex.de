@@ -543,6 +543,22 @@
       "heading": "Ostatnio oglądane produkty",
       "previous": "Poprzedni",
       "next": "Następny"
+    },
+    "reviews": {
+      "heading": "Opinie klientów",
+      "tab_reviews": "Opinie",
+      "tab_gallery": "Galeria",
+      "reviews_count_suffix": "opinii",
+      "write_review_btn": "Napisz opinię"
+    },
+    "feedback_form": {
+      "title_sad": "Przykro nam. Co możemy poprawić?",
+      "placeholder": "Zostaw tutaj swoją opinię...",
+      "submit": "Wyślij",
+      "explanation": "Wykorzystujemy Twoją opinię, aby ulepszać nasze strony produktów. Prosimy o wyrozumiałość – nie możemy udzielić Ci indywidualnej odpowiedzi. Jeśli chcesz się z nami skontaktować, zapraszamy do naszej obsługi klienta.",
+      "to_customer_service": "do obsługi klienta",
+      "aria_textarea": "Twoja opinia",
+      "title_happy": "Cieszymy się! Czy masz dla nas jeszcze jakieś sugestie?"
     }
   }
 }
