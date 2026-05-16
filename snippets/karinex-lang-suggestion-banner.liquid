@@ -37,6 +37,12 @@
     font-family: inherit;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   }
+  /* Mobile: never show this banner. The geo-redirect already serves
+     the right locale, and the slide-in caused a visible layout jump
+     ~2.5 s after page load on phones. */
+  @media (max-width: 768px) {
+    .klb { display: none !important; }
+  }
   .klb.is-open { display: block; animation: klb-in .35s cubic-bezier(.22,.61,.36,1); }
   @keyframes klb-in { from { transform: translateY(-100%); } to { transform: translateY(0); } }
   .klb__inner {
@@ -114,6 +120,14 @@
 
 <script>
   (function () {
+    // Skip on mobile/tablet — the slide-in caused a visible layout jump
+    // ~2.5 s after page load. Geo-redirect already handles the main case.
+    try {
+      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+        return;
+      }
+    } catch (_) {}
+
     var CURRENT = {{ _cur_iso | json }};
     var BASE_PATH = {{ _base_path | json }};
     var KEY = 'karinex_lang_pref';
