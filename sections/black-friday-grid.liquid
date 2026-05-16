@@ -81,11 +81,11 @@
   <div class="bf-head">
     <div>
       <h2 class="bf-h2">
-        {{ section.settings.heading | default: 'Aktuelle Deals für dich' }}
+        {{ 'karinex.deals.heading' | t }}
       </h2>
-      {% if section.settings.show_subheading and section.settings.subheading != blank %}
+      {% if section.settings.show_subheading %}
         <p class="bf-subtitle">
-          {{ section.settings.subheading }}
+          {{ 'karinex.deals.subheading' | t }}
         </p>
       {% endif %}
     </div>
@@ -184,7 +184,7 @@
 
 
                 <div class="bf-price-row">
-                  <span class="bf-price-label">ab</span>
+                  <span class="bf-price-label">{{ 'karinex.deals.price_from' | t }}</span>
                   <div class="bf-price-block">
   
                     <span class="bf-price-main">{{ price | money }}</span>

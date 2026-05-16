@@ -510,7 +510,21 @@
       "ready_to_go_heading": "Gotowe od razu.",
       "ready_to_go_text": "100% legalne klucze licencyjne e-mailem w kilka sekund. Natychmiastowe pobieranie i aktywacja z niemieckim wsparciem. Sprawdzone prawnie.",
       "download_now_btn": "Pobierz teraz",
-      "write_review": "Napisz recenzję"
+      "write_review": "Napisz recenzję",
+      "view_offer": "Zobacz ofertę",
+      "buy_now": "Kup teraz",
+      "price_from": "Od"
+    },
+    "countdown_long": {
+      "days": "DNI",
+      "hours": "GODZIN",
+      "minutes": "MINUT",
+      "seconds": "SEKUND"
+    },
+    "deals": {
+      "heading": "Aktualne oferty dla Ciebie",
+      "subheading": "Nasze najlepsze ceny dla Ciebie",
+      "price_from": "od"
     }
   }
 }

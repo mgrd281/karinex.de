@@ -496,7 +496,21 @@
       "ready_to_go_heading": "Sofort startklar.",
       "ready_to_go_text": "100% legale Lizenzschlüssel per E-Mail in wenigen Sekunden. Sofort-Download & Aktivierung inklusive deutschem Support. Rechtlich geprüft.",
       "download_now_btn": "Jetzt herunterladen",
-      "write_review": "Bewertung schreiben"
+      "write_review": "Bewertung schreiben",
+      "view_offer": "Zum Angebot",
+      "buy_now": "Jetzt kaufen",
+      "price_from": "Ab"
+    },
+    "countdown_long": {
+      "days": "TAGE",
+      "hours": "STUNDEN",
+      "minutes": "MINUTEN",
+      "seconds": "SEKUNDEN"
+    },
+    "deals": {
+      "heading": "Aktuelle Deals für dich",
+      "subheading": "Unsere besten Preise für Sie",
+      "price_from": "ab"
     }
   }
 }

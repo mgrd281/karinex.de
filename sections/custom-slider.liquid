@@ -1234,7 +1234,7 @@
 
             <div class="btn-group">
                 <a class="btn-slider" href="{%- if use_random -%}{{ random_hero_link }}{%- elsif section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/microsoft-office-2024-professional-plus-download-kein-abo{%- endif -%}">
-                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                    {{ 'karinex.cta.view_offer' | t }}
                 </a>
             </div>
         </div>
@@ -1270,7 +1270,7 @@
 
             <div class="btn-group">
                 <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/microsoft-office-2024-standard-fur-mac{%- endif -%}">
-                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                    {{ 'karinex.cta.view_offer' | t }}
                 </a>
             </div>
         </div>
@@ -1302,7 +1302,7 @@
 
             <div class="btn-group">
                 <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}{{ _root }}products/microsoft-windows-11-professional-64{%- endif -%}">
-                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                    {{ 'karinex.cta.view_offer' | t }}
                 </a>
             </div>
         </div>
@@ -1334,7 +1334,7 @@
 
             <div class="btn-group">
                 <a class="btn-slider" href="{%- if section.settings.cta_link != blank -%}{{ section.settings.cta_link }}{%- else -%}/products/office-2021-professional-plus-1pc{%- endif -%}">
-                    {{ section.settings.cta_label | default: 'Zum Angebot' }}
+                    {{ 'karinex.cta.view_offer' | t }}
                 </a>
             </div>
         </div>
@@ -1452,7 +1452,7 @@
 
     <div class="cta">
         <button class="btn" id="shop-button-{{ section.id }}">
-          {{ section.settings.countdown_button_label | default: 'JETZT KAUFEN' }}
+          {{ 'karinex.cta.buy_now' | t }}
         </button>
     </div>
 </section>
