@@ -798,7 +798,21 @@
   }
   .klc-backdrop.is-open { opacity: 1; pointer-events: auto; }
 
-  /* Mobile responsive */
+  /* Desktop-only widget — hide our markup AND any Crisp DOM on mobile/tablet.
+     Paired with the JS bail-out at the top of the script, so neither our
+     gold panel nor Crisp's full-screen chatbox can be injected on phones. */
+  @media (max-width: 768px) {
+    .klc,
+    .klc-launcher,
+    .klc-panel,
+    .klc-backdrop,
+    .klc-lightbox,
+    #crisp-chatbox,
+    .crisp-client { display: none !important; }
+  }
+
+  /* Mobile responsive (kept for sizes 521-768 just in case; the rule above
+     hides everything ≤ 768 px regardless) */
   @media (max-width: 520px) {
     .klc-launcher { right: 16px; bottom: 16px; width: 56px; height: 56px; }
     .klc-panel {
@@ -1849,6 +1863,17 @@
 
 <script>
   (function () {
+    // Desktop-only widget. On mobile/tablet we bail out before any
+    // listener / Crisp loader runs. Reason: Crisp's client script
+    // injects inline styles that override our hide-CSS and goes
+    // into mobile full-screen mode, which the user saw as a blank
+    // white page seconds after the real content rendered.
+    try {
+      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+        return;
+      }
+    } catch (_) {}
+
     var launcher    = document.getElementById('klcLauncher');
     var panel       = document.getElementById('klcPanel');
     var closeBtn    = document.getElementById('klcClose');
