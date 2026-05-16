@@ -379,6 +379,11 @@
       "pay_now_paypal": "Zapłać teraz przez PayPal",
       "lightning_email": "Błyskawiczna wysyłka e-mailem"
     },
+    "related": {
+      "categories_heading": "Powiązane kategorie",
+      "complementary_heading": "To Ci się też przyda",
+      "view_all": "Zobacz wszystko"
+    },
     "trust": {
       "authorized_dealer": "Sprawdzony oryginalny towar – wysyłka z Niemiec",
       "original_and_authenticity": "Sprawdzony oryginał i gwarancja autentyczności",
@@ -481,7 +486,8 @@
       "seals_certificates": "Certyfikaty i pieczęcie",
       "cookie_policy": "Polityka plików cookie",
       "cookies": "Pliki cookie",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "popular_products": "Popularne produkty"
     },
     "header": {
       "contact_help": "Kontakt i pomoc"

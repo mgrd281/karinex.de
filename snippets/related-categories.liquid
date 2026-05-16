@@ -1,0 +1,135 @@
+{%- comment -%}
+  Related Categories — internal-linking widget for the PDP.
+
+  Inputs (passed in via `render`):
+    product         — the current product object (required)
+
+  Picks 3–4 sister collections to point at based on the product's
+  tags / vendor / collection memberships. Falls back to a generic
+  catalogue spread when nothing more specific matches.
+
+  Output: a compact "Verwandte Kategorien" pill row that injects 3-4
+  internal links on every product page.
+{%- endcomment -%}
+
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+
+  assign p_collections = product.collections | map: 'handle' | join: ','
+  assign p_tags = product.tags | join: ',' | downcase
+  assign p_title = product.title | downcase
+  assign p_type = product.type | downcase
+
+  assign cat_key = 'default'
+  if p_collections contains 'microsoft-office' or p_collections contains 'microsoft-office-fur-mac' or p_title contains 'office' or p_tags contains 'office'
+    assign cat_key = 'office'
+  elsif p_collections contains 'windows-server' or p_title contains 'server' or p_tags contains 'server' or p_title contains 'sql' or p_title contains 'exchange'
+    assign cat_key = 'server'
+  elsif p_collections contains 'windows' or p_title contains 'windows' or p_tags contains 'windows'
+    assign cat_key = 'windows'
+  elsif p_collections contains 'microsoft-365-abonnement' or p_title contains '365' or p_tags contains '365'
+    assign cat_key = 'm365'
+  elsif p_collections contains 'microsoft-tools' or p_title contains 'visio' or p_title contains 'project' or p_title contains 'visual studio'
+    assign cat_key = 'tools'
+  endif
+-%}
+
+<aside class="kx-rel-cats" aria-label="{{ 'karinex.related.categories_heading' | t }}">
+  <p class="kx-rel-cats__title">{{ 'karinex.related.categories_heading' | t }}</p>
+  <ul class="kx-rel-cats__list" role="list">
+    {%- case cat_key -%}
+      {%- when 'office' -%}
+        <li><a href="{{ _root }}collections/microsoft-office-fur-mac">Office für Mac</a></li>
+        <li><a href="{{ _root }}collections/microsoft-365-abonnement">Microsoft 365</a></li>
+        <li><a href="{{ _root }}collections/windows">Windows</a></li>
+        <li><a href="{{ _root }}collections/microsoft-tools">Microsoft Tools</a></li>
+      {%- when 'windows' -%}
+        <li><a href="{{ _root }}collections/microsoft-office">Microsoft Office</a></li>
+        <li><a href="{{ _root }}collections/microsoft-365-abonnement">Microsoft 365</a></li>
+        <li><a href="{{ _root }}collections/windows-server">Windows Server</a></li>
+        <li><a href="{{ _root }}collections/microsoft-tools">Microsoft Tools</a></li>
+      {%- when 'server' -%}
+        <li><a href="{{ _root }}collections/windows">Windows</a></li>
+        <li><a href="{{ _root }}collections/microsoft-office">Microsoft Office</a></li>
+        <li><a href="{{ _root }}collections/microsoft-tools">Microsoft Tools</a></li>
+        <li><a href="{{ _root }}collections/bestseller">Bestseller</a></li>
+      {%- when 'm365' -%}
+        <li><a href="{{ _root }}collections/microsoft-office">Office Dauerlizenzen</a></li>
+        <li><a href="{{ _root }}collections/microsoft-office-fur-mac">Office für Mac</a></li>
+        <li><a href="{{ _root }}collections/windows">Windows</a></li>
+        <li><a href="{{ _root }}collections/microsoft-tools">Microsoft Tools</a></li>
+      {%- when 'tools' -%}
+        <li><a href="{{ _root }}collections/microsoft-office">Microsoft Office</a></li>
+        <li><a href="{{ _root }}collections/windows">Windows</a></li>
+        <li><a href="{{ _root }}collections/microsoft-365-abonnement">Microsoft 365</a></li>
+        <li><a href="{{ _root }}collections/windows-server">Windows Server</a></li>
+      {%- else -%}
+        <li><a href="{{ _root }}collections/microsoft-office">Microsoft Office</a></li>
+        <li><a href="{{ _root }}collections/windows">Windows</a></li>
+        <li><a href="{{ _root }}collections/microsoft-365-abonnement">Microsoft 365</a></li>
+        <li><a href="{{ _root }}collections/bestseller">Bestseller</a></li>
+    {%- endcase -%}
+  </ul>
+</aside>
+
+<style>
+  .kx-rel-cats {
+    margin: 24px 0 16px;
+    padding: 16px 18px;
+    background: #faf7f0;
+    border: 1px solid #ece6d6;
+    border-radius: 10px;
+  }
+  .kx-rel-cats__title {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1B3A2E;
+  }
+  .kx-rel-cats__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .kx-rel-cats__list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #d8d0bb;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1B3A2E;
+    text-decoration: none;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+  }
+  .kx-rel-cats__list a:hover,
+  .kx-rel-cats__list a:focus-visible {
+    background: #1B3A2E;
+    border-color: #1B3A2E;
+    color: #ffffff;
+  }
+  .kx-rel-cats__list a::after {
+    content: '→';
+    font-size: 11px;
+    line-height: 1;
+    margin-left: 2px;
+    opacity: 0.6;
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+  .kx-rel-cats__list a:hover::after,
+  .kx-rel-cats__list a:focus-visible::after {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+</style>

@@ -365,6 +365,11 @@
       "pay_now_paypal": "Sofort mit PayPal bezahlen",
       "lightning_email": "Blitzversand per E-Mail"
     },
+    "related": {
+      "categories_heading": "Verwandte Kategorien",
+      "complementary_heading": "Das brauchst du auch",
+      "view_all": "Alle ansehen"
+    },
     "trust": {
       "authorized_dealer": "Geprüfte Originalware – Versand aus Deutschland",
       "original_and_authenticity": "Geprüfte Originalware & Echtheits-Garantie",
@@ -467,7 +472,8 @@
       "seals_certificates": "Zertifikate & Siegel",
       "cookie_policy": "Cookie-Richtlinie",
       "cookies": "Cookies",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "popular_products": "Beliebte Produkte"
     },
     "header": {
       "contact_help": "Kontakt & Hilfe"
