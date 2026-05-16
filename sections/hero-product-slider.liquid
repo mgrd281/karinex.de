@@ -812,7 +812,7 @@
   {%- comment -%} Bottom Bar with Countdown {%- endcomment -%}
   {% if section.settings.show_bar and fallback_has_products %}
     <div class="hero-slider__bar">
-      <div class="hero-slider__sale-text">{{ section.settings.sale_text | default: 'FINAL WINTER SALE' }}</div>
+      <div class="hero-slider__sale-text">{%- if request.locale.iso_code == 'de' -%}{{ section.settings.sale_text | default: 'FINAL WINTER SALE' }}{%- else -%}{{ 'karinex.sale_banner.hero_label' | t }}{%- endif -%}</div>
 
       {% if show_countdown and countdown_end != blank %}
         <div class="hero-slider__timer" role="timer" aria-label="Countdown" style="display:flex; align-items:center;">

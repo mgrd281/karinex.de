@@ -525,6 +525,18 @@
       "heading": "Aktualne oferty dla Ciebie",
       "subheading": "Nasze najlepsze ceny dla Ciebie",
       "price_from": "od"
+    },
+    "panels": {
+      "instant_download_after_purchase": "Natychmiastowe pobieranie po zakupie",
+      "legal_original_key": "100 % legalny i oryginalny klucz licencyjny",
+      "perpetual_no_subscription": "Licencja wieczysta – bez abonamentu, bez miesięcznych opłat",
+      "easy_online_activation": "Łatwa aktywacja online z instrukcją",
+      "manufacturer_label": "Producent:",
+      "article_type_label": "Typ produktu:"
+    },
+    "sale_banner": {
+      "top_text": "Super wyprzedaż: do 60% rabatu",
+      "hero_label": "WYPRZEDAŻ MAJ"
     }
   }
 }
