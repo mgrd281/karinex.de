@@ -2508,9 +2508,12 @@
                 display: none !important;
             }
 
+            /* Desktop: stack the cart pill under the wishlist heart pill (top-right).
+               Wishlist pill sits at top: 16px (~31px tall), so cart pill goes ~10px below. */
             .mobile-cart-btn {
                 display: flex !important;
-                bottom: 24px !important;
+                top: 58px !important;
+                bottom: auto !important;
             }
         }
 
