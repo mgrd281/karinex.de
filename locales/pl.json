@@ -603,6 +603,16 @@
       "remove": "Usuń",
       "error": "Błąd",
       "sale": "Wyprzedaż"
+    },
+    "shipping_card": {
+      "direct_email": "Bezpośrednio e-mailem",
+      "license_via_email": "Klucz licencyjny e-mailem",
+      "instantly_available": "Dostępne natychmiast",
+      "until_key_delivery": "do dostarczenia klucza",
+      "free_badge": "Bezpłatnie",
+      "days_business": "{{ days }} dni robocze",
+      "fast_delivery": "Szybka dostawa",
+      "days_return": "{{ days }} dni na zwrot"
     }
   }
 }

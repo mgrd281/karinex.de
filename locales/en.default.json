@@ -616,6 +616,16 @@
       "remove": "Remove",
       "error": "Error",
       "sale": "Sale"
+    },
+    "shipping_card": {
+      "direct_email": "Directly via email",
+      "license_via_email": "License key via email",
+      "instantly_available": "Instantly available",
+      "until_key_delivery": "until key delivery",
+      "free_badge": "Free",
+      "days_business": "{{ days }} business days",
+      "fast_delivery": "Fast delivery",
+      "days_return": "{{ days }}-day return policy"
     }
   }
 }

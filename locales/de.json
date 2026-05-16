@@ -589,6 +589,16 @@
       "remove": "Entfernen",
       "error": "Fehler",
       "sale": "Sale"
+    },
+    "shipping_card": {
+      "direct_email": "Direkt per E-Mail",
+      "license_via_email": "Lizenzschlüssel per E-Mail",
+      "instantly_available": "Sofort verfügbar",
+      "until_key_delivery": "bis Key-Zustellung",
+      "free_badge": "Kostenlos",
+      "days_business": "{{ days }} Werktage",
+      "fast_delivery": "Schnelle Lieferung",
+      "days_return": "{{ days }} Tage Rückgaberecht"
     }
   }
 }
