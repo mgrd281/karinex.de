@@ -164,19 +164,60 @@
       "applicableCountry": "DE"
     }
   }
+  {%- comment -%}
+    aggregateRating — multi-source fallback chain so we always emit
+    structured data when ANY reviews app on the store has captured a
+    score for this product. Order of preference:
+      1. Shopify Product Reviews / Loox / Judge.me / Stamped → namespace `reviews`
+      2. ddReviews app                                         → namespace `ddreviews`
+      3. Judge.me native                                       → namespace `judgeme`
+      4. Loox native                                           → namespace `loox`
+      5. Stamped.io / Stamped product reviews                  → namespace `spr` / `stamped`
+      6. Rechnung-Profi external rating widget                 → namespace `rechnung_profi`
+    Falls back silently when none are populated.
+  {%- endcomment -%}
   {%- assign rating_value = product.metafields.reviews.rating.value -%}
   {%- assign rating_count = product.metafields.reviews.rating_count -%}
-  
-  {%- if product.metafields.ddreviews.content.average_star -%}
+
+  {%- if rating_value == blank and product.metafields.ddreviews.content.average_star -%}
     {%- assign rating_value = product.metafields.ddreviews.content.average_star -%}
     {%- assign rating_count = product.metafields.ddreviews.content.total_reviews -%}
   {%- endif -%}
 
-  {% if rating_value != blank and rating_value > 0 %}
+  {%- if rating_value == blank and product.metafields.judgeme.badge != blank -%}
+    {%- assign rating_value = product.metafields.judgeme.rating -%}
+    {%- assign rating_count = product.metafields.judgeme.count | default: product.metafields.judgeme.review_count -%}
+  {%- endif -%}
+
+  {%- if rating_value == blank and product.metafields.loox.avg_rating -%}
+    {%- assign rating_value = product.metafields.loox.avg_rating -%}
+    {%- assign rating_count = product.metafields.loox.num_reviews -%}
+  {%- endif -%}
+
+  {%- if rating_value == blank and product.metafields.spr.reviews -%}
+    {%- assign rating_value = product.metafields.spr.average_rating | default: product.metafields.spr.rating -%}
+    {%- assign rating_count = product.metafields.spr.review_count | default: product.metafields.spr.reviews_count -%}
+  {%- endif -%}
+
+  {%- if rating_value == blank and product.metafields.stamped.rating -%}
+    {%- assign rating_value = product.metafields.stamped.rating -%}
+    {%- assign rating_count = product.metafields.stamped.count -%}
+  {%- endif -%}
+
+  {%- if rating_value == blank and product.metafields.rechnung_profi.rating -%}
+    {%- assign rating_value = product.metafields.rechnung_profi.rating -%}
+    {%- assign rating_count = product.metafields.rechnung_profi.count -%}
+  {%- endif -%}
+
+  {%- comment -%} Numeric guard — Google rejects 0 / non-numeric values. {%- endcomment -%}
+  {%- assign _rv_num = rating_value | times: 1.0 -%}
+  {%- assign _rc_num = rating_count | times: 1 -%}
+
+  {% if rating_value != blank and _rv_num > 0 and _rc_num > 0 %}
   ,"aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "{{ rating_value }}",
-    "reviewCount": "{{ rating_count | default: 1 }}",
+    "reviewCount": "{{ rating_count }}",
     "bestRating": "5",
     "worstRating": "1"
   }
