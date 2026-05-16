@@ -582,7 +582,9 @@
       "instant_delivery_email": "Instantly delivered by email",
       "recently_viewed": "Recently viewed",
       "checkout": "Checkout",
-      "in_cart": "In cart"
+      "in_cart": "In cart",
+      "add_to_cart_aria": "Add {{ title }} to cart",
+      "reviews_count": "{{ count }} reviews"
     },
     "breadcrumb": {
       "home": "Home",

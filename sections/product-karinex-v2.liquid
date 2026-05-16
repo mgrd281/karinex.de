@@ -273,7 +273,7 @@
           </svg>
           <span>
             {%- if v.available -%}
-              In den Warenkorb · {{ price | money }}
+              {{ 'karinex.product.add_to_cart' | t }} · {{ price | money }}
             {%- else -%}
               Derzeit nicht verfügbar
             {%- endif -%}
@@ -428,7 +428,7 @@
   <div class="kxv2-stickybar" aria-hidden="true" data-kxv2-stickybar>
     <span class="kxv2-stickybar__price">{{ price | money }}</span>
     <button type="button" class="kxv2-stickybar__btn" data-kxv2-stickybar-cta>
-      In den Warenkorb
+      {{ 'karinex.product.add_to_cart' | t }}
     </button>
   </div>
 
