@@ -346,9 +346,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
       waitForLauncher(function (launcher) {
         var opened = false;
+        // karinex-live-chat hides the launcher (display:none) on ≤768 px and
+        // skips Crisp init there to avoid a known white-page bug. Treat a
+        // hidden launcher as absent so we fall through to email/WhatsApp.
+        var launcherVisible = launcher && launcher.offsetParent !== null;
 
         // 1. Karinex Live Chat panel (Crisp) — same widget as the rest of the site.
-        if (launcher) {
+        if (launcherVisible) {
           launcher.click();
           opened = true;
         }
