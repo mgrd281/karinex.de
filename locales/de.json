@@ -523,6 +523,12 @@
     "sale_banner": {
       "top_text": "Super Sale: Bis zu 60% Rabatt",
       "hero_label": "MAI SALE"
+    },
+    "recently_viewed": {
+      "eyebrow": "Mach weiter, wo du aufgehört hast",
+      "heading": "Zuletzt angesehene Artikel",
+      "previous": "Zurück",
+      "next": "Weiter"
     }
   }
 }

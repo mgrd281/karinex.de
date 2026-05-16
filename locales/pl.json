@@ -537,6 +537,12 @@
     "sale_banner": {
       "top_text": "Super wyprzedaż: do 60% rabatu",
       "hero_label": "WYPRZEDAŻ MAJ"
+    },
+    "recently_viewed": {
+      "eyebrow": "Kontynuuj tam, gdzie skończyłeś",
+      "heading": "Ostatnio oglądane produkty",
+      "previous": "Poprzedni",
+      "next": "Następny"
     }
   }
 }

@@ -475,14 +475,14 @@
 <div class="pdp-rv" id="pdp-rv-{{ section.id }}" style="display:none">
   <div class="pdp-rv__header">
     <div class="pdp-rv__header-text">
-      <span class="pdp-rv__eyebrow">Mach weiter, wo du aufgehört hast</span>
-      <h2 class="pdp-rv__heading">Zuletzt angesehene Artikel</h2>
+      <span class="pdp-rv__eyebrow">{{ 'karinex.recently_viewed.eyebrow' | t }}</span>
+      <h2 class="pdp-rv__heading">{{ 'karinex.recently_viewed.heading' | t }}</h2>
     </div>
     <div class="pdp-rv__nav">
-      <button class="pdp-rv__arrow pdp-rv__arrow--prev" aria-label="Zurück" type="button">
+      <button class="pdp-rv__arrow pdp-rv__arrow--prev" aria-label="{{ 'karinex.recently_viewed.previous' | t }}" type="button">
         <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button class="pdp-rv__arrow pdp-rv__arrow--next" aria-label="Weiter" type="button">
+      <button class="pdp-rv__arrow pdp-rv__arrow--next" aria-label="{{ 'karinex.recently_viewed.next' | t }}" type="button">
         <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
       </button>
     </div>

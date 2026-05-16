@@ -550,6 +550,12 @@
     "sale_banner": {
       "top_text": "Super sale: up to 60% off",
       "hero_label": "MAY SALE"
+    },
+    "recently_viewed": {
+      "eyebrow": "Pick up where you left off",
+      "heading": "Recently viewed items",
+      "previous": "Previous",
+      "next": "Next"
     }
   }
 }
