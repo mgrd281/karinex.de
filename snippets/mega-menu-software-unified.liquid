@@ -325,7 +325,16 @@
       margin: 0 0 0.5rem;
       padding-bottom: 0.45rem;
       border-bottom: 1px solid #ececec;
-      white-space: nowrap;
+      /* allow long column titles like "WINDOWS SERVER 2025" to wrap
+         instead of overflowing into the next column */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      min-width: 0;
+    }
+    .kx-cat__col-title > span:not(.kx-cat__col-icon) {
+      min-width: 0;
+      flex: 1 1 auto;
     }
     .kx-cat__col-list {
       display: flex;
@@ -360,6 +369,12 @@
       letter-spacing: -0.003em;
       color: #2a2a2a;
       text-decoration: none;
+      /* allow link labels to wrap within their narrow column instead of
+         being truncated with an ellipsis */
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      min-width: 0;
       transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
                   color 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
