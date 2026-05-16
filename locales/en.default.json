@@ -495,6 +495,35 @@
       "cookie_policy": "Cookie policy",
       "cookies": "Cookies",
       "newsletter": "Newsletter"
+    },
+    "header": {
+      "contact_help": "Contact & help"
+    },
+    "announcement": {
+      "watches": "Verified authenticity. Full warranty. Insured high-value shipping.",
+      "digital": "100% legal licenses. Express shipping & German support."
+    },
+    "countdown": {
+      "days": "DAYS",
+      "hours": "HRS",
+      "minutes": "MIN",
+      "seconds": "SEC"
+    },
+    "tabs": {
+      "description": "Description",
+      "functions": "Features",
+      "product_details": "Product details",
+      "read_more": "Show more",
+      "read_less": "Show less"
+    },
+    "cta": {
+      "no_subscription": "NO SUBSCRIPTION",
+      "no_subscription_desc": "One-time payment, no hidden costs",
+      "instant_download_title": "INSTANT DOWNLOAD",
+      "ready_to_go_heading": "Ready to go.",
+      "ready_to_go_text": "100% legal license keys delivered by email within seconds. Instant download & activation with German support. Legally verified.",
+      "download_now_btn": "Download now",
+      "write_review": "Write a review"
     }
   }
 }

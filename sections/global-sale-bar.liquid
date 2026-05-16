@@ -41,19 +41,19 @@
     <div class="announcement-left">
       {%- if _top_bar_cat == 'uhren' -%}
         <div class="announcement-message active">
-          <span class="announcement-text">Geprüfte Echtheit. Volle Garantie. Versicherter Wertversand.</span>
+          <span class="announcement-text">{{ 'karinex.announcement.watches' | t }}</span>
         </div>
       {%- elsif _top_bar_cat == 'lego' -%}
         <div class="announcement-message active">
-          <span class="announcement-text">Werkseitig versiegelt (MISB). Sammlerschutz & sicherer Versand.</span>
+          <span class="announcement-text">{{ 'karinex.trust.new_in_ovp' | t }}</span>
         </div>
       {%- elsif _top_bar_cat == 'digital' -%}
         <div class="announcement-message active">
-          <span class="announcement-text">100 % legale Lizenzen. Blitzversand & deutscher Support.</span>
+          <span class="announcement-text">{{ 'karinex.announcement.digital' | t }}</span>
         </div>
       {%- elsif _top_bar_cat == 'games' -%}
         <div class="announcement-message active">
-          <span class="announcement-text">Factory Sealed. Offizielle deutsche Verkaufsversionen (USK).</span>
+          <span class="announcement-text">{{ 'karinex.trust.factory_sealed' | t }}</span>
         </div>
       {%- else -%}
         {% if section.blocks.size > 0 %}
@@ -81,28 +81,28 @@
             <div class="timer-group" data-timer-group="days">
               <div class="timer-block">
                 <span class="timer-value" id="days">00</span>
-                <span class="timer-label">TAGE</span>
+                <span class="timer-label">{{ 'karinex.countdown.days' | t }}</span>
               </div>
               <span class="timer-separator">:</span>
             </div>
             <div class="timer-group" data-timer-group="hours">
               <div class="timer-block">
                 <span class="timer-value" id="hours">00</span>
-                <span class="timer-label">STD</span>
+                <span class="timer-label">{{ 'karinex.countdown.hours' | t }}</span>
               </div>
               <span class="timer-separator">:</span>
             </div>
             <div class="timer-group" data-timer-group="minutes">
               <div class="timer-block">
                 <span class="timer-value" id="minutes">00</span>
-                <span class="timer-label">MIN</span>
+                <span class="timer-label">{{ 'karinex.countdown.minutes' | t }}</span>
               </div>
               <span class="timer-separator">:</span>
             </div>
             <div class="timer-group" data-timer-group="seconds">
               <div class="timer-block">
                 <span class="timer-value" id="seconds">00</span>
-                <span class="timer-label">SEK</span>
+                <span class="timer-label">{{ 'karinex.countdown.seconds' | t }}</span>
               </div>
             </div>
           </div>
