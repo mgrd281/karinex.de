@@ -556,6 +556,11 @@
       "recently_viewed": "Zuletzt angesehen",
       "checkout": "Zur Kasse",
       "in_cart": "Im Warenkorb"
+    },
+    "breadcrumb": {
+      "home": "Startseite",
+      "back_to_home": "Zur Startseite",
+      "back": "Zurück zur Startseite"
     }
   }
 }

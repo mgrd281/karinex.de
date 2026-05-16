@@ -452,7 +452,7 @@
 
       {%- comment -%} Breadcrumb {%- endcomment -%}
       <nav class="ay-breadcrumb" aria-label="Breadcrumb">
-        <a href="{{ _root }}">Startseite</a>
+        <a href="{{ _root }}">{{ 'karinex.breadcrumb.home' | t }}</a>
         <span class="ay-breadcrumb__sep">&gt;</span>
         {%- if product.collections.size > 0 -%}
           <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>

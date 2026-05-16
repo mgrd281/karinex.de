@@ -570,6 +570,11 @@
       "recently_viewed": "Ostatnio oglądane",
       "checkout": "Do kasy",
       "in_cart": "W koszyku"
+    },
+    "breadcrumb": {
+      "home": "Strona główna",
+      "back_to_home": "Do strony głównej",
+      "back": "Powrót do strony głównej"
     }
   }
 }
