@@ -397,6 +397,12 @@
       "complementary_heading": "You'll also need this",
       "view_all": "View all"
     },
+    "compare": {
+      "heading": "Compare with",
+      "view_all": "View all",
+      "this_item": "This pick",
+      "view": "Details"
+    },
     "trust": {
       "authorized_dealer": "Verified original goods – shipped from Germany",
       "original_and_authenticity": "Verified original & authenticity guarantee",
@@ -595,7 +601,8 @@
     "breadcrumb": {
       "home": "Home",
       "back_to_home": "Back to home",
-      "back": "Back to home"
+      "back": "Back to home",
+      "software_hub": "Software"
     },
     "badge": {
       "sale_price": "Sale price",

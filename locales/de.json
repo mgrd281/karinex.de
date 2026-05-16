@@ -370,6 +370,12 @@
       "complementary_heading": "Das brauchst du auch",
       "view_all": "Alle ansehen"
     },
+    "compare": {
+      "heading": "Vergleichen mit",
+      "view_all": "Alle ansehen",
+      "this_item": "Diese Auswahl",
+      "view": "Details"
+    },
     "trust": {
       "authorized_dealer": "Geprüfte Originalware – Versand aus Deutschland",
       "original_and_authenticity": "Geprüfte Originalware & Echtheits-Garantie",
@@ -568,7 +574,8 @@
     "breadcrumb": {
       "home": "Startseite",
       "back_to_home": "Zur Startseite",
-      "back": "Zurück zur Startseite"
+      "back": "Zurück zur Startseite",
+      "software_hub": "Software"
     },
     "badge": {
       "sale_price": "Aktionspreis",

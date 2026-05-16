@@ -1,0 +1,206 @@
+{%- comment -%}
+  Compare widget — shows 2-3 sibling products from the same primary
+  collection beside the current one in a tight comparison strip.
+
+  Each sibling links straight to its PDP, giving every product page
+  2-3 extra inbound internal links from peers in the same category.
+
+  Input:
+    product (required) — the current product
+
+  Falls back to the first collection in product.collections, then to
+  collections.bestseller, and hides itself if nothing usable is found.
+{%- endcomment -%}
+
+{%- liquid
+  assign _root = routes.root_url | default: '/'
+  unless _root == '/'
+    assign _root = _root | append: '/'
+  endunless
+
+  # Pick the most specific collection this product lives in. Order:
+  # explicit assignment via product.collections.first → infer from tags.
+  assign primary = product.collections.first
+  unless primary
+    if product.tags contains 'office'
+      assign primary = collections['microsoft-office']
+    elsif product.tags contains 'windows'
+      assign primary = collections['windows']
+    elsif product.tags contains 'server'
+      assign primary = collections['windows-server']
+    else
+      assign primary = collections['bestseller']
+    endif
+  endunless
+-%}
+
+{%- if primary and primary.products_count > 1 -%}
+  {%- assign _siblings_used = 0 -%}
+  {%- assign _has_any = false -%}
+  {%- for s in primary.products limit: 5 -%}
+    {%- unless s.handle == product.handle -%}
+      {%- if _siblings_used < 2 -%}
+        {%- assign _has_any = true -%}
+        {%- assign _siblings_used = _siblings_used | plus: 1 -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+
+  {%- if _has_any -%}
+    <aside class="kx-compare" aria-label="{{ 'karinex.compare.heading' | t }}">
+      <div class="kx-compare__head">
+        <p class="kx-compare__title">{{ 'karinex.compare.heading' | t }}</p>
+        <a href="{{ primary.url }}" class="kx-compare__all">{{ 'karinex.compare.view_all' | t }} →</a>
+      </div>
+
+      <ul class="kx-compare__grid" role="list">
+        {%- comment -%} Current product (anchored) {%- endcomment -%}
+        {%- assign _curfull = product.title -%}
+        {%- assign _curshort = _curfull | split: ' – ' | first | split: ' | ' | first | truncatewords: 6, '…' -%}
+        <li class="kx-compare__item kx-compare__item--current" aria-current="true">
+          <span class="kx-compare__badge">{{ 'karinex.compare.this_item' | t }}</span>
+          <span class="kx-compare__name">{{ _curshort }}</span>
+          <span class="kx-compare__price">
+            {%- if product.compare_at_price > product.price -%}
+              <s class="kx-compare__old">{{ product.compare_at_price | money }}</s>
+              <strong class="kx-compare__new">{{ product.price | money }}</strong>
+            {%- else -%}
+              <strong>{{ product.price | money }}</strong>
+            {%- endif -%}
+          </span>
+        </li>
+
+        {%- comment -%} Siblings {%- endcomment -%}
+        {%- assign _shown = 0 -%}
+        {%- for s in primary.products limit: 5 -%}
+          {%- unless s.handle == product.handle -%}
+            {%- if _shown < 2 -%}
+              {%- assign _shown = _shown | plus: 1 -%}
+              {%- assign _sfull = s.title -%}
+              {%- assign _sshort = _sfull | split: ' – ' | first | split: ' | ' | first | truncatewords: 6, '…' -%}
+              <li class="kx-compare__item">
+                <a href="{{ s.url }}" class="kx-compare__link" title="{{ _sfull | escape }}">
+                  <span class="kx-compare__name">{{ _sshort }}</span>
+                  <span class="kx-compare__price">
+                    {%- if s.compare_at_price > s.price -%}
+                      <s class="kx-compare__old">{{ s.compare_at_price | money }}</s>
+                      <strong class="kx-compare__new">{{ s.price | money }}</strong>
+                    {%- else -%}
+                      <strong>{{ s.price | money }}</strong>
+                    {%- endif -%}
+                  </span>
+                  <span class="kx-compare__cta">{{ 'karinex.compare.view' | t }} →</span>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </aside>
+
+    <style>
+      .kx-compare {
+        margin: 16px 0 24px;
+        padding: 18px 18px 14px;
+        background: #faf7f0;
+        border: 1px solid #ece6d6;
+        border-radius: 12px;
+      }
+      .kx-compare__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .kx-compare__title {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #1B3A2E;
+      }
+      .kx-compare__all {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1B3A2E;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .kx-compare__all:hover { text-decoration: underline; }
+      .kx-compare__grid {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+      @media (max-width: 640px) {
+        .kx-compare__grid { grid-template-columns: 1fr; }
+      }
+      .kx-compare__item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #f0eadb;
+        background: #fff;
+        font-size: 13px;
+        line-height: 1.35;
+      }
+      .kx-compare__item--current {
+        border-color: #c9a84c;
+        background: #fff8e8;
+      }
+      .kx-compare__badge {
+        align-self: flex-start;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        background: #c9a84c;
+        color: #1B3A2E;
+        border-radius: 999px;
+      }
+      .kx-compare__link {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        text-decoration: none;
+        color: inherit;
+        height: 100%;
+      }
+      .kx-compare__link:hover .kx-compare__cta,
+      .kx-compare__link:focus-visible .kx-compare__cta {
+        background: #1B3A2E;
+        color: #fff;
+      }
+      .kx-compare__name {
+        font-weight: 600;
+        color: #1a1a1a;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .kx-compare__price { font-size: 13px; font-weight: 700; color: #E30613; }
+      .kx-compare__old { font-weight: 400; color: #999; margin-right: 5px; font-size: 11px; }
+      .kx-compare__new { color: #E30613; }
+      .kx-compare__cta {
+        margin-top: auto;
+        align-self: flex-start;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        background: #faf7f0;
+        border: 1px solid #d8d0bb;
+        border-radius: 999px;
+        color: #1B3A2E;
+        transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+      }
+    </style>
+  {%- endif -%}
+{%- endif -%}

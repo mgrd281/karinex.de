@@ -490,14 +490,24 @@
     <nav aria-label="Breadcrumb">
       <ol class="breadcrumbs">
         <li><a href="{{ routes.root_url }}">{{ 'karinex.breadcrumb.home' | t }}</a></li>
+        {%- comment -%}
+          Software hub crumb — extra internal-link surface that groups
+          every Microsoft/software product under a single parent path.
+          Falls back to the bestseller collection if there is no dedicated
+          "Software" collection in the merchant's Shopify admin.
+        {%- endcomment -%}
+        {%- assign _hub = collections.software | default: collections.bestseller -%}
+        {%- if _hub and _hub.products_count > 0 -%}
+          <li><a href="{{ _hub.url }}">{{ 'karinex.breadcrumb.software_hub' | t }}</a></li>
+        {%- endif -%}
         {%- if bc_active_collection -%}
           <li><a href="{{ bc_active_collection.url }}">{{ bc_active_collection.title }}</a></li>
         {%- endif -%}
         {%- if product and product.vendor != blank -%}
           <li>
-            <span title="{{ product.vendor | escape }}">
+            <a href="{{ product.vendor | url_for_vendor }}" title="{{ product.vendor | escape }}">
               {{ product.vendor }}
-            </span>
+            </a>
           </li>
         {%- endif -%}
       </ol>
@@ -3611,8 +3621,9 @@ nav[aria-label="Breadcrumb"],
 
 {% render 'product-meta-compact', is_digital: is_digital, long_shipping: long_shipping, ship_dt: ship_dt %}
 
-{%- comment -%} Internal-linking widgets — Verwandte Kategorien + Cross-sell {%- endcomment -%}
+{%- comment -%} Internal-linking widgets — Verwandte Kategorien + Cross-sell + Compare {%- endcomment -%}
 {% render 'complementary-products', product: product %}
+{% render 'compare-widget', product: product %}
 {% render 'related-categories', product: product %}
 
 <ul class="product-meta-list benefits-list" data-nosnippet>

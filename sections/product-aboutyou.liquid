@@ -450,10 +450,15 @@
     {%- comment -%} ========== RIGHT: PRODUCT INFO ========== {%- endcomment -%}
     <div class="ay-info">
 
-      {%- comment -%} Breadcrumb {%- endcomment -%}
+      {%- comment -%} Breadcrumb — deeper structure with Software hub crumb {%- endcomment -%}
       <nav class="ay-breadcrumb" aria-label="Breadcrumb">
         <a href="{{ _root }}">{{ 'karinex.breadcrumb.home' | t }}</a>
         <span class="ay-breadcrumb__sep">&gt;</span>
+        {%- assign _hub = collections.software | default: collections.bestseller -%}
+        {%- if _hub and _hub.products_count > 0 -%}
+          <a href="{{ _hub.url }}">{{ 'karinex.breadcrumb.software_hub' | t }}</a>
+          <span class="ay-breadcrumb__sep">&gt;</span>
+        {%- endif -%}
         {%- if product.collections.size > 0 -%}
           <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
           <span class="ay-breadcrumb__sep">&gt;</span>

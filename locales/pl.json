@@ -384,6 +384,12 @@
       "complementary_heading": "To Ci się też przyda",
       "view_all": "Zobacz wszystko"
     },
+    "compare": {
+      "heading": "Porównaj z",
+      "view_all": "Zobacz wszystko",
+      "this_item": "Ten wybór",
+      "view": "Szczegóły"
+    },
     "trust": {
       "authorized_dealer": "Sprawdzony oryginalny towar – wysyłka z Niemiec",
       "original_and_authenticity": "Sprawdzony oryginał i gwarancja autentyczności",
@@ -582,7 +588,8 @@
     "breadcrumb": {
       "home": "Strona główna",
       "back_to_home": "Do strony głównej",
-      "back": "Powrót do strony głównej"
+      "back": "Powrót do strony głównej",
+      "software_hub": "Oprogramowanie"
     },
     "badge": {
       "sale_price": "Cena promocyjna",
