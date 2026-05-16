@@ -626,6 +626,21 @@
       "days_business": "{{ days }} business days",
       "fast_delivery": "Fast delivery",
       "days_return": "{{ days }}-day return policy"
+    },
+    "accordion": {
+      "product_description": "Product description",
+      "faq": "Frequently Asked Questions",
+      "shipping_returns": "Shipping & returns",
+      "delivery_notes": "Delivery & notes"
+    },
+    "reviews_widget": {
+      "customer": "Customer",
+      "verified_purchase": "Verified purchase",
+      "was_helpful": "Was this review helpful?",
+      "ago_days": "{{ n }} days ago",
+      "ago_weeks": "{{ n }} weeks ago",
+      "ago_months": "{{ n }} months ago",
+      "ago_years": "{{ n }} years ago"
     }
   }
 }
