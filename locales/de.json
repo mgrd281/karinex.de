@@ -545,6 +545,9 @@
       "to_customer_service": "zum Kundenservice",
       "aria_textarea": "Ihr Feedback",
       "title_happy": "Das freut uns! Haben Sie noch weitere Anregungen?"
+    },
+    "cards": {
+      "coupon": "Coupon"
     }
   }
 }

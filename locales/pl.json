@@ -559,6 +559,9 @@
       "to_customer_service": "do obsługi klienta",
       "aria_textarea": "Twoja opinia",
       "title_happy": "Cieszymy się! Czy masz dla nas jeszcze jakieś sugestie?"
+    },
+    "cards": {
+      "coupon": "Kupon"
     }
   }
 }

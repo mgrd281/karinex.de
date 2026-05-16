@@ -572,6 +572,9 @@
       "to_customer_service": "to customer service",
       "aria_textarea": "Your feedback",
       "title_happy": "We're glad! Do you have any other suggestions?"
+    },
+    "cards": {
+      "coupon": "Coupon"
     }
   }
 }
