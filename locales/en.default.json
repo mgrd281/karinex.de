@@ -588,6 +588,10 @@
       "home": "Home",
       "back_to_home": "Back to home",
       "back": "Back to home"
+    },
+    "badge": {
+      "sale_price": "Sale price",
+      "only_today": "Today only"
     }
   }
 }
