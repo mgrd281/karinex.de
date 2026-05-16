@@ -570,6 +570,23 @@
       "back_to_home": "Zur Startseite",
       "back": "Zurück zur Startseite"
     },
+    "p404": {
+      "title": "Oops! Diese Seite existiert nicht",
+      "text": "Die gewünschte Seite wurde verschoben oder existiert nicht mehr. Kein Problem – wir helfen dir weiter!",
+      "search_placeholder": "Was suchen Sie? z.B. Windows 11, Office 2024…",
+      "search_aria": "Suche",
+      "search_btn_aria": "Suchen",
+      "all_products": "Alle Produkte",
+      "popular_categories": "Beliebte Kategorien",
+      "popular_products": "Beliebte Produkte",
+      "popular_products_subtitle": "Diese Produkte könnten dich interessieren",
+      "help_heading": "Brauchst du Hilfe?",
+      "help_text": "Unser deutschsprachiger Support hilft dir gerne weiter.",
+      "help_chat": "Live-Chat",
+      "help_email": "E-Mail senden",
+      "help_faq": "FAQ ansehen",
+      "contact": "Kontakt"
+    },
     "badge": {
       "sale_price": "Aktionspreis",
       "only_today": "Nur heute",
