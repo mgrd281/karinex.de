@@ -33,7 +33,7 @@
           {%- endfor -%}
         </span>
         {%- if rating_count > 0 -%}
-          <span class="pp-card__rating-count">{{ rating_count }} Bewertungen</span>
+          <span class="pp-card__rating-count">{{ 'karinex.cart.reviews_count' | t: count: rating_count }}</span>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -52,7 +52,7 @@
     <button
       type="submit"
       class="pp-card__btn"
-      aria-label="{{ product.title | escape }} zum Warenkorb hinzufügen"
+      aria-label="{{ 'karinex.cart.add_to_cart_aria' | t: title: product.title | escape }}"
       {%- unless product.available %} disabled{%- endunless -%}>
       {%- if product.available -%}
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

@@ -555,7 +555,9 @@
       "instant_delivery_email": "Sofort lieferbar per E-Mail",
       "recently_viewed": "Zuletzt angesehen",
       "checkout": "Zur Kasse",
-      "in_cart": "Im Warenkorb"
+      "in_cart": "Im Warenkorb",
+      "add_to_cart_aria": "{{ title }} zum Warenkorb hinzufügen",
+      "reviews_count": "{{ count }} Bewertungen"
     },
     "breadcrumb": {
       "home": "Startseite",
