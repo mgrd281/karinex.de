@@ -192,36 +192,54 @@
     .ctg-tile__label { font-size: 15px; margin-top: 12px; }
   }
 
-  /* Desktop: keep 3 columns so a 9-tile preset reads as a clean 3x3,
-     no awkward orphan row. Tiles get larger via wider max-width. */
+  /* Desktop: 3x3 grid kept compact — narrower container so tiles
+     stay ~190px and don't dominate the page. */
   @media (min-width: 990px) {
     .ctg-section {
-      padding: 56px 32px 72px;
-      max-width: 1000px;
+      padding: 60px 24px 80px;
+      max-width: 760px;          /* tighter than 1000 — tiles ~190px */
       margin: 0 auto;
     }
     .ctg-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
+      gap: 20px;
     }
     .ctg-heading {
-      font-size: 28px;
-      margin-bottom: 32px;
+      font-size: 26px;
+      margin-bottom: 28px;
       text-align: center;
     }
     .ctg-tile__card {
-      border-radius: 18px;
+      border-radius: 16px;
+    }
+    .ctg-tile__img {
+      width: 70%;
+      height: 70%;
+    }
+    .ctg-tile__placeholder {
+      font-size: 56px;
+      font-weight: 400;
+      color: #d8d8d8;
+    }
+    .ctg-tile__big-percent {
+      font-size: 72px;
     }
     .ctg-tile__badge {
-      width: 48px;
-      height: 48px;
-      font-size: 20px;
-      border-radius: 18px 0 18px 0;
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+      border-radius: 16px 0 16px 0;
     }
     .ctg-tile__label {
-      font-size: 16px;
-      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
     }
+  }
+
+  /* Wide desktop: cap the section to keep tiles tight even on 4K screens */
+  @media (min-width: 1440px) {
+    .ctg-section { max-width: 820px; padding: 72px 24px 96px; }
   }
 </style>
 
