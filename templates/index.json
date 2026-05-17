@@ -1597,6 +1597,125 @@
         "subheading": "Unsere meistverkauften Produkte — manuell sortiert in der Collection.",
         "collection": "microsoft-office"
       }
+    },
+    "category_tiles_grid_q78Bpt": {
+      "type": "category-tiles-grid",
+      "blocks": {
+        "tile_YTrzdj": {
+          "type": "tile",
+          "settings": {
+            "label": "Deals",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": false,
+            "solid_panel": true,
+            "highlight_label": true
+          }
+        },
+        "tile_NAhyWV": {
+          "type": "tile",
+          "settings": {
+            "label": "Microsoft Office",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_dE3nEr": {
+          "type": "tile",
+          "settings": {
+            "label": "Windows",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_qTgGqV": {
+          "type": "tile",
+          "settings": {
+            "label": "Office für Mac",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_EPrWqc": {
+          "type": "tile",
+          "settings": {
+            "label": "Microsoft 365",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_Bxm4Cg": {
+          "type": "tile",
+          "settings": {
+            "label": "Windows Server",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_cPanR9": {
+          "type": "tile",
+          "settings": {
+            "label": "Microsoft Tools",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        },
+        "tile_eUFCpx": {
+          "type": "tile",
+          "settings": {
+            "label": "SALE",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": true
+          }
+        },
+        "tile_NVqhhY": {
+          "type": "tile",
+          "settings": {
+            "label": "Top 100",
+            "collection": "",
+            "custom_url": "",
+            "show_badge": true,
+            "solid_panel": false,
+            "highlight_label": false
+          }
+        }
+      },
+      "block_order": [
+        "tile_YTrzdj",
+        "tile_NAhyWV",
+        "tile_dE3nEr",
+        "tile_qTgGqV",
+        "tile_EPrWqc",
+        "tile_Bxm4Cg",
+        "tile_cPanR9",
+        "tile_eUFCpx",
+        "tile_NVqhhY"
+      ],
+      "name": "Category tiles grid",
+      "settings": {
+        "heading": "Kategorien"
+      }
     }
   },
   "order": [
@@ -1618,6 +1737,7 @@
     "luxury_blog_section",
     "hero_product_slider_GNaDeb",
     "brands_carousel_jrhRJC",
-    "bestseller_top_10_CaWMAz"
+    "bestseller_top_10_CaWMAz",
+    "category_tiles_grid_q78Bpt"
   ]
 }
