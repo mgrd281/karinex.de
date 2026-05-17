@@ -51,7 +51,7 @@
 {%- comment -%} PERFORMANCE: Font & Preconnects moved to theme.liquid deferred loading {%- endcomment -%}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Newsreader:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600;700&display=swap');
 
   #hero-slider-{{ section.id }} {
     --primary: #1D4739;
@@ -104,7 +104,7 @@
   }
 
   .hero-slider__headline {
-    font-family: 'Cormorant Garamond', 'Newsreader', serif;
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
     font-size: clamp(28px, 3vw, 56px);
     line-height: 1.1;
     letter-spacing: 0.02em;
@@ -703,7 +703,7 @@
       padding-right: 20px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__headline {
-      font-family: 'Cormorant Garamond', 'Newsreader', serif !important;
+      font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
       font-size: 26px !important;
       font-weight: 500 !important;
       letter-spacing: 0.02em !important;
