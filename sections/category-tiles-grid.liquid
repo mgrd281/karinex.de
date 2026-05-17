@@ -109,12 +109,12 @@
     transition: transform .25s cubic-bezier(.22,.61,.36,1), box-shadow .25s ease;
   }
 
-  /* Solid-panel variant (the 'Deals' red box) */
+  /* Solid-panel variant (the 'Deals' panel — brand green) */
   .ctg-tile--solid .ctg-tile__card {
-    background: #E30613;
+    background: #1D4739;
   }
   .ctg-tile__big-percent {
-    color: #ffffff;
+    color: #c9a84c;  /* champagne gold % inside green panel */
     font-family: 'Outfit', system-ui, -apple-system, sans-serif;
     font-size: clamp(56px, 16vw, 88px);
     font-weight: 800;
@@ -137,15 +137,15 @@
     color: #cfcfcf;
   }
 
-  /* Red "%" badge ribbon — top-left corner */
+  /* Brand-green "%" badge ribbon — top-left corner */
   .ctg-tile__badge {
     position: absolute;
     top: 0;
     left: 0;
     width: 38px;
     height: 38px;
-    background: #E30613;
-    color: #ffffff;
+    background: #1D4739;
+    color: #c9a84c;  /* champagne gold % on green */
     font-family: 'Outfit', system-ui, sans-serif;
     font-size: 16px;
     font-weight: 800;
@@ -155,7 +155,7 @@
     justify-content: center;
     border-radius: 14px 0 14px 0;
     z-index: 2;
-    /* Soft cloud-like bottom-right edge — mimics the screenshot */
+    /* Soft cloud-like bottom-right edge */
     clip-path: path('M 0 0 H 38 V 28 Q 32 30 26 34 Q 20 38 12 38 H 0 Z');
   }
 
@@ -171,7 +171,7 @@
     color: #1a1a1a;
   }
   .ctg-tile__label--hot {
-    color: #E30613;
+    color: #c9a84c;  /* champagne gold for SALE / Deals labels */
   }
 
   /* Touch / hover feedback */
