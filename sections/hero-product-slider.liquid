@@ -675,44 +675,67 @@
   }
 
   /* ============================================================
-     PREMIUM MOBILE REDESIGN — Apple / Nike / Tesla aesthetic
-     Vertical luxury stack: eyebrow → timer → pill button
+     ULTRA PREMIUM MOBILE — Apple / B&O / Tesla aesthetic
+     Vertical luxury composition. Dots detached to bar floor.
      ============================================================ */
   @media (max-width: 989px) {
-    /* Hide pagination dots on mobile — premium hero relies on
-       auto-rotate + swipe, no chrome below the timer. */
-    #shopify-section-{{ section.id }} .hero-slider__dots-wrapper {
-      display: none !important;
+
+    /* ---------- HEADLINE / PRICE / PRODUCT — tighter rhythm ---- */
+    #shopify-section-{{ section.id }} .hero-slider__content {
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__headline {
+      font-size: 26px !important;
+      font-weight: 500 !important;
+      letter-spacing: -0.015em !important;
+      line-height: 1.18 !important;
+      margin-bottom: 10px !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__price {
+      font-size: 22px !important;
+      font-weight: 500 !important;
+      letter-spacing: -0.01em !important;
+      margin: 2px 0 22px !important;
+      gap: 10px !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__product {
+      margin-bottom: 18px !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__box-wrap {
+      max-width: 240px !important;
     }
 
-    /* Bottom bar: single column, generous vertical rhythm, deeper bg */
+    /* ---------- BOTTOM BAR — single column, breathing room ---- */
     #shopify-section-{{ section.id }} .hero-slider__bar {
+      position: relative !important;
       grid-template-columns: 1fr !important;
-      padding: 20px 24px 24px !important;
-      gap: 16px !important;
+      padding: 22px 24px 38px !important;  /* extra bottom space for dots */
+      gap: 18px !important;
       text-align: center !important;
       background:
-        linear-gradient(180deg, rgba(13,31,24,.96) 0%, rgba(8,22,17,1) 100%) !important;
-      border-top: 1px solid rgba(201,168,76,.18) !important;  /* champagne gold hairline */
+        linear-gradient(180deg, rgba(11,28,21,.96) 0%, rgba(6,18,14,1) 100%) !important;
+      border-top: 1px solid rgba(201,168,76,.16) !important;
     }
 
-    /* "MAI SALE" eyebrow — small, wide-tracked, dim */
+    /* ---------- "MAI SALE" EYEBROW ---------------------------- */
     #shopify-section-{{ section.id }} .hero-slider__sale-text {
       grid-column: 1 !important;
       margin: 0 !important;
-      font-size: 10px !important;
+      font-size: 9px !important;
       font-weight: 600 !important;
-      letter-spacing: 0.44em !important;
-      color: rgba(255,255,255,.55) !important;
-      text-indent: 0.44em;  /* compensate trailing tracking for visual center */
+      letter-spacing: 0.50em !important;
+      color: rgba(201,168,76,.85) !important;  /* champagne accent */
+      text-indent: 0.50em;
+      text-transform: uppercase !important;
     }
 
-    /* Timer — focal point. Light-weight large numerals, tiny labels */
+    /* ---------- TIMER — luxury horizontal layout -------------- */
     #shopify-section-{{ section.id }} .hero-slider__timer {
       grid-column: 1 !important;
       width: 100% !important;
       max-width: 320px !important;
-      margin: 0 auto !important;
+      margin: 2px auto 0 !important;
       justify-content: space-between !important;
       align-items: flex-end !important;
       flex-wrap: nowrap !important;
@@ -723,11 +746,12 @@
       flex: 1 1 0 !important;
       min-width: 0 !important;
       gap: 0 !important;
+      flex-direction: column !important;
       align-items: center !important;
       justify-content: center !important;
       position: relative;
     }
-    /* Subtle vertical hairline between units — replaces the colons */
+    /* Vertical hairline between units — replaces colon */
     #shopify-section-{{ section.id }} .hero-slider__block + .hero-slider__block::before {
       content: '';
       position: absolute;
@@ -735,8 +759,12 @@
       top: 50%;
       transform: translateY(-50%);
       width: 1px;
-      height: 22px;
-      background: rgba(255,255,255,.10);
+      height: 28px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(255,255,255,.14) 35%,
+        rgba(255,255,255,.14) 65%,
+        transparent 100%);
     }
     #shopify-section-{{ section.id }} .hero-slider__unit {
       min-width: 0 !important;
@@ -745,9 +773,9 @@
       text-align: center;
     }
     #shopify-section-{{ section.id }} .hero-slider__num {
-      font-size: 26px !important;
-      font-weight: 300 !important;  /* light = luxury */
-      letter-spacing: -0.01em !important;
+      font-size: 30px !important;
+      font-weight: 200 !important;  /* ultra-light = luxury */
+      letter-spacing: -0.02em !important;
       line-height: 1 !important;
       color: rgba(255,255,255,.98) !important;
       font-feature-settings: 'tnum';
@@ -756,55 +784,111 @@
       white-space: nowrap;
     }
     #shopify-section-{{ section.id }} .hero-slider__label {
-      margin-top: 7px !important;
+      margin-top: 9px !important;
       font-size: 8px !important;
       font-weight: 600 !important;
-      letter-spacing: 0.24em !important;
-      color: rgba(255,255,255,.42) !important;
+      letter-spacing: 0.26em !important;
+      color: rgba(255,255,255,.38) !important;
       text-transform: uppercase;
       white-space: nowrap;
     }
-    /* Hide the original colon separators — hairlines replace them */
+    /* Hide original colon separators */
     #shopify-section-{{ section.id }} .hero-slider__sep {
       display: none !important;
     }
 
-    /* CTA button — pill, refined width, glass border */
+    /* ---------- CTA — refined pill, low height, soft ---------- */
     #shopify-section-{{ section.id }} a.hero-slider__buy,
     #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy {
       grid-column: 1 !important;
       width: auto !important;
-      min-width: 220px !important;
-      max-width: 280px !important;
-      height: 46px !important;
-      margin: 4px auto 0 !important;
-      padding: 0 28px !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.30em !important;
+      min-width: 200px !important;
+      max-width: 260px !important;
+      height: 40px !important;          /* down from 46 — sleeker */
+      margin: 6px auto 0 !important;
+      padding: 0 26px !important;
+      font-size: 10.5px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.32em !important;
       border-radius: 999px !important;
-      border: 1px solid rgba(255,255,255,.22) !important;
-      background: rgba(255,255,255,.045) !important;
-      backdrop-filter: blur(10px) saturate(140%) !important;
+      border: 1px solid rgba(255,255,255,.18) !important;
+      background: rgba(255,255,255,.035) !important;
+      backdrop-filter: blur(12px) saturate(140%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+      transition: transform .25s cubic-bezier(.22,.61,.36,1),
+                  border-color .25s ease,
+                  background-color .25s ease !important;
     }
     #shopify-section-{{ section.id }} a.hero-slider__buy::after {
-      font-size: 1.05em !important;
-      margin-left: 4px;
-      opacity: .85;
+      font-size: 1.0em !important;
+      margin-left: 6px !important;
+      opacity: .75 !important;
+      transition: transform .25s cubic-bezier(.22,.61,.36,1), opacity .25s ease !important;
+    }
+    #shopify-section-{{ section.id }} a.hero-slider__buy:active {
+      transform: scale(.97) !important;
+      border-color: rgba(201,168,76,.55) !important;
+      background: rgba(255,255,255,.06) !important;
+    }
+    #shopify-section-{{ section.id }} a.hero-slider__buy:active::after {
+      transform: translateX(3px) !important;
+      opacity: 1 !important;
+    }
+
+    /* ---------- DOTS — detached, anchored to BAR FLOOR -------- */
+    /* Pull the dots-wrapper out of the timer's flex flow and pin
+       it to the very bottom-center of the bar as a minimal
+       indicator strip. */
+    #shopify-section-{{ section.id }} .hero-slider__dots-wrapper {
+      display: flex !important;
+      position: absolute !important;
+      bottom: 14px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: auto !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 4 !important;
+      pointer-events: auto !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__dots {
+      display: flex !important;
+      gap: 10px !important;
+      align-items: center !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__dot {
+      width: 4px !important;
+      height: 4px !important;
+      border-radius: 50% !important;
+      background: rgba(255,255,255,.22) !important;
+      transition: width .35s cubic-bezier(.22,.61,.36,1),
+                  background-color .35s ease,
+                  opacity .35s ease !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__dot.active {
+      width: 18px !important;
+      height: 3px !important;
+      border-radius: 2px !important;
+      background: rgba(201,168,76,.85) !important;  /* champagne accent */
+      opacity: 1 !important;
     }
   }
 
-  /* Smaller phones: tighten one notch more */
+  /* Smaller phones: tighten typography one more notch */
   @media (max-width: 380px) {
-    #shopify-section-{{ section.id }} .hero-slider__num { font-size: 24px !important; }
-    #shopify-section-{{ section.id }} .hero-slider__label { font-size: 7px !important; letter-spacing: 0.20em !important; }
-    #shopify-section-{{ section.id }} .hero-slider__sale-text { font-size: 9px !important; letter-spacing: 0.36em !important; }
+    #shopify-section-{{ section.id }} .hero-slider__headline { font-size: 22px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__price { font-size: 20px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__num { font-size: 26px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__label { font-size: 7px !important; letter-spacing: 0.22em !important; }
+    #shopify-section-{{ section.id }} .hero-slider__sale-text { font-size: 8px !important; letter-spacing: 0.42em !important; }
     #shopify-section-{{ section.id }} a.hero-slider__buy,
     #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy {
-      min-width: 200px !important;
-      height: 44px !important;
+      min-width: 180px !important;
+      height: 38px !important;
       font-size: 10px !important;
-      letter-spacing: 0.26em !important;
+      letter-spacing: 0.28em !important;
     }
   }
 </style>
