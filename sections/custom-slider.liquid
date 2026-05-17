@@ -912,27 +912,43 @@
             padding: 18px 12px;
             gap: 18px;
         }
-        
+
         .timer {
             gap: 0;
+            flex-wrap: nowrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
         }
-        
+
+        .unit {
+            flex: 0 0 auto;
+            min-width: 0;
+        }
+
         .block {
-            min-width: 55px;
-            padding: 0 6px;
+            min-width: 0;
+            padding: 0 4px;
         }
-        
+
         .num {
-            font-size: 24px;
+            font-size: 22px;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
         }
-        
+
         .label {
-            font-size: 10px;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            margin-top: 4px;
+            white-space: nowrap;
         }
-        
+
         .sep {
-            letter-spacing: 0.2em;
-            font-size: 18px;
+            letter-spacing: 0.1em;
+            font-size: 16px;
+            padding: 0 2px;
+            transform: translateY(-2px);
         }
         
         .btn {
@@ -995,19 +1011,26 @@
         
         .timer {
             gap: 0;
+            flex-wrap: nowrap;
         }
-        
+
         .block {
-            min-width: 50px;
-            padding: 0 5px;
+            min-width: 0;
+            padding: 0 3px;
         }
-        
+
         .num {
-            font-size: 22px;
+            font-size: 19px;
         }
-        
+
         .label {
-            font-size: 9px;
+            font-size: 8px;
+            letter-spacing: 0.08em;
+        }
+
+        .sep {
+            font-size: 14px;
+            padding: 0 1px;
         }
         
         .btn {
