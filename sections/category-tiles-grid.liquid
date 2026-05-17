@@ -192,12 +192,36 @@
     .ctg-tile__label { font-size: 15px; margin-top: 12px; }
   }
 
-  /* Desktop: 4 columns once we have enough space */
+  /* Desktop: keep 3 columns so a 9-tile preset reads as a clean 3x3,
+     no awkward orphan row. Tiles get larger via wider max-width. */
   @media (min-width: 990px) {
-    .ctg-section { padding: 40px 48px 56px; max-width: 1280px; margin: 0 auto; }
-    .ctg-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .ctg-heading { font-size: 28px; margin-bottom: 24px; }
-    .ctg-tile__badge { width: 44px; height: 44px; font-size: 18px; }
+    .ctg-section {
+      padding: 56px 32px 72px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .ctg-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .ctg-heading {
+      font-size: 28px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .ctg-tile__card {
+      border-radius: 18px;
+    }
+    .ctg-tile__badge {
+      width: 48px;
+      height: 48px;
+      font-size: 20px;
+      border-radius: 18px 0 18px 0;
+    }
+    .ctg-tile__label {
+      font-size: 16px;
+      margin-top: 14px;
+    }
   }
 </style>
 
