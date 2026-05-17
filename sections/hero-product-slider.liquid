@@ -155,9 +155,45 @@
     letter-spacing: 0.5px;
   }
 
-  .hero-slider__cta:active {
-    transform: translateY(0);
+  .hero-slider__category {
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-size: clamp(11px, 1vw, 14px);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.60);
+    margin: 0 0 10px 0;
+    text-shadow: 0 1px 8px rgba(0,0,0,.20);
   }
+
+  .hero-slider__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-size: clamp(13px, 1.05vw, 16px);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,.78);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,.28);
+    padding: 2px 0 4px;
+    margin: 4px 0 0;
+    transition: color .25s ease, border-color .25s ease;
+  }
+  .hero-slider__cta::after {
+    content: '→';
+    font-size: 0.95em;
+    opacity: .7;
+    transition: transform .25s cubic-bezier(.22,.61,.36,1), opacity .25s ease;
+  }
+  .hero-slider__cta:hover,
+  .hero-slider__cta:focus-visible {
+    color: rgba(255,255,255,1);
+    border-color: rgba(255,255,255,.55);
+  }
+  .hero-slider__cta:hover::after { transform: translateX(3px); opacity: 1; }
+  .hero-slider__cta:active { transform: translateY(0); }
 
   /* Product Box - Premium Transparent Integration */
 
@@ -710,12 +746,26 @@
       line-height: 1.18 !important;
       margin-bottom: 10px !important;
     }
+    #shopify-section-{{ section.id }} .hero-slider__category {
+      font-size: 11px !important;
+      letter-spacing: 0.20em !important;
+      margin: 0 0 8px 0 !important;
+      color: rgba(255,255,255,.55) !important;
+    }
     #shopify-section-{{ section.id }} .hero-slider__price {
       font-size: 22px !important;
       font-weight: 500 !important;
       letter-spacing: -0.01em !important;
-      margin: 2px 0 22px !important;
+      margin: 2px 0 14px !important;
       gap: 10px !important;
+    }
+    #shopify-section-{{ section.id }} .hero-slider__cta {
+      font-size: 13px !important;
+      letter-spacing: 0.04em !important;
+      color: rgba(255,255,255,.72) !important;
+      border-bottom: 1px solid rgba(255,255,255,.22) !important;
+      padding: 2px 0 3px !important;
+      margin: 0 0 18px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__product {
       margin-bottom: 18px !important;
