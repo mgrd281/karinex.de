@@ -213,6 +213,24 @@
 </section>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600;700&display=swap');
+
+/* Brand-cohesive serif typography across all BF text — MEGA SALE
+   badge intentionally excluded (kept in default sans-serif). */
+#bf-{{ section.id }} .bf-h2,
+#bf-{{ section.id }} .bf-subtitle,
+#bf-{{ section.id }} .bf-message,
+#bf-{{ section.id }} .bf-card__title,
+#bf-{{ section.id }} .bf-price-label,
+#bf-{{ section.id }} .bf-price-main {
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  letter-spacing: 0.01em;
+}
+#bf-{{ section.id }} .bf-h2 { font-weight: 500; }
+#bf-{{ section.id }} .bf-subtitle { font-weight: 400; }
+#bf-{{ section.id }} .bf-card__title { font-weight: 500; }
+#bf-{{ section.id }} .bf-price-main { font-weight: 600; }
+
 #bf-{{ section.id }}.bf-wrap{
   margin:2rem 0;
   position:relative;
