@@ -976,26 +976,53 @@
     overflow: visible;
   }
 
-  /* AboutYou-style: cart bubble as inline text, not overlay circle */
+  /* Cart bubble as a small champagne-gold badge on the icon corner */
+  .header-actions__cart-icon {
+    position: relative;
+  }
   .header-actions__cart-icon .cart-bubble {
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-    min-width: 0 !important;
-    background: none !important;
-    border-radius: 0 !important;
-    border: none !important;
-    padding: 0 !important;
+    position: absolute !important;
+    top: -4px !important;
+    right: -6px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    padding: 0 4px !important;
+    background: #1D4739 !important;
+    color: #ffffff !important;
+    border: 1.5px solid var(--header-bg, #ffffff) !important;
+    border-radius: 999px !important;
     margin: 0 !important;
-    box-shadow: none !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,.12) !important;
     aspect-ratio: auto !important;
-    z-index: auto !important;
+    z-index: 2 !important;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    pointer-events: none !important;
+  }
+  .header-actions__cart-icon .cart-bubble__background {
+    display: none !important;
+  }
+  .header-actions__cart-icon .cart-bubble__text {
+    display: contents !important;
+  }
+  .header-actions__cart-icon .cart-bubble__text-count {
+    display: inline !important;
+    color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
   }
 
   /* Show cart bubble only when cart has items */
   .header-actions__cart-icon .cart-bubble:not(.visually-hidden) {
     display: flex !important;
-    align-items: center !important;
   }
 
   /* Hide cart bubble when cart is empty */
