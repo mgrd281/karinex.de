@@ -674,74 +674,83 @@
     opacity: 1 !important;
   }
 
+  /* Desktop dots: keep them inline next to the timer (was forced
+     via HTML inline style; restored here so removing that inline
+     style doesn't affect desktop layout). */
+  @media (min-width: 990px) {
+    #shopify-section-{{ section.id }} .hero-slider__dots-wrapper {
+      position: relative !important;
+      left: auto !important;
+      transform: none !important;
+      bottom: auto !important;
+      margin-right: 24px !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+  }
+
   /* ============================================================
-     LUXURY MINIMAL MOBILE — Apple / B&O / Porsche / Nothing
-     Less chrome. More air. Monochrome indicators. Refined CTA.
+     ULTRA PREMIUM MOBILE — Apple / B&O / Tesla aesthetic
+     Vertical luxury composition. Dots detached to bar floor.
      ============================================================ */
   @media (max-width: 989px) {
 
-    /* ---------- HERO SECTION — make space for floating dots --- */
-    #shopify-section-{{ section.id }} .hero-slider-section {
-      position: relative !important;
-      padding-bottom: 28px !important;   /* room for dots row */
-    }
-
-    /* ---------- HEADLINE / PRICE / PRODUCT — refined hierarchy */
+    /* ---------- HEADLINE / PRICE / PRODUCT — tighter rhythm ---- */
     #shopify-section-{{ section.id }} .hero-slider__content {
-      padding-left: 24px !important;
-      padding-right: 24px !important;
+      padding-left: 20px !important;
+      padding-right: 20px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__headline {
-      font-size: 24px !important;
+      font-size: 26px !important;
       font-weight: 500 !important;
-      letter-spacing: -0.02em !important;
-      line-height: 1.16 !important;
-      margin-bottom: 8px !important;
+      letter-spacing: -0.015em !important;
+      line-height: 1.18 !important;
+      margin-bottom: 10px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__price {
-      font-size: 20px !important;
+      font-size: 22px !important;
       font-weight: 500 !important;
       letter-spacing: -0.01em !important;
-      margin: 0 0 24px !important;
+      margin: 2px 0 22px !important;
       gap: 10px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__product {
-      margin-bottom: 24px !important;
+      margin-bottom: 18px !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__box-wrap {
-      max-width: 230px !important;
+      max-width: 240px !important;
     }
 
-    /* ---------- BOTTOM BAR — quieter background, more air ----- */
+    /* ---------- BOTTOM BAR — single column, breathing room ---- */
     #shopify-section-{{ section.id }} .hero-slider__bar {
       position: relative !important;
       grid-template-columns: 1fr !important;
-      padding: 24px 28px 24px !important;
-      gap: 22px !important;
+      padding: 22px 24px 38px !important;  /* extra bottom space for dots */
+      gap: 18px !important;
       text-align: center !important;
       background:
-        linear-gradient(180deg, rgba(10,24,18,.86) 0%, rgba(6,16,12,.96) 100%) !important;
-      border-top: 1px solid rgba(255,255,255,.05) !important;  /* near-invisible */
+        linear-gradient(180deg, rgba(11,28,21,.96) 0%, rgba(6,18,14,1) 100%) !important;
+      border-top: 1px solid rgba(201,168,76,.16) !important;
     }
 
-    /* ---------- EYEBROW — barely-there caption --------------- */
+    /* ---------- "MAI SALE" EYEBROW — champagne accent -------- */
     #shopify-section-{{ section.id }} .hero-slider__sale-text {
       grid-column: 1 !important;
       margin: 0 !important;
-      font-size: 8.5px !important;
+      font-size: 9px !important;
       font-weight: 600 !important;
-      letter-spacing: 0.44em !important;
-      color: rgba(255,255,255,.38) !important;
-      text-indent: 0.44em;
+      letter-spacing: 0.50em !important;
+      color: rgba(201,168,76,.85) !important;
+      text-indent: 0.50em;
       text-transform: uppercase !important;
     }
 
-    /* ---------- TIMER — slim, refined, minimal --------------- */
+    /* ---------- TIMER — luxury horizontal layout -------------- */
     #shopify-section-{{ section.id }} .hero-slider__timer {
       grid-column: 1 !important;
       width: 100% !important;
-      max-width: 300px !important;
-      margin: 0 auto !important;
+      max-width: 320px !important;
+      margin: 2px auto 0 !important;
       justify-content: space-between !important;
       align-items: flex-end !important;
       flex-wrap: nowrap !important;
@@ -757,7 +766,7 @@
       justify-content: center !important;
       position: relative;
     }
-    /* Softer hairline between units */
+    /* Vertical hairline between units — replaces colon */
     #shopify-section-{{ section.id }} .hero-slider__block + .hero-slider__block::before {
       content: '';
       position: absolute;
@@ -765,10 +774,11 @@
       top: 50%;
       transform: translateY(-50%);
       width: 1px;
-      height: 20px;
+      height: 28px;
       background: linear-gradient(180deg,
         transparent 0%,
-        rgba(255,255,255,.08) 50%,
+        rgba(255,255,255,.14) 35%,
+        rgba(255,255,255,.14) 65%,
         transparent 100%);
     }
     #shopify-section-{{ section.id }} .hero-slider__unit {
@@ -778,71 +788,73 @@
       text-align: center;
     }
     #shopify-section-{{ section.id }} .hero-slider__num {
-      font-size: 24px !important;          /* down from 30 — slimmer */
+      font-size: 30px !important;
       font-weight: 200 !important;
-      letter-spacing: -0.015em !important;
+      letter-spacing: -0.02em !important;
       line-height: 1 !important;
-      color: rgba(255,255,255,.94) !important;
+      color: rgba(255,255,255,.98) !important;
       font-feature-settings: 'tnum';
       font-variant-numeric: tabular-nums;
       text-shadow: none !important;
       white-space: nowrap;
     }
     #shopify-section-{{ section.id }} .hero-slider__label {
-      margin-top: 8px !important;
-      font-size: 7.5px !important;
-      font-weight: 500 !important;
-      letter-spacing: 0.28em !important;
-      color: rgba(255,255,255,.32) !important;
+      margin-top: 9px !important;
+      font-size: 8px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.26em !important;
+      color: rgba(255,255,255,.38) !important;
       text-transform: uppercase;
       white-space: nowrap;
     }
     #shopify-section-{{ section.id }} .hero-slider__sep { display: none !important; }
 
-    /* ---------- CTA — slimmer, less padding, no-blur --------- */
+    /* ---------- CTA — refined pill, glass, gold tap ---------- */
     #shopify-section-{{ section.id }} a.hero-slider__buy,
     #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy {
       grid-column: 1 !important;
       width: auto !important;
-      min-width: 180px !important;
-      max-width: 240px !important;
-      height: 36px !important;             /* down from 40 */
-      margin: 4px auto 0 !important;
-      padding: 0 22px !important;
-      font-size: 10px !important;
+      min-width: 200px !important;
+      max-width: 260px !important;
+      height: 40px !important;
+      margin: 6px auto 0 !important;
+      padding: 0 26px !important;
+      font-size: 10.5px !important;
       font-weight: 600 !important;
-      letter-spacing: 0.30em !important;
+      letter-spacing: 0.32em !important;
       border-radius: 999px !important;
-      border: 1px solid rgba(255,255,255,.14) !important;  /* near-invisible */
-      background: transparent !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
+      border: 1px solid rgba(255,255,255,.18) !important;
+      background: rgba(255,255,255,.035) !important;
+      backdrop-filter: blur(12px) saturate(140%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
       transition: transform .25s cubic-bezier(.22,.61,.36,1),
-                  border-color .25s ease !important;
+                  border-color .25s ease,
+                  background-color .25s ease !important;
     }
     #shopify-section-{{ section.id }} a.hero-slider__buy::after {
       font-size: 1.0em !important;
       margin-left: 6px !important;
-      opacity: .65 !important;
+      opacity: .75 !important;
       transition: transform .25s cubic-bezier(.22,.61,.36,1), opacity .25s ease !important;
     }
     #shopify-section-{{ section.id }} a.hero-slider__buy:active {
       transform: scale(.97) !important;
-      border-color: rgba(255,255,255,.35) !important;
+      border-color: rgba(201,168,76,.55) !important;
+      background: rgba(255,255,255,.06) !important;
     }
     #shopify-section-{{ section.id }} a.hero-slider__buy:active::after {
       transform: translateX(3px) !important;
       opacity: 1 !important;
     }
 
-    /* ---------- DOTS — moved BELOW the bar, monochrome ------- */
-    /* Detached from the timer flex flow, pinned to the bottom of
-       the entire hero section (not the bar). They sit in the
-       28px breathing room added to .hero-slider-section above. */
+    /* ---------- DOTS — detached, anchored to BAR FLOOR -------- */
+    /* HTML inline style on .hero-slider__dots-wrapper used to force
+       position:relative !important which prevented absolute pinning.
+       That inline style is removed on mobile in the markup. */
     #shopify-section-{{ section.id }} .hero-slider__dots-wrapper {
       display: flex !important;
       position: absolute !important;
-      bottom: 10px !important;
+      bottom: 14px !important;
       left: 50% !important;
       transform: translateX(-50%) !important;
       margin: 0 !important;
@@ -855,39 +867,39 @@
     }
     #shopify-section-{{ section.id }} .hero-slider__dots {
       display: flex !important;
-      gap: 8px !important;
+      gap: 10px !important;
       align-items: center !important;
     }
     #shopify-section-{{ section.id }} .hero-slider__dot {
-      width: 3px !important;
-      height: 3px !important;
+      width: 4px !important;
+      height: 4px !important;
       border-radius: 50% !important;
-      background: rgba(255,255,255,.14) !important;  /* very dim */
-      opacity: 1 !important;
+      background: rgba(255,255,255,.22) !important;
       transition: width .35s cubic-bezier(.22,.61,.36,1),
-                  background-color .35s ease !important;
+                  background-color .35s ease,
+                  opacity .35s ease !important;
     }
-    /* Active: soft white pill, no color tint */
     #shopify-section-{{ section.id }} .hero-slider__dot.active {
-      width: 14px !important;
-      height: 2px !important;
+      width: 18px !important;
+      height: 3px !important;
       border-radius: 2px !important;
-      background: rgba(255,255,255,.55) !important;
+      background: rgba(201,168,76,.85) !important;  /* champagne accent */
+      opacity: 1 !important;
     }
   }
 
-  /* Smaller phones: trim one more notch */
+  /* Smaller phones: tighten typography one more notch */
   @media (max-width: 380px) {
-    #shopify-section-{{ section.id }} .hero-slider__headline { font-size: 21px !important; }
-    #shopify-section-{{ section.id }} .hero-slider__price { font-size: 19px !important; }
-    #shopify-section-{{ section.id }} .hero-slider__num { font-size: 21px !important; }
-    #shopify-section-{{ section.id }} .hero-slider__label { font-size: 7px !important; letter-spacing: 0.24em !important; }
-    #shopify-section-{{ section.id }} .hero-slider__sale-text { font-size: 8px !important; letter-spacing: 0.40em !important; }
+    #shopify-section-{{ section.id }} .hero-slider__headline { font-size: 22px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__price { font-size: 20px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__num { font-size: 26px !important; }
+    #shopify-section-{{ section.id }} .hero-slider__label { font-size: 7px !important; letter-spacing: 0.22em !important; }
+    #shopify-section-{{ section.id }} .hero-slider__sale-text { font-size: 8px !important; letter-spacing: 0.42em !important; }
     #shopify-section-{{ section.id }} a.hero-slider__buy,
     #hero-slider-{{ section.id }}.hero-slider-section a.hero-slider__buy {
-      min-width: 170px !important;
-      height: 34px !important;
-      font-size: 9.5px !important;
+      min-width: 180px !important;
+      height: 38px !important;
+      font-size: 10px !important;
       letter-spacing: 0.28em !important;
     }
   }
@@ -1057,7 +1069,7 @@
           {% if section.settings.show_dots %}
             {%- assign dot_count = fallback_picked_collection.products_count | at_most: section.settings.max_products -%}
             {% if dot_count > 1 %}
-              <div class="hero-slider__dots-wrapper" style="position:relative!important;left:auto!important;transform:none!important;bottom:auto!important;margin-right:24px!important;display:flex!important;align-items:center!important;">
+              <div class="hero-slider__dots-wrapper">
                 <div class="hero-slider__dots" style="display:flex; gap:8px;">
                   {% for i in (1..dot_count) %}
                     <div class="hero-slider__dot{% if forloop.first %} active{% endif %}" data-dot="{{ forloop.index0 }}"></div>
@@ -1099,7 +1111,7 @@
           {% if section.settings.show_dots %}
             {%- assign dot_count = fallback_picked_collection.products_count | at_most: section.settings.max_products -%}
             {% if dot_count > 1 %}
-              <div class="hero-slider__dots-wrapper" style="position:relative!important;left:auto!important;transform:none!important;bottom:auto!important;margin-right:24px!important;display:flex!important;align-items:center!important;">
+              <div class="hero-slider__dots-wrapper">
                 <div class="hero-slider__dots" style="display:flex; gap:8px;">
                   {% for i in (1..dot_count) %}
                     <div class="hero-slider__dot{% if forloop.first %} active{% endif %}" data-dot="{{ forloop.index0 }}"></div>
