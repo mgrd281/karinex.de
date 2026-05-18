@@ -82,26 +82,6 @@
     {%- render 'local-fonts' -%}
 
     <meta name="color-scheme" content="light">
-    {%- comment -%}
-      Brand green colors the mobile browser chrome (Safari iOS 15+,
-      Chrome Android). Makes the area above the URL bar feel
-      branded instead of generic white.
-    {%- endcomment -%}
-    <meta name="theme-color" content="#1D4739">
-    <meta name="msapplication-navbutton-color" content="#1D4739">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    {%- comment -%}
-      Paints the iOS safe-area (top status-bar zone & bottom rubber-
-      band overscroll) with brand green. Combined with viewport-fit=
-      cover in meta-tags.liquid, the brand color extends behind the
-      iOS status bar — like pringles.com does (with their red).
-    {%- endcomment -%}
-    <style>
-      html {
-        background-color: #1D4739;
-      }
-    </style>
     {% render 'mobile-detector' %}
     <!-- Sync Trigger: Retry at 18:25 -->
 
