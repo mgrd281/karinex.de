@@ -12,7 +12,7 @@
   endunless
 -%}
 
-<section class="ctg-section" aria-label="{{ section.settings.heading | default: 'Kategorien' | escape }}">
+<section class="ctg-section ctg-section--show-{{ section.settings.heading_visibility | default: 'both' }}" aria-label="{{ section.settings.heading | default: 'Kategorien' | escape }}">
   {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
     <div class="ctg-head">
       {%- if section.settings.heading != blank -%}
@@ -87,10 +87,20 @@
     letter-spacing: 0.02em;
     color: #0d2e22;
   }
-  /* Subheading only shown on desktop (per merchant) — hidden on mobile */
+  /* Subheading default: hidden on mobile (will be revealed by
+     heading_visibility setting + desktop breakpoint below). */
   .ctg-subheading {
     display: none;
   }
+
+  /* ----- HEADING VISIBILITY CONTROL (Theme Editor setting) -----
+     Section gets a class .ctg-section--show-{both|mobile|desktop|hidden}
+     that drives whether .ctg-head is visible on each breakpoint. */
+  .ctg-section--show-hidden .ctg-head { display: none; }
+  /* Default 'both' = show on all viewports. No override needed. */
+  /* Mobile-only: hide head on desktop */
+  /* Desktop-only: hide head on mobile (handled below in media query) */
+  .ctg-section--show-desktop .ctg-head { display: none; }
 
   .ctg-grid {
     display: grid;
@@ -242,6 +252,13 @@
       letter-spacing: 0.01em;
       color: rgba(13, 46, 34, 0.55);
     }
+
+    /* Desktop overrides for visibility setting */
+    /* Mobile-only: hide head on desktop */
+    .ctg-section--show-mobile .ctg-head { display: none; }
+    /* Desktop-only: show head on desktop (overrides the global hide rule) */
+    .ctg-section--show-desktop .ctg-head { display: block; }
+    /* Both & desktop view: show (default, no override needed) */
     .ctg-tile__card {
       border-radius: 16px;
     }
@@ -291,8 +308,21 @@
     {
       "type": "text",
       "id": "subheading",
-      "label": "Subheading (optional, desktop only)",
+      "label": "Subheading (optional)",
       "default": "Alle Bereiche im Überblick"
+    },
+    {
+      "type": "select",
+      "id": "heading_visibility",
+      "label": "Show heading on",
+      "info": "Choose where the heading + subheading should appear.",
+      "options": [
+        { "value": "both",    "label": "Both — mobile + desktop" },
+        { "value": "mobile",  "label": "Mobile only" },
+        { "value": "desktop", "label": "Desktop only" },
+        { "value": "hidden",  "label": "Hidden everywhere" }
+      ],
+      "default": "both"
     }
   ],
   "blocks": [
