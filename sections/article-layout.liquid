@@ -44,12 +44,21 @@
   <div class="article-hero">
     {% if article.image %}
       <img
-        src="{{ article.image | image_url: width: 800 }}"
+        src="{{ article.image | image_url: width: 1600 }}"
+        srcset="{{ article.image | image_url: width: 600 }} 600w,
+                {{ article.image | image_url: width: 900 }} 900w,
+                {{ article.image | image_url: width: 1200 }} 1200w,
+                {{ article.image | image_url: width: 1600 }} 1600w,
+                {{ article.image | image_url: width: 2000 }} 2000w,
+                {{ article.image | image_url: width: 2400 }} 2400w"
+        sizes="100vw"
         alt="{{ article.title | escape }}"
         class="article-hero__image"
-        width="800"
-        height="600"
+        width="{{ article.image.width }}"
+        height="{{ article.image.height }}"
         loading="eager"
+        fetchpriority="high"
+        decoding="async"
       >
       <div class="article-hero__overlay"></div>
       <div class="article-hero__content">
@@ -181,7 +190,18 @@
               {% unless related.id == article.id %}
                 <a href="{{ related.url }}" class="related-card">
                   {% if related.image %}
-                    <img src="{{ related.image | image_url: width: 400 }}" alt="{{ related.title | escape }}" class="related-card__image" loading="lazy" width="400" height="225">
+                    <img
+                      src="{{ related.image | image_url: width: 600 }}"
+                      srcset="{{ related.image | image_url: width: 400 }} 400w,
+                              {{ related.image | image_url: width: 600 }} 600w,
+                              {{ related.image | image_url: width: 800 }} 800w"
+                      sizes="(min-width: 990px) 33vw, (min-width: 600px) 50vw, 100vw"
+                      alt="{{ related.title | escape }}"
+                      class="related-card__image"
+                      loading="lazy"
+                      decoding="async"
+                      width="{{ related.image.width | default: 400 }}"
+                      height="{{ related.image.height | default: 225 }}">
                   {% else %}
                     <div class="related-card__placeholder"></div>
                   {% endif %}
