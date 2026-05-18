@@ -1714,7 +1714,9 @@
       ],
       "name": "Category tiles grid",
       "settings": {
-        "heading": "Kategorien"
+        "heading": "Kategorien",
+        "subheading": "Alle Bereiche im Überblick",
+        "heading_visibility": "mobile"
       }
     }
   },
