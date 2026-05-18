@@ -234,7 +234,7 @@
 .article-hero {
   position: relative;
   width: 100%;
-  min-height: 420px;
+  height: clamp(340px, 48vh, 480px);   /* capped — no more giant hero */
   overflow: hidden;
   display: flex;
   align-items: flex-end;
@@ -245,34 +245,52 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 .article-hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+  /* Stronger bottom-gradient for crisp text legibility */
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 35%, rgba(13,46,34,0.55) 75%, rgba(13,46,34,0.92) 100%);
 }
 .article-hero__content {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 900px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 48px clamp(16px, 4vw, 64px);
+  padding: 36px clamp(20px, 4vw, 56px) 40px;
   color: #fff;
 }
 .article-hero__content .article-breadcrumb,
 .article-hero__content .article-breadcrumb a {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  letter-spacing: 0.04em;
 }
 .article-hero__content .article-breadcrumb a:hover {
   color: #fff;
 }
 .article-hero__content .article-title {
   color: #fff;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  font-weight: 500;            /* was 800 — more refined */
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+  margin: 8px 0 14px 0;
+  text-shadow: 0 1px 16px rgba(0,0,0,0.45);
+  /* Cap to 3 lines max on desktop — prevents over-tall heroes */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .article-hero__content .article-meta {
-  color: rgba(255,255,255,0.85);
+  color: rgba(255,255,255,0.78);
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
 }
 
 .article-hero--no-image {
@@ -594,7 +612,9 @@
 
 /* === Mobile === */
 @media (max-width: 600px) {
-  .article-hero { min-height: 300px; }
+  .article-hero { height: clamp(280px, 42vh, 380px); }
+  .article-hero__content { padding: 28px 20px 32px; }
+  .article-hero__content .article-title { font-size: clamp(1.4rem, 5.5vw, 1.7rem); -webkit-line-clamp: 4; }
   .article-body { padding: 24px 16px 48px; }
   .related-articles__grid { grid-template-columns: 1fr; }
 }
