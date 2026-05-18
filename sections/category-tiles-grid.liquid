@@ -95,12 +95,14 @@
 
   /* ----- HEADING VISIBILITY CONTROL (Theme Editor setting) -----
      Section gets a class .ctg-section--show-{both|mobile|desktop|hidden}
-     that drives whether .ctg-head is visible on each breakpoint. */
-  .ctg-section--show-hidden .ctg-head { display: none; }
+     that drives whether .ctg-head is visible on each breakpoint.
+     #shopify-section-{{ section.id }} + !important to override any
+     theme-side rules and Shopify's section wrappers. */
+  #shopify-section-{{ section.id }} .ctg-section--show-hidden .ctg-head { display: none !important; }
   /* Default 'both' = show on all viewports. No override needed. */
   /* Mobile-only: hide head on desktop */
   /* Desktop-only: hide head on mobile (handled below in media query) */
-  .ctg-section--show-desktop .ctg-head { display: none; }
+  #shopify-section-{{ section.id }} .ctg-section--show-desktop .ctg-head { display: none !important; }
 
   .ctg-grid {
     display: grid;
@@ -255,9 +257,11 @@
 
     /* Desktop overrides for visibility setting */
     /* Mobile-only: hide head on desktop */
-    .ctg-section--show-mobile .ctg-head { display: none; }
+    #shopify-section-{{ section.id }} .ctg-section--show-mobile .ctg-head { display: none !important; }
     /* Desktop-only: show head on desktop (overrides the global hide rule) */
-    .ctg-section--show-desktop .ctg-head { display: block; }
+    #shopify-section-{{ section.id }} .ctg-section--show-desktop .ctg-head { display: block !important; }
+    /* Hidden everywhere */
+    #shopify-section-{{ section.id }} .ctg-section--show-hidden .ctg-head { display: none !important; }
     /* Both & desktop view: show (default, no override needed) */
     .ctg-tile__card {
       border-radius: 16px;
