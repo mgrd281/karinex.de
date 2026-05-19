@@ -382,8 +382,27 @@
   if request.page_type == 'collection' and collection.handle == 'all'
     assign is_collection_all = true
   endif
+
+  # SV orphan pages — these German-content pages are served under /sv/
+  # but have no internal SV navigation linking to them. Ahrefs URL
+  # Redirects don't apply to /sv/ paths via Markets routing, so we
+  # noindex them at the page level instead.
+  assign is_sv_orphan = false
+  if request.locale.iso_code == 'sv'
+    if request.page_type == 'page'
+      assign sv_orphan_handles = 'windows-11-lizenz-kaufen,windows-11-aktivierung,windows-10-pro-kaufen-32-64-bit-downloads-installationsanleitung,windows-10-vs-windows-11,office-2021-vs-2024,office-2024-professional-plus-windows,office-2024-standard-mac-download,geschenkkarten,partner-dashboard,partnerprogramm-1,rechtliche-hinweise-1,widerrufsformular,xwiderrufsrecht' | split: ','
+      if sv_orphan_handles contains page.handle
+        assign is_sv_orphan = true
+      endif
+    endif
+    if request.path == '/sv/collections/digital-goods-vat-tax' or request.path == '/sv/blogs/guides'
+      assign is_sv_orphan = true
+    endif
+  endif
 -%}
-{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
+{%- if is_sv_orphan -%}
+  <meta name="robots" content="noindex, nofollow">
+{%- elsif request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
   <meta name="robots" content="noindex, follow">
 {%- elsif is_paginated -%}
   {%- comment -%} Pagination pages: index but don't use for snippets to avoid duplicate content {%- endcomment -%}
