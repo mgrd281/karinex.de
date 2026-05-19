@@ -262,6 +262,12 @@
     #shopify-section-{{ section.id }} .ctg-section--show-desktop .ctg-head { display: block !important; }
     /* Hidden everywhere */
     #shopify-section-{{ section.id }} .ctg-section--show-hidden .ctg-head { display: none !important; }
+    /* When heading is hidden on desktop, drop the top padding so no
+       empty space remains above the grid. */
+    #shopify-section-{{ section.id }} .ctg-section--show-mobile,
+    #shopify-section-{{ section.id }} .ctg-section--show-hidden {
+      padding-top: 24px !important;
+    }
     /* Both & desktop view: show (default, no override needed) */
     .ctg-tile__card {
       border-radius: 16px;
@@ -294,6 +300,11 @@
   /* Wide desktop: cap the section to keep tiles tight even on 4K screens */
   @media (min-width: 1440px) {
     .ctg-section { max-width: 820px; padding: 72px 24px 96px; }
+    /* Same heading-hidden top-padding reduction at this breakpoint */
+    #shopify-section-{{ section.id }} .ctg-section--show-mobile,
+    #shopify-section-{{ section.id }} .ctg-section--show-hidden {
+      padding-top: 32px !important;
+    }
   }
 </style>
 
