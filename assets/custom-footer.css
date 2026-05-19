@@ -34,7 +34,7 @@
 
 .footer-modern-content {
     display: grid;
-    grid-template-columns: 1.4fr repeat(4, 1fr) 1.3fr;
+    grid-template-columns: 1.4fr repeat(4, 1fr) 1.3fr 1.5fr;
     gap: 20px 25px;
     max-width: 1400px;
     margin: 0 auto;
@@ -771,7 +771,7 @@
 /* Desktop */
 @media (min-width: 1025px) {
     .footer-modern-content {
-        grid-template-columns: 1.3fr repeat(4, 1fr) 1.1fr;
+        grid-template-columns: 1.3fr repeat(4, 1fr) 1.1fr 1.4fr;
         max-width: 1400px;
     }
 
