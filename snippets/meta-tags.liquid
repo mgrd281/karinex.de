@@ -390,7 +390,7 @@
   assign is_sv_orphan = false
   if request.locale.iso_code == 'sv'
     if request.page_type == 'page'
-      assign sv_orphan_handles = 'windows-11-lizenz-kaufen,windows-11-aktivierung,windows-10-pro-kaufen-32-64-bit-downloads-installationsanleitung,windows-10-vs-windows-11,office-2021-vs-2024,office-2024-professional-plus-windows,office-2024-standard-mac-download,geschenkkarten,partner-dashboard,partnerprogramm-1,rechtliche-hinweise-1,widerrufsformular,xwiderrufsrecht' | split: ','
+      assign sv_orphan_handles = 'windows-11-lizenz-kaufen,windows-11-aktivierung,windows-10-pro-kaufen-32-64-bit-downloads-installationsanleitung,windows-10-vs-windows-11,office-2021-vs-2024,office-2024-professional-plus-windows,office-2024-standard-mac-download,geschenkkarten,partner-dashboard,partnerprogramm-1,rechtliche-hinweise-1,widerrufsformular,xwiderrufsrecht,widerrufsrecht' | split: ','
       if sv_orphan_handles contains page.handle
         assign is_sv_orphan = true
       endif
