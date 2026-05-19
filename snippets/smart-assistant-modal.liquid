@@ -1031,19 +1031,67 @@ document.addEventListener('DOMContentLoaded', function() {
         form.reportValidity();
         return;
       }
-      
+
       submitBtn.classList.add('is-loading');
       submitBtn.disabled = true;
 
-      var fd = new FormData(form);
-      // Append topic to subject
-      var subj = 'Frage zum Artikel: ' + document.querySelector('[name="contact[produkt_title]"]').value;
-      if(topicInput && topicInput.value) subj += ' (' + topicInput.value + ')';
+      // ----------------------------------------------------------------
+      // Build a single, neatly-formatted email body and submit ONLY the
+      // essential fields (email, subject, body). All the granular
+      // contact[*] fields are intentionally dropped so the merchant's
+      // inbox shows one clean block instead of a wall of key/value rows.
+      // ----------------------------------------------------------------
+      var rawFd = new FormData(form);
+      var anrede   = (rawFd.get('contact[anrede]')   || '').trim();
+      var vorname  = (rawFd.get('contact[vorname]')  || '').trim();
+      var nachname = (rawFd.get('contact[nachname]') || '').trim();
+      var email    = (rawFd.get('contact[email]')    || '').trim();
+      var msg      = (rawFd.get('contact[body]')     || '').trim();
+      var thema    = (rawFd.get('contact[Thema]')    || '').trim();
+      var prodTitle= (rawFd.get('contact[produkt_title]') || '').trim();
+      var prodUrl  = (rawFd.get('contact[produkt_url]')   || '').trim();
+
+      var prodImage = '{{ product.featured_image | image_url: width: 600 }}';
+      if (prodImage && prodImage.indexOf('http') !== 0 && prodImage.charAt(0) !== '/') {
+        prodImage = '';
+      }
+      if (prodImage && prodImage.charAt(0) === '/') {
+        prodImage = 'https:' + prodImage;
+      }
+
+      var fullName = (anrede + ' ' + vorname + ' ' + nachname).replace(/\s+/g, ' ').trim();
+
+      var lines = [];
+      lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      lines.push('🛍️  PRODUKT');
+      if (prodTitle) lines.push('    ' + prodTitle);
+      if (prodUrl)   lines.push('    🔗 ' + prodUrl);
+      if (prodImage) lines.push('    📷 ' + prodImage);
+      lines.push('');
+      lines.push('👤  KUNDE');
+      if (fullName) lines.push('    ' + fullName);
+      if (email)    lines.push('    ✉  ' + email);
+      lines.push('');
+      lines.push('💬  ANFRAGE' + (thema ? '  (' + thema + ')' : ''));
+      if (msg) {
+        msg.split('\n').forEach(function(line){
+          lines.push('    ' + line);
+        });
+      }
+      lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      var finalBody = lines.join('\n');
+
+      var subj = 'Frage zum Artikel: ' + (prodTitle || 'Allgemein');
+      if (thema) subj += ' — ' + thema;
+
+      // Send only the essential fields; Shopify uses contact[email] as
+      // reply-to so a single click "Antworten" goes back to the customer.
+      var fd = new FormData();
+      fd.append('form_type', 'contact');
+      fd.append('utf8', '✓');
+      fd.append('contact[email]', email);
       fd.append('contact[subject]', subj);
-      
-      var fullName = fd.get('contact[anrede]') + ' ' + fd.get('contact[vorname]') + ' ' + fd.get('contact[nachname]');
-      var finalBody = fd.get('contact[body]') + '\n\n---\nKunde: ' + fullName.trim();
-      fd.set('contact[body]', finalBody);
+      fd.append('contact[body]', finalBody);
 
       fetch('/contact', {
         method: 'POST',
