@@ -22,6 +22,24 @@
   {# Vendor filter pages #}
   Disallow: /collections/vendors
   Disallow: /collections/vendors?*
+  {# SV-prefixed orphan pages — Shopify Markets exposes these German-content
+     pages under /sv/ but they have no SV-side internal navigation. URL
+     Redirects don't apply for /sv/ paths, so block at crawler level. #}
+  Disallow: /sv/pages/windows-11-lizenz-kaufen
+  Disallow: /sv/pages/windows-11-aktivierung
+  Disallow: /sv/pages/windows-10-pro-kaufen-32-64-bit-downloads-installationsanleitung
+  Disallow: /sv/pages/windows-10-vs-windows-11
+  Disallow: /sv/pages/office-2021-vs-2024
+  Disallow: /sv/pages/office-2024-professional-plus-windows
+  Disallow: /sv/pages/office-2024-standard-mac-download
+  Disallow: /sv/pages/geschenkkarten
+  Disallow: /sv/pages/partner-dashboard
+  Disallow: /sv/pages/partnerprogramm-1
+  Disallow: /sv/pages/rechtliche-hinweise-1
+  Disallow: /sv/pages/widerrufsformular
+  Disallow: /sv/pages/xwiderrufsrecht
+  Disallow: /sv/collections/digital-goods-vat-tax
+  Disallow: /sv/blogs/guides
 
   {%- if group.sitemap != blank -%}
     {{ group.sitemap }}
