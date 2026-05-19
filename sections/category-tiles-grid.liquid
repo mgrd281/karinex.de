@@ -12,8 +12,20 @@
   endunless
 -%}
 
-<section class="ctg-section ctg-section--show-{{ section.settings.heading_visibility | default: 'both' }}" aria-label="{{ section.settings.heading | default: 'Kategorien' | escape }}">
-  {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+{%- liquid
+  assign _visibility = section.settings.heading_visibility | default: 'both'
+  assign _has_head_content = false
+  if section.settings.heading != blank or section.settings.subheading != blank
+    assign _has_head_content = true
+  endif
+  assign _render_head = false
+  if _has_head_content and _visibility != 'hidden'
+    assign _render_head = true
+  endif
+-%}
+
+<section class="ctg-section ctg-section--show-{{ _visibility }}" aria-label="{{ section.settings.heading | default: 'Kategorien' | escape }}">
+  {%- if _render_head -%}
     <div class="ctg-head">
       {%- if section.settings.heading != blank -%}
         <h2 class="ctg-heading">{{ section.settings.heading }}</h2>
@@ -262,11 +274,18 @@
     #shopify-section-{{ section.id }} .ctg-section--show-desktop .ctg-head { display: block !important; }
     /* Hidden everywhere */
     #shopify-section-{{ section.id }} .ctg-section--show-hidden .ctg-head { display: none !important; }
-    /* When heading is hidden on desktop, drop the top padding so no
-       empty space remains above the grid. */
+    /* When heading is hidden on desktop, collapse the vertical
+       breathing room so the grid sits flush with the section above. */
+    #shopify-section-{{ section.id }}:has(.ctg-section--show-mobile),
+    #shopify-section-{{ section.id }}:has(.ctg-section--show-hidden) {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
     #shopify-section-{{ section.id }} .ctg-section--show-mobile,
     #shopify-section-{{ section.id }} .ctg-section--show-hidden {
       padding-top: 0 !important;
+      padding-bottom: 40px !important;
+      margin-top: 0 !important;
     }
     /* Both & desktop view: show (default, no override needed) */
     .ctg-tile__card {
@@ -301,9 +320,16 @@
   @media (min-width: 1440px) {
     .ctg-section { max-width: 820px; padding: 72px 24px 96px; }
     /* Same heading-hidden top-padding reduction at this breakpoint */
+    #shopify-section-{{ section.id }}:has(.ctg-section--show-mobile),
+    #shopify-section-{{ section.id }}:has(.ctg-section--show-hidden) {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
     #shopify-section-{{ section.id }} .ctg-section--show-mobile,
     #shopify-section-{{ section.id }} .ctg-section--show-hidden {
       padding-top: 0 !important;
+      padding-bottom: 48px !important;
+      margin-top: 0 !important;
     }
   }
 </style>
