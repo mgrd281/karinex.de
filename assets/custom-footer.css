@@ -587,6 +587,10 @@
     flex: 1;
 }
 
+.contact-item a {
+    white-space: nowrap;
+}
+
 /* Social Icons */
 .follow-icons {
     display: grid;
