@@ -341,6 +341,30 @@
     assign _href_pl = shop.url | append: '/pl' | append: _hreflang_path
     assign _href_x_default = shop.url | append: _hreflang_path
   endif
+
+  comment
+    Product pages with locale-specific URL handles (Admin → Translations):
+    Shopify auto-301s /en/products/<de-handle> to /en/products/<en-handle>
+    when the handle is translated per market. That 301 chain is flagged by
+    Ahrefs as "Hreflang to redirect or broken page" (May 19 audit).
+    Merchant fills three optional metafields per product so we can emit
+    the exact 200-OK URL for each locale:
+      custom.handle_de  custom.handle_en  custom.handle_pl
+    If any of the three is blank we fall back to the current path-based
+    behaviour (which keeps working for products with the same handle
+    across markets).
+  endcomment
+  if request.page_type == 'product'
+    assign _h_de = product.metafields.custom.handle_de | default: ''
+    assign _h_en = product.metafields.custom.handle_en | default: ''
+    assign _h_pl = product.metafields.custom.handle_pl | default: ''
+    if _h_de != '' and _h_en != '' and _h_pl != ''
+      assign _href_de = shop.url | append: '/products/' | append: _h_de
+      assign _href_en = shop.url | append: '/en/products/' | append: _h_en
+      assign _href_pl = shop.url | append: '/pl/products/' | append: _h_pl
+      assign _href_x_default = _href_de
+    endif
+  endif
 -%}
 <link rel="alternate" hreflang="de" href="{{ _href_de }}">
 <link rel="alternate" hreflang="en" href="{{ _href_en }}">
