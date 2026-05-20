@@ -169,9 +169,6 @@
                 {% else %}
                   {{ 'image' | placeholder_svg_tag: 'bf-card__img' }}
                 {% endif %}
-                
-                {% comment %} Render Quick Add INSIDE image wrapper to match standard theme card-gallery behavior {% endcomment %}
-                {% render 'quick-add', product: product, section_id: section.id %}
               </div>
 
               <div class="bf-card__body">
