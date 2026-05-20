@@ -436,6 +436,18 @@
   padding: 0 24px;
   background: var(--kx-bg);
   z-index: 5;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+/* Kill any hairline the host theme's header may leave at the seam
+   between the page header and the drawer body when the drawer is open. */
+body:has(.kx-menu.is-open) .header,
+body:has(.kx-menu.is-open) .header-section,
+body:has(.kx-menu.is-open) .ay-utility-bar,
+body:has(.kx-menu.is-open) header.section-header {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
 }
 .kx-menu__header-state {
   position: absolute;
@@ -930,7 +942,7 @@
       }
     });
 
-    /* Hijack the theme's hamburger trigger */
+    /* Hijack the theme's hamburger trigger — toggle (open / close) */
     document.body.addEventListener('click', function (e) {
       if (window.innerWidth > 990) return;
       var trigger = e.target.closest('.header__icon--menu, [data-header-drawer], .header__drawer summary, .header__icon--menu span');
@@ -938,7 +950,11 @@
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      openMenu();
+      if (menu.classList.contains('is-open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
       return false;
     }, true);
 
