@@ -3,91 +3,65 @@
 {% assign block_settings = block.settings %}
 
 <div
-  class="cart-title spacing-style text-{{ block_settings.alignment }}"
+  class="cart-title cart-title--editorial spacing-style text-{{ block_settings.alignment }}"
   style="{% render 'spacing-style', settings: block_settings %}"
   {{ block.shopify_attributes }}
 >
-  <h2 class="{{ block_settings.type_preset | default: 'h2' }}">
+  {%- unless cart.empty? -%}
+    {%- if block_settings.show_count -%}
+      <span class="cart-title__eyebrow" aria-hidden="true">
+        {{ cart.item_count }} Artikel
+      </span>
+      <span class="visually-hidden">
+        {{- 'accessibility.cart_count' | t -}}: {{ cart.item_count }}
+      </span>
+    {%- endif -%}
+  {%- endunless -%}
+
+  <h2 class="cart-title__h {{ block_settings.type_preset | default: 'h2' }}">
     {%- if cart.empty? -%}
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-title-icon"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       {{ 'content.your_cart_is_empty' | t }}
     {%- else -%}
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-title-icon"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
       Warenkorb
-      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
     {%- endif -%}
   </h2>
 </div>
 
 {% stylesheet %}
   /* ============================
-     PREMIUM CART HEADER — COMPACT
+     EDITORIAL CART HEADER
      ============================ */
-  .cart-title {
-    padding: 16px 20px !important;
-    border-bottom: 1px solid #f0f0f0 !important;
-    background: #fff;
+  .cart-title.cart-title--editorial {
+    padding: 24px 20px 0 !important;
+    border-bottom: 0 !important;
+    background: transparent !important;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 56px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 0;
     box-sizing: border-box;
   }
+  .cart-title.cart-title--editorial.text-center { align-items: center; }
+  .cart-title.cart-title--editorial.text-right  { align-items: flex-end; }
 
-  .cart-title h1 {
+  .cart-title__eyebrow {
+    font-family: 'Inter Tight', Inter, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8A8A85;
+    line-height: 1;
+  }
+
+  .cart-title__h {
     margin-block-end: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.4px !important;
-    text-transform: uppercase !important;
-    color: #111 !important;
+    color: #0d2e22 !important;
   }
 
-  .cart-title-icon {
-    color: #0f3b2e;
-    flex-shrink: 0;
-  }
-
-  /* Premium circular green badge */
-  .cart-title .cart-bubble {
-    width: 22px !important;
-    height: 22px !important;
-    min-width: 22px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 50% !important;
-    aspect-ratio: 1 !important;
-    padding: 0 !important;
-  }
-
-  .cart-title .cart-bubble[data-maintain-ratio] {
-    aspect-ratio: 1;
-    min-width: 22px;
-  }
-
-  .cart-title .cart-bubble__background {
-    background-color: #0f3b2e !important;
-    border-radius: 50% !important;
-    width: 22px !important;
-    height: 22px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .cart-title .cart-bubble__text {
-    color: #ffffff !important;
-    font-family: var(--font-paragraph--family);
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-  }
-
-  /* Close (X) button — always perfectly vertically centered */
+  /* Close (X) button on the cart drawer — kept from the previous block
+     so unrelated drawer styling continues to behave. */
   .cart-drawer .drawer__close,
   .cart-drawer button.drawer__close {
     position: absolute !important;
