@@ -301,14 +301,24 @@
           </a>
         {%- endif -%}
 
-        {%- comment -%} ----- Footer ----- {%- endcomment -%}
+        {%- comment -%} ----- Footer (always renders so the drawer bottom looks finished) ----- {%- endcomment -%}
         <footer class="kx-menu__footer kx-menu__stage" data-stage="5">
-          <div class="kx-menu__locale">Deutsch <span aria-hidden="true">⌄</span></div>
+          <div class="kx-menu__footer-rule" aria-hidden="true"></div>
+          <div class="kx-menu__footer-wordmark">KARINEX<span class="kx-menu__footer-dot" aria-hidden="true"></span></div>
           {%- if section.settings.footer_tagline != blank -%}
             <p class="kx-menu__tagline">{{ section.settings.footer_tagline }}</p>
+          {%- else -%}
+            <p class="kx-menu__tagline">Software, sorgfältig kuratiert.</p>
           {%- endif -%}
+          <div class="kx-menu__footer-meta">
+            <span class="kx-menu__locale">Deutsch</span>
+            <span class="kx-menu__footer-sep" aria-hidden="true">·</span>
+            <span class="kx-menu__copyright">© {{ 'now' | date: '%Y' }} Karinex</span>
+          </div>
           {%- if section.settings.footer_legal != blank -%}
             <p class="kx-menu__legal">{{ section.settings.footer_legal }}</p>
+          {%- else -%}
+            <p class="kx-menu__legal">Impressum · AGB · Datenschutz · Widerruf</p>
           {%- endif -%}
         </footer>
 
@@ -550,6 +560,10 @@ body:has(.kx-menu.is-open) header.section-header {
   overscroll-behavior: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* L1: flex column so the footer can pin to the bottom even when
+     the cat-grid + service list don't fill the viewport. */
+  display: flex;
+  flex-direction: column;
 }
 .kx-menu__panel::-webkit-scrollbar { width: 0; height: 0; display: none; background: transparent; }
 .kx-menu, .kx-menu * { scrollbar-width: none; -ms-overflow-style: none; }
@@ -820,10 +834,67 @@ body:has(.kx-menu.is-open) header.section-header {
 .kx-menu__feature:hover .kx-menu__feature-link { gap: 16px; color: var(--kx-bg); border-color: var(--kx-bg); }
 
 /* ---------- Footer ---------- */
-.kx-menu__footer { background: var(--kx-bg); padding: 32px 24px 48px; }
-.kx-menu__locale { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12px; color: var(--kx-gray); }
-.kx-menu__tagline { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: 14px; color: var(--kx-gray); margin: 16px 0 0; }
-.kx-menu__legal { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10px; letter-spacing: 0.5px; color: var(--kx-muted-green); margin: 24px 0 0; }
+.kx-menu__footer {
+  background: var(--kx-bg);
+  padding: 32px 24px calc(36px + env(safe-area-inset-bottom, 0px));
+  margin-top: auto; /* pin to the bottom of the L1 panel */
+}
+.kx-menu__footer-rule {
+  height: 1px;
+  background: var(--kx-hairline);
+  margin: 0 0 24px;
+}
+.kx-menu__footer-wordmark {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--kx-black);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+.kx-menu__footer-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--kx-gold);
+  margin-left: -6px;
+  transform: translateY(-1px);
+}
+.kx-menu__tagline {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--kx-gray);
+  margin: 14px 0 0;
+  line-height: 1.4;
+}
+.kx-menu__footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kx-gray);
+}
+.kx-menu__locale { font-family: inherit; font-size: inherit; color: inherit; letter-spacing: inherit; }
+.kx-menu__footer-sep { color: var(--kx-hairline); }
+.kx-menu__copyright { color: var(--kx-gray); }
+.kx-menu__legal {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--kx-muted-green);
+  margin: 14px 0 0;
+  line-height: 1.6;
+}
 
 @media (min-width: 990px) {
   .kx-menu, .kx-menu-backdrop { display: none; }
