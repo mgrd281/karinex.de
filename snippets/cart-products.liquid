@@ -853,15 +853,26 @@
       }
 
       /* ============================
-         DUAL SWIPE — DELETE + WISHLIST
+         DUAL SWIPE — DELETE + WISHLIST  (DISABLED)
+         Layers hidden + horizontal overflow locked so the cart page
+         can't pan sideways under the merchant's finger.
          ============================ */
       @media (max-width: 749px) {
+        html, body { overflow-x: hidden !important; }
+        .cart-page, .cart-items-component { overflow-x: hidden !important; }
+        .swipe-delete-layer,
+        .swipe-wish-layer { display: none !important; }
         .swipe-row {
           overflow: visible !important;
           will-change: auto;
           -webkit-user-select: none;
           user-select: none;
           -webkit-tap-highlight-color: transparent;
+          transform: none !important;
+        }
+        .swipe-row > td,
+        .swipe-row > button.cart-items__remove {
+          transform: none !important;
         }
 
         /* GPU-accelerated content cells */
@@ -2082,6 +2093,10 @@
 <!-- Dual Swipe JS — Delete (left) + Wishlist (right) — 60fps GPU -->
 <script>
 (function() {
+  // Swipe-to-delete disabled per merchant request — gesture was panning
+  // the whole cart page horizontally. Removal still works via the X
+  // button on each row (`.cart-items__remove`).
+  return;
   if (window.matchMedia('(min-width: 750px)').matches) return;
 
   const THRESHOLD = 60;
