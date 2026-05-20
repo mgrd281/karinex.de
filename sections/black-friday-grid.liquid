@@ -249,24 +249,29 @@
 }
 #bf-{{ section.id }} .bf-h2{
   font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  font-style: italic;
   font-weight: 500;
-  font-size: 22px;
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+  font-size: clamp(34px, 9.2vw, 44px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   margin: 0;
   color: #0d2e22;
 }
 @media (min-width: 990px) {
-  #bf-{{ section.id }} .bf-h2 { font-size: 28px; }
+  #bf-{{ section.id }} .bf-h2 { font-size: 56px; letter-spacing: -0.025em; }
 }
 #bf-{{ section.id }} .bf-subtitle{
-  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
-  margin: 4px 0 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: 0.01em;
+  font-family: 'Inter Tight', 'Söhne', system-ui, -apple-system, sans-serif;
+  margin: 14px 0 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   color: rgba(13, 46, 34, 0.55);
+}
+@media (min-width: 990px) {
+  #bf-{{ section.id }} .bf-subtitle { font-size: 12px; letter-spacing: 0.24em; margin-top: 18px; }
 }
 #bf-{{ section.id }} .bf-message{
   font-size:14px;
