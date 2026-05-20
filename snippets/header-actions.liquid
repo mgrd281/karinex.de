@@ -1008,23 +1008,42 @@
     pointer-events: none !important;
   }
 
+  /* Old green count circle — superseded by the editorial eyebrow
+     below. Hidden everywhere it might still render. */
   .cart-drawer__count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    padding: 0;
-    margin-left: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff;
-    background: #0f3b2e;
-    border-radius: 50%;
-    vertical-align: middle;
+    display: none !important;
+  }
+
+  /* Editorial drawer header — tracked-caps eyebrow above the
+     "WARENKORB" headline, mirrors the /cart page treatment from
+     blocks/_cart-title.liquid. */
+  .cart-drawer__header--editorial .cart-drawer__heading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .cart-drawer__eyebrow {
+    font-family: 'Inter Tight', Inter, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8A8A85;
     line-height: 1;
   }
+
+  /* Defensive: swipe layers must never show inside the drawer either. */
+  .cart-drawer .swipe-delete-layer,
+  .cart-drawer .swipe-wish-layer {
+    display: none !important;
+  }
+  .cart-drawer .swipe-row,
+  .cart-drawer .swipe-row > td,
+  .cart-drawer .swipe-row > button.cart-items__remove {
+    transform: none !important;
+  }
+  .cart-drawer { overflow-x: hidden !important; }
 
   .cart-drawer__heading .cart-bubble,
   .cart-drawer__heading .cart-bubble.visually-hidden {
