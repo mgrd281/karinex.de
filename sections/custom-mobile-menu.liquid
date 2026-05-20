@@ -383,6 +383,12 @@
   visibility: hidden;
   transition: opacity 220ms ease, visibility 0s linear 220ms;
   z-index: 9998;
+  /* Swallow all gestures so the visible page strip (right ~12 vw)
+     can't drive page scroll under the drawer. Click still fires for
+     the close-on-backdrop handler. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .kx-menu-backdrop.is-open {
   opacity: 1;
@@ -928,6 +934,7 @@ body:has(.kx-menu.is-open) header.section-header {
     if (!menu) return;
 
     var lastFocused = null;
+    var savedScrollY = 0;
     var l2Panel = menu.querySelector('.kx-menu__panel--l2');
     var l1Panel = menu.querySelector('.kx-menu__panel--l1');
     var subPanels = menu.querySelectorAll('.kx-menu__sub');
@@ -973,7 +980,16 @@ body:has(.kx-menu.is-open) header.section-header {
       lastFocused = document.activeElement;
       menu.classList.add('is-open');
       if (backdrop) backdrop.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
+      // iOS-Safari-safe body scroll lock: pin <body> at -scrollY so the
+      // page underneath cannot move while the drawer is open.
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      var b = document.body.style;
+      b.position = 'fixed';
+      b.top      = '-' + savedScrollY + 'px';
+      b.left     = '0';
+      b.right    = '0';
+      b.width    = '100%';
+      b.overflow = 'hidden';
       var nativeDrawer = document.getElementById('Details-menu-drawer-container');
       if (nativeDrawer) {
         nativeDrawer.removeAttribute('open');
@@ -986,7 +1002,16 @@ body:has(.kx-menu.is-open) header.section-header {
     function closeMenu() {
       menu.classList.remove('is-open');
       if (backdrop) backdrop.classList.remove('is-open');
-      document.body.style.overflow = '';
+      // Release the body lock and restore the exact pre-open scroll
+      // position — without this iOS jumps the page to top.
+      var b = document.body.style;
+      b.position = '';
+      b.top      = '';
+      b.left     = '';
+      b.right    = '';
+      b.width    = '';
+      b.overflow = '';
+      window.scrollTo(0, savedScrollY);
       setTimeout(function () {
         menu.classList.remove('is-l2');
         if (l2Panel) l2Panel.setAttribute('aria-hidden', 'true');
