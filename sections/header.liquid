@@ -547,18 +547,20 @@
             </div>
           {%- else -%}
             <div
-              class="cart-drawer__header cart-section cart-section--1"
+              class="cart-drawer__header cart-section cart-section--1 cart-drawer__header--editorial"
               id="cart-drawer-header"
             >
-              <h2
-                class="cart-drawer__heading h4"
-                id="cart-drawer-heading"
-              >
-                {{ 'karinex.cart.heading' | t }}
+              <div class="cart-drawer__heading-wrap">
                 {%- unless cart == empty -%}
-                  <span class="cart-drawer__count">{{ cart.item_count }}</span>
+                  <span class="cart-drawer__eyebrow" aria-hidden="true">{{ cart.item_count }} Artikel</span>
                 {%- endunless -%}
-              </h2>
+                <h2
+                  class="cart-drawer__heading h4"
+                  id="cart-drawer-heading"
+                >
+                  {{ 'karinex.cart.heading' | t }}
+                </h2>
+              </div>
 
               <button
                 ref="closeButton"
