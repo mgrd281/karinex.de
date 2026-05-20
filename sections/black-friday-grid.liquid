@@ -169,6 +169,9 @@
                 {% else %}
                   {{ 'image' | placeholder_svg_tag: 'bf-card__img' }}
                 {% endif %}
+
+                {% comment %} Quick Add — desktop only (hidden via CSS on mobile) {% endcomment %}
+                {% render 'quick-add', product: product, section_id: section.id %}
               </div>
 
               <div class="bf-card__body">
@@ -255,7 +258,14 @@
   color: #0d2e22;
 }
 @media (min-width: 990px) {
-  #bf-{{ section.id }} .bf-h2 { font-size: 56px; letter-spacing: -0.025em; }
+  /* Desktop keeps the original calm upright treatment */
+  #bf-{{ section.id }} .bf-h2 {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+  }
 }
 #bf-{{ section.id }} .bf-subtitle{
   font-family: 'Inter Tight', 'Söhne', system-ui, -apple-system, sans-serif;
@@ -268,7 +278,16 @@
   color: rgba(13, 46, 34, 0.55);
 }
 @media (min-width: 990px) {
-  #bf-{{ section.id }} .bf-subtitle { font-size: 12px; letter-spacing: 0.24em; margin-top: 18px; }
+  /* Desktop keeps the original sentence-case serif subtitle */
+  #bf-{{ section.id }} .bf-subtitle {
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    margin: 4px 0 0;
+  }
 }
 #bf-{{ section.id }} .bf-message{
   font-size:14px;
@@ -297,6 +316,11 @@
 }
 
 /* Karten */
+  /* Quick Add — desktop only. Hidden on mobile per merchant request. */
+  @media (max-width: 989px) {
+    #bf-{{ section.id }} .quick-add,
+    #bf-{{ section.id }} .quick-add__button { display: none !important; }
+  }
   /* Quick Add CSS Injection */
   .quick-add {
     --quick-add-offset: var(--padding-sm);
