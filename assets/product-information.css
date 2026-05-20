@@ -3677,52 +3677,58 @@ nav[aria-label="Breadcrumb"],
   .desc-mask strong { font-weight: 500 !important; color: #0d2e22 !important; }
   .desc-mask em { font-style: italic !important; }
 
-  /* Mobile read-more becomes a refined "Weiterlesen →" CTA */
+  /* ----- "Mehr anzeigen" CTA — minimal modern luxury -----
+     Drops the boxed card. Now a quiet centered text link with a thin
+     champagne-gold underline + serif arrow that drifts on press. */
   .read-more-btn {
     display: inline-flex !important;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
-    margin-top: 14px;
-    padding: 14px 18px;
-    background: #ffffff;
-    border: 1px solid rgba(13, 46, 34, 0.12);
-    border-radius: 12px;
-    color: #0d2e22;
-    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    box-shadow: 0 1px 0 rgba(13, 46, 34, 0.04);
-    transition: border-color .25s ease, box-shadow .25s ease, transform .15s ease;
+    margin: 18px 0 8px;
+    padding: 14px 8px;
+    background: transparent !important;
+    border: 0 !important;
+    border-top: 1px solid rgba(13, 46, 34, 0.08) !important;
+    border-bottom: 1px solid rgba(13, 46, 34, 0.08) !important;
+    border-radius: 0 !important;
+    color: #0d2e22 !important;
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: none;
+    box-shadow: none !important;
+    transition: color .25s ease, letter-spacing .25s ease;
+    -webkit-tap-highlight-color: transparent;
   }
   .read-more-btn:hover,
   .read-more-btn:active {
-    color: #0d2e22;
-    border-color: rgba(13, 46, 34, 0.28);
-    box-shadow: 0 4px 14px rgba(13, 46, 34, 0.08);
-    letter-spacing: 0.01em;
+    color: #1D4739 !important;
+    letter-spacing: 0.06em !important;
   }
   .read-more-btn::after { display: none !important; }
-  .read-more-btn .read-more-icon { display: none; }
+  .read-more-btn .read-more-icon { display: none !important; }
   .read-more-btn::before {
     content: '→';
     order: 2;
-    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-size: 18px;
     font-weight: 400;
-    color: #1D4739;
-    transition: transform .25s ease;
+    color: #c9a84c;
+    transition: transform .35s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
-  .read-more-btn:hover::before { transform: translateX(3px); }
+  .read-more-btn:hover::before,
+  .read-more-btn:active::before { transform: translateX(6px); }
 }
 
-/* Bottom-sheet modal (mobile only) */
+/* Bottom-sheet modal (mobile only) — full-viewport so iOS Safari's
+   URL bar can't hide the header / close X. */
 .kx-desc-sheet {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999;
   display: none;
   pointer-events: none;
 }
@@ -3744,38 +3750,39 @@ nav[aria-label="Breadcrumb"],
   left: 0;
   right: 0;
   bottom: 0;
+  top: 0;
+  height: 100%;
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
+  border-radius: 0;
   box-shadow: 0 -16px 40px rgba(13, 46, 34, 0.18);
   display: flex;
   flex-direction: column;
-  max-height: 92vh;
-  height: 92vh;
   transform: translateY(100%);
   transition: transform .42s cubic-bezier(0.22, 0.61, 0.36, 1);
+  padding-top: env(safe-area-inset-top, 0);
   padding-bottom: env(safe-area-inset-bottom, 0);
+  overflow: hidden;
+}
+@supports (height: 100dvh) {
+  .kx-desc-sheet__panel { height: 100dvh; }
 }
 .kx-desc-sheet.is-open .kx-desc-sheet__panel {
   transform: translateY(0);
 }
-.kx-desc-sheet__handle {
-  width: 44px;
-  height: 4px;
-  background: rgba(13, 46, 34, 0.22);
-  border-radius: 999px;
-  margin: 10px auto 4px;
-  flex-shrink: 0;
-}
+/* Drag handle is no longer needed on full-screen panel — hide it */
+.kx-desc-sheet__handle { display: none; }
 .kx-desc-sheet__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 14px;
+  gap: 16px;
+  padding: 16px 20px 14px;
   border-bottom: 1px solid rgba(13, 46, 34, 0.08);
   flex-shrink: 0;
   background: #ffffff;
-  position: relative;
-  z-index: 2;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 .kx-desc-sheet__title {
   margin: 0;
@@ -3784,10 +3791,12 @@ nav[aria-label="Breadcrumb"],
   font-weight: 500;
   letter-spacing: 0.01em;
   color: #0d2e22;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .kx-desc-sheet__close {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3798,28 +3807,42 @@ nav[aria-label="Breadcrumb"],
   cursor: pointer;
   transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
   padding: 0;
-  box-shadow: 0 2px 10px rgba(13, 46, 34, 0.18);
+  box-shadow: 0 4px 14px rgba(13, 46, 34, 0.22);
   flex-shrink: 0;
 }
 .kx-desc-sheet__close:hover,
-.kx-desc-sheet__close:active {
+.kx-desc-sheet__close:active,
+.kx-desc-sheet__close:focus-visible {
   background: #c9a84c;
   color: #0d2e22;
   transform: rotate(90deg);
+  outline: none;
 }
 .kx-desc-sheet__body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: 22px 22px 32px;
+  padding: 22px 22px 40px;
   font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
   font-size: 16px;
   line-height: 1.7;
   color: #2c2c2c;
   overscroll-behavior: contain;
   background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
 }
+/* Make every descendant respect the viewport width — kills the
+   horizontal overflow seen on tables/grids/wide titles */
+.kx-desc-sheet__body * {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+.kx-desc-sheet__body table { table-layout: fixed !important; }
 
 /* ----- MODAL BODY TYPOGRAPHY OVERRIDES -----
    Same reason as the preview: each product description ships its own
