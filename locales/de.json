@@ -494,8 +494,8 @@
       "description": "Beschreibung",
       "functions": "Funktionen",
       "product_details": "Produktdetails",
-      "read_more": "Mehr anzeigen",
-      "read_less": "Weniger anzeigen"
+      "read_more": "weiterlesen",
+      "read_less": "weniger anzeigen"
     },
     "cta": {
       "no_subscription": "KEIN ABO",

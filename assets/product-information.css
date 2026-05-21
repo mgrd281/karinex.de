@@ -3677,50 +3677,49 @@ nav[aria-label="Breadcrumb"],
   .desc-mask strong { font-weight: 500 !important; color: #0d2e22 !important; }
   .desc-mask em { font-style: italic !important; }
 
-  /* ----- "Mehr anzeigen" CTA — minimal modern luxury -----
-     Drops the boxed card. Now a quiet centered text link with a thin
-     champagne-gold underline + serif arrow that drifts on press. */
+  /* ----- "weiterlesen »" CTA — left-aligned green text link -----
+     No boxed card, no hairline borders. A plain bold brand-green link
+     with a » glyph, matching the editorial product-description style. */
   .read-more-btn {
     display: inline-flex !important;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    margin: 18px 0 8px;
-    padding: 14px 8px;
+    justify-content: flex-start;
+    gap: 6px;
+    width: auto;
+    margin: 12px 0 4px;
+    padding: 6px 0 !important;
     background: transparent !important;
     border: 0 !important;
-    border-top: 1px solid rgba(13, 46, 34, 0.08) !important;
-    border-bottom: 1px solid rgba(13, 46, 34, 0.08) !important;
     border-radius: 0 !important;
-    color: #0d2e22 !important;
-    font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.04em !important;
+    color: #1D4739 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
     text-transform: none;
     box-shadow: none !important;
-    transition: color .25s ease, letter-spacing .25s ease;
+    transition: opacity .2s ease;
     -webkit-tap-highlight-color: transparent;
   }
   .read-more-btn:hover,
   .read-more-btn:active {
     color: #1D4739 !important;
-    letter-spacing: 0.06em !important;
+    opacity: 0.65;
   }
   .read-more-btn::after { display: none !important; }
   .read-more-btn .read-more-icon { display: none !important; }
   .read-more-btn::before {
-    content: '→';
+    content: '»';
     order: 2;
-    font-family: 'Newsreader', Georgia, serif;
-    font-size: 18px;
-    font-weight: 400;
-    color: #c9a84c;
-    transition: transform .35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1D4739;
+    line-height: 1;
+    transition: transform .25s ease;
   }
   .read-more-btn:hover::before,
-  .read-more-btn:active::before { transform: translateX(6px); }
+  .read-more-btn:active::before { transform: translateX(3px); }
 }
 
 /* Bottom-sheet modal (mobile only) — full-viewport so iOS Safari's
