@@ -26,7 +26,7 @@
 .footer-modern-wrapper {
     background: #fff;
     color: #333;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Outfit', Arial, sans-serif;
     padding-top: 30px;
     border-top: 1px solid #dcdcdc;
     position: relative;
@@ -465,7 +465,7 @@
 .footer-brand-large span {
     font-size: 18vw;
     font-weight: 400;
-    font-family: 'Didot', 'Bodoni MT', 'Playfair Display', 'Times New Roman', serif;
+    font-family: 'Newsreader', 'Bodoni MT', 'Playfair Display', 'Times New Roman', serif;
     font-style: normal;
     color: rgba(255, 255, 255, 0.12);
     letter-spacing: 0.12em;
@@ -1123,7 +1123,7 @@
         text-decoration: none;
         white-space: nowrap;
         opacity: 0.9;
-        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-family: 'Outfit', Arial, sans-serif;
     }
 
     .footer-links a:hover {

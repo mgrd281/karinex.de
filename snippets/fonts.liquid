@@ -1,8 +1,10 @@
 {% # theme-check-disable %}
 {%- comment -%}
-  PERF: Shopify theme fonts (Newsreader, Red Hat Display) are NOT used.
-  Site uses self-hosted Outfit + Roboto via local-fonts.liquid.
-  Preloading unused fonts wastes ~80-120KB of high-priority bandwidth.
-  Removed preloads; font-face declarations remain in base.css for fallback.
+  Theme typography is unified to two families:
+  - Newsreader (serif, headings/display) — loaded here via Google Fonts
+  - Outfit (sans, body/UI) — self-hosted in local-fonts.liquid
 {%- endcomment -%}
 {% # theme-check-enable %}
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap">

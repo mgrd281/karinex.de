@@ -3,14 +3,14 @@
    Similar to: AboutYou, MediaMarkt, Zalando
    ================================================ */
 
-/* Google Font: Inter - loaded globally via theme.liquid */
+/* Font: Outfit — unified theme sans */
 /* Using system font stack as fallback for better performance */
 
 /* ================================================
    CSS VARIABLES
    ================================================ */
 .search-page-container {
-  --ec-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ec-font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --ec-bg: #ffffff;
   --ec-bg-secondary: #f8fafc;
   --ec-text: #1a1a1a;

@@ -2,7 +2,7 @@
      GLOBAL VARIABLES
      ================================================ */
   .enterprise-collection {
-    --ec-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --ec-font: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --ec-bg: #ffffff;
     --ec-text: #1a1a1a;
     --ec-text-secondary: #6b7280;

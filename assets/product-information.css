@@ -56,7 +56,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-family: 'Outfit', 'Segoe UI', sans-serif;
             line-height: 1.6;
             color: var(--text);
             background-color: var(--white);
@@ -138,7 +138,7 @@
 
         /* Rating score pill – e.g. "4.9" */
         .product-rating .rating-value {
-            font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+            font-family: 'Outfit', 'Roboto', system-ui, sans-serif;
             font-weight: 700;
             font-size: 0.875rem;
             color: #1a1a1a;
@@ -2159,7 +2159,7 @@
            ═══════════════════════════════════════════════════ */
 
         .kx-reviews-widget-wrapper {
-            font-family: 'Inter', 'Roboto', system-ui, sans-serif !important;
+            font-family: 'Outfit', 'Roboto', system-ui, sans-serif !important;
         }
 
         #rechnung-profi-reviews-widget {
@@ -3298,7 +3298,7 @@ nav[aria-label="Breadcrumb"],
 
   .product-description-text {
     /* Default font as fallback only — no !important so admin inline styles win */
-    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.7;
     color: var(--text-color);
     font-size: 16px;
