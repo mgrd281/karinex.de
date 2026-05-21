@@ -209,6 +209,8 @@ html body .kx-faq .kx-faq__panel {
     display: block !important;
     overflow: hidden !important;
     height: 0;
+    max-height: none !important;
+    padding: 0 !important;
     transition: height var(--faq-dur) var(--faq-ease) !important;
     will-change: height !important;
 }
