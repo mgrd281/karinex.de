@@ -256,6 +256,27 @@
       margin-inline-end: calc(-1 * max(var(--padding-xs), var(--padding-inline-end)));
     }
   }
+  /* Single-column ("mobile-single") view → compact horizontal list rows
+     instead of one giant full-width square image per product. */
+  @media screen and (max-width: 749px) {
+    [product-grid-view='mobile-single'] .product-grid__card {
+      flex-flow: row nowrap;
+      align-items: center;
+      gap: 14px;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card > :first-child {
+      flex: 0 0 124px;
+      width: 124px;
+      max-width: 124px;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card > :first-child ~ * {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card .card-gallery {
+      margin-inline: 0 !important;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
