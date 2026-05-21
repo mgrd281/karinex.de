@@ -135,16 +135,10 @@
       var details = btn.closest('details');
       if (!details) return;
 
-      var list   = btn.closest('.kx-faq__list') || btn.closest('.kx-faq');
       var isOpen = details.classList.contains('is-open');
 
-      /* Close siblings gracefully */
-      if (list) {
-        list.querySelectorAll('details.is-open, details[open]').forEach(function (other) {
-          if (other !== details) animateClose(other);
-        });
-      }
-
+      /* No sibling auto-close: opening an item never collapses one above
+         it, so the page never shifts upward on tap. */
       if (isOpen || busy.get(details) === 'opening') {
         animateClose(details);
       } else {
