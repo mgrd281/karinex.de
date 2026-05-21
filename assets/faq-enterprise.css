@@ -116,10 +116,11 @@ html body .kx-faq .kx-faq__btn::marker { display: none !important; content: '' !
 /* ── Question text ──────────────────────────────────────── */
 html body .kx-faq .kx-faq__q {
     flex: 1 1 auto !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important;
+    font-size: 17px !important;
+    font-weight: 500 !important;
     color: var(--faq-clr) !important;
-    line-height: 1.5 !important;
+    line-height: 1.4 !important;
     margin: 0 !important;
     padding: 0 !important;
     letter-spacing: -0.005em !important;
@@ -270,7 +271,7 @@ html body .kx-faq .kx-faq__panel-inner p {
     }
 
     html body .kx-faq .kx-faq__q {
-        font-size: 15px !important;
+        font-size: 16px !important;
     }
 
     html body .kx-faq .kx-faq__icon {
