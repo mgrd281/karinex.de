@@ -75,13 +75,16 @@ html body .kx-faq .kx-faq__list {
 }
 
 /* ── Item ────────────────────────────────────────────────── */
-html body .kx-faq .kx-faq__item {
+html body .kx-faq .kx-faq__item,
+html body .kx-faq .kx-faq__item[open],
+html body .kx-faq .kx-faq__item.is-open {
     display: block !important;
     width: 100% !important;
     background: transparent !important;
     border: none !important;
     border-bottom: 1px solid var(--faq-line) !important;
     border-radius: 0 !important;
+    box-shadow: none !important;
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
