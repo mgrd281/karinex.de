@@ -1,7 +1,6 @@
 <!-- ======= FUNKTIONEN / PRODUKTDETAILS TAB ======= -->
 <div id="features-panel" class="tab-content">
   {%- if is_digital -%}
-    <h2>{{ 'karinex.tabs.functions' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">{{ 'karinex.panels.instant_download_after_purchase' | t }}</li>
       <li style="margin-bottom:var(--space-sm);">{{ 'karinex.panels.legal_original_key' | t }}</li>
@@ -11,7 +10,6 @@
       <li style="margin-bottom:var(--space-sm);">{{ 'karinex.panels.article_type_label' | t }} {{ product.type }}</li>
     </ul>
   {%- elsif is_watch -%}
-    <h2>{{ 'karinex.tabs.product_details' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">100 % originale Markenware mit Echtheits-Garantie</li>
       <li style="margin-bottom:var(--space-sm);">Offizielle Herstellergarantie inklusive</li>
@@ -20,7 +18,6 @@
       <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
     </ul>
   {%- elsif is_lego -%}
-    <h2>{{ 'karinex.tabs.product_details' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">Original LEGO Neuware – versiegelt im Karton</li>
       <li style="margin-bottom:var(--space-sm);">Sicher verpackt – ideal als Geschenk</li>
@@ -29,7 +26,6 @@
       <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
     </ul>
   {%- elsif is_game -%}
-    <h2>{{ 'karinex.tabs.product_details' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">Original Neuware – versiegelt</li>
       <li style="margin-bottom:var(--space-sm);">Sofort spielbar nach Aktivierung</li>
@@ -38,7 +34,6 @@
       <li style="margin-bottom:var(--space-sm);">Artikeltyp: {{ product.type }}</li>
     </ul>
   {%- else -%}
-    <h2>{{ 'karinex.tabs.product_details' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">Original Neuware</li>
       <li style="margin-bottom:var(--space-sm);">Sicher verpackt – ideal als Geschenk</li>
@@ -85,7 +80,6 @@
     {% assign is_mac = false %}
     {% if title_l contains 'windows' or tags_l contains 'windows' or type_l contains 'windows' %}{% assign is_win = true %}{% endif %}
     {% if title_l contains 'mac' or title_l contains 'macos' or tags_l contains 'mac' or tags_l contains 'macos' or type_l contains 'mac' %}{% assign is_mac = true %}{% endif %}
-    <h2>{{ 'karinex.product.system_requirements' | t }}</h2>
     {% if sys_all != '' %}
       <div class="rte">{{ sys_all }}</div>
     {% elsif is_win and sys_win != '' %}
@@ -109,7 +103,6 @@
       </ul>
     {% endif %}
   {%- else -%}
-    <h2>{{ 'karinex.product.delivery_and_returns' | t }}</h2>
     <ul style="margin-left:var(--space-lg);color:var(--text-light);">
       <li style="margin-bottom:var(--space-sm);">Lieferzeit: 1–3 Werktage innerhalb Deutschlands</li>
       <li style="margin-bottom:var(--space-sm);">Versanddienstleister: DHL</li>
