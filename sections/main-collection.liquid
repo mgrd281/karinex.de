@@ -256,6 +256,31 @@
       margin-inline-end: calc(-1 * max(var(--padding-xs), var(--padding-inline-end)));
     }
   }
+  /* Modern single-column ("mobile-single") product cards: real rounded
+     card, hairline border, contained (not giant) image. Vertical layout
+     kept. Doubled class + !important to beat base.css. */
+  @media screen and (max-width: 749px) {
+    [product-grid-view='mobile-single'] .product-grid__card.product-grid__card {
+      border: 1px solid #ebeae5 !important;
+      border-radius: 14px !important;
+      overflow: hidden !important;
+      background: #ffffff !important;
+      padding-block-end: 14px !important;
+      gap: 12px !important;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card .card-gallery {
+      margin-inline: 0 !important;
+      background: #f4f3ef;
+      height: 248px !important;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card .card-gallery :is(img, svg) {
+      height: 100% !important;
+      object-fit: contain !important;
+    }
+    [product-grid-view='mobile-single'] .product-grid__card > :not(:first-child) {
+      padding-inline: 16px;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
