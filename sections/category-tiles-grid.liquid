@@ -230,6 +230,9 @@
   /* Desktop: 3x3 grid kept compact — narrower container so tiles
      stay ~190px and don't dominate the page. */
   @media (min-width: 990px) {
+    /* Mobile-only section — hidden entirely on desktop */
+    #shopify-section-{{ section.id }} { display: none !important; }
+
     .ctg-section {
       padding: 60px 24px 80px;
       max-width: 760px;          /* tighter than 1000 — tiles ~190px */
