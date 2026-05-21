@@ -4,38 +4,40 @@
   assign heading = section.settings.heading | default: 'Aktuell sehr beliebt'
   assign manual_products = section.settings.products
   assign source_collection = section.settings.collection
+
+  # Decide which product list will actually be rendered, so the
+  # heading is only shown when there is something below it.
+  assign render_products = manual_products
+  if source == 'manual'
+    assign render_products = manual_products
+  elsif source == 'recommendations'
+    if recommendations.performed? and recommendations.products_count > 0
+      assign render_products = recommendations.products
+    else
+      assign render_products = source_collection.products
+    endif
+  else
+    assign render_products = source_collection.products
+  endif
+  assign has_products = false
+  if render_products != blank and render_products.size > 0
+    assign has_products = true
+  endif
 -%}
 
+{%- if has_products -%}
 <div class="popular-products" data-section-id="{{ section.id }}">
   {%- if heading != blank -%}
     <h3 class="popular-products__heading">{{ heading }}</h3>
   {%- endif -%}
 
   <div class="popular-products__list">
-    {%- case source -%}
-      {%- when 'manual' -%}
-        {%- for product in manual_products limit: products_to_show -%}
-          {% render 'popular-product-card', product: product %}
-        {%- endfor -%}
-      {%- when 'recommendations' -%}
-        {%- if recommendations.performed? and recommendations.products_count > 0 -%}
-          {%- for product in recommendations.products limit: products_to_show -%}
-            {% render 'popular-product-card', product: product %}
-          {%- endfor -%}
-        {%- elsif source_collection.products.size > 0 -%}
-          {%- for product in source_collection.products limit: products_to_show -%}
-            {% render 'popular-product-card', product: product %}
-          {%- endfor -%}
-        {%- endif -%}
-      {%- else -%}
-        {%- if source_collection.products.size > 0 -%}
-          {%- for product in source_collection.products limit: products_to_show -%}
-            {% render 'popular-product-card', product: product %}
-          {%- endfor -%}
-        {%- endif -%}
-    {%- endcase -%}
+    {%- for product in render_products limit: products_to_show -%}
+      {% render 'popular-product-card', product: product %}
+    {%- endfor -%}
   </div>
 </div>
+{%- endif -%}
 
 {%- stylesheet -%}
 .popular-products {
