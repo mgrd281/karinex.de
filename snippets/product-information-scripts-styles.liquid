@@ -1412,39 +1412,8 @@ function toggleMobileAccordion(header) {
   requestAnimationFrame(() => { window.scrollTo(0, scrollY); });
 }
 
-// FAQ Logic
-document.addEventListener('click', (e) => {
-  const summary = e.target.closest('.kx-faq__btn');
-  if (!summary) return;
-  const details = summary.parentElement;
-  const content = details ? details.querySelector('.kx-faq__panel') : null;
-  if (!details || details.tagName !== 'DETAILS' || !content) return;
+// FAQ accordion is handled solely by the product-faq section
+// (single delegated handler) — the duplicate handler that lived here
+// fought it for the same clicks and caused the page to jump.
 
-  const container = details.closest('.kx-faq__list');
-  if (container) {
-    container.querySelectorAll('details[open]').forEach(other => {
-      if (other !== details) {
-        const oc = other.querySelector('.kx-faq__panel');
-        if (oc) {
-          oc.style.maxHeight = oc.scrollHeight + "px";
-          requestAnimationFrame(() => { requestAnimationFrame(() => { oc.style.maxHeight = '0px'; }); });
-          setTimeout(() => { other.open = false; }, 300);
-        } else other.open = false;
-      }
-    });
-  }
-
-  if (details.open) {
-    e.preventDefault();
-    content.style.maxHeight = content.scrollHeight + "px";
-    requestAnimationFrame(() => { requestAnimationFrame(() => { content.style.maxHeight = '0px'; }); });
-    setTimeout(() => { details.open = false; content.style.maxHeight = ''; }, 300);
-  } else {
-    e.preventDefault();
-    details.open = true;
-    content.style.maxHeight = '0px';
-    requestAnimationFrame(() => { requestAnimationFrame(() => { content.style.maxHeight = content.scrollHeight + "px"; }); });
-    setTimeout(() => { content.style.maxHeight = 'none'; }, 350);
-  }
-});
 </script>
