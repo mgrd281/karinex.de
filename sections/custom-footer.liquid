@@ -602,7 +602,7 @@
             // FAQ Accordion (footer) — toggle .active on the clicked item.
             // Multiple items may stay open; opening one never collapses
             // another, so the page never jumps.
-            document.querySelectorAll('.faq-question').forEach(function (q) {
+            document.querySelectorAll('.footer-modern-wrapper .faq-question').forEach(function (q) {
                 q.addEventListener('click', function () {
                     var item = q.closest('.faq-item');
                     if (item) item.classList.toggle('active');

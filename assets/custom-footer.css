@@ -722,7 +722,7 @@
     padding: 10px 0;
 }
 
-.faq-item {
+.footer-modern-wrapper .faq-item {
     margin-bottom: 12px;
     border-radius: 8px;
     overflow: hidden;
@@ -730,7 +730,7 @@
     border: 1px solid #e9ecef;
 }
 
-.faq-question {
+.footer-modern-wrapper .faq-question {
     padding: 14px 16px;
     font-weight: 600;
     color: #2e7d32;
@@ -741,11 +741,11 @@
     transition: all 0.3s ease;
 }
 
-.faq-question:hover {
+.footer-modern-wrapper .faq-question:hover {
     background: #e8f5e9;
 }
 
-.faq-answer {
+.footer-modern-wrapper .faq-answer {
     padding: 0 16px;
     max-height: 0;
     overflow: hidden;
@@ -756,16 +756,16 @@
     color: #555;
 }
 
-.faq-item.active .faq-answer {
+.footer-modern-wrapper .faq-item.active .faq-answer {
     max-height: 300px;
     padding: 0 16px 16px 16px;
 }
 
-.faq-item.active .faq-toggle {
+.footer-modern-wrapper .faq-item.active .faq-toggle {
     transform: rotate(45deg);
 }
 
-.faq-toggle {
+.footer-modern-wrapper .faq-toggle {
     font-size: 18px;
     font-weight: 300;
     color: #2e7d32;
@@ -1180,12 +1180,12 @@
         font-size: 9px;
     }
 
-    .faq-question {
+    .footer-modern-wrapper .faq-question {
         padding: 12px 14px;
         font-size: 14px;
     }
 
-    .faq-answer {
+    .footer-modern-wrapper .faq-answer {
         font-size: 13px;
     }
 
@@ -1264,12 +1264,12 @@
         font-size: 9px;
     }
 
-    .faq-question {
+    .footer-modern-wrapper .faq-question {
         padding: 10px 12px;
         font-size: 13px;
     }
 
-    .faq-answer {
+    .footer-modern-wrapper .faq-answer {
         font-size: 12px;
     }
 }
