@@ -599,9 +599,15 @@
                 });
             });
 
-            // FAQ Accordion Functionality - KORRIGIERT
-            // FAQ ACCORDION FUNCTIONALITY REMOVED - NOW HANDLED GLOBALLY BY theme.liquid
-            // This prevents the "double toggle" issue.
+            // FAQ Accordion (footer) — toggle .active on the clicked item.
+            // Multiple items may stay open; opening one never collapses
+            // another, so the page never jumps.
+            document.querySelectorAll('.faq-question').forEach(function (q) {
+                q.addEventListener('click', function () {
+                    var item = q.closest('.faq-item');
+                    if (item) item.classList.toggle('active');
+                });
+            });
 
             // Enhanced touch interactions for mobile
             document.querySelectorAll('.footer-section a').forEach(link => {
