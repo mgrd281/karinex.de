@@ -322,24 +322,32 @@
   }
 
   function clean() {
-    var walker = document.createTreeWalker(WIDGET, NodeFilter.SHOW_TEXT, null);
-    var node;
-    while ((node = walker.nextNode())) {
-      var txt = (node.nodeValue || '').replace(/\s+/g, ' ').trim();
+    var all = WIDGET.querySelectorAll('*');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (el.dataset.kxCleaned) continue;
+      var txt = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!txt) continue;
-      if (LABELS.indexOf(txt) === -1) continue;
-      var el = node.parentElement;
+      var hit = false;
+      for (var j = 0; j < LABELS.length; j++) {
+        var lbl = LABELS[j];
+        if (!lbl) continue;
+        if (txt === lbl) { hit = true; break; }
+        if (txt.length - lbl.length < 6 && txt.indexOf(lbl) !== -1) { hit = true; break; }
+      }
+      if (!hit) continue;
+      var styled = el;
       var depth = 0;
-      while (el && el !== WIDGET && depth < 5) {
-        var cs = window.getComputedStyle(el);
+      while (styled && styled !== WIDGET && depth < 6) {
+        var cs = window.getComputedStyle(styled);
         var bg = cs.backgroundColor || '';
         var hasBg = bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent';
         var rad = parseFloat(cs.borderRadius) || 0;
-        if (hasBg || rad > 4) { strip(el); break; }
-        el = el.parentElement;
+        if (hasBg || rad > 4) { strip(styled); break; }
+        styled = styled.parentElement;
         depth++;
       }
-      if (node.parentElement) strip(node.parentElement);
+      strip(el);
     }
   }
 
