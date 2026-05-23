@@ -23,4 +23,10 @@
   <link rel="preload" href="{{ product.featured_image | image_url: width: 800 }}" as="image" fetchpriority="high">
 {%- endif -%}
 
+<!-- Preload Reviews widget script on product pages so it starts
+     downloading during head parse (faster than the async <script>). -->
+{%- if template.name == 'product' -%}
+  <link rel="preload" href="https://invoice-production-8cd6.up.railway.app/review-widget.js" as="script" crossorigin>
+{%- endif -%}
+
 {%- comment -%} dns-prefetch for TS is already in theme.liquid head {%- endcomment -%}
