@@ -285,6 +285,72 @@
 })();
 </script>
 
+<script>
+/* Strip the pill-style "Verifizierter Kauf" badge to an elegant inline
+   label, regardless of the class names the reviews widget uses. We
+   locate it by its visible text and clear the pill background, padding
+   and radius on the styled ancestor. */
+(function () {
+  var WIDGET = document.getElementById('rechnung-profi-reviews-widget');
+  if (!WIDGET) return;
+
+  var LABELS = [
+    {{ 'karinex.reviews_widget.verified_purchase' | t | json }},
+    'Verifizierter Kauf',
+    'Verifizierter Käufer',
+    'Verified Purchase',
+    'Verified purchase',
+    'Zakup zweryfikowany',
+    'Verifierat köp'
+  ];
+
+  function strip(el) {
+    if (!el || el.dataset.kxCleaned) return;
+    el.dataset.kxCleaned = '1';
+    el.style.setProperty('background', 'transparent', 'important');
+    el.style.setProperty('background-color', 'transparent', 'important');
+    el.style.setProperty('border', '0', 'important');
+    el.style.setProperty('border-radius', '0', 'important');
+    el.style.setProperty('box-shadow', 'none', 'important');
+    el.style.setProperty('padding', '0', 'important');
+    el.style.setProperty('color', '#1D4739', 'important');
+    el.style.setProperty('font-weight', '600', 'important');
+    el.style.setProperty('font-size', '13px', 'important');
+    el.style.setProperty('display', 'inline-flex', 'important');
+    el.style.setProperty('align-items', 'center', 'important');
+    el.style.setProperty('gap', '5px', 'important');
+  }
+
+  function clean() {
+    var walker = document.createTreeWalker(WIDGET, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      var txt = (node.nodeValue || '').replace(/\s+/g, ' ').trim();
+      if (!txt) continue;
+      if (LABELS.indexOf(txt) === -1) continue;
+      var el = node.parentElement;
+      var depth = 0;
+      while (el && el !== WIDGET && depth < 5) {
+        var cs = window.getComputedStyle(el);
+        var bg = cs.backgroundColor || '';
+        var hasBg = bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent';
+        var rad = parseFloat(cs.borderRadius) || 0;
+        if (hasBg || rad > 4) { strip(el); break; }
+        el = el.parentElement;
+        depth++;
+      }
+      if (node.parentElement) strip(node.parentElement);
+    }
+  }
+
+  clean();
+  try {
+    new MutationObserver(function () { clean(); })
+      .observe(WIDGET, { childList: true, subtree: true });
+  } catch (e) {}
+})();
+</script>
+
 {% schema %}
 {
   "name": "Bewertungen",
