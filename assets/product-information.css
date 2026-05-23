@@ -2246,14 +2246,22 @@
 
         /* ── Verified badge — elegant inline label (no pill) ── */
         #rechnung-profi-reviews-widget .verified-badge,
-        #rechnung-profi-reviews-widget [class*="verified"] {
+        #rechnung-profi-reviews-widget [class*="verified" i],
+        #rechnung-profi-reviews-widget [class*="Verified"],
+        #rechnung-profi-reviews-widget [data-verified],
+        #rechnung-profi-reviews-widget .rp-verified,
+        #rechnung-profi-reviews-widget .rp-verified-badge,
+        #rechnung-profi-reviews-widget .rp-verified-buyer,
+        #rechnung-profi-reviews-widget .rp-verified-purchase {
             background: transparent !important;
+            background-color: transparent !important;
             color: #1D4739 !important;
             border-radius: 0 !important;
             font-size: 13px !important;
             font-weight: 600 !important;
             padding: 0 !important;
             border: none !important;
+            box-shadow: none !important;
             display: inline-flex !important;
             align-items: center !important;
             gap: 5px !important;
