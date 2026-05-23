@@ -1628,7 +1628,7 @@
           "settings": {
             "label": "Windows",
             "collection": "",
-            "custom_url": "",
+            "custom_url": "shopify://collections/windows",
             "show_badge": true,
             "solid_panel": false,
             "highlight_label": false
