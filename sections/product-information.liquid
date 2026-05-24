@@ -5621,7 +5621,11 @@ function toggleDesc() {
   .cart-drawer__summary .shopify-payment-button,
   .cart-drawer__summary shopify-payment-terms,
   .cart-drawer__summary more-payment-options-link,
-  .cart-drawer__summary .accelerated-checkout-block{
+  .cart-drawer__summary .accelerated-checkout-block,
+  .kx-payment-buttons .shopify-payment-button,
+  .kx-payment-buttons shopify-payment-terms,
+  .kx-payment-buttons more-payment-options-link,
+  .kx-payment-buttons .accelerated-checkout-block{
     display: block !important;
     visibility: visible !important;
     pointer-events: auto !important;
@@ -5644,6 +5648,7 @@ function toggleDesc() {
         HIDE_SELECTORS.forEach(function(sel){
           root.querySelectorAll(sel).forEach(function(node){
             if(node.closest('.cart-drawer__summary')) return; // allowed area
+            if(node.closest('.kx-payment-buttons')) return; // allowed area: PDP express buttons
             node.style.setProperty('display','none','important');
             node.style.setProperty('visibility','hidden','important');
             node.style.setProperty('pointer-events','none','important');
