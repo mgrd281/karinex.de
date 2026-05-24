@@ -1,11 +1,35 @@
 {% comment %}
 Generiert ein Inhaltsverzeichnis (TOC) aus den Überschriften (H2/H3) im Artikelinhalt.
+Strips <style> und <script> Blöcke vorher, damit CSS/JS-Inhalt nicht im TOC erscheint.
+Nur echte H2/H3-Tags werden erkannt (beginnt mit "h2>", "h2 ", "h3>" oder "h3 ").
 {% endcomment %}
-{% assign headings = content | split: '<' %}
+
+{%- comment -%} Strip <style>...</style> blocks {%- endcomment -%}
+{%- assign style_parts = content | split: '<style' -%}
+{%- assign clean = style_parts | first -%}
+{%- for part in style_parts -%}
+  {%- if forloop.first == false -%}
+    {%- assign after_style = part | split: '</style>' | last -%}
+    {%- assign clean = clean | append: after_style -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Strip <script>...</script> blocks {%- endcomment -%}
+{%- assign script_parts = clean | split: '<script' -%}
+{%- assign clean = script_parts | first -%}
+{%- for part in script_parts -%}
+  {%- if forloop.first == false -%}
+    {%- assign after_script = part | split: '</script>' | last -%}
+    {%- assign clean = clean | append: after_script -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{% assign headings = clean | split: '<' %}
 <nav aria-label="Inhaltsverzeichnis">
   <ul class="toc-list">
     {% for h in headings %}
-      {% if h contains 'h2' or h contains 'h3' %}
+      {%- assign first3 = h | slice: 0, 3 -%}
+      {% if first3 == 'h2>' or first3 == 'h3>' or first3 == 'h2 ' or first3 == 'h3 ' %}
         {% assign tag = h | slice: 0, 2 %}
         {% assign text = h | split: '>' | last | split: '<' | first | strip %}
         {% if text != blank %}
@@ -51,14 +75,14 @@ Generiert ein Inhaltsverzeichnis (TOC) aus den Überschriften (H2/H3) im Artikel
   font-size: 0.87rem;
 }
 .toc-list a:hover {
-  background: #eef0f3;
-  border-left-color: #c8102e;
-  color: #1a1a1a;
+  background: #f5faf7;
+  border-left-color: #c9a84c;
+  color: #1D4739;
 }
 .toc-list a.active {
-  background: #fef2f2;
-  border-left-color: #c8102e;
-  color: #c8102e;
+  background: #faf7f0;
+  border-left-color: #1D4739;
+  color: #1D4739;
   font-weight: 600;
 }
 </style>
