@@ -1,41 +1,44 @@
 <!-- ====================================================
-     PRODUCT REVIEWS (Bewertungen)
+     PRODUCT REVIEWS (Bewertungen) – Karinex card design
      ==================================================== -->
-<div class="kx-reviews-section">
-  <div class="kx-reviews-section__header">
-    <h2 class="kx-reviews-section__title">{{ 'karinex.reviews.heading' | t }}</h2>
-  </div>
-  <div class="kx-reviews-section__body">
-    <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}">
-      {%- comment -%}
-        Instant skeleton placeholder. The reviews widget's script replaces
-        the innerHTML on load, so this auto-clears once real reviews arrive.
-        Keeps the area visually alive (no 3–4s blank gap → better LCP feel).
-      {%- endcomment -%}
-      <div class="kx-rev-skel" aria-hidden="true">
-        <div class="kx-rev-skel__head">
-          <div class="kx-rev-skel__big"></div>
-          <div class="kx-rev-skel__pill"></div>
-        </div>
-        {%- for i in (1..3) -%}
-          <div class="kx-rev-skel__card">
-            <div class="kx-rev-skel__row">
-              <div class="kx-rev-skel__avatar"></div>
-              <div class="kx-rev-skel__col">
-                <div class="kx-rev-skel__bar kx-rev-skel__bar--name"></div>
-                <div class="kx-rev-skel__bar kx-rev-skel__bar--date"></div>
-              </div>
-            </div>
-            <div class="kx-rev-skel__bar kx-rev-skel__bar--stars"></div>
-            <div class="kx-rev-skel__bar kx-rev-skel__bar--text"></div>
-            <div class="kx-rev-skel__bar kx-rev-skel__bar--text"></div>
-            <div class="kx-rev-skel__bar kx-rev-skel__bar--text-short"></div>
+<section class="kx-reviews-section" aria-labelledby="kx-reviews-title">
+  <article class="kx-reviews-card">
+    <header class="kx-reviews-card__head">
+      <h2 id="kx-reviews-title" class="kx-reviews-card__title">{{ 'karinex.reviews.heading' | t }}</h2>
+      <span class="kx-reviews-card__rule" aria-hidden="true"></span>
+    </header>
+    <div class="kx-reviews-card__body">
+      <div id="rechnung-profi-reviews-widget" data-product-id="{{ product.id }}">
+        {%- comment -%}
+          Instant skeleton placeholder. The reviews widget's script replaces
+          the innerHTML on load, so this auto-clears once real reviews arrive.
+          Keeps the area visually alive (no 3–4s blank gap → better LCP feel).
+        {%- endcomment -%}
+        <div class="kx-rev-skel" aria-hidden="true">
+          <div class="kx-rev-skel__head">
+            <div class="kx-rev-skel__big"></div>
+            <div class="kx-rev-skel__pill"></div>
           </div>
-        {%- endfor -%}
+          {%- for i in (1..3) -%}
+            <div class="kx-rev-skel__card">
+              <div class="kx-rev-skel__row">
+                <div class="kx-rev-skel__avatar"></div>
+                <div class="kx-rev-skel__col">
+                  <div class="kx-rev-skel__bar kx-rev-skel__bar--name"></div>
+                  <div class="kx-rev-skel__bar kx-rev-skel__bar--date"></div>
+                </div>
+              </div>
+              <div class="kx-rev-skel__bar kx-rev-skel__bar--stars"></div>
+              <div class="kx-rev-skel__bar kx-rev-skel__bar--text"></div>
+              <div class="kx-rev-skel__bar kx-rev-skel__bar--text"></div>
+              <div class="kx-rev-skel__bar kx-rev-skel__bar--text-short"></div>
+            </div>
+          {%- endfor -%}
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </article>
+</section>
 
 <style>
   /* ══════════════════════════════════════════════════════
@@ -49,7 +52,7 @@
   .kx-rev-skel__big { width: 38%; max-width: 220px; height: 44px; border-radius: 999px; }
   .kx-rev-skel__pill { width: 28%; max-width: 160px; height: 32px; border-radius: 999px; }
   .kx-rev-skel__card {
-    background: #fff; border: 1px solid #efeee9; border-radius: 12px;
+    background: #faf7f0; border: 1px solid #ece9df; border-radius: 12px;
     padding: 18px 18px 20px;
   }
   .kx-rev-skel__row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
@@ -79,34 +82,71 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     REVIEWS SECTION – Modern Card Design
+     REVIEWS SECTION – Karinex card design
      ══════════════════════════════════════════════════════ */
   .kx-reviews-section {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 24px 48px;
+    padding: 8px 16px 48px;
   }
-  .kx-reviews-section__header {
+  .kx-reviews-card {
+    background: #ffffff;
+    border: 1px solid #ece9df;
+    border-radius: 20px;
+    padding: 32px 32px 28px;
+    box-shadow:
+      0 1px 2px rgba(13, 46, 34, 0.04),
+      0 12px 32px rgba(13, 46, 34, 0.05);
+    position: relative;
+  }
+  .kx-reviews-card__head {
     margin-bottom: 24px;
   }
-  .kx-reviews-section__title {
-    font-size: 22px;
-    font-weight: 600;
-    color: #1a1a1a;
-    letter-spacing: -0.3px;
+  .kx-reviews-card__title {
+    font-family: var(--font-heading-family, 'Newsreader', serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: #0d2e22;
+    letter-spacing: -0.4px;
+    line-height: 1.15;
     margin: 0;
   }
-  .kx-reviews-section__body {
-    background: #fafafa;
-    border-radius: 16px;
-    border: 1px solid #f0f0f0;
-    padding: 32px;
+  .kx-reviews-card__rule {
+    display: block;
+    width: 44px;
+    height: 2px;
+    margin-top: 14px;
+    background: #c9a84c;
+    border-radius: 2px;
+  }
+  .kx-reviews-card__body {
     min-height: 120px;
   }
 
   /* ── Override widget's default "no reviews" state ── */
   .rp-widget {
     font-family: inherit !important;
+  }
+
+  /* ── Mobile: tighter padding ── */
+  @media (max-width: 600px) {
+    .kx-reviews-section {
+      padding: 4px 12px 32px;
+    }
+    .kx-reviews-card {
+      padding: 22px 18px 22px;
+      border-radius: 16px;
+    }
+    .kx-reviews-card__head {
+      margin-bottom: 18px;
+    }
+    .kx-reviews-card__title {
+      font-size: 22px;
+    }
+    .kx-reviews-card__rule {
+      width: 36px;
+      margin-top: 10px;
+    }
   }
 
   /* ══════════════════════════════════════════════════════
