@@ -450,6 +450,168 @@
   font-weight: 600;
 }
 
+/* === Editorial comparison-table override (used in vergleich articles) === */
+.article-content .comparison-table {
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(13, 46, 34, 0.08);
+  border: 1px solid #e8e8ed;
+}
+.article-content .comparison-table th {
+  background: #1D4739 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 14px 16px !important;
+  border: none !important;
+  text-align: left;
+  letter-spacing: 0.01em;
+}
+.article-content .comparison-table td {
+  padding: 12px 16px !important;
+  border: none !important;
+  border-bottom: 1px solid #eef0ef !important;
+}
+.article-content .comparison-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+.article-content .comparison-table tr:nth-child(even) td {
+  background: #fafbfa;
+}
+.article-content .comparison-table .highlight {
+  background: #fdf6e3 !important;
+  border-left: 2px solid #c9a84c !important;
+  border-right: 2px solid #c9a84c !important;
+}
+.article-content .comparison-table tbody tr:first-child .highlight {
+  border-top: 2px solid #c9a84c !important;
+}
+.article-content .comparison-table tbody tr:last-child .highlight {
+  border-bottom: 2px solid #c9a84c !important;
+}
+
+/* === Persona cards refinement === */
+.article-content .persona-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin: 28px 0;
+}
+.article-content .persona {
+  background: #ffffff;
+  border: 1px solid #e8eaed;
+  border-top: 4px solid #1D4739;
+  border-left: none;
+  border-radius: 10px;
+  padding: 24px 22px;
+  box-shadow: 0 2px 8px rgba(13, 46, 34, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+.article-content .persona:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(13, 46, 34, 0.10);
+}
+.article-content .persona h4 {
+  color: #1D4739 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 14px 0 !important;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #c9a84c;
+}
+.article-content .persona ul {
+  margin: 0 !important;
+  padding-left: 18px !important;
+}
+.article-content .persona li {
+  font-size: 14px;
+  color: #2d3a35;
+  margin-bottom: 6px !important;
+  line-height: 1.5;
+}
+.article-content .persona li::marker {
+  color: #c9a84c;
+}
+@media (max-width: 720px) {
+  .article-content .persona-grid { grid-template-columns: 1fr; }
+}
+
+/* === Edition cards (3-col product preview) === */
+.article-content .edition-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 36px 0;
+}
+.article-content .edition-card {
+  background: #ffffff;
+  border: 1.5px solid #e8eaed;
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.article-content .edition-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(13, 46, 34, 0.12);
+}
+.article-content .edition-card.recommended {
+  border: 2px solid #1D4739;
+  background: linear-gradient(180deg, #f5faf7 0%, #ffffff 100%);
+  box-shadow: 0 4px 16px rgba(29, 71, 57, 0.10);
+}
+.article-content .edition-card h3 {
+  margin: 4px 0 6px 0 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: #1D4739 !important;
+}
+.article-content .edition-card .price {
+  display: block;
+  font-size: 30px;
+  font-weight: 900;
+  color: #1D4739;
+  margin: 8px 0 4px 0;
+  letter-spacing: -0.02em;
+}
+.article-content .edition-card .badge-best {
+  display: inline-block;
+  background: #c9a84c;
+  color: #1D4739;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+.article-content .edition-card .cta {
+  display: block;
+  background: #1D4739;
+  color: #ffffff !important;
+  padding: 11px 14px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  font-weight: 700;
+  margin-top: 18px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.article-content .edition-card .cta:hover { background: #0a2118; }
+.article-content .edition-card.recommended .cta {
+  background: #c9a84c;
+  color: #1D4739 !important;
+}
+.article-content .edition-card.recommended .cta:hover { background: #b8973d; }
+@media (max-width: 720px) {
+  .article-content .edition-cards { grid-template-columns: 1fr; }
+}
+
 /* === Share === */
 .article-actions {
   margin-top: 48px;
