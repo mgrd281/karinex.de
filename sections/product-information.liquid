@@ -3292,9 +3292,11 @@
               <span>{{ 'karinex.product.buy_now' | t }}</span>
             </button>
           </form>
-          <p class="kx-payment-hint" data-admin-hint>
-            Hinweis (nur für den Shop-Betreiber sichtbar): Um die nativen Shopify-Express-Buttons (PayPal Express, Apple Pay, Google Pay, Shop Pay) anzuzeigen, aktiviere unter <strong>Shopify Admin → Einstellungen → Zahlungen → Express-Bezahlung</strong> mindestens einen Anbieter.
-          </p>
+          {%- if request.design_mode -%}
+            <p class="kx-payment-hint" data-admin-hint>
+              Hinweis (nur im Theme-Editor sichtbar): Um die nativen Shopify-Express-Buttons (PayPal Express, Apple Pay, Google Pay, Shop Pay) anzuzeigen, aktiviere unter <strong>Shopify Admin → Einstellungen → Zahlungen → Express-Bezahlung</strong> mindestens einen Anbieter.
+            </p>
+          {%- endif -%}
         {%- endif -%}
       </div>
       <script>
