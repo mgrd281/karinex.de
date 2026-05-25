@@ -69,6 +69,40 @@
           on:change="/changeLanguage"
         >
           {%- for language in localization.available_languages -%}
+            {%- assign _lang_flag = '' -%}
+            {%- case language.iso_code -%}
+              {%- when 'de' -%}{%- assign _lang_flag = '🇩🇪' -%}
+              {%- when 'en' -%}{%- assign _lang_flag = '🇬🇧' -%}
+              {%- when 'pl' -%}{%- assign _lang_flag = '🇵🇱' -%}
+              {%- when 'sv' -%}{%- assign _lang_flag = '🇸🇪' -%}
+              {%- when 'nl' -%}{%- assign _lang_flag = '🇳🇱' -%}
+              {%- when 'da' -%}{%- assign _lang_flag = '🇩🇰' -%}
+              {%- when 'nb' -%}{%- assign _lang_flag = '🇳🇴' -%}
+              {%- when 'fi' -%}{%- assign _lang_flag = '🇫🇮' -%}
+              {%- when 'fr' -%}{%- assign _lang_flag = '🇫🇷' -%}
+              {%- when 'it' -%}{%- assign _lang_flag = '🇮🇹' -%}
+              {%- when 'es' -%}{%- assign _lang_flag = '🇪🇸' -%}
+              {%- when 'pt-PT' -%}{%- assign _lang_flag = '🇵🇹' -%}
+              {%- when 'pt-BR' -%}{%- assign _lang_flag = '🇧🇷' -%}
+              {%- when 'cs' -%}{%- assign _lang_flag = '🇨🇿' -%}
+              {%- when 'sk' -%}{%- assign _lang_flag = '🇸🇰' -%}
+              {%- when 'sl' -%}{%- assign _lang_flag = '🇸🇮' -%}
+              {%- when 'hr' -%}{%- assign _lang_flag = '🇭🇷' -%}
+              {%- when 'hu' -%}{%- assign _lang_flag = '🇭🇺' -%}
+              {%- when 'ro' -%}{%- assign _lang_flag = '🇷🇴' -%}
+              {%- when 'bg' -%}{%- assign _lang_flag = '🇧🇬' -%}
+              {%- when 'el' -%}{%- assign _lang_flag = '🇬🇷' -%}
+              {%- when 'tr' -%}{%- assign _lang_flag = '🇹🇷' -%}
+              {%- when 'ru' -%}{%- assign _lang_flag = '🇷🇺' -%}
+              {%- when 'ja' -%}{%- assign _lang_flag = '🇯🇵' -%}
+              {%- when 'ko' -%}{%- assign _lang_flag = '🇰🇷' -%}
+              {%- when 'zh-CN' -%}{%- assign _lang_flag = '🇨🇳' -%}
+              {%- when 'zh-TW' -%}{%- assign _lang_flag = '🇹🇼' -%}
+              {%- when 'th' -%}{%- assign _lang_flag = '🇹🇭' -%}
+              {%- when 'vi' -%}{%- assign _lang_flag = '🇻🇳' -%}
+              {%- when 'id' -%}{%- assign _lang_flag = '🇮🇩' -%}
+              {%- when 'lt' -%}{%- assign _lang_flag = '🇱🇹' -%}
+            {%- endcase -%}
             <option
               value="{{ language.iso_code }}"
               lang="{{ language.iso_code }}"
@@ -76,7 +110,7 @@
                 selected
               {% endif %}
             >
-              {{ language.endonym_name | capitalize }}
+              {%- if _lang_flag != '' -%}{{ _lang_flag }}  {% endif -%}{{ language.endonym_name | capitalize }}
             </option>
           {%- endfor -%}
         </select>
