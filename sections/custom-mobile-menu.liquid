@@ -318,19 +318,16 @@
           endcase
         -%}
         <div class="kx-menu__stage kx-menu__locale-block" data-stage="4">
-          <div class="kx-menu__locale-heading">
-            <span class="kx-menu__locale-eyebrow">{{ _T_region }}</span>
-          </div>
           {%- form 'localization', id: 'KxMobileMenuLocaleForm', class: 'kx-menu__locale-form' -%}
             <input type="hidden" name="return_to" value="{{ request.path }}">
 
-            <label class="kx-menu__locale-field">
-              <span class="kx-menu__locale-field-label">{{ _T_lang }}</span>
-              <span class="kx-menu__locale-field-value" aria-hidden="true">
+            <div class="kx-menu__locale-row">
+              <span class="kx-menu__locale-row-label">{{ _T_lang }}</span>
+              <span class="kx-menu__locale-row-value" aria-hidden="true">
                 {%- if _cur_lang_flag != '' -%}<span class="kx-menu__locale-flag">{{ _cur_lang_flag }}</span>{%- endif -%}
-                <span class="kx-menu__locale-field-text">{{ localization.language.endonym_name | capitalize }}</span>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <span>{{ localization.language.endonym_name | capitalize }}</span>
               </span>
+              <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
               <select name="language_code" aria-label="{{ _T_lang }}" class="kx-menu__locale-select" onchange="this.form.submit()">
                 {%- for language in localization.available_languages -%}
                   {%- assign _f = '' -%}
@@ -354,15 +351,15 @@
                   </option>
                 {%- endfor -%}
               </select>
-            </label>
+            </div>
 
-            <label class="kx-menu__locale-field">
-              <span class="kx-menu__locale-field-label">{{ _T_land }}</span>
-              <span class="kx-menu__locale-field-value" aria-hidden="true">
-                <span class="kx-menu__locale-field-text">{{ localization.country.name }}</span>
-                <span class="kx-menu__locale-field-meta">{{ localization.country.currency.iso_code }}</span>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <div class="kx-menu__locale-row">
+              <span class="kx-menu__locale-row-label">{{ _T_land }}</span>
+              <span class="kx-menu__locale-row-value" aria-hidden="true">
+                <span>{{ localization.country.name }}</span>
+                <span class="kx-menu__locale-currency">{{ localization.country.currency.iso_code }}</span>
               </span>
+              <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
               <select name="country_code" aria-label="{{ _T_land }}" class="kx-menu__locale-select" onchange="this.form.submit()">
                 {%- for country in localization.available_countries -%}
                   <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
@@ -370,7 +367,7 @@
                   </option>
                 {%- endfor -%}
               </select>
-            </label>
+            </div>
           {%- endform -%}
         </div>
 
@@ -884,66 +881,61 @@ body:has(.kx-menu.is-open) header.section-header {
 .kx-menu__service-item a:hover svg, .kx-menu__service-item a:focus-visible svg { color: var(--kx-gold); transform: translateX(3px); }
 
 /* ---------- Locale switcher (Sprache & Region) ---------- */
-.kx-menu__locale-block { margin: 32px 0 0; padding: 0 24px; }
-.kx-menu__locale-heading { margin-bottom: 12px; }
-.kx-menu__locale-eyebrow {
-  font-family: "Outfit", Arial, sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--kx-gray);
-}
-.kx-menu__locale-form { display: flex; flex-direction: column; gap: 10px; margin: 0; }
-.kx-menu__locale-field {
+.kx-menu__locale-block { margin: 0; padding: 0 24px; }
+.kx-menu__locale-form { display: block; margin: 0; }
+.kx-menu__locale-row {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 14px;
-  background: #ffffff;
-  border: 1px solid var(--kx-hairline);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
-}
-.kx-menu__locale-field:hover,
-.kx-menu__locale-field:focus-within {
-  border-color: var(--kx-forest);
-  box-shadow: 0 1px 0 rgba(29, 71, 57, 0.04), 0 6px 18px rgba(29, 71, 57, 0.06);
-}
-.kx-menu__locale-field-label {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--kx-hairline);
   font-family: "Outfit", Arial, sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--kx-gray);
-  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--kx-charcoal);
+  transition: color 150ms ease, padding-left 200ms var(--kx-spring);
 }
-.kx-menu__locale-field-value {
+.kx-menu__locale-row:last-child { border-bottom: 0; }
+.kx-menu__locale-row-label {
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.kx-menu__locale-row-value {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: "Outfit", Arial, sans-serif;
+  margin-left: auto;
+  color: var(--kx-gray);
   font-size: 15px;
-  font-weight: 500;
-  color: var(--kx-charcoal);
+  font-weight: 400;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
 }
-.kx-menu__locale-field-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.kx-menu__locale-field-meta {
+.kx-menu__locale-currency {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--kx-gray);
   padding: 2px 6px;
   border: 1px solid var(--kx-hairline);
   border-radius: 4px;
 }
 .kx-menu__locale-flag { font-size: 18px; line-height: 1; }
-.kx-menu__locale-field-value svg { color: var(--kx-gray); flex-shrink: 0; }
+.kx-menu__locale-row-caret {
+  color: var(--kx-gray);
+  flex-shrink: 0;
+  transition: color 150ms ease, transform 200ms ease;
+  pointer-events: none;
+}
+.kx-menu__locale-row:hover,
+.kx-menu__locale-row:focus-within { color: var(--kx-forest); }
+.kx-menu__locale-row:hover .kx-menu__locale-row-caret,
+.kx-menu__locale-row:focus-within .kx-menu__locale-row-caret { color: var(--kx-gold); transform: translateX(3px); }
 .kx-menu__locale-select {
   position: absolute;
   inset: 0;
@@ -956,7 +948,9 @@ body:has(.kx-menu.is-open) header.section-header {
   background: transparent;
   -webkit-appearance: none;
   appearance: none;
+  z-index: 2;
 }
+.kx-menu__locale-select:focus-visible { outline: none; }
 
 /* ---------- Editorial Feature ---------- */
 .kx-menu__feature {
