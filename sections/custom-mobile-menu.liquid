@@ -959,9 +959,15 @@ body:has(.kx-menu.is-open) header.section-header {
 
 /* Suppress non-keyboard focus ring on the hamburger summary; iOS Safari
    moves focus there when the in-menu <select> picker opens, which the
-   merchant flagged as an unwanted rectangle around the menu icon. */
-.header__icon--menu:focus:not(:focus-visible),
-.header__icon--summary:focus:not(:focus-visible) {
+   merchant flagged as an unwanted rectangle around the menu icon. Base
+   theme uses *:focus-visible { outline ... } so we have to override
+   :focus-visible too (and use !important to win specificity). */
+.header__icon--menu,
+.header__icon--summary,
+.header__icon--menu:focus,
+.header__icon--summary:focus,
+.header__icon--menu:focus-visible,
+.header__icon--summary:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
