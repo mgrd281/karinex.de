@@ -318,75 +318,72 @@
           endcase
         -%}
         <div class="kx-menu__stage kx-menu__locale-block" data-stage="4">
-          {%- form 'localization', id: 'KxMobileMenuLocaleForm', class: 'kx-menu__locale-form' -%}
+          {%- form 'localization', id: 'KxMobileLangForm', class: 'kx-menu__locale-form' -%}
             <input type="hidden" name="return_to" value="{{ request.path }}">
+            <details class="kx-menu__locale-row">
+              <summary class="kx-menu__locale-summary">
+                <span class="kx-menu__locale-row-label">{{ _T_lang }}</span>
+                <span class="kx-menu__locale-row-value">
+                  {%- if _cur_lang_flag != '' -%}<span class="kx-menu__locale-flag" aria-hidden="true">{{ _cur_lang_flag }}</span>{%- endif -%}
+                  <span class="kx-menu__locale-row-text">{{ localization.language.endonym_name | capitalize }}</span>
+                </span>
+                <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <ul class="kx-menu__locale-options" role="list">
+                {%- for language in localization.available_languages -%}
+                  {%- assign _f = '' -%}
+                  {%- case language.iso_code -%}
+                    {%- when 'de' -%}{%- assign _f = '🇩🇪' -%}
+                    {%- when 'en' -%}{%- assign _f = '🇬🇧' -%}
+                    {%- when 'pl' -%}{%- assign _f = '🇵🇱' -%}
+                    {%- when 'sv' -%}{%- assign _f = '🇸🇪' -%}
+                    {%- when 'nl' -%}{%- assign _f = '🇳🇱' -%}
+                    {%- when 'da' -%}{%- assign _f = '🇩🇰' -%}
+                    {%- when 'nb' -%}{%- assign _f = '🇳🇴' -%}
+                    {%- when 'fi' -%}{%- assign _f = '🇫🇮' -%}
+                    {%- when 'fr' -%}{%- assign _f = '🇫🇷' -%}
+                    {%- when 'it' -%}{%- assign _f = '🇮🇹' -%}
+                    {%- when 'es' -%}{%- assign _f = '🇪🇸' -%}
+                    {%- when 'pt-PT' -%}{%- assign _f = '🇵🇹' -%}
+                    {%- when 'pt-BR' -%}{%- assign _f = '🇧🇷' -%}
+                  {%- endcase -%}
+                  <li>
+                    <button type="submit" name="language_code" value="{{ language.iso_code }}" class="kx-menu__locale-option{% if language.iso_code == localization.language.iso_code %} is-current{% endif %}">
+                      {%- if _f != '' -%}<span class="kx-menu__locale-flag" aria-hidden="true">{{ _f }}</span>{%- endif -%}
+                      <span>{{ language.endonym_name | capitalize }}</span>
+                      {%- if language.iso_code == localization.language.iso_code -%}<svg class="kx-menu__locale-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>{%- endif -%}
+                    </button>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </details>
+          {%- endform -%}
 
-            <div class="kx-menu__locale-row">
-              <span class="kx-menu__locale-row-label">{{ _T_lang }}</span>
-              <span class="kx-menu__locale-control">
-                <select name="language_code" aria-label="{{ _T_lang }}" class="kx-menu__locale-select" data-kx-locale-trigger="language">
-                  {%- for language in localization.available_languages -%}
-                    {%- assign _f = '' -%}
-                    {%- case language.iso_code -%}
-                      {%- when 'de' -%}{%- assign _f = '🇩🇪' -%}
-                      {%- when 'en' -%}{%- assign _f = '🇬🇧' -%}
-                      {%- when 'pl' -%}{%- assign _f = '🇵🇱' -%}
-                      {%- when 'sv' -%}{%- assign _f = '🇸🇪' -%}
-                      {%- when 'nl' -%}{%- assign _f = '🇳🇱' -%}
-                      {%- when 'da' -%}{%- assign _f = '🇩🇰' -%}
-                      {%- when 'nb' -%}{%- assign _f = '🇳🇴' -%}
-                      {%- when 'fi' -%}{%- assign _f = '🇫🇮' -%}
-                      {%- when 'fr' -%}{%- assign _f = '🇫🇷' -%}
-                      {%- when 'it' -%}{%- assign _f = '🇮🇹' -%}
-                      {%- when 'es' -%}{%- assign _f = '🇪🇸' -%}
-                      {%- when 'pt-PT' -%}{%- assign _f = '🇵🇹' -%}
-                      {%- when 'pt-BR' -%}{%- assign _f = '🇧🇷' -%}
-                    {%- endcase -%}
-                    <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
-                      {%- if _f != '' -%}{{ _f }}  {% endif -%}{{ language.endonym_name | capitalize }}
-                    </option>
-                  {%- endfor -%}
-                </select>
-                <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-              </span>
-            </div>
-
-            <div class="kx-menu__locale-row">
-              <span class="kx-menu__locale-row-label">{{ _T_land }}</span>
-              <span class="kx-menu__locale-control">
-                <select name="country_code" aria-label="{{ _T_land }}" class="kx-menu__locale-select" data-kx-locale-trigger="country">
-                  {%- for country in localization.available_countries -%}
-                    <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
-                      {{ country.name }} · {{ country.currency.iso_code }}
-                    </option>
-                  {%- endfor -%}
-                </select>
-                <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-              </span>
-            </div>
+          {%- form 'localization', id: 'KxMobileCountryForm', class: 'kx-menu__locale-form' -%}
+            <input type="hidden" name="return_to" value="{{ request.path }}">
+            <details class="kx-menu__locale-row">
+              <summary class="kx-menu__locale-summary">
+                <span class="kx-menu__locale-row-label">{{ _T_land }}</span>
+                <span class="kx-menu__locale-row-value">
+                  <span class="kx-menu__locale-row-text">{{ localization.country.name }}</span>
+                  <span class="kx-menu__locale-currency">{{ localization.country.currency.iso_code }}</span>
+                </span>
+                <svg class="kx-menu__locale-row-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <ul class="kx-menu__locale-options" role="list">
+                {%- for country in localization.available_countries -%}
+                  <li>
+                    <button type="submit" name="country_code" value="{{ country.iso_code }}" class="kx-menu__locale-option{% if country.iso_code == localization.country.iso_code %} is-current{% endif %}">
+                      <span>{{ country.name }}</span>
+                      <span class="kx-menu__locale-currency-small">{{ country.currency.iso_code }}</span>
+                      {%- if country.iso_code == localization.country.iso_code -%}<svg class="kx-menu__locale-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>{%- endif -%}
+                    </button>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </details>
           {%- endform -%}
         </div>
-
-        <script>
-        (function () {
-          var form = document.getElementById('KxMobileMenuLocaleForm');
-          if (!form) return;
-          form.addEventListener('change', function (event) {
-            var target = event.target;
-            if (!target || !target.matches || !target.matches('[data-kx-locale-trigger]')) return;
-            // Force a fresh submit even if a previous one was queued / interrupted
-            try {
-              if (typeof form.requestSubmit === 'function') {
-                form.requestSubmit();
-              } else {
-                form.submit();
-              }
-            } catch (e) {
-              form.submit();
-            }
-          });
-        })();
-        </script>
 
         {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
         {%- if section.settings.feature_headline != blank -%}
@@ -901,61 +898,105 @@ body:has(.kx-menu.is-open) header.section-header {
 .kx-menu__locale-block { margin: 0; padding: 0 24px; }
 .kx-menu__locale-form { display: block; margin: 0; }
 .kx-menu__locale-row {
+  border-bottom: 1px solid var(--kx-hairline);
+}
+.kx-menu__locale-form:last-of-type .kx-menu__locale-row { border-bottom: 0; }
+.kx-menu__locale-row > .kx-menu__locale-summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 16px 0;
-  border-bottom: 1px solid var(--kx-hairline);
   font-family: "Outfit", Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;
   color: var(--kx-charcoal);
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.kx-menu__locale-row:last-child { border-bottom: 0; }
+.kx-menu__locale-row > .kx-menu__locale-summary::-webkit-details-marker { display: none; }
+.kx-menu__locale-row > .kx-menu__locale-summary::marker { content: ''; }
 .kx-menu__locale-row-label { flex-shrink: 0; }
-.kx-menu__locale-control {
-  position: relative;
+.kx-menu__locale-row-value {
   display: inline-flex;
   align-items: center;
-  min-width: 0;
+  gap: 8px;
   margin-left: auto;
-}
-.kx-menu__locale-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background: transparent;
-  border: 0;
-  outline: none;
   color: var(--kx-gray);
-  font-family: inherit;
-  font-size: 15px; /* keep ≥16 px? iOS zoom only triggers on text/number inputs, not selects */
-  font-weight: 400;
-  line-height: 1.2;
-  text-align: right;
-  padding: 4px 22px 4px 0;
-  max-width: 220px;
-  cursor: pointer;
-  text-overflow: ellipsis;
+  font-size: 15px;
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  direction: ltr;
 }
-.kx-menu__locale-select:focus-visible {
-  outline: none;
-  color: var(--kx-forest);
+.kx-menu__locale-row-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kx-menu__locale-flag { font-size: 18px; line-height: 1; }
+.kx-menu__locale-currency,
+.kx-menu__locale-currency-small {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--kx-gray);
+  padding: 2px 6px;
+  border: 1px solid var(--kx-hairline);
+  border-radius: 4px;
 }
 .kx-menu__locale-row-caret {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
   color: var(--kx-gray);
-  pointer-events: none;
-  transition: color 150ms ease;
+  flex-shrink: 0;
+  transition: transform 250ms var(--kx-spring), color 150ms ease;
 }
-.kx-menu__locale-row:focus-within .kx-menu__locale-row-caret { color: var(--kx-gold); }
+.kx-menu__locale-row[open] > .kx-menu__locale-summary .kx-menu__locale-row-caret {
+  transform: rotate(180deg);
+  color: var(--kx-gold);
+}
+.kx-menu__locale-options {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.kx-menu__locale-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 15px;
+  color: var(--kx-charcoal);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 150ms ease, color 150ms ease;
+}
+.kx-menu__locale-option:hover,
+.kx-menu__locale-option:focus-visible {
+  background: var(--kx-hairline);
+  outline: none;
+}
+.kx-menu__locale-option.is-current {
+  color: var(--kx-forest);
+  font-weight: 600;
+  background: rgba(29, 71, 57, 0.06);
+}
+.kx-menu__locale-option .kx-menu__locale-currency-small {
+  margin-left: auto;
+}
+.kx-menu__locale-option .kx-menu__locale-check {
+  color: var(--kx-forest);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.kx-menu__locale-option:has(.kx-menu__locale-currency-small) .kx-menu__locale-check {
+  margin-left: 6px;
+}
 
 /* Suppress non-keyboard focus ring on the hamburger summary; iOS Safari
    moves focus there when the in-menu <select> picker opens, which the
