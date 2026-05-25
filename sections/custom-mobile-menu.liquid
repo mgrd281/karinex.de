@@ -324,7 +324,7 @@
             <div class="kx-menu__locale-row">
               <span class="kx-menu__locale-row-label">{{ _T_lang }}</span>
               <span class="kx-menu__locale-control">
-                <select name="language_code" aria-label="{{ _T_lang }}" class="kx-menu__locale-select" onchange="this.form.submit()">
+                <select name="language_code" aria-label="{{ _T_lang }}" class="kx-menu__locale-select" data-kx-locale-trigger="language">
                   {%- for language in localization.available_languages -%}
                     {%- assign _f = '' -%}
                     {%- case language.iso_code -%}
@@ -354,7 +354,7 @@
             <div class="kx-menu__locale-row">
               <span class="kx-menu__locale-row-label">{{ _T_land }}</span>
               <span class="kx-menu__locale-control">
-                <select name="country_code" aria-label="{{ _T_land }}" class="kx-menu__locale-select" onchange="this.form.submit()">
+                <select name="country_code" aria-label="{{ _T_land }}" class="kx-menu__locale-select" data-kx-locale-trigger="country">
                   {%- for country in localization.available_countries -%}
                     <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
                       {{ country.name }} · {{ country.currency.iso_code }}
@@ -366,6 +366,27 @@
             </div>
           {%- endform -%}
         </div>
+
+        <script>
+        (function () {
+          var form = document.getElementById('KxMobileMenuLocaleForm');
+          if (!form) return;
+          form.addEventListener('change', function (event) {
+            var target = event.target;
+            if (!target || !target.matches || !target.matches('[data-kx-locale-trigger]')) return;
+            // Force a fresh submit even if a previous one was queued / interrupted
+            try {
+              if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+              } else {
+                form.submit();
+              }
+            } catch (e) {
+              form.submit();
+            }
+          });
+        })();
+        </script>
 
         {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
         {%- if section.settings.feature_headline != blank -%}
