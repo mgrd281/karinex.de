@@ -50,7 +50,17 @@
       so visitors don't have to scroll past 30+ countries to find their language.
     {%- endcomment -%}
     {% if show_language %}
-      <div class="language-selector language-selector--top{% if show_country == false %} language-selector--collapse-space{% endif %}{% if show_country == false and localization_style == 'drawer' %} h5{% endif %}">
+      {%- liquid
+        # Karinex: when both language + country are visible in a dropdown
+        # panel, render the language as a custom list (matching the country
+        # list) so the two read as a single elegant card instead of opening
+        # an OS-rendered <select> popup on top of the country list.
+        assign render_lang_as_list = false
+        if show_country and localization_style == 'dropdown'
+          assign render_lang_as_list = true
+        endif
+      -%}
+      <div class="language-selector language-selector--top{% if show_country == false %} language-selector--collapse-space{% endif %}{% if show_country == false and localization_style == 'drawer' %} h5{% endif %}{% if render_lang_as_list %} language-selector--as-list{% endif %}">
         <h2
           class="visually-hidden"
           id="{{ localization_style }}-LanguageLabel"
@@ -58,15 +68,16 @@
           {{ 'content.language' | t }}
         </h2>
         {% if show_country == true %}
-          <span class="language-selector__label">{{ 'content.language' | t }}</span>
+          <span class="language-selector__label{% if render_lang_as_list %} language-selector__heading{% endif %}">{{ 'content.language' | t }}</span>
         {% endif %}
         <select
           id="{{ localization_style }}Select"
-          class="localization-form__select"
+          class="localization-form__select{% if render_lang_as_list %} visually-hidden{% endif %}"
           name="language_code"
           aria-label="{{ 'content.language' | t }}"
           ref="languageInput"
           on:change="/changeLanguage"
+          {% if render_lang_as_list %}tabindex="-1" aria-hidden="true"{% endif %}
         >
           {%- for language in localization.available_languages -%}
             {%- assign _lang_flag = '' -%}
@@ -114,12 +125,74 @@
             </option>
           {%- endfor -%}
         </select>
-        <span class="svg-wrapper icon-caret">
-          {{- 'icon-caret.svg' | inline_asset_content -}}
-        </span>
+        {% unless render_lang_as_list %}
+          <span class="svg-wrapper icon-caret">
+            {{- 'icon-caret.svg' | inline_asset_content -}}
+          </span>
+        {% endunless %}
+        {% if render_lang_as_list %}
+          <ul
+            class="list-unstyled localization-form__list language-selector__list"
+            role="list"
+            aria-labelledby="{{ localization_style }}-LanguageLabel"
+          >
+            {%- for language in localization.available_languages -%}
+              {%- assign _lf = '' -%}
+              {%- case language.iso_code -%}
+                {%- when 'de' -%}{%- assign _lf = '🇩🇪' -%}
+                {%- when 'en' -%}{%- assign _lf = '🇬🇧' -%}
+                {%- when 'pl' -%}{%- assign _lf = '🇵🇱' -%}
+                {%- when 'sv' -%}{%- assign _lf = '🇸🇪' -%}
+                {%- when 'nl' -%}{%- assign _lf = '🇳🇱' -%}
+                {%- when 'da' -%}{%- assign _lf = '🇩🇰' -%}
+                {%- when 'nb' -%}{%- assign _lf = '🇳🇴' -%}
+                {%- when 'fi' -%}{%- assign _lf = '🇫🇮' -%}
+                {%- when 'fr' -%}{%- assign _lf = '🇫🇷' -%}
+                {%- when 'it' -%}{%- assign _lf = '🇮🇹' -%}
+                {%- when 'es' -%}{%- assign _lf = '🇪🇸' -%}
+                {%- when 'pt-PT' -%}{%- assign _lf = '🇵🇹' -%}
+                {%- when 'pt-BR' -%}{%- assign _lf = '🇧🇷' -%}
+                {%- when 'cs' -%}{%- assign _lf = '🇨🇿' -%}
+                {%- when 'sk' -%}{%- assign _lf = '🇸🇰' -%}
+                {%- when 'sl' -%}{%- assign _lf = '🇸🇮' -%}
+                {%- when 'hr' -%}{%- assign _lf = '🇭🇷' -%}
+                {%- when 'hu' -%}{%- assign _lf = '🇭🇺' -%}
+                {%- when 'ro' -%}{%- assign _lf = '🇷🇴' -%}
+                {%- when 'bg' -%}{%- assign _lf = '🇧🇬' -%}
+                {%- when 'el' -%}{%- assign _lf = '🇬🇷' -%}
+                {%- when 'tr' -%}{%- assign _lf = '🇹🇷' -%}
+                {%- when 'ru' -%}{%- assign _lf = '🇷🇺' -%}
+                {%- when 'ja' -%}{%- assign _lf = '🇯🇵' -%}
+                {%- when 'ko' -%}{%- assign _lf = '🇰🇷' -%}
+                {%- when 'zh-CN' -%}{%- assign _lf = '🇨🇳' -%}
+                {%- when 'zh-TW' -%}{%- assign _lf = '🇹🇼' -%}
+                {%- when 'th' -%}{%- assign _lf = '🇹🇭' -%}
+                {%- when 'vi' -%}{%- assign _lf = '🇻🇳' -%}
+                {%- when 'id' -%}{%- assign _lf = '🇮🇩' -%}
+                {%- when 'lt' -%}{%- assign _lf = '🇱🇹' -%}
+              {%- endcase -%}
+              <li
+                class="localization-form__list-item language-selector__list-item"
+                {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %}
+                data-lang-value="{{ language.iso_code }}"
+                role="option"
+                tabindex="0"
+              >
+                <span class="svg-wrapper icon-checkmark">
+                  {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                </span>
+                {% if _lf != '' %}<span class="country-flag country-flag--emoji" aria-hidden="true">{{ _lf }}</span>{% endif %}
+                <span class="country">{{ language.endonym_name | capitalize }}</span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {% endif %}
       </div>
     {% endif %}
     {% if show_country %}
+      {% if show_language and localization_style == 'dropdown' %}
+        <span class="language-selector__heading language-selector__heading--country">{{ 'accessibility.country_region' | t }}</span>
+      {% endif %}
       {% if show_country_filter %}
         <div class="country-filter">
           <div class="field">
@@ -871,6 +944,45 @@
   .drawer-localization .language-selector .svg-wrapper.icon-caret svg {
     transform: none;
   }
+
+  /* ── Karinex: unified card design when language renders as list ── */
+  .language-selector--as-list {
+    display: block;
+    padding: var(--padding-xs) 0 0;
+    position: static;
+  }
+  .language-selector--as-list .language-selector__heading,
+  .language-selector__heading--country {
+    display: block;
+    padding: var(--padding-sm) var(--padding-lg) var(--padding-2xs);
+    font-family: var(--font-accent-family, "Outfit", system-ui, sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground-rgb) / 0.5);
+    margin: 0;
+  }
+  .language-selector__heading--country {
+    border-top: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
+    margin-top: var(--padding-xs);
+    padding-top: var(--padding-md);
+  }
+  .language-selector__list {
+    margin: 0 0 var(--padding-2xs);
+    padding: 0;
+  }
+  .language-selector--as-list .country-flag--emoji {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 16px;
+    font-size: 16px;
+    line-height: 1;
+    background: transparent;
+    box-shadow: none;
+  }
 {% endstylesheet %}
 
 <script>
@@ -996,5 +1108,35 @@
   }
   // Re-run after any dynamic renders (drawer opening etc.)
   document.addEventListener('shopify:section:load', attachLocalizationListener);
+})();
+(function () {
+  // Karinex: wire up custom language list items inside the unified
+  // dropdown card. Each <li data-lang-value="xx"> sets the hidden
+  // <select> value and submits the form, matching how the country
+  // list works via selectCountry on the component.
+  function handleLangClick(li) {
+    var form = li.closest('form');
+    if (!form) return;
+    var select = form.querySelector('select[name="language_code"]');
+    if (!select) return;
+    var iso = li.getAttribute('data-lang-value');
+    if (!iso) return;
+    select.value = iso;
+    form.submit();
+  }
+  document.addEventListener('click', function (event) {
+    var li = event.target && event.target.closest && event.target.closest('.language-selector__list-item[data-lang-value]');
+    if (!li) return;
+    event.preventDefault();
+    event.stopPropagation();
+    handleLangClick(li);
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    var li = event.target && event.target.closest && event.target.closest('.language-selector__list-item[data-lang-value]');
+    if (!li) return;
+    event.preventDefault();
+    handleLangClick(li);
+  });
 })();
 </script>
