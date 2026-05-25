@@ -1029,6 +1029,72 @@
         </details>
       </div>
 
+      <style>
+        .ay-accordion__close {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin: 18px 0 4px;
+          padding: 10px 16px;
+          background: transparent;
+          color: #1D4739;
+          border: 1px solid #1D4739;
+          border-radius: 999px;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          cursor: pointer;
+          transition: background 180ms ease, color 180ms ease;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .ay-accordion__close:hover,
+        .ay-accordion__close:focus-visible {
+          background: #1D4739;
+          color: #fff;
+          outline: none;
+        }
+        .ay-accordion__close svg {
+          width: 12px;
+          height: 12px;
+          transition: transform 180ms ease;
+        }
+      </style>
+
+      <script>
+      (function () {
+        var ROOT = document.currentScript && document.currentScript.closest('section') || document;
+        var accordions = ROOT.querySelectorAll('.ay-accordion');
+        if (!accordions.length) return;
+
+        var LABEL = {{ 'karinex.tabs.read_less' | t | json }};
+
+        accordions.forEach(function (details) {
+          var content = details.querySelector('.ay-accordion__content');
+          if (!content || content.querySelector('.ay-accordion__close')) return;
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'ay-accordion__close';
+          btn.setAttribute('data-ay-accordion-close', '');
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>' +
+            '<span>' + LABEL.charAt(0).toUpperCase() + LABEL.slice(1) + '</span>';
+          content.appendChild(btn);
+        });
+
+        ROOT.addEventListener('click', function (event) {
+          var btn = event.target && event.target.closest && event.target.closest('[data-ay-accordion-close]');
+          if (!btn) return;
+          var details = btn.closest('details');
+          if (!details) return;
+          details.open = false;
+          var summary = details.querySelector('summary');
+          if (summary && typeof summary.scrollIntoView === 'function') {
+            summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      })();
+      </script>
+
       {%- comment -%} ========== DAS PASST DAZU (Cross-Sell via Metafield) ========== {%- endcomment -%}
       {%- assign _passt_dazu = product.metafields.custom.passt_dazu.value -%}
       {%- if _passt_dazu != blank and _passt_dazu.size > 0 -%}
