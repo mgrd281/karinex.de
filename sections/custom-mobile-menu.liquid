@@ -279,6 +279,101 @@
           </ul>
         </div>
 
+        {%- comment -%} ----- Locale switcher (language + country) ----- {%- endcomment -%}
+        {%- liquid
+          case request.locale.iso_code
+            when 'en'
+              assign _T_region = 'Language & Region'
+              assign _T_lang   = 'Language'
+              assign _T_land   = 'Country'
+            when 'pl'
+              assign _T_region = 'Język i region'
+              assign _T_lang   = 'Język'
+              assign _T_land   = 'Kraj'
+            when 'sv'
+              assign _T_region = 'Språk & region'
+              assign _T_lang   = 'Språk'
+              assign _T_land   = 'Land'
+            else
+              assign _T_region = 'Sprache & Region'
+              assign _T_lang   = 'Sprache'
+              assign _T_land   = 'Land'
+          endcase
+
+          assign _cur_lang_flag = ''
+          case localization.language.iso_code
+            when 'de' then assign _cur_lang_flag = '🇩🇪'
+            when 'en' then assign _cur_lang_flag = '🇬🇧'
+            when 'pl' then assign _cur_lang_flag = '🇵🇱'
+            when 'sv' then assign _cur_lang_flag = '🇸🇪'
+            when 'nl' then assign _cur_lang_flag = '🇳🇱'
+            when 'da' then assign _cur_lang_flag = '🇩🇰'
+            when 'nb' then assign _cur_lang_flag = '🇳🇴'
+            when 'fi' then assign _cur_lang_flag = '🇫🇮'
+            when 'fr' then assign _cur_lang_flag = '🇫🇷'
+            when 'it' then assign _cur_lang_flag = '🇮🇹'
+            when 'es' then assign _cur_lang_flag = '🇪🇸'
+            when 'pt-PT' then assign _cur_lang_flag = '🇵🇹'
+            when 'pt-BR' then assign _cur_lang_flag = '🇧🇷'
+          endcase
+        -%}
+        <div class="kx-menu__stage kx-menu__locale-block" data-stage="4">
+          <div class="kx-menu__locale-heading">
+            <span class="kx-menu__locale-eyebrow">{{ _T_region }}</span>
+          </div>
+          {%- form 'localization', id: 'KxMobileMenuLocaleForm', class: 'kx-menu__locale-form' -%}
+            <input type="hidden" name="return_to" value="{{ request.path }}">
+
+            <label class="kx-menu__locale-field">
+              <span class="kx-menu__locale-field-label">{{ _T_lang }}</span>
+              <span class="kx-menu__locale-field-value" aria-hidden="true">
+                {%- if _cur_lang_flag != '' -%}<span class="kx-menu__locale-flag">{{ _cur_lang_flag }}</span>{%- endif -%}
+                <span class="kx-menu__locale-field-text">{{ localization.language.endonym_name | capitalize }}</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+              <select name="language_code" aria-label="{{ _T_lang }}" class="kx-menu__locale-select" onchange="this.form.submit()">
+                {%- for language in localization.available_languages -%}
+                  {%- assign _f = '' -%}
+                  {%- case language.iso_code -%}
+                    {%- when 'de' -%}{%- assign _f = '🇩🇪' -%}
+                    {%- when 'en' -%}{%- assign _f = '🇬🇧' -%}
+                    {%- when 'pl' -%}{%- assign _f = '🇵🇱' -%}
+                    {%- when 'sv' -%}{%- assign _f = '🇸🇪' -%}
+                    {%- when 'nl' -%}{%- assign _f = '🇳🇱' -%}
+                    {%- when 'da' -%}{%- assign _f = '🇩🇰' -%}
+                    {%- when 'nb' -%}{%- assign _f = '🇳🇴' -%}
+                    {%- when 'fi' -%}{%- assign _f = '🇫🇮' -%}
+                    {%- when 'fr' -%}{%- assign _f = '🇫🇷' -%}
+                    {%- when 'it' -%}{%- assign _f = '🇮🇹' -%}
+                    {%- when 'es' -%}{%- assign _f = '🇪🇸' -%}
+                    {%- when 'pt-PT' -%}{%- assign _f = '🇵🇹' -%}
+                    {%- when 'pt-BR' -%}{%- assign _f = '🇧🇷' -%}
+                  {%- endcase -%}
+                  <option value="{{ language.iso_code }}" lang="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                    {%- if _f != '' -%}{{ _f }}  {% endif -%}{{ language.endonym_name | capitalize }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </label>
+
+            <label class="kx-menu__locale-field">
+              <span class="kx-menu__locale-field-label">{{ _T_land }}</span>
+              <span class="kx-menu__locale-field-value" aria-hidden="true">
+                <span class="kx-menu__locale-field-text">{{ localization.country.name }}</span>
+                <span class="kx-menu__locale-field-meta">{{ localization.country.currency.iso_code }}</span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+              <select name="country_code" aria-label="{{ _T_land }}" class="kx-menu__locale-select" onchange="this.form.submit()">
+                {%- for country in localization.available_countries -%}
+                  <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                    {{ country.name }} · {{ country.currency.iso_code }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- endform -%}
+        </div>
+
         {%- comment -%} ----- Editorial Feature Block ----- {%- endcomment -%}
         {%- if section.settings.feature_headline != blank -%}
           <a href="{{ section.settings.feature_link | default: '/' }}" class="kx-menu__feature kx-menu__stage" data-stage="4">
@@ -311,7 +406,7 @@
             <p class="kx-menu__tagline">Software, sorgfältig kuratiert.</p>
           {%- endif -%}
           <div class="kx-menu__footer-meta">
-            <span class="kx-menu__locale">Deutsch</span>
+            <span class="kx-menu__locale">{{ localization.language.endonym_name | capitalize }}</span>
             <span class="kx-menu__footer-sep" aria-hidden="true">·</span>
             <span class="kx-menu__copyright">© {{ 'now' | date: '%Y' }} Karinex</span>
           </div>
@@ -787,6 +882,81 @@ body:has(.kx-menu.is-open) header.section-header {
 .kx-menu__service-item a svg { color: var(--kx-gray); transition: color 150ms ease, transform 200ms ease; }
 .kx-menu__service-item a:hover, .kx-menu__service-item a:focus-visible { color: var(--kx-forest); padding-left: 4px; }
 .kx-menu__service-item a:hover svg, .kx-menu__service-item a:focus-visible svg { color: var(--kx-gold); transform: translateX(3px); }
+
+/* ---------- Locale switcher (Sprache & Region) ---------- */
+.kx-menu__locale-block { margin: 32px 0 0; padding: 0 24px; }
+.kx-menu__locale-heading { margin-bottom: 12px; }
+.kx-menu__locale-eyebrow {
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kx-gray);
+}
+.kx-menu__locale-form { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+.kx-menu__locale-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid var(--kx-hairline);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.kx-menu__locale-field:hover,
+.kx-menu__locale-field:focus-within {
+  border-color: var(--kx-forest);
+  box-shadow: 0 1px 0 rgba(29, 71, 57, 0.04), 0 6px 18px rgba(29, 71, 57, 0.06);
+}
+.kx-menu__locale-field-label {
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kx-gray);
+  flex-shrink: 0;
+}
+.kx-menu__locale-field-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Outfit", Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--kx-charcoal);
+  min-width: 0;
+}
+.kx-menu__locale-field-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kx-menu__locale-field-meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--kx-gray);
+  padding: 2px 6px;
+  border: 1px solid var(--kx-hairline);
+  border-radius: 4px;
+}
+.kx-menu__locale-flag { font-size: 18px; line-height: 1; }
+.kx-menu__locale-field-value svg { color: var(--kx-gray); flex-shrink: 0; }
+.kx-menu__locale-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px; /* prevent iOS zoom on focus */
+  border: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
 
 /* ---------- Editorial Feature ---------- */
 .kx-menu__feature {
