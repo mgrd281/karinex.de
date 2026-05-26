@@ -775,12 +775,19 @@
      WIDERRUFSVERZICHT consent (§ 356 (5) BGB)
      ============================================================ */
   .kx-widerruf {
-    margin: 8px 0 14px;
-    padding: 14px 16px;
+    margin: 0 0 10px;
+    padding: 12px 14px;
     background: #f8f5ec;
     border: 1px solid #ece9df;
     border-radius: 10px;
     font-family: inherit;
+  }
+  /* Pull the consent box tight under the totals row */
+  .cart-drawer .cart__summary-totals {
+    padding-bottom: 4px !important;
+  }
+  .cart__summary-inner > .kx-widerruf {
+    margin-top: calc(var(--gap-2xl, 16px) * -0.5);
   }
   .kx-widerruf__label {
     display: grid;
