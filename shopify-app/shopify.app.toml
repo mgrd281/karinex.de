@@ -1,0 +1,19 @@
+## ─────────────────────────────────────────────────────────
+## Filled automatically by `shopify app config link` on
+## first deploy. The placeholder client_id will be replaced
+## with the real value tied to your Partner account + store.
+## ─────────────────────────────────────────────────────────
+client_id = ""
+name = "Karinex Widerruf"
+handle = "karinex-widerruf"
+application_url = "https://karinex.de"
+embedded = false
+
+[access_scopes]
+scopes = ""
+
+[webhooks]
+api_version = "2024-10"
+
+[build]
+include_config_on_deploy = true

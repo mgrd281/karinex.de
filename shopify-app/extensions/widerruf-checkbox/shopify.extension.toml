@@ -1,0 +1,15 @@
+api_version = "2024-10"
+
+[[extensions]]
+type = "ui_extension"
+name = "Widerrufsverzicht consent"
+handle = "widerruf-checkbox"
+
+  [[extensions.targeting]]
+  module = "./src/Checkout.tsx"
+  target = "purchase.checkout.actions.render-before"
+
+  [extensions.capabilities]
+  network_access = false
+  block_progress = true
+  api_access = false
