@@ -291,15 +291,52 @@
   </div>
 </div>
 
+{%- comment -%}
+  ============================================================
+  WIDERRUFSVERZICHT (§ 356 (5) BGB) — required consent for
+  digital goods. Without this explicit checkbox, the customer
+  keeps the right of withdrawal even after key delivery →
+  refund risk. Consent is mirrored to a cart attribute so it
+  appears in the Shopify order details with a timestamp.
+  Hidden when the cart is empty; required to enable checkout.
+  ============================================================
+{%- endcomment -%}
+{%- unless cart == empty -%}
+  {%- assign _kxw_ctx = 'page' -%}
+  {%- if is_drawer -%}{%- assign _kxw_ctx = 'drawer' -%}{%- endif -%}
+  {%- assign _kxw_val = cart.attributes.widerruf_consent | default: '' -%}
+  <div class="kx-widerruf" data-kx-widerruf data-kxw-context="{{ _kxw_ctx }}">
+    <label class="kx-widerruf__label" for="kx-widerruf-cb-{{ _kxw_ctx }}">
+      <input
+        type="checkbox"
+        id="kx-widerruf-cb-{{ _kxw_ctx }}"
+        class="kx-widerruf__cb"
+        data-kx-widerruf-cb
+        {% if _kxw_val != blank %}checked{% endif %}
+        required
+        aria-describedby="kx-widerruf-text-{{ _kxw_ctx }}"
+      />
+      <span class="kx-widerruf__box" aria-hidden="true"></span>
+      <span class="kx-widerruf__text" id="kx-widerruf-text-{{ _kxw_ctx }}">
+        {{ 'karinex.widerruf.consent' | t }}
+      </span>
+    </label>
+    <p class="kx-widerruf__err" data-kx-widerruf-err role="alert" hidden>
+      {{ 'karinex.widerruf.required' | t }}
+    </p>
+  </div>
+{%- endunless -%}
+
 <div class="cart__ctas">
   <button
     type="submit"
     id="checkout"
     class="cart__checkout-button button"
     name="checkout"
-    {% if cart == empty %}
+    {% if cart == empty or cart.attributes.widerruf_consent == blank %}
       disabled
     {% endif %}
+    {% if cart == empty %}data-kxw-empty="1"{% endif %}
     form="cart-form"
     style="display: flex; justify-content: space-between; align-items: center; padding: 0 24px;"
   >
@@ -733,4 +770,217 @@
   .cart__ctas .additional-checkout-buttons.is-non-apple-device li:has(div[role="button"][aria-label*="Apple Pay"]) {
     display: none !important;
   }
+
+  /* ============================================================
+     WIDERRUFSVERZICHT consent (§ 356 (5) BGB)
+     ============================================================ */
+  .kx-widerruf {
+    margin: 8px 0 14px;
+    padding: 14px 16px;
+    background: #f8f5ec;
+    border: 1px solid #ece9df;
+    border-left: 3px solid #1D4739;
+    border-radius: 10px;
+    font-family: inherit;
+  }
+  .kx-widerruf__label {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    align-items: start;
+    cursor: pointer;
+    margin: 0;
+  }
+  .kx-widerruf__cb {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 22px;
+    height: 22px;
+  }
+  .kx-widerruf__box {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid #c0bdb2;
+    border-radius: 5px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  }
+  .kx-widerruf__cb:focus-visible + .kx-widerruf__box {
+    border-color: #1D4739;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.35);
+  }
+  .kx-widerruf__cb:checked + .kx-widerruf__box {
+    background: #1D4739;
+    border-color: #1D4739;
+  }
+  .kx-widerruf__cb:checked + .kx-widerruf__box::after {
+    content: '';
+    width: 6px;
+    height: 11px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+  .kx-widerruf__text {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #2b2b2b;
+    letter-spacing: 0;
+  }
+  .kx-widerruf__err {
+    margin: 8px 0 0 34px;
+    font-size: 12px;
+    color: #b91c1c;
+    font-weight: 500;
+  }
+  .kx-widerruf.is-error {
+    border-left-color: #b91c1c;
+    background: #fdf2f2;
+  }
+  .kx-widerruf.is-error .kx-widerruf__box {
+    border-color: #b91c1c;
+  }
+  /* Visually muted accelerated checkout when consent not given */
+  .cart__ctas.kxw-locked .additional-checkout-buttons {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(0.6);
+  }
+  @media (max-width: 600px) {
+    .kx-widerruf {
+      padding: 12px 14px;
+    }
+    .kx-widerruf__text {
+      font-size: 12px;
+    }
+  }
 </style>
+
+<script>
+  /* Widerrufsverzicht gate — disables checkout (and accelerated checkout)
+     until the customer ticks the consent box. Mirrors state into a Shopify
+     cart attribute (widerruf_consent) so the timestamped consent appears in
+     the order details. Wires both the cart page and the cart drawer. */
+  (function () {
+    if (window.__kxWiderrufInit) return;
+    window.__kxWiderrufInit = true;
+
+    function boxes() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll('[data-kx-widerruf-cb]')
+      );
+    }
+    function buttons() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll('button[name="checkout"]')
+      );
+    }
+    function ctaContainers() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll('.cart__ctas')
+      );
+    }
+    function errs() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll('[data-kx-widerruf-err]')
+      );
+    }
+    function wrappers() {
+      return Array.prototype.slice.call(
+        document.querySelectorAll('[data-kx-widerruf]')
+      );
+    }
+
+    function syncBoxes(state) {
+      boxes().forEach(function (b) { if (b.checked !== state) b.checked = state; });
+    }
+    function setEnabled(on) {
+      buttons().forEach(function (b) {
+        if (b.dataset.kxwEmpty === '1') return; // empty cart stays disabled
+        b.disabled = !on;
+      });
+      ctaContainers().forEach(function (c) {
+        c.classList.toggle('kxw-locked', !on);
+      });
+    }
+    function clearError() {
+      errs().forEach(function (e) { e.hidden = true; });
+      wrappers().forEach(function (w) { w.classList.remove('is-error'); });
+    }
+    function showError() {
+      errs().forEach(function (e) { e.hidden = false; });
+      wrappers().forEach(function (w) { w.classList.add('is-error'); });
+      var first = boxes()[0];
+      if (first) {
+        var wrap = first.closest('[data-kx-widerruf]');
+        if (wrap && wrap.scrollIntoView) {
+          wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+      }
+    }
+
+    function persist(state) {
+      var value = state ? 'Ja (' + new Date().toISOString() + ')' : '';
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ attributes: { widerruf_consent: value } })
+      }).catch(function () { /* ignore network errors */ });
+    }
+
+    function onChange(e) {
+      var state = !!(e.target && e.target.checked);
+      clearError();
+      syncBoxes(state);
+      setEnabled(state);
+      persist(state);
+    }
+
+    function wire() {
+      boxes().forEach(function (b) {
+        if (b.dataset.kxwWired === '1') return;
+        b.dataset.kxwWired = '1';
+        b.addEventListener('change', onChange);
+      });
+      // Initial state — reflect whatever the server pre-rendered
+      var bs = boxes();
+      var checked = bs.length > 0 && bs[0].checked;
+      setEnabled(checked);
+    }
+
+    // Defensive: block any checkout click while unchecked, even for buttons
+    // injected after our wire pass (drawer re-renders, etc.)
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t) return;
+      var btn = t.closest ? t.closest('button[name="checkout"]') : null;
+      if (!btn) return;
+      if (boxes().length === 0) return; // no consent UI on this page
+      var ok = boxes().some(function (b) { return b.checked; });
+      if (!ok) {
+        e.preventDefault();
+        e.stopPropagation();
+        showError();
+      }
+    }, true);
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wire);
+    } else {
+      wire();
+    }
+
+    // Re-wire when sections morph (cart drawer open, cart line update, etc.)
+    try {
+      new MutationObserver(function () { wire(); })
+        .observe(document.body, { childList: true, subtree: true });
+    } catch (e) { /* old browsers — initial wire is enough */ }
+  })();
+</script>

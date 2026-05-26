@@ -567,6 +567,10 @@
       "add_to_cart_aria": "{{ title }} zum Warenkorb hinzufügen",
       "reviews_count": "{{ count }} Bewertungen"
     },
+    "widerruf": {
+      "consent": "Ich stimme ausdrücklich zu, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird. Mir ist bekannt, dass mein Widerrufsrecht mit Beginn der Vertragsausführung erlischt.",
+      "required": "Bitte bestätigen Sie die Erklärung, um zur Kasse zu gehen."
+    },
     "breadcrumb": {
       "home": "Startseite",
       "back_to_home": "Zur Startseite",

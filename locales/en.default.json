@@ -594,6 +594,10 @@
       "add_to_cart_aria": "Add {{ title }} to cart",
       "reviews_count": "{{ count }} reviews"
     },
+    "widerruf": {
+      "consent": "I expressly consent that performance of the contract begins before the withdrawal period expires. I acknowledge that my right of withdrawal expires once performance of the contract has begun.",
+      "required": "Please confirm the declaration to proceed to checkout."
+    },
     "breadcrumb": {
       "home": "Home",
       "back_to_home": "Back to home",
