@@ -1106,12 +1106,15 @@
     }
 
     /* Hide the Rabatt (discount code) disclosure inside the cart
-       drawer — merchant doesn't want it cluttering the side cart.
-       The /cart page still shows it (rule scoped to .cart-drawer). */
+       drawer when the merchant has turned the toggle OFF in
+       Theme Settings → Cart → "Rabatt im Warenkorb-Drawer".
+       The /cart page is never affected (rule scoped to .cart-drawer). */
+    {%- unless settings.show_drawer_discount -%}
     .cart-drawer .cart-actions,
     .cart-drawer .cart-discount {
       display: none !important;
     }
+    {%- endunless -%}
 
     /* 3) Summary block hugs the bottom — the white strip under
        Apple Pay / PayPal was Safari's safe-area inset showing
