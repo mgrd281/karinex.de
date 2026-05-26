@@ -1050,66 +1050,55 @@
   .cart-drawer__eyebrow {
     display: none !important;
   }
-  /* Header spacing — extra top breathing room, minimal bottom so the
-     reservation timer sits flush under "Warenkorb". */
-  .cart-drawer .cart-drawer__header--editorial {
-    padding-top: 32px !important;
-    padding-bottom: 4px !important;
-  }
+  /* ─────────────────────────────────────────────────────────────
+     Mobile-only cart drawer polish (≤ 768px).
+     Desktop spacing intentionally untouched.
+     ───────────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
+    /* 1) More breathing room above WARENKORB, almost none below. */
     .cart-drawer .cart-drawer__header--editorial {
       padding-top: 30px !important;
       padding-bottom: 2px !important;
     }
-    /* Remove the extra top padding the drawer items add on mobile
-       so the timer is flush under the heading. */
+    /* Kill the drawer items' top inset so the timer hugs the
+       heading instead of floating. */
     .cart-drawer .cart-drawer__items {
       padding-top: 0 !important;
     }
-    /* Tighten the timer's own margin too. */
+    /* Pull the reservation timer up. */
     .cart-drawer .cart-session-timer {
-      margin-top: 8px !important;
+      margin-top: 6px !important;
       margin-bottom: 6px !important;
     }
-  }
 
-  /* Compact "Rabatt" disclosure — was a tall full-row block; now
-     a single low-profile line. */
-  .cart-drawer .cart-actions {
-    margin-block-start: 0 !important;
-    border-block: 1px solid var(--color-border) !important;
-  }
-  .cart-drawer .cart-actions .disclosure-trigger {
-    padding-block: 6px !important;
-    min-height: 0 !important;
-  }
-  .cart-drawer .cart-actions .disclosure-trigger__label {
-    font-size: 13px !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.01em !important;
-  }
-  .cart-drawer .cart-actions .cart-discount .svg-wrapper.icon-plus {
-    width: 14px !important;
-    height: 14px !important;
-  }
+    /* 2) Compact Rabatt row — single low-profile line. */
+    .cart-drawer .cart-actions {
+      margin-block-start: 0 !important;
+    }
+    .cart-drawer .cart-actions .disclosure-trigger {
+      padding-block: 6px !important;
+      min-height: 0 !important;
+    }
+    .cart-drawer .cart-actions .disclosure-trigger__label {
+      font-size: 13px !important;
+      font-weight: 500 !important;
+    }
+    .cart-drawer .cart-actions .cart-discount .svg-wrapper.icon-plus {
+      width: 14px !important;
+      height: 14px !important;
+    }
 
-  /* Push the summary block tight to the bottom of the drawer.
-     The empty white strip under the payment buttons was Safari's
-     safe-area inset showing through; we now use it as padding. */
-  .cart-drawer__summary {
-    padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
-  }
-  @media (max-width: 768px) {
+    /* 3) Summary block hugs the bottom — the white strip under
+       Apple Pay / PayPal was Safari's safe-area inset showing
+       through; use it as padding instead of empty space. */
     .cart-drawer__summary {
       padding: 10px 15px max(10px, env(safe-area-inset-bottom)) 15px !important;
     }
-    /* Reduce the gap between the checkout button and the
-       accelerated-checkout (shop / Apple Pay / PayPal) row. */
     .cart-drawer .cart__ctas {
-      gap: 8px;
+      gap: 8px !important;
     }
     .cart-drawer .cart__ctas .additional-checkout-buttons {
-      margin-top: 6px;
+      margin-top: 6px !important;
     }
   }
 
