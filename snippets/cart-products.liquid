@@ -1629,6 +1629,74 @@
       _refreshRecoFromHTML(sid, data.sections[sid]);
     } catch (e) {}
   });
+
+  /* ── Recently Viewed (.rv-card__btn) ────────────────────────────
+     The cart-recently-viewed section is injected via innerHTML
+     by cart-drawer.js, so <script> tags inside it never execute.
+     Bind the add handler here, where the IIFE is always loaded. */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.rv-card__btn');
+    if (!btn || btn.disabled || btn.classList.contains('rv-card__btn--loading')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    var variantId = btn.dataset.variantId;
+    if (!variantId) return;
+
+    var sectionId = _recoSectionId();
+    btn.classList.add('rv-card__btn--loading');
+    _optimisticBadgeIncrement();
+
+    var body = { id: Number(variantId), quantity: 1 };
+    if (sectionId) body.sections = sectionId;
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then(function (r) {
+      if (!r.ok) return r.json().then(function (d) { throw new Error(d.description || 'add failed'); });
+      return r.json();
+    })
+    .then(function (data) {
+      btn.classList.remove('rv-card__btn--loading');
+      btn.classList.add('rv-card__btn--added');
+
+      var html = sectionId && data.sections && data.sections[sectionId];
+      if (html) {
+        _updateCartItemsFromHTML(html);
+        _updateBadgeFromHTML(html);
+        _updateSummaryFromHTML(sectionId, html);
+        _refreshRecoFromHTML(sectionId, html);
+      }
+    })
+    .catch(function (err) {
+      btn.classList.remove('rv-card__btn--loading');
+      fetch('/cart.js').then(function (r) { return r.json(); }).then(function (c) {
+        var n = c.item_count;
+        document.querySelectorAll('cart-icon').forEach(function (icon) {
+          var refs = icon.refs;
+          var bc = refs ? refs.cartBubbleCount : icon.querySelector('[ref="cartBubbleCount"]');
+          var bb = refs ? refs.cartBubble : icon.querySelector('[ref="cartBubble"]');
+          if (!bc || !bb) return;
+          bc.textContent = (n > 0 && n < 100) ? String(n) : '';
+          bc.classList.toggle('hidden', n === 0);
+          bb.classList.toggle('visually-hidden', n === 0);
+          bb.setAttribute('data-count', String(n));
+          icon.classList.toggle('header-actions__cart-icon--has-cart', n > 0);
+        });
+        document.querySelectorAll('.cart-drawer__eyebrow').forEach(function (el) {
+          var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
+          var suffix = m ? m[1] : 'Artikel';
+          if (n > 0) { el.textContent = n + ' ' + suffix; el.hidden = false; }
+          else { el.hidden = true; }
+        });
+      }).catch(function () {});
+      console.warn('[rv-card] add failed:', err);
+    });
+  }, true);
 })();
 
 /* ═══════════════════════════════════════════════════════════════

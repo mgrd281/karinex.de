@@ -237,83 +237,11 @@
   </div>
 </div>
 
-<script>
-(function() {
-  if (window.__rvCartAddWired) return;
-  window.__rvCartAddWired = true;
-
-  function getCartSectionId() {
-    var c = document.querySelector('.cart-drawer cart-items-component');
-    return c && c.dataset ? c.dataset.sectionId : null;
-  }
-
-  function applyCartSectionHTML(html) {
-    if (!html) return;
-    try {
-      var doc = new DOMParser().parseFromString(html, 'text/html');
-      var newTbody = doc.querySelector('tbody[role="rowgroup"]');
-      var oldTbody = document.querySelector('.cart-drawer tbody[role="rowgroup"]');
-      if (newTbody && oldTbody) oldTbody.replaceWith(newTbody);
-
-      var newSummary = doc.querySelector('.cart-drawer__summary');
-      var oldSummary = document.querySelector('.cart-drawer__summary');
-      if (newSummary && oldSummary) oldSummary.innerHTML = newSummary.innerHTML;
-    } catch (e) {}
-  }
-
-  /* Delegate from document — capture phase so we beat any
-     cart-drawer-component routing that swallows the click. The
-     rv-card buttons can be torn down and re-rendered with the
-     drawer, so binding here keeps working across re-renders. */
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest && e.target.closest('.rv-card__btn');
-    if (!btn || btn.disabled || btn.classList.contains('rv-card__btn--loading')) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    var variantId = btn.dataset.variantId;
-    if (!variantId) return;
-
-    btn.classList.add('rv-card__btn--loading');
-
-    var sectionId = getCartSectionId();
-    var body = { id: parseInt(variantId, 10), quantity: 1 };
-    if (sectionId) body.sections = sectionId;
-
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-    .then(function(r) {
-      if (!r.ok) return r.json().then(function(d){ throw new Error(d.description || 'add failed'); });
-      return r.json();
-    })
-    .then(function(data) {
-      btn.classList.remove('rv-card__btn--loading');
-      btn.classList.add('rv-card__btn--added');
-
-      if (sectionId && data.sections && data.sections[sectionId]) {
-        applyCartSectionHTML(data.sections[sectionId]);
-      }
-
-      return fetch('/cart.js', { credentials: 'same-origin' })
-        .then(function(r){ return r.json(); })
-        .then(function(c) {
-          document.dispatchEvent(new CustomEvent('cart:refresh', {
-            bubbles: true,
-            detail: { cart: c }
-          }));
-        });
-    })
-    .catch(function(err) {
-      btn.classList.remove('rv-card__btn--loading');
-      console.warn('[cart-recently-viewed] add failed:', err);
-    });
-  }, true);
-})();
-</script>
+{%- comment -%}
+  Note: the .rv-card__btn click handler lives in snippets/cart-products.liquid.
+  Any <script> placed here would NOT run, because cart-drawer.js injects
+  this section via innerHTML, which doesn't execute embedded scripts.
+{%- endcomment -%}
 
 {%- endif -%}
 
