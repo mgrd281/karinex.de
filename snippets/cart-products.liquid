@@ -319,7 +319,7 @@
   {%- else -%}
     {%- comment -%} --- CART TIMER (always visible for all products) - Static HTML --- {%- endcomment -%}
     <cart-timer data-product-ids='{{ cart.items | map: "product_id" | uniq | json | escape }}'>
-      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer" style="margin-left: 0; margin-right: 0; width: 100%; display: block;">
+      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer">
         <div class="timer-content">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="timer-icon">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
@@ -336,15 +336,34 @@
       .cart-session-timer {
         background: #f4f7f5 !important;
         border: none !important;
-        border-radius: 6px !important;
-        padding: 8px 14px !important;
-        margin: 0 0 10px 0 !important;
+        border-radius: 999px !important;
+        padding: 6px 14px !important;
+        margin: 8px auto 10px auto !important;
         color: #1f3b33;
         font-size: 12px;
         font-weight: 500;
         font-family: var(--font-body-family);
         box-sizing: border-box;
-        width: 100%;
+        width: fit-content !important;
+        max-width: 100%;
+        opacity: 0;
+        animation: kxTimerSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+      }
+      @keyframes kxTimerSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-8px) scale(0.96);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .cart-session-timer {
+          animation: none;
+          opacity: 1;
+        }
       }
       .timer-content {
         display: flex;
@@ -355,6 +374,14 @@
       .timer-icon {
         color: #0f3b2e !important;
         flex-shrink: 0;
+        animation: kxTimerPulse 2.4s ease-in-out infinite;
+      }
+      @keyframes kxTimerPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.55; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .timer-icon { animation: none; }
       }
       .time-display {
         font-weight: 700 !important;

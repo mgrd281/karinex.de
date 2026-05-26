@@ -1055,13 +1055,12 @@
      Desktop spacing intentionally untouched.
      ───────────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
-    /* 1) Pull WARENKORB tight to the top, and force the X button
-       onto the same baseline. We shrink the close button's tap
-       target padding so its visual centre matches the heading's
-       text baseline exactly. */
+    /* 1) Header — WARENKORB top + perfectly aligned X. Padding
+       large enough that the green badge doesn't graze the border
+       below; close button big enough that the X is clearly visible. */
     .cart-drawer .cart-drawer__header--editorial {
-      padding-top: 4px !important;
-      padding-bottom: 0 !important;
+      padding-top: 8px !important;
+      padding-bottom: 10px !important;
       align-items: center !important;
       min-height: 0 !important;
     }
@@ -1076,15 +1075,22 @@
       display: inline-flex !important;
       align-items: center !important;
     }
-    /* Close button — match the heading's compact height so both
-       sit on the same Y centre. Tap target preserved by padding. */
+    /* Close button — readable X, same centre line as WARENKORB. */
     .cart-drawer .cart-drawer__close-button {
       margin: 0 !important;
-      padding: 4px !important;
-      width: 32px !important;
-      height: 32px !important;
+      padding: 6px !important;
+      width: 36px !important;
+      height: 36px !important;
       align-self: center !important;
       flex-shrink: 0 !important;
+      opacity: 1 !important;
+    }
+    .cart-drawer .cart-drawer__close-button .svg-wrapper,
+    .cart-drawer .cart-drawer__close-button svg {
+      width: 20px !important;
+      height: 20px !important;
+      color: #2b2b2b !important;
+      --icon-stroke-width: 2 !important;
     }
     /* Kill the drawer items' top inset so the timer hugs the
        heading instead of floating. */
