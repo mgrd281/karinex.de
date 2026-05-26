@@ -1055,10 +1055,26 @@
      Desktop spacing intentionally untouched.
      ───────────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
-    /* 1) More breathing room above WARENKORB, almost none below. */
+    /* 1) Pull WARENKORB tight to the top, and lock it to the same
+       vertical centre as the X close button (heading uses tight
+       line-height + same flex baseline). */
     .cart-drawer .cart-drawer__header--editorial {
-      padding-top: 30px !important;
+      padding-top: 10px !important;
       padding-bottom: 2px !important;
+      align-items: center !important;
+    }
+    .cart-drawer .cart-drawer__heading-wrap {
+      align-items: center !important;
+    }
+    .cart-drawer .cart-drawer__heading {
+      line-height: 1 !important;
+      margin: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+    .cart-drawer .cart-drawer__close-button {
+      margin: 0 !important;
+      align-self: center !important;
     }
     /* Kill the drawer items' top inset so the timer hugs the
        heading instead of floating. */
