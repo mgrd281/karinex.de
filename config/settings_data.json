@@ -41,6 +41,7 @@
     "cart_type": "drawer",
     "auto_open_cart_drawer": true,
     "show_cart_note": false,
+    "show_widerruf_consent": false,
     "inputs_border_radius": 0,
     "type_preset": "paragraph",
     "popover_border": "none",
