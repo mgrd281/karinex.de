@@ -1844,6 +1844,17 @@
         "label": "Widerruf-Zustimmungsfeld vor „Zur Kasse\" anzeigen",
         "info": "Empfohlen: aktiviert lassen. Deaktivierung erhöht das rechtliche Risiko bei Erstattungsanfragen.",
         "default": true
+      },
+      {
+        "type": "header",
+        "content": "Rabatt im Warenkorb-Drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_drawer_discount",
+        "label": "Rabatt-Eingabefeld in der seitlichen Warenkorb-Schublade anzeigen",
+        "info": "Wenn deaktiviert, ist der Gutschein-Code nur an der Kasse einlösbar (Drawer bleibt aufgeräumt).",
+        "default": false
       }
     ]
   },
