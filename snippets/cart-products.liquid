@@ -1615,6 +1615,59 @@
     } catch (e) {}
   });
 })();
+
+/* ═══════════════════════════════════════════════════════════════
+   Cart-drawer eyebrow count synchroniser
+   ───────────────────────────────────────────────────────────────
+   The "N Artikel" eyebrow at the top of the cart drawer lives in
+   sections/header.liquid, OUTSIDE the cart-items section that
+   Shopify re-fetches on cart:update. Without this sync, adding an
+   item from "Wird oft zusammen gekauft" / "Zuletzt angesehen"
+   leaves the count stale until the next full page reload.
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  function syncEyebrow(count) {
+    var els = document.querySelectorAll('.cart-drawer__eyebrow');
+    if (!els.length) return;
+    els.forEach(function (el) {
+      var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
+      var suffix = m ? m[1] : 'Artikel';
+      if (count > 0) {
+        el.textContent = count + ' ' + suffix;
+        el.hidden = false;
+      } else {
+        el.hidden = true;
+      }
+    });
+  }
+
+  var pending = false;
+  function refreshFromServer() {
+    if (pending) return;
+    pending = true;
+    fetch('/cart.js', { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (c) { syncEyebrow(c.item_count); })
+      .catch(function () {})
+      .then(function () { pending = false; });
+  }
+
+  function onCartEvent(e) {
+    var d = e && e.detail;
+    var count = null;
+    if (d) {
+      if (typeof d.itemCount === 'number') count = d.itemCount;
+      else if (d.data && typeof d.data.itemCount === 'number') count = d.data.itemCount;
+      else if (d.cart && typeof d.cart.item_count === 'number') count = d.cart.item_count;
+    }
+    if (count != null) syncEyebrow(count);
+    else refreshFromServer();
+  }
+
+  document.addEventListener('cart:update', onCartEvent);
+  document.addEventListener('cart:refresh', onCartEvent);
+  document.addEventListener('cart:add', onCartEvent);
+})();
 </script>
 
 <style>
