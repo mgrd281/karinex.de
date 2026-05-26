@@ -1055,26 +1055,36 @@
      Desktop spacing intentionally untouched.
      ───────────────────────────────────────────────────────────── */
   @media (max-width: 768px) {
-    /* 1) Pull WARENKORB tight to the top, and lock it to the same
-       vertical centre as the X close button (heading uses tight
-       line-height + same flex baseline). */
+    /* 1) Pull WARENKORB tight to the top, and force the X button
+       onto the same baseline. We shrink the close button's tap
+       target padding so its visual centre matches the heading's
+       text baseline exactly. */
     .cart-drawer .cart-drawer__header--editorial {
-      padding-top: 10px !important;
-      padding-bottom: 2px !important;
+      padding-top: 4px !important;
+      padding-bottom: 0 !important;
       align-items: center !important;
+      min-height: 0 !important;
     }
     .cart-drawer .cart-drawer__heading-wrap {
       align-items: center !important;
+      align-self: center !important;
     }
     .cart-drawer .cart-drawer__heading {
       line-height: 1 !important;
       margin: 0 !important;
+      padding: 0 !important;
       display: inline-flex !important;
       align-items: center !important;
     }
+    /* Close button — match the heading's compact height so both
+       sit on the same Y centre. Tap target preserved by padding. */
     .cart-drawer .cart-drawer__close-button {
       margin: 0 !important;
+      padding: 4px !important;
+      width: 32px !important;
+      height: 32px !important;
       align-self: center !important;
+      flex-shrink: 0 !important;
     }
     /* Kill the drawer items' top inset so the timer hugs the
        heading instead of floating. */
