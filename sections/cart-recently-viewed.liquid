@@ -239,12 +239,9 @@
 
 <script>
 (function() {
-  var scroll = document.querySelector('.rv-scroll');
-  if (!scroll) return;
+  if (window.__rvCartAddWired) return;
+  window.__rvCartAddWired = true;
 
-  /* Section that renders the cart items list inside the drawer.
-     We POST sections=<id> to /cart/add.js so the response carries
-     the updated HTML and we can swap the DOM in place. */
   function getCartSectionId() {
     var c = document.querySelector('.cart-drawer cart-items-component');
     return c && c.dataset ? c.dataset.sectionId : null;
@@ -264,9 +261,14 @@
     } catch (e) {}
   }
 
-  scroll.addEventListener('click', function(e) {
-    var btn = e.target.closest('.rv-card__btn');
+  /* Delegate from document — capture phase so we beat any
+     cart-drawer-component routing that swallows the click. The
+     rv-card buttons can be torn down and re-rendered with the
+     drawer, so binding here keeps working across re-renders. */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest && e.target.closest('.rv-card__btn');
     if (!btn || btn.disabled || btn.classList.contains('rv-card__btn--loading')) return;
+
     e.preventDefault();
     e.stopPropagation();
 
@@ -296,8 +298,6 @@
         applyCartSectionHTML(data.sections[sectionId]);
       }
 
-      /* Authoritative refresh — listeners in cart-products.liquid pick
-         this up to sync the drawer eyebrow, cart-icon bubble, etc. */
       return fetch('/cart.js', { credentials: 'same-origin' })
         .then(function(r){ return r.json(); })
         .then(function(c) {
@@ -311,7 +311,7 @@
       btn.classList.remove('rv-card__btn--loading');
       console.warn('[cart-recently-viewed] add failed:', err);
     });
-  });
+  }, true);
 })();
 </script>
 
