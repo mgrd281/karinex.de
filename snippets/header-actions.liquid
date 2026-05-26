@@ -1052,40 +1052,45 @@
   }
   /* Header spacing — extra top breathing room, minimal bottom so the
      reservation timer sits flush under "Warenkorb". */
-  .cart-drawer__header--editorial {
-    padding-top: 28px;
-    padding-bottom: 4px;
+  .cart-drawer .cart-drawer__header--editorial {
+    padding-top: 32px !important;
+    padding-bottom: 4px !important;
   }
   @media (max-width: 768px) {
-    .cart-drawer__header--editorial {
-      padding-top: 26px;
-      padding-bottom: 2px;
+    .cart-drawer .cart-drawer__header--editorial {
+      padding-top: 30px !important;
+      padding-bottom: 2px !important;
     }
     /* Remove the extra top padding the drawer items add on mobile
        so the timer is flush under the heading. */
-    .cart-drawer__items {
+    .cart-drawer .cart-drawer__items {
       padding-top: 0 !important;
+    }
+    /* Tighten the timer's own margin too. */
+    .cart-drawer .cart-session-timer {
+      margin-top: 8px !important;
+      margin-bottom: 6px !important;
     }
   }
 
   /* Compact "Rabatt" disclosure — was a tall full-row block; now
      a single low-profile line. */
   .cart-drawer .cart-actions {
-    margin-block-start: 0;
-    border-block: 1px solid var(--color-border);
+    margin-block-start: 0 !important;
+    border-block: 1px solid var(--color-border) !important;
   }
   .cart-drawer .cart-actions .disclosure-trigger {
-    padding-block: 6px;
-    min-height: 0;
+    padding-block: 6px !important;
+    min-height: 0 !important;
   }
   .cart-drawer .cart-actions .disclosure-trigger__label {
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
   }
   .cart-drawer .cart-actions .cart-discount .svg-wrapper.icon-plus {
-    width: 14px;
-    height: 14px;
+    width: 14px !important;
+    height: 14px !important;
   }
 
   /* Push the summary block tight to the bottom of the drawer.
