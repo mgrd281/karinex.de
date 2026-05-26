@@ -242,37 +242,76 @@
   var scroll = document.querySelector('.rv-scroll');
   if (!scroll) return;
 
+  /* Section that renders the cart items list inside the drawer.
+     We POST sections=<id> to /cart/add.js so the response carries
+     the updated HTML and we can swap the DOM in place. */
+  function getCartSectionId() {
+    var c = document.querySelector('.cart-drawer cart-items-component');
+    return c && c.dataset ? c.dataset.sectionId : null;
+  }
+
+  function applyCartSectionHTML(html) {
+    if (!html) return;
+    try {
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var newTbody = doc.querySelector('tbody[role="rowgroup"]');
+      var oldTbody = document.querySelector('.cart-drawer tbody[role="rowgroup"]');
+      if (newTbody && oldTbody) oldTbody.replaceWith(newTbody);
+
+      var newSummary = doc.querySelector('.cart-drawer__summary');
+      var oldSummary = document.querySelector('.cart-drawer__summary');
+      if (newSummary && oldSummary) oldSummary.innerHTML = newSummary.innerHTML;
+    } catch (e) {}
+  }
+
   scroll.addEventListener('click', function(e) {
     var btn = e.target.closest('.rv-card__btn');
-    if (!btn || btn.disabled) return;
+    if (!btn || btn.disabled || btn.classList.contains('rv-card__btn--loading')) return;
     e.preventDefault();
     e.stopPropagation();
 
     var variantId = btn.dataset.variantId;
     if (!variantId) return;
 
-    /* Loading state */
     btn.classList.add('rv-card__btn--loading');
+
+    var sectionId = getCartSectionId();
+    var body = { id: parseInt(variantId, 10), quantity: 1 };
+    if (sectionId) body.sections = sectionId;
 
     fetch('/cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: parseInt(variantId, 10), quantity: 1 })
+      body: JSON.stringify(body)
     })
-    .then(function(r) { return r.json(); })
-    .then(function() {
+    .then(function(r) {
+      if (!r.ok) return r.json().then(function(d){ throw new Error(d.description || 'add failed'); });
+      return r.json();
+    })
+    .then(function(data) {
       btn.classList.remove('rv-card__btn--loading');
       btn.classList.add('rv-card__btn--added');
-      /* Refresh cart drawer */
-      document.dispatchEvent(new CustomEvent('cart:update'));
+
+      if (sectionId && data.sections && data.sections[sectionId]) {
+        applyCartSectionHTML(data.sections[sectionId]);
+      }
+
+      /* Authoritative refresh — listeners in cart-products.liquid pick
+         this up to sync the drawer eyebrow, cart-icon bubble, etc. */
+      return fetch('/cart.js', { credentials: 'same-origin' })
+        .then(function(r){ return r.json(); })
+        .then(function(c) {
+          document.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true,
+            detail: { cart: c }
+          }));
+        });
     })
-    .catch(function() {
+    .catch(function(err) {
       btn.classList.remove('rv-card__btn--loading');
+      console.warn('[cart-recently-viewed] add failed:', err);
     });
   });
-
-  /* Remove on long-press or swipe could be added later */
-  /* For now, items persist until localStorage is cleared */
 })();
 </script>
 
