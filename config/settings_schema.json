@@ -1829,6 +1829,21 @@
         "step": 1,
         "unit": "px",
         "default": 0
+      },
+      {
+        "type": "header",
+        "content": "Widerrufsverzicht (§ 356 (5) BGB)"
+      },
+      {
+        "type": "paragraph",
+        "content": "Pflicht-Zustimmung für digitale Produkte (Lizenzschlüssel). Ohne dieses Häkchen erlischt das Widerrufsrecht NICHT mit der Schlüsselauslieferung — Kunden können nach Erhalt Rückerstattung verlangen."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_widerruf_consent",
+        "label": "Widerruf-Zustimmungsfeld vor „Zur Kasse\" anzeigen",
+        "info": "Empfohlen: aktiviert lassen. Deaktivierung erhöht das rechtliche Risiko bei Erstattungsanfragen.",
+        "default": true
       }
     ]
   },
