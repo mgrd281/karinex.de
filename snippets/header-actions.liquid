@@ -1105,21 +1105,12 @@
       margin-bottom: 6px !important;
     }
 
-    /* 2) Compact Rabatt row — single low-profile line. */
-    .cart-drawer .cart-actions {
-      margin-block-start: 0 !important;
-    }
-    .cart-drawer .cart-actions .disclosure-trigger {
-      padding-block: 6px !important;
-      min-height: 0 !important;
-    }
-    .cart-drawer .cart-actions .disclosure-trigger__label {
-      font-size: 13px !important;
-      font-weight: 500 !important;
-    }
-    .cart-drawer .cart-actions .cart-discount .svg-wrapper.icon-plus {
-      width: 14px !important;
-      height: 14px !important;
+    /* Hide the Rabatt (discount code) disclosure inside the cart
+       drawer — merchant doesn't want it cluttering the side cart.
+       The /cart page still shows it (rule scoped to .cart-drawer). */
+    .cart-drawer .cart-actions,
+    .cart-drawer .cart-discount {
+      display: none !important;
     }
 
     /* 3) Summary block hugs the bottom — the white strip under
