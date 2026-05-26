@@ -1767,6 +1767,19 @@
       mmBadge.textContent = count > 0 ? String(count) : '0';
       mmBadge.style.display = count > 0 ? 'flex' : 'none';
     }
+    /* Cart drawer header eyebrow (e.g. "2 Artikel") — preserve the
+       locale-aware suffix the server rendered with. */
+    var eyebrows = document.querySelectorAll('.cart-drawer__eyebrow');
+    eyebrows.forEach(function (el) {
+      var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
+      var suffix = m ? m[1] : 'Artikel';
+      if (count > 0) {
+        el.textContent = count + ' ' + suffix;
+        el.hidden = false;
+      } else {
+        el.hidden = true;
+      }
+    });
   }
 
   /**
