@@ -1565,13 +1565,10 @@
       if (fb) fb.textContent = String((parseInt(fb.textContent, 10) || 0) + 1);
       var mb = document.querySelector('.cmm-cart-count');
       if (mb) { mb.textContent = String((parseInt(mb.textContent, 10) || 0) + 1); mb.style.display = 'flex'; }
-      /* Cart-drawer eyebrow ("N Artikel"). Bump in-place and keep
-         the locale suffix the server rendered. */
-      document.querySelectorAll('.cart-drawer__eyebrow').forEach(function (el) {
-        var m = el.textContent.match(/^\s*(\d+)\s+(.+?)\s*$/);
-        var n = m ? (parseInt(m[1], 10) + 1) : 1;
-        var suffix = m ? m[2] : 'Artikel';
-        el.textContent = n + ' ' + suffix;
+      /* Cart-drawer count badge next to "Warenkorb". Bump by 1. */
+      document.querySelectorAll('[data-cart-count-badge]').forEach(function (el) {
+        var n = (parseInt(el.textContent, 10) || 0) + 1;
+        el.textContent = String(n);
         el.hidden = false;
       });
     } catch (e) {}
@@ -1646,10 +1643,8 @@
           bb.setAttribute('data-count', String(n));
           icon.classList.toggle('header-actions__cart-icon--has-cart', n > 0);
         });
-        document.querySelectorAll('.cart-drawer__eyebrow').forEach(function (el) {
-          var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
-          var suffix = m ? m[1] : 'Artikel';
-          if (n > 0) { el.textContent = n + ' ' + suffix; el.hidden = false; }
+        document.querySelectorAll('[data-cart-count-badge]').forEach(function (el) {
+          if (n > 0) { el.textContent = String(n); el.hidden = false; }
           else { el.hidden = true; }
         });
       }).catch(function () {});
@@ -1731,10 +1726,8 @@
           bb.setAttribute('data-count', String(n));
           icon.classList.toggle('header-actions__cart-icon--has-cart', n > 0);
         });
-        document.querySelectorAll('.cart-drawer__eyebrow').forEach(function (el) {
-          var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
-          var suffix = m ? m[1] : 'Artikel';
-          if (n > 0) { el.textContent = n + ' ' + suffix; el.hidden = false; }
+        document.querySelectorAll('[data-cart-count-badge]').forEach(function (el) {
+          if (n > 0) { el.textContent = String(n); el.hidden = false; }
           else { el.hidden = true; }
         });
       }).catch(function () {});
@@ -1754,13 +1747,11 @@
    ═══════════════════════════════════════════════════════════════ */
 (function () {
   function syncEyebrow(count) {
-    var els = document.querySelectorAll('.cart-drawer__eyebrow');
+    var els = document.querySelectorAll('[data-cart-count-badge]');
     if (!els.length) return;
     els.forEach(function (el) {
-      var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
-      var suffix = m ? m[1] : 'Artikel';
       if (count > 0) {
-        el.textContent = count + ' ' + suffix;
+        el.textContent = String(count);
         el.hidden = false;
       } else {
         el.hidden = true;
@@ -1947,14 +1938,11 @@
       mmBadge.textContent = count > 0 ? String(count) : '0';
       mmBadge.style.display = count > 0 ? 'flex' : 'none';
     }
-    /* Cart drawer header eyebrow (e.g. "2 Artikel") — preserve the
-       locale-aware suffix the server rendered with. */
-    var eyebrows = document.querySelectorAll('.cart-drawer__eyebrow');
-    eyebrows.forEach(function (el) {
-      var m = el.textContent.match(/^\s*\d+\s+(.+?)\s*$/);
-      var suffix = m ? m[1] : 'Artikel';
+    /* Cart drawer count badge next to "Warenkorb". */
+    var badges = document.querySelectorAll('[data-cart-count-badge]');
+    badges.forEach(function (el) {
       if (count > 0) {
-        el.textContent = count + ' ' + suffix;
+        el.textContent = String(count);
         el.hidden = false;
       } else {
         el.hidden = true;
