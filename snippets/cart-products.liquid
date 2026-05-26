@@ -1519,6 +1519,33 @@
     }, 380);
   }
 
+  /* Same collapse animation for the "Zuletzt angesehen" rv-cards. */
+  function _removeRvCard(card) {
+    if (!card || !card.parentNode) return;
+    var h = card.offsetHeight;
+    card.style.maxHeight = h + 'px';
+    card.style.overflow = 'hidden';
+    requestAnimationFrame(function () {
+      card.style.transition = 'opacity 0.2s ease, max-height 0.3s ease 0.05s, padding-top 0.3s ease 0.05s, padding-bottom 0.3s ease 0.05s';
+      card.style.opacity = '0';
+      card.style.maxHeight = '0';
+      card.style.paddingTop = '0';
+      card.style.paddingBottom = '0';
+    });
+    setTimeout(function () {
+      card.remove();
+      var scroll = document.querySelector('.rv-scroll');
+      if (scroll && !scroll.querySelector('.rv-card')) {
+        var wrapper = document.querySelector('.rv-wrapper');
+        if (wrapper) {
+          wrapper.style.transition = 'opacity 0.2s ease';
+          wrapper.style.opacity = '0';
+          setTimeout(function () { wrapper.remove(); }, 220);
+        }
+      }
+    }, 380);
+  }
+
   /** Optimistically increment all badge elements by 1 before server responds */
   function _optimisticBadgeIncrement() {
     try {
@@ -1577,17 +1604,28 @@
       return r.json();
     })
     .then(function (data) {
-      // Show success check, begin card exit
+      // Show success check, then begin card exit (~1s so ✓ is readable)
       btn.classList.remove('cart-reco-btn--loading');
       btn.classList.add('cart-reco-btn--added');
-      if (card) _removeCard(card);
 
       var html = data.sections && data.sections[sectionId];
       if (html) {
-        // Authoritative sync — corrects any optimistic values
+        // Cart list, badge and summary update immediately so the new
+        // line appears in the drawer right away.
         _updateCartItemsFromHTML(html);
         _updateBadgeFromHTML(html);
         _updateSummaryFromHTML(sectionId, html);
+      }
+
+      // Keep the ✓ visible for ~1s before collapsing the card. Then
+      // refresh the rest of the reco strip from fresh HTML so any
+      // empty slot gets filled with the next recommendation.
+      if (card) {
+        setTimeout(function () {
+          _removeCard(card);
+          if (html) setTimeout(function () { _refreshRecoFromHTML(sectionId, html); }, 450);
+        }, 1000);
+      } else if (html) {
         _refreshRecoFromHTML(sectionId, html);
       }
     })
@@ -1644,6 +1682,7 @@
     var variantId = btn.dataset.variantId;
     if (!variantId) return;
 
+    var card = btn.closest('.rv-card');
     var sectionId = _recoSectionId();
     btn.classList.add('rv-card__btn--loading');
     _optimisticBadgeIncrement();
@@ -1671,6 +1710,11 @@
         _updateSummaryFromHTML(sectionId, html);
         _refreshRecoFromHTML(sectionId, html);
       }
+
+      /* Let the ✓ check breathe for ~1 second, then collapse the
+         card out of the strip. If it was the last rv-card, tidy the
+         whole "Zuletzt angesehen" wrapper away as well. */
+      if (card) setTimeout(function () { _removeRvCard(card); }, 1000);
     })
     .catch(function (err) {
       btn.classList.remove('rv-card__btn--loading');
