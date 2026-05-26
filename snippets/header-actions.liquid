@@ -1075,13 +1075,15 @@
       display: inline-flex !important;
       align-items: center !important;
     }
-    /* Close button — readable X, same centre line as WARENKORB. */
+    /* Close button — readable X, nudged up so it visually sits a
+       touch higher than the heading baseline (merchant request). */
     .cart-drawer .cart-drawer__close-button {
       margin: 0 !important;
       padding: 6px !important;
       width: 36px !important;
       height: 36px !important;
-      align-self: center !important;
+      align-self: flex-start !important;
+      transform: translateY(-4px) !important;
       flex-shrink: 0 !important;
       opacity: 1 !important;
     }
