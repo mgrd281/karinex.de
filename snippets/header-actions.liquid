@@ -1050,14 +1050,61 @@
   .cart-drawer__eyebrow {
     display: none !important;
   }
-  /* Tighten the bottom padding so the reservation timer sits
-     close under the heading instead of floating. */
+  /* Header spacing — extra top breathing room, minimal bottom so the
+     reservation timer sits flush under "Warenkorb". */
   .cart-drawer__header--editorial {
-    padding-bottom: 10px;
+    padding-top: 28px;
+    padding-bottom: 4px;
   }
   @media (max-width: 768px) {
     .cart-drawer__header--editorial {
-      padding-bottom: 8px;
+      padding-top: 26px;
+      padding-bottom: 2px;
+    }
+    /* Remove the extra top padding the drawer items add on mobile
+       so the timer is flush under the heading. */
+    .cart-drawer__items {
+      padding-top: 0 !important;
+    }
+  }
+
+  /* Compact "Rabatt" disclosure — was a tall full-row block; now
+     a single low-profile line. */
+  .cart-drawer .cart-actions {
+    margin-block-start: 0;
+    border-block: 1px solid var(--color-border);
+  }
+  .cart-drawer .cart-actions .disclosure-trigger {
+    padding-block: 6px;
+    min-height: 0;
+  }
+  .cart-drawer .cart-actions .disclosure-trigger__label {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .cart-drawer .cart-actions .cart-discount .svg-wrapper.icon-plus {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Push the summary block tight to the bottom of the drawer.
+     The empty white strip under the payment buttons was Safari's
+     safe-area inset showing through; we now use it as padding. */
+  .cart-drawer__summary {
+    padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+  @media (max-width: 768px) {
+    .cart-drawer__summary {
+      padding: 10px 15px max(10px, env(safe-area-inset-bottom)) 15px !important;
+    }
+    /* Reduce the gap between the checkout button and the
+       accelerated-checkout (shop / Apple Pay / PayPal) row. */
+    .cart-drawer .cart__ctas {
+      gap: 8px;
+    }
+    .cart-drawer .cart__ctas .additional-checkout-buttons {
+      margin-top: 6px;
     }
   }
 
