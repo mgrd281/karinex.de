@@ -298,10 +298,14 @@
   keeps the right of withdrawal even after key delivery →
   refund risk. Consent is mirrored to a cart attribute so it
   appears in the Shopify order details with a timestamp.
-  Hidden when the cart is empty; required to enable checkout.
+  Hidden when the cart is empty OR when the merchant disabled
+  the gate from Theme Settings → Cart → Widerrufsverzicht.
+  Defaults to ON (legal safety): we only hide on explicit OFF.
   ============================================================
 {%- endcomment -%}
-{%- unless cart == empty -%}
+{%- assign _kxw_enabled = true -%}
+{%- if settings.show_widerruf_consent == false -%}{%- assign _kxw_enabled = false -%}{%- endif -%}
+{%- if cart != empty and _kxw_enabled -%}
   {%- assign _kxw_ctx = 'page' -%}
   {%- if is_drawer -%}{%- assign _kxw_ctx = 'drawer' -%}{%- endif -%}
   {%- assign _kxw_val = cart.attributes.widerruf_consent | default: '' -%}
@@ -325,7 +329,7 @@
       {{ 'karinex.widerruf.required' | t }}
     </p>
   </div>
-{%- endunless -%}
+{%- endif -%}
 
 <div class="cart__ctas">
   <button
@@ -333,7 +337,9 @@
     id="checkout"
     class="cart__checkout-button button"
     name="checkout"
-    {% if cart == empty or cart.attributes.widerruf_consent == blank %}
+    {% if cart == empty %}
+      disabled
+    {% elsif _kxw_enabled and cart.attributes.widerruf_consent == blank %}
       disabled
     {% endif %}
     {% if cart == empty %}data-kxw-empty="1"{% endif %}
@@ -950,15 +956,17 @@
     }
 
     function wire() {
-      boxes().forEach(function (b) {
+      var bs = boxes();
+      // Gate disabled by merchant via theme settings → nothing to wire,
+      // and don't disable the checkout button.
+      if (bs.length === 0) return;
+      bs.forEach(function (b) {
         if (b.dataset.kxwWired === '1') return;
         b.dataset.kxwWired = '1';
         b.addEventListener('change', onChange);
       });
       // Initial state — reflect whatever the server pre-rendered
-      var bs = boxes();
-      var checked = bs.length > 0 && bs[0].checked;
-      setEnabled(checked);
+      setEnabled(!!bs[0].checked);
     }
 
     // Defensive: block any checkout click while unchecked, even for buttons
