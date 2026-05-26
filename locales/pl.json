@@ -581,6 +581,10 @@
       "add_to_cart_aria": "Dodaj {{ title }} do koszyka",
       "reviews_count": "{{ count }} opinii"
     },
+    "widerruf": {
+      "consent": "Wyraźnie wyrażam zgodę, aby wykonanie umowy rozpoczęło się przed upływem terminu odstąpienia. Przyjmuję do wiadomości, że moje prawo do odstąpienia od umowy wygasa z chwilą rozpoczęcia wykonywania umowy.",
+      "required": "Proszę potwierdzić oświadczenie, aby przejść do kasy."
+    },
     "breadcrumb": {
       "home": "Strona główna",
       "back_to_home": "Do strony głównej",
