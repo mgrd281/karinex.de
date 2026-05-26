@@ -551,14 +551,13 @@
               id="cart-drawer-header"
             >
               <div class="cart-drawer__heading-wrap">
-                {%- unless cart == empty -%}
-                  <span class="cart-drawer__eyebrow" aria-hidden="true">{{ cart.item_count }} Artikel</span>
-                {%- endunless -%}
                 <h2
                   class="cart-drawer__heading h4"
                   id="cart-drawer-heading"
                 >
-                  {{ 'karinex.cart.heading' | t }}
+                  {{ 'karinex.cart.heading' | t }}{%- unless cart == empty -%}
+                    <span class="cart-drawer__count-badge" data-cart-count-badge>{{ cart.item_count }}</span>
+                  {%- endunless -%}
                 </h2>
               </div>
 
