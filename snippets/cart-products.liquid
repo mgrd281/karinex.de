@@ -319,7 +319,7 @@
   {%- else -%}
     {%- comment -%} --- CART TIMER (always visible for all products) - Static HTML --- {%- endcomment -%}
     <cart-timer data-product-ids='{{ cart.items | map: "product_id" | uniq | json | escape }}'>
-      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer" style="margin-left: 0; margin-right: 0; width: 100%; display: block;">
+      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer" style="margin: 0 0 10px auto; width: 65%; display: block;">
         <div class="timer-content">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="timer-icon">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
@@ -338,13 +338,15 @@
         border: none !important;
         border-radius: 6px !important;
         padding: 8px 14px !important;
-        margin: 0 0 10px 0 !important;
+        /* Flush against the right edge — elastic left margin pushes
+           the pill as far right as the drawer's inner padding allows. */
+        margin: 0 0 10px auto !important;
         color: #1f3b33;
         font-size: 12px;
         font-weight: 500;
         font-family: var(--font-body-family);
         box-sizing: border-box;
-        width: 100%;
+        width: 65% !important;
       }
       .timer-content {
         display: flex;
