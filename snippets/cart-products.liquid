@@ -1695,21 +1695,31 @@
       return r.json();
     })
     .then(function (data) {
+      // Mirror the FBT (.cart-reco-btn) flow exactly so the visual
+      // feedback is identical between both strips.
       btn.classList.remove('rv-card__btn--loading');
       btn.classList.add('rv-card__btn--added');
 
       var html = sectionId && data.sections && data.sections[sectionId];
       if (html) {
+        // Cart list, badge and summary update immediately so the new
+        // line appears in the drawer right away.
         _updateCartItemsFromHTML(html);
         _updateBadgeFromHTML(html);
         _updateSummaryFromHTML(sectionId, html);
-        _refreshRecoFromHTML(sectionId, html);
       }
 
-      /* Let the ✓ check breathe for ~1 second, then collapse the
-         card out of the strip. If it was the last rv-card, tidy the
-         whole "Zuletzt angesehen" wrapper away as well. */
-      if (card) setTimeout(function () { _removeRvCard(card); }, 1000);
+      // Keep the ✓ visible for ~1s, then collapse the card. After
+      // the collapse, refresh the FBT strip so the next slot can
+      // backfill — same timing as cart-reco-btn for parity.
+      if (card) {
+        setTimeout(function () {
+          _removeRvCard(card);
+          if (html) setTimeout(function () { _refreshRecoFromHTML(sectionId, html); }, 450);
+        }, 1000);
+      } else if (html) {
+        _refreshRecoFromHTML(sectionId, html);
+      }
     })
     .catch(function (err) {
       btn.classList.remove('rv-card__btn--loading');
