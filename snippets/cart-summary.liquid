@@ -901,12 +901,16 @@
     window.__kxShopPayVariantInit = true;
 
     var VARIANT = 'white-outline';
+    var SIZE = 'large';
 
     function reskin() {
       var nodes = document.querySelectorAll('shop-pay-button');
       for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].getAttribute('variant') !== VARIANT) {
           nodes[i].setAttribute('variant', VARIANT);
+        }
+        if (nodes[i].getAttribute('size') !== SIZE) {
+          nodes[i].setAttribute('size', SIZE);
         }
       }
     }
