@@ -319,7 +319,7 @@
   {%- else -%}
     {%- comment -%} --- CART TIMER (always visible for all products) - Static HTML --- {%- endcomment -%}
     <cart-timer data-product-ids='{{ cart.items | map: "product_id" | uniq | json | escape }}'>
-      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer" style="margin: 0 -15px 10px auto; width: calc(65% + 15px); display: block;">
+      <div class="cart-session-timer cart-section cart-section--1" id="cartSessionTimer" style="margin-left: 0; margin-right: 0; width: 100%; display: block;">
         <div class="timer-content">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="timer-icon">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
@@ -336,21 +336,15 @@
       .cart-session-timer {
         background: #f4f7f5 !important;
         border: none !important;
-        /* Square off the right edge — the pill is now flush against
-           the drawer wall, so a rounded right corner would float. */
-        border-radius: 6px 0 0 6px !important;
+        border-radius: 6px !important;
         padding: 8px 14px !important;
-        /* The drawer's items container has 15px right padding; the
-           negative right margin cancels it so the pill touches the
-           actual drawer edge. The width is also widened by 15px so
-           the visual size still matches the previous 65% target. */
-        margin: 0 -15px 10px auto !important;
+        margin: 0 0 10px 0 !important;
         color: #1f3b33;
         font-size: 12px;
         font-weight: 500;
         font-family: var(--font-body-family);
         box-sizing: border-box;
-        width: calc(65% + 15px) !important;
+        width: 100%;
       }
       .timer-content {
         display: flex;
