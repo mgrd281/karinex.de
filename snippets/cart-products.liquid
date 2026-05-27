@@ -695,7 +695,12 @@
       .cart-drawer .cart-items__details > div > span:not(.compare-at-price):not(.visually-hidden) {
         font-size: 15px !important;
         font-weight: 700 !important;
+        /* Sale price stays black at full price; switches to brand red
+           when a compare_at_price is set on the same row. */
         color: #111 !important;
+      }
+      .cart-drawer .cart-items__details > div:has(.compare-at-price) > span:not(.compare-at-price):not(.visually-hidden) {
+        color: #b5291c !important;
       }
       .cart-drawer .cart-items__details .compare-at-price {
         font-size: 12px !important;
@@ -3069,6 +3074,23 @@
     overflow: hidden;
     background: rgb(var(--color-foreground-rgb) / 0.04);
     display: block;
+    position: relative;
+  }
+
+  /* Discount badge — matches .rv-card__badge */
+  .cart-reco-badge {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    background: #c0392b;
+    color: #fff;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 2px 5px;
+    border-radius: 8px;
+    line-height: 1.2;
+    z-index: 1;
   }
 
   .cart-reco-img {
