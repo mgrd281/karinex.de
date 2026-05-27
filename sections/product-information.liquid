@@ -3274,30 +3274,29 @@
       Shopify Admin (not a code issue).
     {%- endcomment -%}
     {%- unless section.settings.show_payment_buttons == false -%}
-      {%- capture _kx_pb_html -%}{%- form 'product', product, id: 'kx-payment-form', class: 'kx-payment-buttons__form' -%}<input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="kx-payment-variant-id"><input type="hidden" name="quantity" value="1">{{ form | payment_button }}{%- endform -%}{%- endcapture -%}
-      <div class="kx-payment-buttons" data-shopify-payment-buttons data-pb-size="{{ _kx_pb_html | size }}" style="margin-top: 10px; display: block;">
-        {%- if _kx_pb_html contains 'shopify-payment-button__button' -%}
-          {{ _kx_pb_html }}
-        {%- else -%}
-          <a href="{{ product.url }}?variant={{ product.selected_or_first_available_variant.id }}&checkout=1" class="kx-payment-fallback-btn" onclick="this.closest('form,.kx-payment-buttons')?.querySelector?.('input[name=id]'); return true;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h11a4 4 0 0 1 0 8h-5l-1.5 6"/><path d="M9 13h5a4 4 0 0 0 0-8H8L6.5 1H3l3 12"/></svg>
-            {{ 'karinex.product.pay_now_paypal' | t }}
-          </a>
-          <form method="post" action="/cart/add" id="kx-paypal-fallback-form" style="margin-top: 8px;">
-            <input type="hidden" name="id" id="kx-paypal-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
-            <input type="hidden" name="quantity" value="1">
-            <input type="hidden" name="return_to" value="/checkout">
-            <button type="submit" class="kx-paypal-fallback-submit">
-              <span class="kx-paypal-fallback-logo">PayPal</span>
-              <span>{{ 'karinex.product.buy_now' | t }}</span>
-            </button>
-          </form>
-          {%- if request.design_mode -%}
-            <p class="kx-payment-hint" data-admin-hint>
-              Hinweis (nur im Theme-Editor sichtbar): Um die nativen Shopify-Express-Buttons (PayPal Express, Apple Pay, Google Pay, Shop Pay) anzuzeigen, aktiviere unter <strong>Shopify Admin → Einstellungen → Zahlungen → Express-Bezahlung</strong> mindestens einen Anbieter.
-            </p>
-          {%- endif -%}
-        {%- endif -%}
+      {%- comment -%}
+        Always show the custom PayPal-styled express button instead
+        of Shopify's `{{ form | payment_button }}` (which would
+        render the Shop Pay pill on this storefront). Merchant
+        prefers PayPal as the primary express option on product
+        pages — the button posts the variant to /cart/add with
+        return_to=/checkout so the customer lands directly in the
+        Shopify checkout flow and can complete with PayPal there.
+      {%- endcomment -%}
+      <div class="kx-payment-buttons" data-shopify-payment-buttons style="margin-top: 10px; display: block;">
+        <a href="{{ product.url }}?variant={{ product.selected_or_first_available_variant.id }}&checkout=1" class="kx-payment-fallback-btn" onclick="this.closest('form,.kx-payment-buttons')?.querySelector?.('input[name=id]'); return true;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h11a4 4 0 0 1 0 8h-5l-1.5 6"/><path d="M9 13h5a4 4 0 0 0 0-8H8L6.5 1H3l3 12"/></svg>
+          {{ 'karinex.product.pay_now_paypal' | t }}
+        </a>
+        <form method="post" action="/cart/add" id="kx-paypal-fallback-form" style="margin-top: 8px;">
+          <input type="hidden" name="id" id="kx-paypal-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="return_to" value="/checkout">
+          <button type="submit" class="kx-paypal-fallback-submit">
+            <span class="kx-paypal-fallback-logo">PayPal</span>
+            <span>{{ 'karinex.product.buy_now' | t }}</span>
+          </button>
+        </form>
       </div>
       <script>
         (function () {
