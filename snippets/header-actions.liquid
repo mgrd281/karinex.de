@@ -1116,6 +1116,14 @@
     }
     {%- endunless -%}
 
+    /* Hide the heart / wishlist control inside the cart drawer.
+       The /cart page is untouched. */
+    .cart-drawer .cart-wishlist-container,
+    .cart-drawer .cart-wishlist-btn,
+    .cart-drawer .cart-wishlist-active {
+      display: none !important;
+    }
+
     /* 3) Summary block hugs the bottom — the white strip under
        Apple Pay / PayPal was Safari's safe-area inset showing
        through; use it as padding instead of empty space. */
