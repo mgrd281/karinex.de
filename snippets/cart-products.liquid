@@ -642,6 +642,7 @@
         flex-shrink: 0;
         background: #f6f6f6;
         transition: transform 0.2s ease;
+        position: relative;
       }
       .cart-drawer .cart-items__media-container:hover {
         transform: scale(1.02);
@@ -651,6 +652,24 @@
         height: 64px !important;
         object-fit: cover !important;
         border-radius: 8px !important;
+      }
+
+      /* Discount badge on the cart line item thumbnail —
+         matches .rv-card__badge / .cart-reco-badge */
+      .cart-item-badge {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        background: #c0392b;
+        color: #fff;
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        padding: 2px 5px;
+        border-radius: 8px;
+        line-height: 1.2;
+        z-index: 1;
+        pointer-events: none;
       }
 
       /* Product title — max 2 lines */
@@ -1164,6 +1183,10 @@
                       class="cart-items__media-container"
                       style="--ratio:{{ ratio }};"
                     >
+                      {%- if item.variant.compare_at_price > item.variant.price -%}
+                        {%- assign _item_discount_pct = item.variant.compare_at_price | minus: item.variant.price | times: 100 | divided_by: item.variant.compare_at_price -%}
+                        <span class="cart-item-badge">-{{ _item_discount_pct }}%</span>
+                      {%- endif -%}
                       {%- liquid
                         echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override, alt: item.image.alt | default: item.product.title
                       -%}
