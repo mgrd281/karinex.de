@@ -1,0 +1,25 @@
+api_version = "2024-10"
+
+[[extensions]]
+type = "ui_extension"
+name = "Product rating on cart lines"
+handle = "product-ratings"
+
+  [[extensions.targeting]]
+  module = "./src/Checkout.tsx"
+  target = "purchase.checkout.cart-line-item.render-after"
+
+  [extensions.capabilities]
+  network_access = false
+  api_access = false
+
+  # Product metafields the extension reads. Shopify's Product Reviews
+  # app writes to `reviews.rating` (rating type, {value, scale_min,
+  # scale_max}) and `reviews.rating_count` (number).
+  [[extensions.metafields]]
+  namespace = "reviews"
+  key = "rating"
+
+  [[extensions.metafields]]
+  namespace = "reviews"
+  key = "rating_count"
