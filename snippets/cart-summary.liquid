@@ -863,6 +863,43 @@
   }
 
   /* ============================================================
+     MOBILE OVERRIDES — hide Shop Pay + Google Pay, keep
+     Apple Pay + PayPal. Tighter button height so the express
+     row doesn't dominate the drawer on small screens.
+     ============================================================ */
+  @media (max-width: 767px) {
+    .cart__ctas .additional-checkout-buttons [data-testid="ShopPayButton"],
+    .cart__ctas .additional-checkout-buttons shop-pay-button,
+    .cart__ctas .additional-checkout-buttons [role="button"][aria-label*="Shop Pay"],
+    .cart__ctas .additional-checkout-buttons [aria-label*="Shop Pay"],
+    .cart__ctas .additional-checkout-buttons li:has([data-testid="ShopPayButton"]),
+    .cart__ctas .additional-checkout-buttons li:has(shop-pay-button),
+    .cart__ctas .additional-checkout-buttons [data-testid="GooglePay-button"],
+    .cart__ctas .additional-checkout-buttons .gpay-button,
+    .cart__ctas .additional-checkout-buttons [role="button"][aria-label*="Google Pay"],
+    .cart__ctas .additional-checkout-buttons li:has([data-testid="GooglePay-button"]),
+    .cart__ctas .additional-checkout-buttons li:has(.gpay-button),
+    .cart__ctas .additional-checkout-buttons li:has([role="button"][aria-label*="Google Pay"]) {
+      display: none !important;
+    }
+
+    /* Tighten the remaining express row on phones */
+    .cart__ctas .additional-checkout-buttons {
+      gap: 8px !important;
+      margin-top: 10px !important;
+    }
+    .cart__ctas .additional-checkout-buttons [data-testid="ShopPayButton"],
+    .cart__ctas .additional-checkout-buttons .shopify-cleanslate,
+    .cart__ctas .additional-checkout-buttons button,
+    .cart__ctas .additional-checkout-buttons .gpay-button,
+    .cart__ctas .additional-checkout-buttons [data-testid="ApplePay-button"],
+    .cart__ctas .additional-checkout-buttons .apple-pay-button {
+      height: 40px !important;
+      border-radius: 10px !important;
+    }
+  }
+
+  /* ============================================================
      WIDERRUFSVERZICHT consent (§ 356 (5) BGB)
      ============================================================ */
   .kx-widerruf {
