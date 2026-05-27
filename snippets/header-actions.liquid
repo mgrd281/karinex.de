@@ -1105,16 +1105,8 @@
       margin-bottom: 6px !important;
     }
 
-    /* Hide the Rabatt (discount code) disclosure inside the cart
-       drawer when the merchant has turned the toggle OFF in
-       Theme Settings → Cart → "Rabatt im Warenkorb-Drawer".
-       The /cart page is never affected (rule scoped to .cart-drawer). */
-    {%- unless settings.show_drawer_discount -%}
-    .cart-drawer .cart-actions,
-    .cart-drawer .cart-discount {
-      display: none !important;
-    }
-    {%- endunless -%}
+    /* (Rabatt hide rule moved outside this media block so it
+       respects the Admin toggle on desktop too.) */
 
     /* (Heart hide rule moved outside this media block so it
        applies on desktop too.) */
@@ -1132,6 +1124,17 @@
       margin-top: 6px !important;
     }
   }
+
+  /* Hide the Rabatt (discount code) disclosure inside the cart
+     drawer on ALL viewports when the merchant has turned the
+     toggle OFF in Theme Settings → Cart → "Rabatt im Warenkorb-
+     Drawer". The /cart page is never affected. */
+  {%- unless settings.show_drawer_discount -%}
+  .cart-drawer .cart-actions,
+  .cart-drawer .cart-discount {
+    display: none !important;
+  }
+  {%- endunless -%}
 
   /* Hide the wishlist heart inside the cart drawer on ALL viewports.
      The /cart page is untouched (rule scoped to .cart-drawer). */
