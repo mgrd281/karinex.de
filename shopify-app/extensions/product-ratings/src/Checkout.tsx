@@ -9,9 +9,6 @@
  * → { value, scale_min, scale_max }) and `reviews.rating_count`
  * (number). Same metafields the storefront uses via
  * snippets/schema-product-smart.liquid.
- *
- * Hidden when the product has no rating metafield set (no UI
- * clutter for products that haven't been reviewed yet).
  */
 import {
   reactExtension,
@@ -29,39 +26,35 @@ export default reactExtension(
 
 type RatingMetafieldValue = {
   value: string;
-  scale_min: string;
-  scale_max: string;
+  scale_min?: string;
+  scale_max?: string;
 };
 
 function ProductRating() {
   const t = useTranslate();
-  const cartLine = useTarget();
+  const cartLine = useTarget() as any;
   const metafields = useAppMetafields();
 
-  // The current cart line's merchandise — locate its product ID so
-  // we can pick the rating metafield that belongs to it.
-  const productId =
-    cartLine?.merchandise?.type === 'product'
-      ? cartLine.merchandise.product.id
-      : undefined;
+  const productId: string | undefined =
+    cartLine?.merchandise?.product?.id;
   if (!productId) return null;
 
   const ratingField = metafields.find(
     (m) =>
-      m.target.type === 'product' &&
-      m.target.id === productId &&
-      m.metafield.namespace === 'reviews' &&
-      m.metafield.key === 'rating',
+      m.target?.type === 'product' &&
+      m.target?.id === productId &&
+      m.metafield?.namespace === 'reviews' &&
+      m.metafield?.key === 'rating',
   );
   const countField = metafields.find(
     (m) =>
-      m.target.type === 'product' &&
-      m.target.id === productId &&
-      m.metafield.namespace === 'reviews' &&
-      m.metafield.key === 'rating_count',
+      m.target?.type === 'product' &&
+      m.target?.id === productId &&
+      m.metafield?.namespace === 'reviews' &&
+      m.metafield?.key === 'rating_count',
   );
 
-  if (!ratingField || ratingField.metafield.value == null) return null;
+  if (!ratingField || ratingField.metafield?.value == null) return null;
 
   let ratingValue = 0;
   try {
@@ -74,7 +67,9 @@ function ProductRating() {
   }
   if (!Number.isFinite(ratingValue) || ratingValue <= 0) return null;
 
-  const ratingCount = countField ? Number(countField.metafield.value) : 0;
+  const ratingCount = countField?.metafield?.value
+    ? Number(countField.metafield.value)
+    : 0;
   const stars = renderStars(ratingValue);
   const display = ratingValue.toFixed(1).replace('.', ',');
 

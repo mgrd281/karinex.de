@@ -10,10 +10,10 @@ application_url = "https://karinex.de"
 embedded = false
 
 [access_scopes]
-scopes = ""
+scopes = "read_products"
 
 [webhooks]
-api_version = "2024-10"
+api_version = "2025-10"
 
 [build]
 include_config_on_deploy = true
