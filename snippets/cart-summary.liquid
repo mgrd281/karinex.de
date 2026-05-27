@@ -391,6 +391,52 @@
       }
     }
   });
+
+  /* CTA INTRO — replay the "shell then text" entrance every time
+     the cart drawer opens. Watches all <dialog> elements for an
+     `open` attribute mutation and, when set, removes + re-adds the
+     `.cart__ctas--intro` class so the CSS animations restart. */
+  (function () {
+    if (window.__kxCtaIntroInit) return;
+    window.__kxCtaIntroInit = true;
+
+    function playIntro(root) {
+      var ctas = (root || document).querySelectorAll('.cart__ctas');
+      for (var i = 0; i < ctas.length; i++) {
+        var el = ctas[i];
+        el.classList.remove('cart__ctas--intro');
+        // Force a reflow so removing + re-adding the class restarts
+        // the keyframes instead of being coalesced into a no-op.
+        void el.offsetWidth;
+        el.classList.add('cart__ctas--intro');
+      }
+    }
+
+    // Initial play in case the drawer is already open on load.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { playIntro(); });
+    } else {
+      playIntro();
+    }
+
+    // Replay each time any cart-drawer dialog flips to open=true.
+    try {
+      new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          var m = mutations[i];
+          if (m.type !== 'attributes' || m.attributeName !== 'open') continue;
+          var t = m.target;
+          if (!(t && t.tagName === 'DIALOG' && t.hasAttribute('open'))) continue;
+          if (!t.closest('cart-drawer-component') && !t.querySelector('.cart__ctas')) continue;
+          playIntro(t);
+        }
+      }).observe(document.body, {
+        attributes: true,
+        attributeFilter: ['open'],
+        subtree: true
+      });
+    } catch (e) { /* old browsers — initial play is enough */ }
+  })();
 </script>
 
 <style>
@@ -642,6 +688,45 @@
   .cart-page .cart-summary-detail-row,
   .cart-page .cart-summary-detail-row span {
     color: #ffffff !important;
+  }
+
+  /* ============================
+     INTRO ANIMATION — shell then text
+     ============================
+     Triggered each time the cart drawer opens. JS toggles the
+     `.cart__ctas--intro` class, then this stylesheet does the work:
+     1. The checkout button shell slides + fades in
+     2. ~340ms later, the two text spans inside fade up
+     3. The express-checkout row (Shop Pay / Apple Pay / PayPal)
+        follows the primary button by ~200ms */
+  @keyframes ctaShellIn {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0)   scale(1); }
+  }
+
+  @keyframes ctaTextIn {
+    0%   { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .cart__ctas.cart__ctas--intro .cart__checkout-button {
+    animation: ctaShellIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+    transform-origin: center;
+  }
+  .cart__ctas.cart__ctas--intro .cart__checkout-button > span {
+    animation: ctaTextIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.42s both;
+  }
+  .cart__ctas.cart__ctas--intro .additional-checkout-buttons {
+    animation: ctaShellIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cart__ctas.cart__ctas--intro .cart__checkout-button,
+    .cart__ctas.cart__ctas--intro .cart__checkout-button > span,
+    .cart__ctas.cart__ctas--intro .additional-checkout-buttons {
+      animation: none !important;
+    }
   }
 
   /* ============================
