@@ -872,6 +872,19 @@
       font-size: 12px;
     }
   }
+
+  /* Hide the Shop Pay button — the merchant wants Apple Pay
+     (macOS / iOS) or Google Pay (Windows / Android) to take its
+     slot. Apple Pay and Google Pay are only rendered by Shopify
+     when the customer's device + Shopify Payments support them.
+     If neither shows after this rule, enable them in
+     Shopify Admin → Settings → Payments. */
+  .cart__ctas .additional-checkout-buttons [data-testid="ShopPayButton"],
+  .cart__ctas .additional-checkout-buttons shop-pay-button,
+  .cart__ctas .additional-checkout-buttons [role="button"][aria-label*="Shop Pay"],
+  .cart__ctas .additional-checkout-buttons [aria-label="Mit Shop Pay bezahlen"] {
+    display: none !important;
+  }
 </style>
 
 <script>
