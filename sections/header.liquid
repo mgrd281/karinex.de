@@ -602,6 +602,10 @@
                           {%- assign _rv = _rp.selected_or_first_available_variant -%}
                           <div class="cart-reco-card" data-product-id="{{ _rp.id }}" data-variant-id="{{ _rv.id }}" style="animation-delay: {{ _reco_count | times: 150 }}ms;">
                             <a href="{{ _rp.url }}" class="cart-reco-img-link" tabindex="-1" aria-hidden="true">
+                              {%- if _rp.compare_at_price > _rp.price -%}
+                                {%- assign _reco_discount_pct = _rp.compare_at_price | minus: _rp.price | times: 100 | divided_by: _rp.compare_at_price -%}
+                                <span class="cart-reco-badge">-{{ _reco_discount_pct }}%</span>
+                              {%- endif -%}
                               {%- if _rp.featured_image -%}
                                 <img
                                   src="{{ _rp.featured_image | image_url: width: 120 }}"
