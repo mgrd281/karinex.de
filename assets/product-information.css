@@ -2688,19 +2688,56 @@
             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
         }
         .kx-payment-buttons .shopify-payment-button__more-options {
-            margin-top: 10px;
-            font-size: 12.5px;
-            color: #6e6e73;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: 18px 0 12px;
+            padding: 0 4px;
             background: transparent;
             border: 0;
             cursor: pointer;
-            padding: 6px 8px;
-            text-decoration: underline;
-            text-underline-offset: 3px;
+            font-family: inherit;
+            font-size: 10.5px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #8a8a8e;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .kx-payment-buttons .shopify-payment-button__more-options::before,
+        .kx-payment-buttons .shopify-payment-button__more-options::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.12), transparent);
+            margin: 0 14px;
         }
         .kx-payment-buttons .shopify-payment-button__more-options:hover {
             color: #1B3A2E;
+        }
+
+        /* === Payment icons row — modern strip === */
+        .payment-icons-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0 22px !important;
+            padding: 0;
+        }
+        .payment-icons-row .payment-icon {
+            height: 24px;
+            width: auto;
+            opacity: 0.78;
+            border-radius: 4px;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .payment-icons-row .payment-icon:hover {
+            opacity: 1;
+            transform: translateY(-1px);
         }
 
         /* === Fallback "Mit PayPal bezahlen" button === */
