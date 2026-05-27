@@ -855,13 +855,76 @@
           sync with the user's selection.
         {%- endcomment -%}
         {%- if section.settings.show_payment_buttons != false and current_variant.available -%}
+          {%- comment -%}
+            Custom "Mit PayPal zahlen" pill — mirrors the design used
+            on the Standard-Produkt template (sections/product-
+            information.liquid). Posts the variant to /cart/add with
+            return_to=/checkout so the customer lands in checkout
+            with PayPal as the primary express method.
+          {%- endcomment -%}
           <div class="ay-payment-buttons" data-shopify-payment-buttons>
-            {%- form 'product', product, id: 'ay-payment-form', class: 'ay-payment-buttons__form' -%}
-              <input type="hidden" name="id" value="{{ current_variant.id }}" id="ay-payment-variant-id">
+            <form method="post" action="/cart/add" id="ay-paypal-form">
+              <input type="hidden" name="id" id="ay-payment-variant-id" value="{{ current_variant.id }}">
               <input type="hidden" name="quantity" value="1">
-              {{ form | payment_button }}
-            {%- endform -%}
+              <input type="hidden" name="return_to" value="/checkout">
+              <button type="submit" class="kx-paypal-pill" aria-label="Mit PayPal zahlen">
+                <span class="kx-paypal-pill__prefix">Mit</span>
+                <span class="kx-paypal-pill__logo" aria-hidden="true">
+                  <span class="kx-paypal-pill__pay">Pay</span><span class="kx-paypal-pill__pal">Pal</span>
+                </span>
+                <span class="kx-paypal-pill__suffix">zahlen</span>
+              </button>
+            </form>
           </div>
+          <style>
+            .ay-payment-buttons {
+              margin-top: 10px;
+            }
+            .kx-paypal-pill {
+              width: 100%;
+              min-height: 52px;
+              padding: 0 18px;
+              border: 0;
+              border-radius: 10px;
+              background: #ffc439;
+              font-family: inherit;
+              font-size: 15px;
+              font-weight: 600;
+              color: #003087;
+              cursor: pointer;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              line-height: 1;
+              transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            }
+            .kx-paypal-pill:hover {
+              background: #ffba1a;
+              transform: translateY(-1px);
+              box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+            }
+            .kx-paypal-pill:active {
+              transform: translateY(0);
+              box-shadow: none;
+            }
+            .kx-paypal-pill__prefix,
+            .kx-paypal-pill__suffix {
+              font-weight: 600;
+              color: #003087;
+            }
+            .kx-paypal-pill__logo {
+              display: inline-flex;
+              font-style: italic;
+              font-weight: 800;
+              font-size: 18px;
+              letter-spacing: -0.02em;
+              line-height: 1;
+              padding: 0 2px;
+            }
+            .kx-paypal-pill__pay { color: #003087; }
+            .kx-paypal-pill__pal { color: #009cde; }
+          </style>
         {%- endif -%}
       {%- endif -%}
 
