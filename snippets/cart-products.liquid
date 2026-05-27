@@ -1586,8 +1586,13 @@
 
     var card = btn.closest('.cart-reco-card');
 
-    // Instant feedback: optimistic badge + loading state
-    btn.disabled = true;
+    // Instant feedback: optimistic badge + loading state.
+    // NOTE: we intentionally do NOT set btn.disabled = true here —
+    // the `:disabled { opacity: 0.28 }` rule would carry through to
+    // the `--added` state and dim the ✓ check (rv-card doesn't
+    // disable, so the two strips would look different). The
+    // `--loading` class already blocks pointer-events, and the
+    // `loading || added` guards above prevent double-clicks.
     btn.classList.add('cart-reco-btn--loading');
     _optimisticBadgeIncrement();
 
