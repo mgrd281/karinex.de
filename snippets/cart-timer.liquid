@@ -26,33 +26,101 @@
     font-size: 14px;
     font-weight: 500;
     font-family: var(--font-body-family);
-    animation: fadeIn 0.4s ease;
+    animation: timerSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1);
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.6s ease, color 0.6s ease;
   }
-  
+
+  /* Soft sheen that drifts left→right across the pill — pure CSS,
+     GPU-friendly, ignored when the user prefers reduced motion. */
+  .cart-session-timer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 75%);
+    transform: translateX(-100%);
+    animation: timerSheen 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
   .timer-content {
     display: flex;
     align-items: center;
     gap: 10px;
     justify-content: center;
+    position: relative;
+    z-index: 1;
   }
-  
+
   .timer-icon {
     color: #0f3b2e;
     flex-shrink: 0;
+    animation: timerPulse 2.4s ease-in-out infinite;
+    transform-origin: center;
   }
-  
+
   .time-display {
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: #0f3b2e;
+    transition: color 0.6s ease;
   }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+
+  /* The .time-display--tick class is toggled by JS each time the
+     seconds digit changes, giving a gentle "heartbeat" cue. */
+  .time-display.time-display--tick {
+    animation: timerTick 0.55s ease-out;
   }
-  
+
+  @keyframes timerSlideIn {
+    from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  @keyframes timerPulse {
+    0%, 100% { transform: scale(1);    opacity: 0.85; }
+    50%      { transform: scale(1.09); opacity: 1; }
+  }
+
+  @keyframes timerTick {
+    0%   { transform: translateY(0)    scale(1); }
+    35%  { transform: translateY(-1px) scale(1.04); }
+    100% { transform: translateY(0)    scale(1); }
+  }
+
+  @keyframes timerSheen {
+    0%       { transform: translateX(-100%); }
+    55%, 100% { transform: translateX(100%); }
+  }
+
+  /* ── URGENT STATE — last 2 minutes ── */
+  .cart-session-timer.timer-urgent {
+    background-color: #fbf2e2 !important;
+    color: #8a5a14 !important;
+  }
+  .cart-session-timer.timer-urgent .timer-icon {
+    color: #c97a18 !important;
+    animation: timerPulse 1.1s ease-in-out infinite;
+  }
+  .cart-session-timer.timer-urgent .time-display {
+    color: #8a5a14 !important;
+  }
+
+  /* Honour reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .cart-session-timer,
+    .cart-session-timer::before,
+    .timer-icon,
+    .time-display {
+      animation: none !important;
+    }
+  }
+
   @media (max-width: 600px) {
     .cart-session-timer {
       font-size: 13px;
@@ -73,24 +141,38 @@
     letter-spacing: 0.01em;
     box-sizing: border-box;
   }
-  
+
+  .cart-drawer .cart-session-timer.timer-urgent {
+    background: #fbf2e2 !important;
+    color: #8a5a14 !important;
+  }
+
   .cart-drawer .timer-content {
     justify-content: center !important;
     gap: 8px;
   }
-  
+
   .cart-drawer .timer-icon {
     width: 14px;
     height: 14px;
     color: #2c6b53 !important;
-    opacity: 0.8;
+    opacity: 0.85;
   }
-  
+
+  .cart-drawer .cart-session-timer.timer-urgent .timer-icon {
+    color: #c97a18 !important;
+    opacity: 1;
+  }
+
   .cart-drawer .time-display {
     font-weight: 600 !important;
     font-variant-numeric: tabular-nums;
     color: #2c5a44 !important;
     letter-spacing: 0.03em;
+  }
+
+  .cart-drawer .cart-session-timer.timer-urgent .time-display {
+    color: #8a5a14 !important;
   }
 </style>
 
@@ -171,7 +253,10 @@
 
       update() {
         if (!this.startTime) return;
-        
+
+        let lastSecond = -1;
+        const URGENT_THRESHOLD_MS = 2 * 60 * 1000; // last 2 minutes
+
         const updateFrame = () => {
             if (!this.isConnected) return; // Stop if removed from DOM
 
@@ -183,17 +268,37 @@
                 // Reset loop
                 this.startTime = Date.now();
                 localStorage.setItem(this.storageKey, this.startTime);
+                lastSecond = -1;
+                this.container.classList.remove('timer-urgent');
                 this.animationFrameId = requestAnimationFrame(updateFrame);
                 return;
             }
 
             const m = Math.floor(remaining / 60000);
             const s = Math.floor((remaining % 60000) / 1000);
-            const timeStr = `${m}:${s.toString().padStart(2, '0')}`;
-            
-            this.display.textContent = timeStr;
+
+            // Only update DOM when the second actually changes — keeps
+            // RAF cheap and gives us a clean hook for the "tick" cue.
+            if (s !== lastSecond) {
+                const timeStr = m + ':' + (s < 10 ? '0' + s : s);
+                this.display.textContent = timeStr;
+
+                if (lastSecond !== -1) {
+                    this.display.classList.remove('time-display--tick');
+                    // Force reflow so the animation re-triggers
+                    void this.display.offsetWidth;
+                    this.display.classList.add('time-display--tick');
+                }
+                lastSecond = s;
+
+                // Toggle urgency state once we cross the threshold,
+                // toggle it off again on reset.
+                const urgent = remaining <= URGENT_THRESHOLD_MS;
+                this.container.classList.toggle('timer-urgent', urgent);
+            }
+
             this.container.style.display = 'block';
-            
+
             this.animationFrameId = requestAnimationFrame(updateFrame);
         };
         this.animationFrameId = requestAnimationFrame(updateFrame);
