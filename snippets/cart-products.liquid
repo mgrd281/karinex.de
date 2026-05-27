@@ -654,6 +654,24 @@
         border-radius: 8px !important;
       }
 
+      /* Discount badge on the cart line item thumbnail —
+         matches .rv-card__badge / .cart-reco-badge */
+      .cart-item-badge {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        background: #c0392b;
+        color: #fff;
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        padding: 2px 5px;
+        border-radius: 8px;
+        line-height: 1.2;
+        z-index: 1;
+        pointer-events: none;
+      }
+
       /* Product title — max 2 lines */
       .cart-drawer .cart-items__title {
         font-size: 14px !important;
@@ -700,7 +718,9 @@
         color: #111 !important;
       }
       .cart-drawer .cart-items__details > div:has(.compare-at-price) > span:not(.compare-at-price):not(.visually-hidden) {
-        color: #b5291c !important;
+        /* Brand deep green for the sale price (was red #b5291c).
+           The strike-through original stays muted gray below. */
+        color: #1D4739 !important;
       }
       .cart-drawer .cart-items__details .compare-at-price {
         font-size: 12px !important;
@@ -1170,6 +1190,10 @@
                       class="cart-items__media-container"
                       style="--ratio:{{ ratio }};"
                     >
+                      {%- if item.variant.compare_at_price > item.variant.price -%}
+                        {%- assign _item_discount_pct = item.variant.compare_at_price | minus: item.variant.price | times: 100 | divided_by: item.variant.compare_at_price -%}
+                        <span class="cart-item-badge">-{{ _item_discount_pct }}%</span>
+                      {%- endif -%}
                       {%- liquid
                         echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override, alt: item.image.alt | default: item.product.title
                       -%}
