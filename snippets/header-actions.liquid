@@ -1116,13 +1116,8 @@
     }
     {%- endunless -%}
 
-    /* Hide the heart / wishlist control inside the cart drawer.
-       The /cart page is untouched. */
-    .cart-drawer .cart-wishlist-container,
-    .cart-drawer .cart-wishlist-btn,
-    .cart-drawer .cart-wishlist-active {
-      display: none !important;
-    }
+    /* (Heart hide rule moved outside this media block so it
+       applies on desktop too.) */
 
     /* 3) Summary block hugs the bottom — the white strip under
        Apple Pay / PayPal was Safari's safe-area inset showing
@@ -1136,6 +1131,14 @@
     .cart-drawer .cart__ctas .additional-checkout-buttons {
       margin-top: 6px !important;
     }
+  }
+
+  /* Hide the wishlist heart inside the cart drawer on ALL viewports.
+     The /cart page is untouched (rule scoped to .cart-drawer). */
+  .cart-drawer .cart-wishlist-container,
+  .cart-drawer .cart-wishlist-btn,
+  .cart-drawer .cart-wishlist-active {
+    display: none !important;
   }
 
   /* Defensive: swipe layers must never show inside the drawer either. */
