@@ -1603,7 +1603,27 @@
   }
 </style>
 
-<div class="klc"{% if request.page_type == 'product' and product != blank %} data-klc-product="{{ product.title | escape }}"{% endif %}>
+{%- comment -%}
+  Detect the product's platform for the consult form, mirroring the
+  keyword logic in sections/product-information.liquid. Mac products
+  are always explicitly labelled ("für Mac"); everything else in the
+  catalogue is Windows, so an undetected product defaults to Windows.
+{%- endcomment -%}
+{%- assign _klc_platform = '' -%}
+{%- if request.page_type == 'product' and product != blank -%}
+  {%- assign _klc_t  = product.title | downcase -%}
+  {%- assign _klc_tg = product.tags | join: ',' | downcase -%}
+  {%- assign _klc_ty = product.type | downcase -%}
+  {%- assign _klc_win = false -%}
+  {%- assign _klc_mac = false -%}
+  {%- if _klc_t contains 'windows' or _klc_tg contains 'windows' or _klc_ty contains 'windows' -%}{%- assign _klc_win = true -%}{%- endif -%}
+  {%- if _klc_t contains 'mac' or _klc_t contains 'macos' or _klc_tg contains 'mac' or _klc_tg contains 'macos' or _klc_ty contains 'mac' -%}{%- assign _klc_mac = true -%}{%- endif -%}
+  {%- if _klc_mac and _klc_win -%}{%- assign _klc_platform = 'Both' -%}
+  {%- elsif _klc_mac -%}{%- assign _klc_platform = 'Mac' -%}
+  {%- else -%}{%- assign _klc_platform = 'Windows' -%}{%- endif -%}
+{%- endif -%}
+
+<div class="klc"{% if request.page_type == 'product' and product != blank %} data-klc-product="{{ product.title | escape }}" data-klc-platform="{{ _klc_platform }}"{% endif %}>
   <button
     type="button"
     class="klc-launcher"
@@ -2401,10 +2421,15 @@
          without them typing the product name. */
     (function () {
       var LAST_KEY = 'klc_last_product';
+      var PLAT_KEY = 'klc_last_platform';
       var root = document.querySelector('.klc');
       var current = root ? (root.getAttribute('data-klc-product') || '').trim() : '';
+      var platform = root ? (root.getAttribute('data-klc-platform') || '').trim() : '';
       if (current) {
         try { localStorage.setItem(LAST_KEY, current); } catch (e) {}
+      }
+      if (platform) {
+        try { localStorage.setItem(PLAT_KEY, platform); } catch (e) {}
       }
       var sw = document.getElementById('klcFieldSoftware');
       if (sw && !sw.value) {
@@ -2413,6 +2438,22 @@
           try { suggestion = (localStorage.getItem(LAST_KEY) || '').trim(); } catch (e) { suggestion = ''; }
         }
         if (suggestion) sw.value = suggestion;
+      }
+      // Pre-select the platform chip that matches the product (or the
+      // last product viewed), unless the visitor already picked one.
+      var plat = platform;
+      if (!plat) {
+        try { plat = (localStorage.getItem(PLAT_KEY) || '').trim(); } catch (e) { plat = ''; }
+      }
+      if (plat) {
+        var radios = document.querySelectorAll('input[name="platform"]');
+        var anyChecked = false;
+        for (var i = 0; i < radios.length; i++) { if (radios[i].checked) { anyChecked = true; break; } }
+        if (!anyChecked) {
+          for (var j = 0; j < radios.length; j++) {
+            if (radios[j].value === plat) { radios[j].checked = true; break; }
+          }
+        }
       }
     })();
 
