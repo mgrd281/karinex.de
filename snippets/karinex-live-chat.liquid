@@ -1064,6 +1064,11 @@
     font-style: italic;
     margin-left: 4px;
   }
+  .klc-field__req {
+    color: #c62828;
+    font-weight: 700;
+    margin-left: 2px;
+  }
   .klc-field input[type="text"],
   .klc-field input[type="email"],
   .klc-field textarea {
@@ -1598,7 +1603,7 @@
   }
 </style>
 
-<div class="klc">
+<div class="klc"{% if request.page_type == 'product' and product != blank %} data-klc-product="{{ product.title | escape }}"{% endif %}>
   <button
     type="button"
     class="klc-launcher"
@@ -1768,10 +1773,10 @@
         <form class="klc-pre__form" id="klcPreForm" novalidate>
           <div class="klc-field">
             <label for="klcFieldName">{{ T_field_name }}</label>
-            <input id="klcFieldName" type="text" name="name" autocomplete="name" required>
+            <input id="klcFieldName" type="text" name="name" autocomplete="name">
           </div>
           <div class="klc-field">
-            <label for="klcFieldEmail">{{ T_field_email }}</label>
+            <label for="klcFieldEmail">{{ T_field_email }} <span class="klc-field__req" aria-hidden="true">*</span></label>
             <input id="klcFieldEmail" type="email" name="email" autocomplete="email" required>
           </div>
           <div class="klc-field klc-field--hidden" data-show-for="order,license,invoice">
@@ -2388,6 +2393,29 @@
     });
 
     // Bind form submit
+    /* Auto-fill the "Welche Software?" field from page context:
+       - On a product page, the .klc root carries data-klc-product;
+         use it and remember it for later.
+       - On any other page (e.g. home), fall back to the last product
+         the visitor looked at, so the consult form is pre-described
+         without them typing the product name. */
+    (function () {
+      var LAST_KEY = 'klc_last_product';
+      var root = document.querySelector('.klc');
+      var current = root ? (root.getAttribute('data-klc-product') || '').trim() : '';
+      if (current) {
+        try { localStorage.setItem(LAST_KEY, current); } catch (e) {}
+      }
+      var sw = document.getElementById('klcFieldSoftware');
+      if (sw && !sw.value) {
+        var suggestion = current;
+        if (!suggestion) {
+          try { suggestion = (localStorage.getItem(LAST_KEY) || '').trim(); } catch (e) { suggestion = ''; }
+        }
+        if (suggestion) sw.value = suggestion;
+      }
+    })();
+
     var preForm = document.getElementById('klcPreForm');
     if (preForm) {
       preForm.addEventListener('submit', function (e) {
@@ -2400,7 +2428,7 @@
         var fields = preForm.querySelectorAll('.klc-field');
         fields.forEach(function (f) { f.classList.remove('klc-field--error'); });
         var firstError = null;
-        if (!name)    { var nf = preForm.querySelector('#klcFieldName').closest('.klc-field'); nf.classList.add('klc-field--error'); firstError = firstError || nf; }
+        // Only email + consent are required; name is optional now.
         if (!emailOk) { var ef = preForm.querySelector('#klcFieldEmail').closest('.klc-field'); ef.classList.add('klc-field--error'); firstError = firstError || ef; }
         if (!consent) {
           var cl = preForm.querySelector('.klc-consent');
