@@ -57,7 +57,7 @@
           "show_close_button": true,
           "sale_bar_text": "Super Sale: Bis zu 60% Rabatt",
           "show_timer": true,
-          "timer_date": "2026-05-27T23:59:59",
+          "timer_date": "2026-05-31T23:59:59",
           "sale_bar_bg_color": "#1d4739",
           "sale_bar_text_color": "#ffffff"
         }
@@ -163,11 +163,6 @@
       },
       "9670189827046205946": {
         "type": "shopify://apps/hextom-translate-and-currency/blocks/app-block/b927a799-be04-4b97-9efb-5c8f0290a68e",
-        "disabled": false,
-        "settings": {}
-      },
-      "8774941748004189772": {
-        "type": "shopify://apps/upsell-com-ex-reconvert/blocks/cart-drawer/72c64c30-2f7c-4a71-ae4c-efd1d5d1d2e2",
         "disabled": false,
         "settings": {}
       },
