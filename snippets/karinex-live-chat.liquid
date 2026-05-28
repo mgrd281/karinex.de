@@ -19,6 +19,7 @@
   {%- assign T_aria_back      = 'Back to menu' -%}
   {%- assign T_teaser         = 'We are online' -%}
   {%- assign T_teaser_sub     = 'Reply in ~2 min' -%}
+  {%- assign T_typing         = 'Karin is typing …' -%}
   {%- assign T_brand_tagline  = 'PREMIUM SUPPORT · ONLINE' -%}
   {%- assign T_welcome_para   = 'We are here for you. Our team replies to your questions about products, licences and orders within minutes.' -%}
   {%- assign T_menu_section   = 'How can we help?' -%}
@@ -103,6 +104,7 @@
   {%- assign T_aria_back      = 'Wstecz do menu' -%}
   {%- assign T_teaser         = 'Jesteśmy online' -%}
   {%- assign T_teaser_sub     = 'Odpowiedź w ok. 2 min' -%}
+  {%- assign T_typing         = 'Karin pisze …' -%}
   {%- assign T_brand_tagline  = 'WSPARCIE PREMIUM · ONLINE' -%}
   {%- assign T_welcome_para   = 'Jesteśmy do Twojej dyspozycji. Nasz zespół odpowiada na pytania o produkty, licencje i zamówienia w ciągu kilku minut.' -%}
   {%- assign T_menu_section   = 'W czym możemy pomóc?' -%}
@@ -187,6 +189,7 @@
   {%- assign T_aria_back      = 'Tillbaka till menyn' -%}
   {%- assign T_teaser         = 'Vi är online' -%}
   {%- assign T_teaser_sub     = 'Svar inom ca 2 min' -%}
+  {%- assign T_typing         = 'Karin skriver …' -%}
   {%- assign T_brand_tagline  = 'PREMIUMSUPPORT · ONLINE' -%}
   {%- assign T_welcome_para   = 'Vi finns här för dig. Vårt team svarar på dina frågor om produkter, licenser och beställningar inom några minuter.' -%}
   {%- assign T_menu_section   = 'Hur kan vi hjälpa till?' -%}
@@ -271,6 +274,7 @@
   {%- assign T_aria_back      = 'Zurück zum Menü' -%}
   {%- assign T_teaser         = 'Wir sind online' -%}
   {%- assign T_teaser_sub     = 'Antwort in ca. 2 Min.' -%}
+  {%- assign T_typing         = 'Karin schreibt …' -%}
   {%- assign T_brand_tagline  = 'PREMIUM-SUPPORT · ONLINE' -%}
   {%- assign T_welcome_para   = 'Wir sind für Sie da. Unser Team beantwortet Ihre Fragen zu Produkten, Lizenzen und Bestellungen in wenigen Minuten.' -%}
   {%- assign T_menu_section   = 'Wie können wir helfen?' -%}
@@ -1368,6 +1372,36 @@
   .klc-msg--user .klc-msg__time { color: rgba(26,26,26,.65); }
   .klc-msg--agent .klc-msg__time { color: var(--klc-ink-mute); }
 
+  .klc-typing-row {
+    align-self: flex-start;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    animation: klc-msg-in .25s var(--klc-ease-spring);
+  }
+  .klc-typing-avatar {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--klc-green);
+    color: #fff;
+    font-family: var(--klc-font-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .klc-typing-body { display: flex; flex-direction: column; gap: 3px; }
+  .klc-typing-name {
+    font-family: var(--klc-font-accent);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--klc-ink-mute);
+    letter-spacing: .04em;
+    padding-left: 4px;
+  }
   .klc-typing {
     align-self: flex-start;
     display: inline-flex; gap: 4px;
@@ -2013,15 +2047,28 @@
       lightbox.classList.remove('is-open');
       lightbox.setAttribute('aria-hidden', 'true');
     }
+    var typingTimer = null;
     function showTyping() {
-      if (typingEl || !chatStream) return;
-      typingEl = document.createElement('div');
-      typingEl.className = 'klc-typing';
-      typingEl.innerHTML = '<span></span><span></span><span></span>';
-      chatStream.appendChild(typingEl);
-      chatStream.scrollTop = chatStream.scrollHeight;
+      if (!chatStream) return;
+      if (!typingEl) {
+        typingEl = document.createElement('div');
+        typingEl.className = 'klc-typing-row';
+        typingEl.innerHTML =
+          '<span class="klc-typing-avatar" aria-hidden="true">K</span>' +
+          '<span class="klc-typing-body">' +
+            '<span class="klc-typing-name">' + (KLC_I18N.typing || '…') + '</span>' +
+            '<span class="klc-typing"><span></span><span></span><span></span></span>' +
+          '</span>';
+        chatStream.appendChild(typingEl);
+        chatStream.scrollTop = chatStream.scrollHeight;
+      }
+      // Crisp emits compose events repeatedly while the operator types
+      // and has no reliable "stopped" event — auto-hide after a pause.
+      if (typingTimer) clearTimeout(typingTimer);
+      typingTimer = setTimeout(removeTyping, 5000);
     }
     function removeTyping() {
+      if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
       if (typingEl) { typingEl.remove(); typingEl = null; }
     }
 
@@ -2039,6 +2086,8 @@
       var from = (msg.from || msg.user && msg.user.type || '').toString().toLowerCase();
       // Skip our own outgoing
       if (from === 'user' || from === 'visitor') return;
+      // The operator's message has landed — drop the typing indicator.
+      removeTyping();
       // De-dupe via Crisp fingerprint
       if (_isSeen(msg.fingerprint)) return;
       if (KLC_DEBUG) console.log('[KLC] operator message', msg);
@@ -2079,6 +2128,10 @@
       window.$crisp.push(['safe', true]);
       // Receive — register against multiple lifecycle hooks for robustness
       window.$crisp.push(['on', 'message:received', _handleOperatorMessage]);
+      // Operator typing indicator. Crisp's documented event is
+      // 'message:compose:received'; keep the older composer:* names as
+      // a fallback for other SDK versions. showTyping() self-expires.
+      window.$crisp.push(['on', 'message:compose:received', function () { showTyping(); }]);
       window.$crisp.push(['on', 'message:composer:started', function () { showTyping(); }]);
       window.$crisp.push(['on', 'message:composer:stopped', function () { removeTyping(); }]);
       window.$crisp.push(['on', 'session:loaded', function () {
@@ -2122,6 +2175,7 @@
     var KLC_I18N = {
       formTitle:     {{ T_form_title   | json }},
       formTitleC:    {{ T_form_title_c | json }},
+      typing:        {{ T_typing       | json }},
       ctxHeader:     {{ T_ctx_header   | json }},
       ctxTopic:      {{ T_ctx_topic    | json }},
       ctxStatus:     {{ T_ctx_status   | json }},
