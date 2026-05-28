@@ -188,8 +188,13 @@
     }
 
     /* On product pages, indent the message so it lines up with the
-       'Kontakt & Hilfe' link in the utility bar below (same 8.5%). */
-    .announcement-bar-wrapper.is-pdp .announcement-center {
+       'Kontakt & Hilfe' link in the utility bar below (same 8.5%).
+       Target the message itself, not .announcement-center: the
+       message is position:absolute with left:0/width:100%, so a
+       padding on the parent is ignored — it must go on the message,
+       and the centering has to flip to flex-start. */
+    .announcement-bar-wrapper.is-pdp .announcement-message {
+      justify-content: flex-start;
       padding-left: 8.5%;
     }
     
