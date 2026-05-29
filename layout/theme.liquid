@@ -16,18 +16,24 @@
         Geo → language map (IP-based, from Shopify Markets):
         DE/AT/CH/LI/LU  → de   (German-speaking)
         PL              → pl   (Polish)
-        SE              → sv   (Swedish)
         anywhere else   → en   (default fallback, incl. English-speaking
                                 countries US/GB/IE/AU/NZ/CA + any country
                                 we don't have a localised version for yet)
+
+        NOTE: SE → sv was REMOVED. The /sv/ locale serves untranslated
+        German content with no SV-side navigation, and every /sv/
+        product/collection/article/blog page is noindexed (see
+        snippets/meta-tags.liquid) and blocked in robots.txt. Redirecting
+        Swedish visitors there stranded them on noindexed dead-end pages.
+        They now fall through to the indexable /en locale instead. The
+        existing /sv/ noindex + robots rules remain to clean up any URLs
+        Google already indexed.
       {%- endcomment -%}
       {%- assign _expected = 'en' -%}
       {%- if _geo_country == 'DE' or _geo_country == 'AT' or _geo_country == 'CH' or _geo_country == 'LI' or _geo_country == 'LU' -%}
         {%- assign _expected = 'de' -%}
       {%- elsif _geo_country == 'PL' -%}
         {%- assign _expected = 'pl' -%}
-      {%- elsif _geo_country == 'SE' -%}
-        {%- assign _expected = 'sv' -%}
       {%- endif -%}
 
       {%- if _expected != _cur_locale -%}
@@ -86,15 +92,23 @@
     <!-- Sync Trigger: Retry at 18:25 -->
 
     {%- comment -%}
-      Font Awesome — loaded synchronously so icons (e.g. `<i class="fab fa-whatsapp">`)
-      do NOT cause a layout shift ~1 s after page paint when the lazy
-      stylesheet finally arrives. CDN-cached so cost is minimal after
-      the first hit. (Previous lazy-loader via requestIdleCallback was
-      the source of the "1-second jump" users felt on mobile.)
+      Font Awesome — loaded NON-render-blocking via the rel=preload +
+      onload→stylesheet pattern. Using `preload` (instead of the old
+      requestIdleCallback lazy-loader) fetches the CSS at high priority
+      immediately, so icons (e.g. `<i class="fab fa-whatsapp">`) arrive
+      almost as early as a synchronous tag would — but without blocking
+      first paint. This keeps the late-icon "1-second jump" risk low while
+      removing three render-blocking requests from the critical path.
+      <noscript> keeps icons working when JS is disabled.
     {%- endcomment -%}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css">
+    </noscript>
 
     {%- comment -%}
       Third-party scripts (Usercentrics, GTM, Tidio, etc.) are still

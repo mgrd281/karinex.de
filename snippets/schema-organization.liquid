@@ -1,12 +1,15 @@
 {% comment %}
   Organization Schema for SEO - Company Information
-  Updated: 03.04.2026 - v4
+  Updated: 2026-05-29 - v5
   Schema Type: Organization (valid for all properties)
-  aggregateRating now reads from Theme Settings → "SEO — Organization Rating"
-{% endcomment %}
 
-{%- assign org_rating = settings.org_rating_value | default: '4.73' -%}
-{%- assign org_reviews = settings.org_rating_count | default: '118' -%}
+  aggregateRating was REMOVED: a site-wide, self-serving rating on the
+  Organization violates Google's review-snippet guidelines (ratings about
+  the business as a whole) and risks a structured-data manual action.
+  Ratings belong only on Product schema where real, verifiable reviews
+  exist (see snippets/product-rich-schema.liquid, which emits ratings only
+  when product.metafields.reviews.* is present).
+{% endcomment %}
 
 <script type="application/ld+json">
 {
@@ -35,13 +38,6 @@
     "addressLocality": "Hamburg",
     "postalCode": "22115",
     "addressCountry": "DE"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "{{ org_rating }}",
-    "reviewCount": "{{ org_reviews }}",
-    "bestRating": "5",
-    "worstRating": "1"
   },
   "numberOfEmployees": {
     "@type": "QuantitativeValue",
