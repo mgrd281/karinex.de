@@ -18,7 +18,7 @@
         "show_price_alert": false,
         "show_card_wishlist_heart": true,
         "show_card_quick_add": true,
-        "show_payment_buttons": false,
+        "show_payment_buttons": true,
         "enable_badge": true,
         "enable_category_rules": true,
         "rating_star_color": "#c9a84c"
