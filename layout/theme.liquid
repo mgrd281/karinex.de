@@ -16,7 +16,8 @@
         Geo → language map (IP-based, from Shopify Markets):
         DE/AT/CH/LI/LU  → de   (German-speaking)
         PL              → pl   (Polish)
-        SE              → sv   (Swedish)
+        SE              → en   (Swedish market retired May–Jun 2026; SE
+                                visitors fall through to the EN default)
         anywhere else   → en   (default fallback, incl. English-speaking
                                 countries US/GB/IE/AU/NZ/CA + any country
                                 we don't have a localised version for yet)
@@ -26,9 +27,13 @@
         {%- assign _expected = 'de' -%}
       {%- elsif _geo_country == 'PL' -%}
         {%- assign _expected = 'pl' -%}
-      {%- elsif _geo_country == 'SE' -%}
-        {%- assign _expected = 'sv' -%}
       {%- endif -%}
+      {%- comment -%}
+        Swedish market retired (Jun 2026). SE is intentionally NOT mapped to
+        'sv' anymore, so SE visitors fall through to _expected = 'en'. 'sv'
+        is deliberately kept in the _known_locales strip list below so any
+        legacy inbound /sv/… URL is rewritten to its /en/… equivalent.
+      {%- endcomment -%}
 
       {%- if _expected != _cur_locale -%}
         {%- assign _path = request.path -%}
