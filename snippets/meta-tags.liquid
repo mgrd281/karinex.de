@@ -305,12 +305,12 @@
 {%- endcomment -%}
 <link rel="canonical" href="{{ clean_canonical }}">
 
-{%- comment -%} 
-  Hreflang: Multi-language site (DE default, EN, PL)
+{%- comment -%}
+  Hreflang: Multi-language site (DE default, EN, PL, SV)
   Required for Google to discover and index alternate locale versions.
   Only output on indexable pages — skip search, cart, 404, account pages.
 {%- endcomment -%}
-{%- unless request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or request.locale.iso_code == 'sv' -%}
+{%- unless request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
 {%- liquid
   comment
     Build a locale-free base path from request.path.
@@ -334,11 +334,13 @@
     assign _href_de = shop.url | append: '/'
     assign _href_en = shop.url | append: '/en'
     assign _href_pl = shop.url | append: '/pl'
+    assign _href_sv = shop.url | append: '/sv'
     assign _href_x_default = shop.url | append: '/'
   else
     assign _href_de = shop.url | append: _hreflang_path
     assign _href_en = shop.url | append: '/en' | append: _hreflang_path
     assign _href_pl = shop.url | append: '/pl' | append: _hreflang_path
+    assign _href_sv = shop.url | append: '/sv' | append: _hreflang_path
     assign _href_x_default = shop.url | append: _hreflang_path
   endif
 
@@ -369,6 +371,7 @@
 <link rel="alternate" hreflang="de" href="{{ _href_de }}">
 <link rel="alternate" hreflang="en" href="{{ _href_en }}">
 <link rel="alternate" hreflang="pl" href="{{ _href_pl }}">
+<link rel="alternate" hreflang="sv" href="{{ _href_sv }}">
 <link rel="alternate" hreflang="x-default" href="{{ _href_x_default }}">
 {%- endunless -%}
 
@@ -406,36 +409,8 @@
   if request.page_type == 'collection' and collection.handle == 'all'
     assign is_collection_all = true
   endif
-
-  # SV orphan pages — these German-content pages are served under /sv/
-  # but have no internal SV navigation linking to them. Ahrefs URL
-  # Redirects don't apply to /sv/ paths via Markets routing, so we
-  # noindex them at the page level instead.
-  #
-  # In addition to the named-handle orphans below (kept for legacy
-  # coverage), we blanket-noindex every product / collection /
-  # article / blog under /sv/. We do not actively serve a Swedish
-  # market and the few SV inbound paths Google has indexed produce
-  # the hreflang-to-redirect warnings reported by Ahrefs (May 19).
-  assign is_sv_orphan = false
-  if request.locale.iso_code == 'sv'
-    if request.page_type == 'product' or request.page_type == 'collection' or request.page_type == 'article' or request.page_type == 'blog'
-      assign is_sv_orphan = true
-    endif
-    if request.page_type == 'page'
-      assign sv_orphan_handles = 'windows-11-lizenz-kaufen,windows-11-aktivierung,windows-10-pro-kaufen-32-64-bit-downloads-installationsanleitung,windows-10-vs-windows-11,office-2021-vs-2024,office-2024-professional-plus-windows,office-2024-standard-mac-download,geschenkkarten,partner-dashboard,partnerprogramm-1,rechtliche-hinweise-1,widerrufsformular,xwiderrufsrecht,widerrufsrecht' | split: ','
-      if sv_orphan_handles contains page.handle
-        assign is_sv_orphan = true
-      endif
-    endif
-    if request.path == '/sv/collections/digital-goods-vat-tax' or request.path == '/sv/blogs/guides'
-      assign is_sv_orphan = true
-    endif
-  endif
 -%}
-{%- if is_sv_orphan -%}
-  <meta name="robots" content="noindex, nofollow">
-{%- elsif request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
+{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
   <meta name="robots" content="noindex, follow">
 {%- elsif is_paginated -%}
   {%- comment -%} Pagination pages: index but don't use for snippets to avoid duplicate content {%- endcomment -%}
