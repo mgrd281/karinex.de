@@ -364,6 +364,14 @@
       assign _href_de = shop.url | append: '/products/' | append: _h_de
       assign _href_en = shop.url | append: '/en/products/' | append: _h_en
       assign _href_pl = shop.url | append: '/pl/products/' | append: _h_pl
+      comment
+        Swedish reuses the German handle (no per-locale translated handle),
+        so the /sv/ URL is /sv/products/<de-handle>. Build it from _h_de —
+        NOT from the current page's path — otherwise the /en/ and /pl/ pages
+        emit hreflang="sv" pointing at /sv/products/<en|pl-handle>, which
+        301-redirects to the German handle (Ahrefs: "hreflang not 200").
+      endcomment
+      assign _href_sv = shop.url | append: '/sv/products/' | append: _h_de
       assign _href_x_default = _href_de
     endif
   endif
