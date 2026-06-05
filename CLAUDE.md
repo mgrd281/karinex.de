@@ -725,6 +725,35 @@ to bulk-import.
 **Why:** Code fixes prevent new 404s; redirects catch historical
 inbound links that crawlers still hit.
 
+### ADR-007: Swedish (`/sv/`) is a first-class indexable locale (June 2026)
+
+**Decision:** `/sv/` pages render `index, follow` and participate in the
+hreflang cluster (`hreflang="sv"`), exactly like `/en/` and `/pl/`.
+
+**History:** For a brief window (May 2026) every `/sv/` product /
+collection / article / blog was blanket-`noindex`ed and excluded from
+hreflang, on the assumption that Karinex did not serve a Swedish market.
+That created the opposite Ahrefs warning — **"Noindex page in sitemap"**
+(108 URLs) — because Shopify still lists `/sv/` in its auto-generated
+Swedish sitemap (Swedish is a *published language*; the theme cannot edit
+that sitemap). The merchant confirmed they **do** want Swedish traffic and
+the Swedish storefront, so the noindex was removed instead of unpublishing
+the language.
+
+**Why this is safe:** every `/sv/` URL returns HTTP 200, and Swedish reuses
+the **German product handles** (no per-locale translated handles), so the
+path-based `/sv/<de-handle>` URLs are 200 OK — no hreflang-to-redirect
+chains (the May regression does not recur).
+
+**Cost / caveat:** much of the `/sv/` *content* is still German. The pages
+are now SEO-*eligible*, but won't rank well in Swedish until the product /
+collection text is translated (Shopify Admin → **Translate & Adapt**).
+Indexing German text under `/sv/` risks Google ignoring the `sv` hreflang.
+
+**Don't:** re-add a blanket `/sv/` `noindex` (in `snippets/meta-tags.liquid`)
+or `/sv/` `Disallow` rules (in `templates/robots.txt.liquid`) without
+reversing this decision — that brings back the noindex-in-sitemap warning.
+
 ---
 
 ## 12. Performance budgets
@@ -945,6 +974,7 @@ of this bug have been the single largest source of 404s.
 | Utility bar / header cleanup | #108 – #114 | Shipped |
 | Mobile chat hide + AboutYou mobile experiment | #116 – #119 | Reverted by #120 |
 | `CLAUDE.md` AI assistant onboarding | #121 | Shipped |
+| SEO 404 cleanup (Ahrefs cycle 2): draft-product 404 redirect + Swedish `/sv/` promoted to indexable locale (ADR-007) | #336 | In review |
 
 ---
 

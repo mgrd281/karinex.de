@@ -38,6 +38,7 @@ to re-import after edits.
 | Legacy product handles for Office 2021/2024 Mac | Handle changed in catalog | `/collections/microsoft-office-fur-mac` |
 | `/products/office-2024-home-and-business-mac` (+ locales) | Doesn't exist; referenced in Theme Editor settings | `/collections/microsoft-office-fur-mac` |
 | `/products/visual-studio-2026-professional-kaufen` (+ locales) | Not a published product; linked in Admin nav | `/collections/microsoft-tools` |
+| `/products/microsoft-project-2024-professional-kaufen` (+ locales) | Product is in **draft** status; linked from the `windows-10-iot-enterprise-2019-ltsc-kaufen` description + `complementary_products` metafield | `/collections/microsoft-tools` |
 | `/products/windows-11-pro-key-kaufen`, `windows-11-home-key-kaufen`, …-pro-64-bit-oem-… | Old handles | `/collections/windows` |
 | Locale-concat bug residue (`/enpages/`, `/plpages/`, `/svpages/`, `/enpolicies/`, …) | Already fixed structurally in PR #95–#97, but external sites / crawler caches keep hitting them | Correct locale-prefixed equivalents |
 
