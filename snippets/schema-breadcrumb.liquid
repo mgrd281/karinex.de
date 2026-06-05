@@ -1,56 +1,16 @@
 {% comment %}
-  BreadcrumbList JSON-LD Schema — v1.1
-  Renders alongside existing HTML breadcrumbs on product/collection/page/article templates.
+  BreadcrumbList JSON-LD Schema — v1.2
+  Renders alongside existing HTML breadcrumbs on collection/page/article templates.
+
+  NOTE: Product breadcrumbs are intentionally NOT emitted here. They are
+  produced by snippets/product-rich-schema.liquid inside its @graph, so
+  emitting them again here would put two BreadcrumbList blocks on every
+  product page. Keep product breadcrumbs in product-rich-schema only.
+
   Usage: {% render 'schema-breadcrumb' %}
 {% endcomment %}
 
-{%- if request.page_type == 'product' -%}
-  {%- assign best_col = nil -%}
-  {%- for col in product.collections -%}
-    {%- assign h = col.handle -%}
-    {%- unless h == 'all' or h == 'alle' or h == 'frontpage' -%}
-      {%- assign best_col = col -%}
-      {%- break -%}
-    {%- endunless -%}
-  {%- endfor -%}
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "{% if request.locale.iso_code == 'en' %}Home{% elsif request.locale.iso_code == 'pl' %}Strona główna{% else %}Startseite{% endif %}",
-      "item": "{{ shop.url }}"
-    }
-    {%- if best_col -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ best_col.title | json }},
-      "item": "{{ shop.url }}{{ best_col.url }}"
-    }
-    ,{
-      "@type": "ListItem",
-      "position": 3,
-      "name": {{ product.title | json }},
-      "item": "{{ shop.url }}{{ product.url }}"
-    }
-    {%- else -%}
-    ,{
-      "@type": "ListItem",
-      "position": 2,
-      "name": {{ product.title | json }},
-      "item": "{{ shop.url }}{{ product.url }}"
-    }
-    {%- endif -%}
-  ]
-}
-</script>
-
-{%- elsif request.page_type == 'collection' -%}
+{%- if request.page_type == 'collection' -%}
 
 <script type="application/ld+json">
 {

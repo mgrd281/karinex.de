@@ -46,7 +46,12 @@
   assign desc_clean        = product.description | strip_html | strip_newlines | truncate: 5000
   assign canonical         = shop.url | append: product.url
   assign org_url           = shop.url
-  assign org_id            = canonical | append: '#org'
+  comment
+    Reference the single site-wide Organization defined in
+    snippets/schema-organization.liquid (@id "<shop.url>/#organization")
+    instead of emitting a second, competing Organization node here.
+  endcomment
+  assign org_id            = shop.url | append: '/#organization'
   assign breadcrumb_id     = canonical | append: '#breadcrumb'
   assign product_id        = canonical | append: '#product'
   assign offer_id          = canonical | append: '#offer'
@@ -85,24 +90,6 @@
 {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "Organization",
-      "@id": {{ org_id | json }},
-      "name": {{ shop.name | json }},
-      "url": {{ org_url | json }},
-      "logo": {%- if settings.logo -%}{{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}{%- else -%}{{ org_url | append: '/cdn/shop/files/karinex-logo.png' | json }}{%- endif -%},
-      "sameAs": [
-        "https://www.linkedin.com/in/karinex-",
-        "https://x.com/Karinexshop"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "email": "shop@karinex.de",
-        "areaServed": ["DE", "AT", "CH", "EU"],
-        "availableLanguage": ["German", "English"]
-      }
-    },
     {
       "@type": "BreadcrumbList",
       "@id": {{ breadcrumb_id | json }},

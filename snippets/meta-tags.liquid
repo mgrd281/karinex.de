@@ -50,9 +50,29 @@
   # Meta description should be 150-160 chars (~1000 pixels) maximum
   assign meta_description = page_description | strip_html | strip_newlines | truncate: 155
   
-  # Fallback descriptions for pages without custom SEO description
+  # Fallback descriptions for pages without a custom SEO description.
+  # We deliberately do NOT fall back to shop.description, because that emits
+  # the exact same meta description across hundreds of pages (duplicate-content
+  # signal). Prefer the page's own content; final fallback is page title + brand.
   if meta_description == blank
-    assign meta_description = shop.description | default: shop.name | truncate: 155
+    if request.page_type == 'product' and product.description != blank
+      assign meta_description = product.description | strip_html | strip_newlines | truncate: 155
+    elsif request.page_type == 'collection' and collection.description != blank
+      assign meta_description = collection.description | strip_html | strip_newlines | truncate: 155
+    elsif request.page_type == 'article' and article.excerpt_or_content != blank
+      assign meta_description = article.excerpt_or_content | strip_html | strip_newlines | truncate: 155
+    endif
+  endif
+
+  # Final fallback: page title + brand (kept unique per page, never shop.description)
+  if meta_description == blank
+    assign _desc_title = page_title | default: shop.name
+    if _desc_title contains shop.name
+      assign meta_description = _desc_title
+    else
+      assign meta_description = _desc_title | append: ' – ' | append: shop.name
+    endif
+    assign meta_description = meta_description | truncate: 155
   endif
 
   # Override descriptions for specific pages with missing/bad descriptions

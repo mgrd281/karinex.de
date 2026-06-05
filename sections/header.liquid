@@ -393,7 +393,17 @@
   data-scroll-direction="none"
 >
   {%- if request.page_type == 'index' -%}
-    <h1 class="visually-hidden">{{ shop.name }}</h1>
+    {%- liquid
+      case request.locale.iso_code
+        when 'en'
+          assign _home_h1 = 'Microsoft software, Windows & Office licences and more — buy online at karinex'
+        when 'pl'
+          assign _home_h1 = 'Oprogramowanie Microsoft, licencje Windows i Office oraz więcej — kup online w karinex'
+        else
+          assign _home_h1 = 'Software-Lizenzen, Microsoft Office, Windows & mehr günstig online kaufen — karinex'
+      endcase
+    -%}
+    <h1 class="visually-hidden">{{ _home_h1 }}</h1>
   {%- endif -%}
   {% for row in rows %}
     {% liquid

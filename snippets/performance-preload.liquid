@@ -23,6 +23,16 @@
   <link rel="preload" href="{{ product.featured_image | image_url: width: 800 }}" as="image" fetchpriority="high">
 {%- endif -%}
 
+<!-- Preload the product stylesheet from <head>. It is referenced with a plain
+     <link rel="stylesheet"> inside sections/product-information.liquid (in
+     <body>), so the browser would otherwise discover it late and stall render.
+     Preload here (same URL + cache-buster) starts the download early; it still
+     applies via the in-body <link>, so no FOUC. Only the DEFAULT product
+     template uses product-information.css. -->
+{%- if template == 'product' -%}
+  <link rel="preload" as="style" href="{{ 'product-information.css' | asset_url }}?v=5">
+{%- endif -%}
+
 <!-- Preload Reviews widget script on product pages so it starts
      downloading during head parse (faster than the async <script>). -->
 {%- if template.name == 'product' -%}
