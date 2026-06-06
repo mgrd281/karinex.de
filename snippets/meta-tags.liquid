@@ -306,82 +306,21 @@
 <link rel="canonical" href="{{ clean_canonical }}">
 
 {%- comment -%}
-  Hreflang: Multi-language site (DE default, EN, PL, SV)
-  Required for Google to discover and index alternate locale versions.
-  Only output on indexable pages — skip search, cart, 404, account pages.
+  HREFLANG — emitted natively by Shopify via content_for_header
+  (layout/theme.liquid no longer suppresses it; see ADR-008).
+
+  We do NOT hand-build hreflang here anymore. Shopify is the only source
+  that knows each product's per-locale translated handle (Admin →
+  Translate & Adapt) and lists every published language with a correct
+  self-referencing tag + x-default. A manual block cannot reproduce that:
+  translated handles are mixed per-product AND per-locale (e.g. sv =
+  German handle for visual-studio-2026, but sv = "kop-…" for
+  office-2024), so any single rule produced 301 / missing-return-tag
+  errors (Ahrefs: "Hreflang to redirect" + "Missing reciprocal hreflang").
+
+  DO NOT re-add a manual hreflang block here, and DO NOT re-enable the
+  hreflang suppression in layout/theme.liquid, without reversing ADR-008.
 {%- endcomment -%}
-{%- unless request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page -%}
-{%- liquid
-  comment
-    Build a locale-free base path from request.path.
-    Without this, visiting /sv/pages/wishlist produced hreflang URLs
-    like /en/sv/pages/wishlist and /pl/sv/pages/wishlist (both 404),
-    flooding the Ahrefs broken-link report (May 14).
-  endcomment
-  assign _hreflang_path = request.path
-  assign _path_seg = _hreflang_path | split: '/'
-  assign _path_locale = _path_seg[1] | default: ''
-  assign _known_locales = 'en,pl,sv,da,nl,fr,it,es,cs,hu,ro,sk,fi,el,pt' | split: ','
-  if _known_locales contains _path_locale
-    assign _strip = '/' | append: _path_locale
-    assign _hreflang_path = _hreflang_path | remove_first: _strip
-  endif
-  if _hreflang_path == '/' or _hreflang_path == blank
-    assign _hreflang_path = ''
-  endif
-
-  if _hreflang_path == ''
-    assign _href_de = shop.url | append: '/'
-    assign _href_en = shop.url | append: '/en'
-    assign _href_pl = shop.url | append: '/pl'
-    assign _href_sv = shop.url | append: '/sv'
-    assign _href_x_default = shop.url | append: '/'
-  else
-    assign _href_de = shop.url | append: _hreflang_path
-    assign _href_en = shop.url | append: '/en' | append: _hreflang_path
-    assign _href_pl = shop.url | append: '/pl' | append: _hreflang_path
-    assign _href_sv = shop.url | append: '/sv' | append: _hreflang_path
-    assign _href_x_default = shop.url | append: _hreflang_path
-  endif
-
-  comment
-    Product pages with locale-specific URL handles (Admin → Translations):
-    Shopify auto-301s /en/products/<de-handle> to /en/products/<en-handle>
-    when the handle is translated per market. That 301 chain is flagged by
-    Ahrefs as "Hreflang to redirect or broken page" (May 19 audit).
-    Merchant fills three optional metafields per product so we can emit
-    the exact 200-OK URL for each locale:
-      custom.handle_de  custom.handle_en  custom.handle_pl
-    If any of the three is blank we fall back to the current path-based
-    behaviour (which keeps working for products with the same handle
-    across markets).
-  endcomment
-  if request.page_type == 'product'
-    assign _h_de = product.metafields.custom.handle_de | default: ''
-    assign _h_en = product.metafields.custom.handle_en | default: ''
-    assign _h_pl = product.metafields.custom.handle_pl | default: ''
-    if _h_de != '' and _h_en != '' and _h_pl != ''
-      assign _href_de = shop.url | append: '/products/' | append: _h_de
-      assign _href_en = shop.url | append: '/en/products/' | append: _h_en
-      assign _href_pl = shop.url | append: '/pl/products/' | append: _h_pl
-      comment
-        Swedish reuses the German handle (no per-locale translated handle),
-        so the /sv/ URL is /sv/products/<de-handle>. Build it from _h_de —
-        NOT from the current page's path — otherwise the /en/ and /pl/ pages
-        emit hreflang="sv" pointing at /sv/products/<en|pl-handle>, which
-        301-redirects to the German handle (Ahrefs: "hreflang not 200").
-      endcomment
-      assign _href_sv = shop.url | append: '/sv/products/' | append: _h_de
-      assign _href_x_default = _href_de
-    endif
-  endif
--%}
-<link rel="alternate" hreflang="de" href="{{ _href_de }}">
-<link rel="alternate" hreflang="en" href="{{ _href_en }}">
-<link rel="alternate" hreflang="pl" href="{{ _href_pl }}">
-<link rel="alternate" hreflang="sv" href="{{ _href_sv }}">
-<link rel="alternate" hreflang="x-default" href="{{ _href_x_default }}">
-{%- endunless -%}
 
 {%- comment -%} ═══ PAGINATION (PREV/NEXT) ═══ {%- endcomment -%}
 {%- if paginate -%}
