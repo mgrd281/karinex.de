@@ -254,9 +254,12 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
     {%- assign content_for_header_clean = content_for_header_clean | replace: '<title>', '<meta name="x-cfh-title" content="' | replace: '</title>', '">' -%}
     {%- comment -%} Strip Shopify's duplicate canonical — ours is in meta-tags.liquid {%- endcomment -%}
     {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="canonical"', '<link data-cfh-canonical rel="canonical"' -%}
-    {%- comment -%} Strip Shopify's duplicate hreflang — ours is in meta-tags.liquid {%- endcomment -%}
-    {%- assign content_for_header_clean = content_for_header_clean | replace: '<link rel="alternate" hreflang=', '<link data-cfh-hreflang rel="not-alternate" data-hreflang=' -%}
-    {%- assign content_for_header_clean = content_for_header_clean | replace: '<link data-cfh-hreflang rel="alternate" hreflang=', '<link data-cfh-hreflang rel="not-alternate" data-hreflang=' -%}
+    {%- comment -%}
+      Shopify's NATIVE hreflang is left intact (ADR-008). It knows each
+      product's per-locale translated handle and lists every published
+      language with self-reference + x-default — which our old hand-built
+      block could not. Do NOT re-add suppression here.
+    {%- endcomment -%}
     {{ content_for_header_clean }}
 
   <!-- SEO: search/vendor page noindex handled in meta-tags.liquid -->

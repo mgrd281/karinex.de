@@ -754,6 +754,38 @@ Indexing German text under `/sv/` risks Google ignoring the `sv` hreflang.
 or `/sv/` `Disallow` rules (in `templates/robots.txt.liquid`) without
 reversing this decision — that brings back the noindex-in-sitemap warning.
 
+### ADR-008: Hreflang is emitted natively by Shopify, not hand-built (June 2026)
+
+**Decision:** Rely on Shopify's native `hreflang` tags from
+`content_for_header`. Removed the hand-built hreflang block in
+`snippets/meta-tags.liquid` **and** the suppression in
+`layout/theme.liquid` that had been rewriting Shopify's
+`rel="alternate" hreflang=` to `rel="not-alternate"`.
+
+**Why:** product handles are translated per locale (Admin → Translate &
+Adapt), and the translations are **mixed per-product AND per-locale** —
+e.g. `/sv/` uses the German handle for `visual-studio-2026` but the
+translated handle `kop-…` for `office-2024-professional-plus`. A manual
+block (even with `custom.handle_de/en/pl` metafields) cannot know every
+locale's real handle, so it emitted URLs that 301-redirect → Ahrefs
+**"Hreflang to redirect or broken page"**, and it only listed a hardcoded
+subset of locales → **"Missing reciprocal hreflang (no return-tag)."**
+Shopify's native hreflang is the only source that knows each product's
+real per-locale handle; it lists **every published language** with a
+correct self-referencing tag + `x-default`, and is self-maintaining for
+new products/languages.
+
+**Caveat:** native hreflang covers *all* published languages, including
+the untranslated extras (`da, el, nl, pt-PT`) whose pages still show
+German content (duplicate-content risk). To take those out of the cluster,
+**unpublish them** in Admin → Settings → Languages (the merchant chose to
+keep them for now). The canonical tag is still emitted manually in
+`meta-tags.liquid` (Shopify's canonical remains suppressed) — only the
+hreflang suppression was removed.
+
+**Don't:** re-add a manual hreflang block in `snippets/meta-tags.liquid`,
+and don't re-enable the hreflang suppression in `layout/theme.liquid`.
+
 ---
 
 ## 12. Performance budgets
@@ -974,7 +1006,8 @@ of this bug have been the single largest source of 404s.
 | Utility bar / header cleanup | #108 – #114 | Shipped |
 | Mobile chat hide + AboutYou mobile experiment | #116 – #119 | Reverted by #120 |
 | `CLAUDE.md` AI assistant onboarding | #121 | Shipped |
-| SEO 404 cleanup (Ahrefs cycle 2): draft-product 404 redirect + Swedish `/sv/` promoted to indexable locale (ADR-007) | #336 | In review |
+| SEO 404 cleanup (Ahrefs cycle 2): draft-product 404 redirect + Swedish `/sv/` promoted to indexable locale (ADR-007) | #336 | Shipped |
+| Hreflang: switch from hand-built to Shopify-native; fixes "hreflang to redirect" + "missing reciprocal" (ADR-008) | #337 | In review |
 
 ---
 
