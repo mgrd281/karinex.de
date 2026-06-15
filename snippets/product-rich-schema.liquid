@@ -46,7 +46,7 @@
   assign desc_clean        = product.description | strip_html | strip_newlines | truncate: 5000
   assign canonical         = shop.url | append: product.url
   assign org_url           = shop.url
-  assign org_id            = canonical | append: '#org'
+  assign org_id            = shop.url | append: '/#organization'
   assign breadcrumb_id     = canonical | append: '#breadcrumb'
   assign product_id        = canonical | append: '#product'
   assign offer_id          = canonical | append: '#offer'
@@ -85,60 +85,6 @@
 {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "Organization",
-      "@id": {{ org_id | json }},
-      "name": {{ shop.name | json }},
-      "url": {{ org_url | json }},
-      "logo": {%- if settings.logo -%}{{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }}{%- else -%}{{ org_url | append: '/cdn/shop/files/karinex-logo.png' | json }}{%- endif -%},
-      "sameAs": [
-        "https://www.linkedin.com/in/karinex-",
-        "https://x.com/Karinexshop"
-      ],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "email": "shop@karinex.de",
-        "areaServed": ["DE", "AT", "CH", "EU"],
-        "availableLanguage": ["German", "English"]
-      }
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": {{ breadcrumb_id | json }},
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Startseite",
-          "item": {{ org_url | json }}
-        }{% if collection %},
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": {{ collection.title | json }},
-          "item": {{ shop.url | append: collection.url | json }}
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": {{ product.title | json }},
-          "item": {{ canonical | json }}
-        }{% else %},
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": {{ vendor_name | json }},
-          "item": {{ vendor_name | url_for_vendor | prepend: shop.url | json }}
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": {{ product.title | json }},
-          "item": {{ canonical | json }}
-        }{% endif %}
-      ]
-    },
     {
       "@type": "Product",
       "@id": {{ product_id | json }},
@@ -229,8 +175,8 @@
       "operatingSystem": {{ os_req | json }},
       "image": {{ img_main | json }},
       "url": {{ canonical | json }},
-      "downloadUrl": {{ canonical | json }},
-      "softwareVersion": {{ product.metafields.karinex.version.value | default: '' | json }},
+      "downloadUrl": {{ canonical | json }},{%- assign sw_ver = product.metafields.karinex.version.value -%}{% if sw_ver != blank %}
+      "softwareVersion": {{ sw_ver | json }},{% endif %}
       "publisher": {
         "@type": "Organization",
         "name": {{ vendor_name | json }}
@@ -241,10 +187,13 @@
       "@type": "FAQPage",
       "@id": {{ faq_id | json }},
       "mainEntity": [
+        {%- assign faq_first = true -%}
         {%- for entry in faq_raw -%}
-          {%- assign q = entry.q | default: entry.question -%}
-          {%- assign a = entry.a | default: entry.answer -%}
+          {%- assign q = entry.name | default: entry.q | default: entry.question -%}
+          {%- assign a = entry.acceptedAnswer.text | default: entry.a | default: entry.answer -%}
           {%- if q != blank and a != blank -%}
+          {%- unless faq_first %},{% endunless -%}
+          {%- assign faq_first = false -%}
         {
           "@type": "Question",
           "name": {{ q | json }},
@@ -252,7 +201,7 @@
             "@type": "Answer",
             "text": {{ a | json }}
           }
-        }{% unless forloop.last %},{% endunless %}
+        }
           {%- endif -%}
         {%- endfor -%}
       ]
