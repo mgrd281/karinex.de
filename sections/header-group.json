@@ -18,6 +18,7 @@
           "type": "_header-logo",
           "static": true,
           "settings": {
+            "logo": "shopify://shop_images/Kein_Titel_500_x_280_px_0465bc69-e493-413c-a59a-868f261e1c6b.png",
             "logo_width": 100,
             "hide_logo_on_home_page": false,
             "padding-block-start": 0,
