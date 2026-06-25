@@ -356,8 +356,12 @@
   if request.page_type == 'collection' and collection.handle == 'all'
     assign is_collection_all = true
   endif
+  assign is_admin_page = false
+  if template.suffix == 'health'
+    assign is_admin_page = true
+  endif
 -%}
-{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all -%}
+{%- if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == '404' or request.page_type == 'customers/account' or request.page_type == 'customers/order' or request.page_type == 'customers/register' or request.page_type == 'customers/login' or is_vendor_page or is_policy_page or is_collection_all or is_admin_page -%}
   <meta name="robots" content="noindex, follow">
 {%- elsif is_paginated -%}
   {%- comment -%} Pagination pages: index but don't use for snippets to avoid duplicate content {%- endcomment -%}

@@ -245,6 +245,9 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
       {%- render 'schema-faq' -%}
     {%- endif -%}
 
+    {%- comment -%} Client-side JS error logger (owner-only diagnostics, localStorage only) {%- endcomment -%}
+    {%- render 'admin-error-logger' -%}
+
 
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
