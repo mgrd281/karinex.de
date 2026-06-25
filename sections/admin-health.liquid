@@ -1,0 +1,234 @@
+{%- comment -%}
+  Karinex — Admin Health Dashboard (owner-only).
+  - Light password gate (client-side; configurable in section settings).
+  - SEO-Check: fetches same-origin URLs and analyses title, meta description,
+    canonical, robots, H1 count, hreflang, JSON-LD, images without alt, status.
+  - Fehler-Log: reads JS errors captured on THIS device (snippets/admin-error-logger).
+  This page is set to noindex via snippets/meta-tags.liquid (template suffix "health").
+  Note: the gate is obscurity-level only; the page exposes no customer PII.
+{%- endcomment -%}
+
+{%- assign kx_pw = section.settings.admin_password | default: 'karinex-admin' -%}
+
+<div class="kx-health" data-pw="{{ kx_pw }}">
+
+  {%- comment -%} ── GATE ── {%- endcomment -%}
+  <div class="kx-health__gate" data-gate>
+    <h1>🔒 Interner Check</h1>
+    <p>Dieser Bereich ist nur für den Shop-Inhaber.</p>
+    <input type="password" data-pw-input placeholder="Passwort" autocomplete="off">
+    <button type="button" data-pw-btn>Öffnen</button>
+    <p class="kx-health__err" data-pw-err hidden>Falsches Passwort.</p>
+  </div>
+
+  {%- comment -%} ── DASHBOARD ── {%- endcomment -%}
+  <div class="kx-health__app" data-app hidden>
+    <div class="kx-health__tabs">
+      <button type="button" class="is-active" data-tab="seo">🔍 SEO-Check</button>
+      <button type="button" data-tab="err">🐞 Fehler-Log (dieses Gerät)</button>
+    </div>
+
+    {%- comment -%} SEO TAB {%- endcomment -%}
+    <div data-panel="seo">
+      <p class="kx-health__hint">Eine URL pro Zeile (gleiche Domain). Standard: Startseite + Beispiele.</p>
+      <textarea data-urls rows="5">/
+/collections/all
+/products/{{ collections.all.products.first.handle | default: 'windows-11-pro-key-kaufen-download' }}
+/blogs/news
+/pages/kontakt</textarea>
+      <button type="button" data-run>Prüfung starten</button>
+      <div data-seo-out class="kx-health__out"></div>
+    </div>
+
+    {%- comment -%} ERROR TAB {%- endcomment -%}
+    <div data-panel="err" hidden>
+      <div class="kx-health__row">
+        <button type="button" data-err-refresh>Aktualisieren</button>
+        <button type="button" data-err-clear class="kx-health__danger">Liste leeren</button>
+      </div>
+      <div data-err-out class="kx-health__out"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .kx-health { max-width: 980px; margin: 40px auto; padding: 0 16px; font-family: var(--font-body-family, sans-serif); color: #0d2e22; }
+  .kx-health h1 { font-size: 24px; margin: 0 0 8px; }
+  .kx-health__gate { max-width: 380px; margin: 60px auto; text-align: center; padding: 28px; border: 1px solid #e2e8f0; border-radius: 14px; }
+  .kx-health__gate input { width: 100%; padding: 12px; margin: 12px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
+  .kx-health button { background: #1D4739; color: #fff; border: 0; padding: 11px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; }
+  .kx-health button:hover { background: #2d6b54; }
+  .kx-health__err { color: #c0392b; font-size: 13px; margin-top: 8px; }
+  .kx-health__tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .kx-health__tabs button { background: #f1f5f9; color: #0d2e22; }
+  .kx-health__tabs button.is-active { background: #1D4739; color: #fff; }
+  .kx-health__hint { font-size: 13px; color: #64748b; margin: 0 0 8px; }
+  .kx-health textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 13px; }
+  .kx-health [data-run] { margin: 10px 0; }
+  .kx-health__row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .kx-health__danger { background: #c0392b; }
+  .kx-health__danger:hover { background: #a93226; }
+  .kx-health__out { margin-top: 14px; }
+  .kx-health__card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+  .kx-health__card h3 { margin: 0 0 4px; font-size: 14px; word-break: break-all; }
+  .kx-health__card .url { font-size: 12px; color: #64748b; margin-bottom: 10px; word-break: break-all; }
+  .kx-health__chk { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; padding: 3px 0; border-top: 1px solid #f1f5f9; }
+  .kx-health__chk:first-child { border-top: 0; }
+  .kx-health__chk .ico { flex: 0 0 18px; font-weight: 700; }
+  .ok { color: #1D4739; } .warn { color: #b7791f; } .fail { color: #c0392b; }
+  .kx-health__err-item { border: 1px solid #f1d0d0; background: #fdf6f6; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .kx-health__err-item .badge { display: inline-block; font-size: 10px; font-weight: 700; background: #c0392b; color: #fff; padding: 2px 6px; border-radius: 4px; }
+  .kx-health__err-item .msg { font-size: 13px; margin: 6px 0 4px; }
+  .kx-health__err-item .meta { font-size: 11px; color: #64748b; word-break: break-all; }
+  .kx-health__empty { color: #64748b; font-size: 14px; padding: 16px 0; }
+</style>
+
+<script>
+(function () {
+  var root = document.currentScript.closest('.kx-health') || document.querySelector('.kx-health');
+  if (!root) return;
+  var PW = root.getAttribute('data-pw');
+  var gate = root.querySelector('[data-gate]');
+  var app = root.querySelector('[data-app]');
+
+  /* ── GATE ── */
+  function unlock() { gate.hidden = true; app.hidden = false; try { sessionStorage.setItem('kx_health_ok', '1'); } catch (e) {} renderErrors(); }
+  if (sessionStorageOk()) unlock();
+  function sessionStorageOk() { try { return sessionStorage.getItem('kx_health_ok') === '1'; } catch (e) { return false; } }
+  var pwInput = root.querySelector('[data-pw-input]');
+  var pwErr = root.querySelector('[data-pw-err]');
+  function tryPw() {
+    if (pwInput.value === PW) { unlock(); } else { pwErr.hidden = false; }
+  }
+  root.querySelector('[data-pw-btn]').addEventListener('click', tryPw);
+  pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryPw(); });
+
+  /* ── TABS ── */
+  var tabs = root.querySelectorAll('[data-tab]');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (x) { x.classList.remove('is-active'); });
+      t.classList.add('is-active');
+      root.querySelector('[data-panel="seo"]').hidden = (t.getAttribute('data-tab') !== 'seo');
+      root.querySelector('[data-panel="err"]').hidden = (t.getAttribute('data-tab') !== 'err');
+    });
+  });
+
+  /* ── SEO CHECK ── */
+  function row(state, label, detail) {
+    var ico = state === 'ok' ? '✓' : (state === 'warn' ? '!' : '✗');
+    return '<div class="kx-health__chk"><span class="ico ' + state + '">' + ico + '</span><span>' +
+      esc(label) + (detail ? ' <span style="color:#64748b">— ' + esc(detail) + '</span>' : '') + '</span></div>';
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+  function analyse(url, html, status) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var out = [];
+    out.push(status >= 200 && status < 300 ? row('ok', 'HTTP-Status', String(status)) : row('fail', 'HTTP-Status', String(status)));
+
+    var title = (doc.querySelector('title') || {}).textContent || '';
+    title = title.trim();
+    if (!title) out.push(row('fail', 'Title', 'fehlt'));
+    else if (title.length < 15 || title.length > 65) out.push(row('warn', 'Title-Länge', title.length + ' Zeichen (ideal 15–65)'));
+    else out.push(row('ok', 'Title', title.length + ' Zeichen'));
+
+    var md = doc.querySelector('meta[name="description"]');
+    var mdc = md ? (md.getAttribute('content') || '').trim() : '';
+    if (!mdc) out.push(row('fail', 'Meta-Description', 'fehlt'));
+    else if (mdc.length < 50 || mdc.length > 165) out.push(row('warn', 'Description-Länge', mdc.length + ' Zeichen (ideal 50–165)'));
+    else out.push(row('ok', 'Meta-Description', mdc.length + ' Zeichen'));
+
+    var canon = doc.querySelector('link[rel="canonical"]');
+    out.push(canon ? row('ok', 'Canonical', canon.getAttribute('href')) : row('warn', 'Canonical', 'fehlt'));
+
+    var robots = doc.querySelector('meta[name="robots"]');
+    var rc = robots ? (robots.getAttribute('content') || '').toLowerCase() : '';
+    if (rc.indexOf('noindex') !== -1) out.push(row('warn', 'Robots', 'noindex (Seite wird nicht indexiert)'));
+    else out.push(row('ok', 'Robots', rc || 'index (Standard)'));
+
+    var h1 = doc.querySelectorAll('h1');
+    if (h1.length === 0) out.push(row('fail', 'H1', 'keine H1'));
+    else if (h1.length === 1) out.push(row('ok', 'H1', '1 (korrekt)'));
+    else out.push(row('warn', 'H1', h1.length + ' H1 (ideal: 1)'));
+
+    var hreflang = doc.querySelectorAll('link[rel="alternate"][hreflang]');
+    out.push(row(hreflang.length ? 'ok' : 'warn', 'Hreflang', hreflang.length + ' Tags'));
+
+    var ld = doc.querySelectorAll('script[type="application/ld+json"]');
+    var ldBad = 0;
+    ld.forEach(function (s) { try { JSON.parse(s.textContent); } catch (e) { ldBad++; } });
+    if (ld.length === 0) out.push(row('warn', 'Structured Data', 'keine JSON-LD'));
+    else if (ldBad) out.push(row('fail', 'Structured Data', ldBad + ' von ' + ld.length + ' ungültig (JSON-Fehler)'));
+    else out.push(row('ok', 'Structured Data', ld.length + ' Blöcke, gültig'));
+
+    var imgs = doc.querySelectorAll('img');
+    var noAlt = 0;
+    imgs.forEach(function (im) { if (!im.getAttribute('alt')) noAlt++; });
+    if (noAlt === 0) out.push(row('ok', 'Bild-Alt-Texte', imgs.length + ' Bilder, alle mit alt'));
+    else out.push(row('warn', 'Bild-Alt-Texte', noAlt + ' von ' + imgs.length + ' ohne alt'));
+
+    return out.join('');
+  }
+
+  function fetchOne(url) {
+    return fetch(url, { credentials: 'same-origin' }).then(function (res) {
+      return res.text().then(function (html) { return { status: res.status, html: html }; });
+    });
+  }
+
+  root.querySelector('[data-run]').addEventListener('click', function () {
+    var out = root.querySelector('[data-seo-out]');
+    var urls = root.querySelector('[data-urls]').value.split('\n').map(function (u) { return u.trim(); }).filter(Boolean);
+    if (!urls.length) { out.innerHTML = '<p class="kx-health__empty">Keine URLs angegeben.</p>'; return; }
+    out.innerHTML = '<p class="kx-health__empty">Prüfe ' + urls.length + ' Seiten…</p>';
+    var html = '';
+    var i = 0;
+    (function next() {
+      if (i >= urls.length) { out.innerHTML = html; return; }
+      var u = urls[i++];
+      var abs = u.charAt(0) === '/' ? (location.origin + u) : u;
+      fetchOne(abs).then(function (r) {
+        html += '<div class="kx-health__card"><div class="url">' + esc(abs) + '</div>' + analyse(abs, r.html, r.status) + '</div>';
+      }).catch(function (e) {
+        html += '<div class="kx-health__card"><div class="url">' + esc(abs) + '</div>' + row('fail', 'Abruf fehlgeschlagen', String(e && e.message || e)) + '</div>';
+      }).then(function () { out.innerHTML = html + '<p class="kx-health__empty">Prüfe… (' + i + '/' + urls.length + ')</p>'; next(); });
+    })();
+  });
+
+  /* ── ERROR LOG ── */
+  function readErrors() { try { return JSON.parse(localStorage.getItem('karinex_error_log') || '[]'); } catch (e) { return []; } }
+  function renderErrors() {
+    var out = root.querySelector('[data-err-out]');
+    if (!out) return;
+    var list = readErrors().slice().reverse();
+    if (!list.length) { out.innerHTML = '<p class="kx-health__empty">Keine Fehler auf diesem Gerät aufgezeichnet. 🎉</p>'; return; }
+    out.innerHTML = list.map(function (e) {
+      var d = new Date(e.t || Date.now());
+      return '<div class="kx-health__err-item"><span class="badge">' + esc(e.type || 'JS') + '</span>' +
+        '<div class="msg">' + esc(e.msg || '') + '</div>' +
+        '<div class="meta">📄 ' + esc(e.page || '') + (e.src ? ' · ' + esc(e.src) : '') + ' · ' + d.toLocaleString('de-DE') + '</div></div>';
+    }).join('');
+  }
+  var rb = root.querySelector('[data-err-refresh]'); if (rb) rb.addEventListener('click', renderErrors);
+  var cb = root.querySelector('[data-err-clear]'); if (cb) cb.addEventListener('click', function () { try { localStorage.removeItem('karinex_error_log'); } catch (e) {} renderErrors(); });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Admin Health Dashboard",
+  "settings": [
+    {
+      "type": "text",
+      "id": "admin_password",
+      "label": "Passwort (nur Inhaber)",
+      "default": "karinex-admin",
+      "info": "Einfacher Schutz vor Gelegenheitszugriff. Seite ist zusätzlich auf noindex gesetzt und nicht verlinkt."
+    }
+  ],
+  "presets": [
+    { "name": "Admin Health Dashboard" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,43 @@
+{%- comment -%}
+  Karinex — client-side JS error logger.
+  Captures JS errors / unhandled rejections / failed resources into the
+  visitor's OWN localStorage only (key: karinex_error_log). No network calls,
+  no external service, no PII sent anywhere. Read by the Admin Health Dashboard
+  (sections/admin-health.liquid). Rendered globally from layout/theme.liquid.
+{%- endcomment -%}
+<script>
+(function () {
+  if (window.__kxErrLog) return;
+  window.__kxErrLog = true;
+  var KEY = 'karinex_error_log';
+  var MAX = 50;
+
+  function read() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
+  }
+  function save(list) {
+    try { localStorage.setItem(KEY, JSON.stringify(list.slice(-MAX))); } catch (e) {}
+  }
+  function add(entry) {
+    var list = read();
+    entry.t = Date.now();
+    entry.page = location.pathname + location.search;
+    list.push(entry);
+    save(list);
+  }
+
+  window.addEventListener('error', function (e) {
+    if (e && e.message) {
+      add({ type: 'JS', msg: String(e.message), src: (e.filename || '') + (e.lineno ? ':' + e.lineno : '') });
+    } else if (e && e.target && (e.target.src || e.target.href)) {
+      add({ type: 'RESOURCE', msg: 'Ressource konnte nicht geladen werden', src: e.target.src || e.target.href });
+    }
+  }, true);
+
+  window.addEventListener('unhandledrejection', function (e) {
+    var r = e && e.reason;
+    var msg = (r && (r.message || r)) ? String(r.message || r) : 'Unhandled promise rejection';
+    add({ type: 'PROMISE', msg: msg, src: '' });
+  });
+})();
+</script>
