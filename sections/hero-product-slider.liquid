@@ -1195,6 +1195,11 @@
       var endMs = new Date(raw).getTime();
       if (isNaN(endMs)) return;
 
+      /* Evergreen / auto-restart: loop every "duration" and restart automatically */
+      var autoRestart = {{ section.settings.auto_restart | default: false | json }};
+      var durationMs  = ({{ section.settings.restart_duration_hours | default: 24 }} || 0) * 3600000;
+      var isEvergreen = autoRestart && durationMs > 0;
+
       var daysEl  = section.querySelector('[data-countdown-days]');
       var hoursEl = section.querySelector('[data-countdown-hours]');
       var minsEl  = section.querySelector('[data-countdown-minutes]');
@@ -1206,7 +1211,14 @@
       var p = function(n) { return (n < 10 ? '0' : '') + n; };
 
       function tick() {
-        var diff = endMs - Date.now();
+        var now = Date.now();
+        var diff;
+        if (isEvergreen) {
+          var into = (((now - endMs) % durationMs) + durationMs) % durationMs;
+          diff = durationMs - into;
+        } else {
+          diff = endMs - now;
+        }
         if (diff <= 0) {
           timerEl.innerHTML = '<div style="font-size:18px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.85)">Sale beendet</div>';
           return;
@@ -1574,7 +1586,21 @@
       "id": "countdown_end",
       "label": "Angebots-Enddatum (ISO)",
       "default": "2026-02-28T23:59:59",
-      "info": "Format: JJJJ-MM-TTTHH:MM:SS (Berlin-Zeit CET/CEST). Beispiel: 2026-12-31T23:59:59"
+      "info": "Format: JJJJ-MM-TTTHH:MM:SS (Berlin-Zeit CET/CEST). Bei aktiviertem Auto-Neustart dient dies nur als Startpunkt."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_restart",
+      "label": "Countdown automatisch neu starten",
+      "default": false,
+      "info": "Wenn aktiviert, zählt der Timer immer die unten eingestellte Dauer herunter und startet nach Ablauf automatisch neu (Evergreen)."
+    },
+    {
+      "type": "number",
+      "id": "restart_duration_hours",
+      "label": "Dauer pro Zyklus (Stunden)",
+      "default": 24,
+      "info": "Nur bei aktiviertem Auto-Neustart. Beispiele: 24 = 1 Tag, 72 = 3 Tage, 168 = 7 Tage."
     },
     {
       "type": "text",
