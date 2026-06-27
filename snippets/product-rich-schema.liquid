@@ -122,21 +122,7 @@
         "@id": {{ offer_id | json }},
         "url": {{ canonical | json }},
         "priceCurrency": {{ currency | json }},
-        "price": "{{ price_decimal | round: 2 }}",{% if has_compare_at %}
-        "priceSpecification": [
-          {
-            "@type": "UnitPriceSpecification",
-            "priceType": "https://schema.org/ListPrice",
-            "price": "{{ compare_at_decimal | round: 2 }}",
-            "priceCurrency": {{ currency | json }}
-          },
-          {
-            "@type": "UnitPriceSpecification",
-            "priceType": "https://schema.org/SalePrice",
-            "price": "{{ price_decimal | round: 2 }}",
-            "priceCurrency": {{ currency | json }}
-          }
-        ],{% endif %}
+        "price": "{{ price_decimal | round: 2 }}",
         "priceValidUntil": {{ price_valid_until | json }},
         "availability": "{% if in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
         "itemCondition": "https://schema.org/NewCondition",
