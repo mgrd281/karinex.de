@@ -1008,6 +1008,7 @@ of this bug have been the single largest source of 404s.
 | `CLAUDE.md` AI assistant onboarding | #121 | Shipped |
 | SEO 404 cleanup (Ahrefs cycle 2): draft-product 404 redirect + Swedish `/sv/` promoted to indexable locale (ADR-007) | #336 | Shipped |
 | Hreflang: switch from hand-built to Shopify-native; fixes "hreflang to redirect" + "missing reciprocal" (ADR-008) | #337 | In review |
+| SEO cleanup + product schema + review stars + disavow (Ahrefs cycle 3): robots `/account`, redirect-link fixes, `aggregateRating` from metafields, priceSpecification removal. See `docs/seo-session-2026-06-27.md` | #352 – #356 | Shipped |
 
 ---
 
