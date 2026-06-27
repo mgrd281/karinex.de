@@ -61,6 +61,7 @@ X (Twitter)    https://x.com/Karinexshop
 Marktplatz-Mittelstand  https://www.marktplatz-mittelstand.de/hamburg/karinex-aYFe61.html
 goYellow       https://www.goyellow.de/home/computerzubehoer-software-karinex-hamburg--4q5kwq.html
 Blogger        https://karinexblog.blogspot.com
+Pinterest      https://de.pinterest.com/karinex99/
 ```
 
 ### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
