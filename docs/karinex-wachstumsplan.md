@@ -65,6 +65,7 @@ Pinterest      https://de.pinterest.com/karinex99/
 ServiceOrca    https://serviceorca.com/de/business/karinex/detail
 Google Business https://maps.app.goo.gl/WqHn2t2QGLFz1vV99
 Gelbe Seiten   https://www.gelbeseiten.de/gsbiz/d9304227-2e31-48bd-9f13-c7b02bc12bf9
+Creditreform   https://firmeneintrag.creditreform.de/22115/2152177776/KARINA_KHRYSTYCH_KARINEX
 ```
 
 ### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
