@@ -53,6 +53,8 @@ Kundennote     https://kundennote.com/app/profil/karinex
 Trustami       https://www.trustami.com/erfahrung/6829f06d7e78cde07a8b4568-bewertung
 ProvenExpert   https://www.provenexpert.com/de-de/karinex/
 Trusted Shops  https://www.trustedshops.de/bewertung/karinex.de
+Shopauskunft   https://www.shopauskunft.de/review/www.karinex.de
+YouTube        https://www.youtube.com/@kariinex
 ```
 
 > استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
