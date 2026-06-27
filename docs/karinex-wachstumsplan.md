@@ -55,7 +55,28 @@ ProvenExpert   https://www.provenexpert.com/de-de/karinex/
 Trusted Shops  https://www.trustedshops.de/bewertung/karinex.de
 Shopauskunft   https://www.shopauskunft.de/review/www.karinex.de
 YouTube        https://www.youtube.com/@kariinex
+Trustpilot     https://de.trustpilot.com/review/karinex.de
+LinkedIn       https://www.linkedin.com/in/karinex-%E2%80%8E-1146833a7
+X (Twitter)    https://x.com/Karinexshop
+Marktplatz-Mittelstand  https://www.marktplatz-mittelstand.de/hamburg/karinex-aYFe61.html
+goYellow       https://www.goyellow.de/home/computerzubehoer-software-karinex-hamburg--4q5kwq.html
+Blogger        https://karinexblog.blogspot.com
+Pinterest      https://de.pinterest.com/karinex99/
+ServiceOrca    https://serviceorca.com/de/business/karinex/detail
+Google Business https://maps.app.goo.gl/WqHn2t2QGLFz1vV99
+Gelbe Seiten   https://www.gelbeseiten.de/gsbiz/d9304227-2e31-48bd-9f13-c7b02bc12bf9
 ```
+
+### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
+
+```
+GitHub Gist    https://gist.github.com/judero01col/4eac6f01f3fe64a48924b229c6427f01
+Gutefrage      https://www.gutefrage.net/frage/wo-sollte-man-einen-windows-10-product-key-kaufen
+mydealz        https://www.mydealz.de/deals/microsoft-office-2024-professional-plus-2614838  (منتهي · nofollow · أعطى ترافيك مش DR)
+```
+
+> هدول روابط في محتوى/مجتمعات (مش بروفايلات). كمّل بهالأسلوب: إجابات مفيدة على
+> Gutefrage/Reddit + تعليقات بمحتوى تقني، مع رابط طبيعي وقت ما يكون مناسب.
 
 > استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
 > schema المؤسسة (`snippets/schema-organization.liquid`) — تحسين طفيف يربط
