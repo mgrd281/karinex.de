@@ -1,43 +1,58 @@
 {%- comment -%}
-  Karinex — client-side JS error logger.
-  Captures JS errors / unhandled rejections / failed resources into the
-  visitor's OWN localStorage only (key: karinex_error_log). No network calls,
-  no external service, no PII sent anywhere. Read by the Admin Health Dashboard
-  (sections/admin-health.liquid). Rendered globally from layout/theme.liquid.
+  Karinex — owner diagnostics: error logger + lazy launcher.
+
+  1) Error logger: captures JS errors / unhandled rejections / failed resources
+     into the visitor's OWN localStorage (key: karinex_error_log). No network,
+     no external service, no PII sent. Tiny, runs on every page.
+
+  2) Launcher: when the URL hash is "#kx-health", it lazy-loads the dashboard
+     asset (assets/admin-health.js) which renders a password-gated overlay with
+     SEO checks + the error log. Because it is a hash (#…), it is never sent to
+     the server, never appears in the sitemap, and is never indexed — so no
+     Shopify page is needed.
+
+  Open the dashboard via:  https://www.karinex.de/#kx-health
+  Change the password below (KX_HEALTH_PW). Obscurity-level only — the overlay
+  exposes no customer PII (only public SEO data + this device's JS errors).
+
+  Rendered globally from layout/theme.liquid.
 {%- endcomment -%}
 <script>
 (function () {
   if (window.__kxErrLog) return;
   window.__kxErrLog = true;
-  var KEY = 'karinex_error_log';
-  var MAX = 50;
 
-  function read() {
-    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; }
-  }
-  function save(list) {
-    try { localStorage.setItem(KEY, JSON.stringify(list.slice(-MAX))); } catch (e) {}
-  }
+  /* ── 1. Error logger ── */
+  var KEY = 'karinex_error_log', MAX = 50;
+  function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+  function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list.slice(-MAX))); } catch (e) {} }
   function add(entry) {
     var list = read();
     entry.t = Date.now();
     entry.page = location.pathname + location.search;
-    list.push(entry);
-    save(list);
+    list.push(entry); save(list);
   }
-
   window.addEventListener('error', function (e) {
-    if (e && e.message) {
-      add({ type: 'JS', msg: String(e.message), src: (e.filename || '') + (e.lineno ? ':' + e.lineno : '') });
-    } else if (e && e.target && (e.target.src || e.target.href)) {
-      add({ type: 'RESOURCE', msg: 'Ressource konnte nicht geladen werden', src: e.target.src || e.target.href });
-    }
+    if (e && e.message) add({ type: 'JS', msg: String(e.message), src: (e.filename || '') + (e.lineno ? ':' + e.lineno : '') });
+    else if (e && e.target && (e.target.src || e.target.href)) add({ type: 'RESOURCE', msg: 'Ressource konnte nicht geladen werden', src: e.target.src || e.target.href });
   }, true);
-
   window.addEventListener('unhandledrejection', function (e) {
     var r = e && e.reason;
-    var msg = (r && (r.message || r)) ? String(r.message || r) : 'Unhandled promise rejection';
-    add({ type: 'PROMISE', msg: msg, src: '' });
+    add({ type: 'PROMISE', msg: (r && (r.message || r)) ? String(r.message || r) : 'Unhandled promise rejection', src: '' });
   });
+
+  /* ── 2. Lazy dashboard launcher (secret hash) ── */
+  window.KX_HEALTH_PW = 'karinex-admin'; /* ← Passwort hier ändern */
+  function launch() {
+    if (window.__kxHealthLoaded) { window.dispatchEvent(new Event('kx-health-open')); return; }
+    window.__kxHealthLoaded = true;
+    var s = document.createElement('script');
+    s.src = {{ 'admin-health.js' | asset_url | json }};
+    s.defer = true;
+    document.body.appendChild(s);
+  }
+  function check() { if ((location.hash || '').toLowerCase().indexOf('kx-health') !== -1) launch(); }
+  check();
+  window.addEventListener('hashchange', check);
 })();
 </script>

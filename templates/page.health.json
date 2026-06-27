@@ -1,9 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "admin-health",
-      "settings": {}
-    }
-  },
-  "order": ["main"]
-}
