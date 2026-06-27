@@ -40,9 +40,24 @@
 | Medium / Blogger | **انشر مقالات** عن البرامج + رابط لمنتجاتك ⭐ |
 | YouTube | فيديو "كيف تثبّت Office" + رابط بالوصف |
 | GitHub Profile | رابط الموقع بالبروفايل |
+| Kundennote | اطلب تقييمات + أكمل البيانات |
+| Trustami | اطلب تقييمات + أكمل البيانات |
 | Pinterest / TikTok / X | انشر محتوى منتظم + رابط |
 
 > 🔑 **الأولوية:** التقييمات (Trustpilot, ProvenExpert, Google) + المحتوى (Medium, Blogger, YouTube) + Idealo (منتجات). هدول بينقلوا قيمة حقيقية.
+
+### 🔗 روابط ملفاتك المباشرة (للمراجعة + طلب التقييمات)
+
+```
+Kundennote     https://kundennote.com/app/profil/karinex
+Trustami       https://www.trustami.com/erfahrung/6829f06d7e78cde07a8b4568-bewertung
+ProvenExpert   https://www.provenexpert.com/de-de/karinex/
+Trusted Shops  https://www.trustedshops.de/bewertung/karinex.de
+```
+
+> استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
+> schema المؤسسة (`snippets/schema-organization.liquid`) — تحسين طفيف يربط
+> علامتك بملفاتك (اختياري، قلّي لو بدك أعمله).
 
 ---
 
