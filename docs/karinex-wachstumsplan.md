@@ -76,6 +76,21 @@ Gutefrage      https://www.gutefrage.net/frage/wo-sollte-man-einen-windows-10-pr
 mydealz        https://www.mydealz.de/deals/microsoft-office-2024-professional-plus-2614838  (منتهي · nofollow · أعطى ترافيك مش DR)
 ```
 
+### 📒 أدلّة/Citations إضافية مسجّل فيها (قيمة DR ≈ صفر — للتوثيق فقط)
+
+```
+Das Telefonbuch · werkenntdenBesten · KennstDuEinen · golocal
+Stadtbranchenbuch (Opendi) · Hotfrog · StadtBranche · Branchenbuch Deutschland
+Mister What · auskunft.de · BundesTelefonbuch · firmeneintrag.de · Suchnadel
+Backlinkklick · Webspider24 · Go-Findyou · Csearch · onlinestreet · mybox
+TikTok (@karinexshop) · Scamadviser · Reddit (r/microsoftoffice)
+بيانات صحفية: openpr.de · pressemitteilung.ws · lifepr.de · Das Örtliche
+```
+
+> ⚠️ **درس حاسم:** المالك مسجّل بـ **عشرات** هالأدلّة — ومع هيك **DR لسا 0.4**.
+> هاد **دليل قاطع** إنه أدلّة/Citations **لا تبني سلطة** (nofollow/ضعيفة جدًا).
+> **توقّف عن إضافة أدلّة** — اللي يرفع DR = روابط dofollow تحريرية فقط.
+
 > هدول روابط في محتوى/مجتمعات (مش بروفايلات). كمّل بهالأسلوب: إجابات مفيدة على
 > Gutefrage/Reddit + تعليقات بمحتوى تقني، مع رابط طبيعي وقت ما يكون مناسب.
 
