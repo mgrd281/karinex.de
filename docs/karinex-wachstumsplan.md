@@ -63,6 +63,7 @@ goYellow       https://www.goyellow.de/home/computerzubehoer-software-karinex-ha
 Blogger        https://karinexblog.blogspot.com
 Pinterest      https://de.pinterest.com/karinex99/
 ServiceOrca    https://serviceorca.com/de/business/karinex/detail
+Google Business https://maps.app.goo.gl/WqHn2t2QGLFz1vV99
 ```
 
 ### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
