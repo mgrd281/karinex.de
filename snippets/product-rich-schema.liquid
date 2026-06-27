@@ -60,6 +60,19 @@
   endif
 
   comment
+    AggregateRating — only emitted when the external review backend has
+    synced real values into Shopify metafields. No data → no stars (never
+    fake ratings). Backend writes: karinex.review_rating (decimal, e.g. 4.8)
+    and karinex.review_count (integer). See PR description for the mutation.
+  endcomment
+  assign rv_rating = product.metafields.karinex.review_rating
+  assign rv_count  = product.metafields.karinex.review_count | plus: 0
+  assign has_rating = false
+  if rv_rating != blank and rv_count > 0
+    assign has_rating = true
+  endif
+
+  comment
     Detect software vs general product so we can emit SoftwareApplication
     only when relevant (avoids polluting non-software entries).
   endcomment
@@ -164,7 +177,14 @@
             }
           }
         }
-      }
+      }{% if has_rating %},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ rv_rating }}",
+        "reviewCount": {{ rv_count }},
+        "bestRating": "5",
+        "worstRating": "1"
+      }{% endif %}
     }{% if is_software %},
     {
       "@type": "SoftwareApplication",
@@ -181,7 +201,14 @@
         "@type": "Organization",
         "name": {{ vendor_name | json }}
       },
-      "offers": { "@id": {{ offer_id | json }} }
+      "offers": { "@id": {{ offer_id | json }} }{% if has_rating %},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ rv_rating }}",
+        "reviewCount": {{ rv_count }},
+        "bestRating": "5",
+        "worstRating": "1"
+      }{% endif %}
     }{% endif %}{% if has_faq %},
     {
       "@type": "FAQPage",
