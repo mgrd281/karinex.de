@@ -59,6 +59,7 @@ Trustpilot     https://de.trustpilot.com/review/karinex.de
 LinkedIn       https://www.linkedin.com/in/karinex-%E2%80%8E-1146833a7
 X (Twitter)    https://x.com/Karinexshop
 Marktplatz-Mittelstand  https://www.marktplatz-mittelstand.de/hamburg/karinex-aYFe61.html
+goYellow       https://www.goyellow.de/home/computerzubehoer-software-karinex-hamburg--4q5kwq.html
 ```
 
 ### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
