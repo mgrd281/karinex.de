@@ -72,6 +72,7 @@ Gelbe Seiten   https://www.gelbeseiten.de/gsbiz/d9304227-2e31-48bd-9f13-c7b02bc1
 ```
 GitHub Gist    https://gist.github.com/judero01col/4eac6f01f3fe64a48924b229c6427f01
 Gutefrage      https://www.gutefrage.net/frage/wo-sollte-man-einen-windows-10-product-key-kaufen
+mydealz        https://www.mydealz.de/deals/microsoft-office-2024-professional-plus-2614838  (منتهي · nofollow · أعطى ترافيك مش DR)
 ```
 
 > هدول روابط في محتوى/مجتمعات (مش بروفايلات). كمّل بهالأسلوب: إجابات مفيدة على
