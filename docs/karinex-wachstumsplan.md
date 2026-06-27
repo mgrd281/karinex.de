@@ -55,6 +55,7 @@ ProvenExpert   https://www.provenexpert.com/de-de/karinex/
 Trusted Shops  https://www.trustedshops.de/bewertung/karinex.de
 Shopauskunft   https://www.shopauskunft.de/review/www.karinex.de
 YouTube        https://www.youtube.com/@kariinex
+Trustpilot     https://de.trustpilot.com/review/karinex.de
 ```
 
 > استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
