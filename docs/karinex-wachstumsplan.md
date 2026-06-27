@@ -60,6 +60,16 @@ LinkedIn       https://www.linkedin.com/in/karinex-%E2%80%8E-1146833a7
 X (Twitter)    https://x.com/Karinexshop
 ```
 
+### 🔗 روابط خلفية فعلية (أماكن ظهر فيها رابطك — مش ملفات)
+
+```
+GitHub Gist    https://gist.github.com/judero01col/4eac6f01f3fe64a48924b229c6427f01
+Gutefrage      https://www.gutefrage.net/frage/wo-sollte-man-einen-windows-10-product-key-kaufen
+```
+
+> هدول روابط في محتوى/مجتمعات (مش بروفايلات). كمّل بهالأسلوب: إجابات مفيدة على
+> Gutefrage/Reddit + تعليقات بمحتوى تقني، مع رابط طبيعي وقت ما يكون مناسب.
+
 > استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
 > schema المؤسسة (`snippets/schema-organization.liquid`) — تحسين طفيف يربط
 > علامتك بملفاتك (اختياري، قلّي لو بدك أعمله).
