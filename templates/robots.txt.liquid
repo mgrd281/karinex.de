@@ -19,6 +19,8 @@
   Disallow: /customer_authentication/
   Disallow: /authentication/oauth
   Disallow: /authentication/oauth?*
+  {# Customer account area — always 302s to the accounts flow, never indexable #}
+  Disallow: /account
   {# Vendor filter pages #}
   Disallow: /collections/vendors
   Disallow: /collections/vendors?*
