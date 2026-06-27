@@ -56,6 +56,8 @@ Trusted Shops  https://www.trustedshops.de/bewertung/karinex.de
 Shopauskunft   https://www.shopauskunft.de/review/www.karinex.de
 YouTube        https://www.youtube.com/@kariinex
 Trustpilot     https://de.trustpilot.com/review/karinex.de
+LinkedIn       https://www.linkedin.com/in/karinex-%E2%80%8E-1146833a7
+X (Twitter)    https://x.com/Karinexshop
 ```
 
 > استعمل هالروابط: (١) ابعتها لزبائنك ليتركوا تقييم. (٢) ضيفها بـ `sameAs` في
