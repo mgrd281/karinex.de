@@ -60,17 +60,13 @@
   endif
 
   comment
-    AggregateRating — only emitted when the external review backend has
-    synced real values into Shopify metafields. No data → no stars (never
-    fake ratings). Backend writes: karinex.review_rating (decimal, e.g. 4.8)
-    and karinex.review_count (integer). See PR description for the mutation.
+    AggregateRating intentionally NOT emitted. The Shopify metafields
+    karinex.review_rating / review_count held non-credible values (flat 5.0
+    with 400-500+ reviews per product, while independent platforms show
+    ~4.3 / 68 total). Serving that as rich-result review stars is a UWG
+    (fake-review) and Google-policy risk. Re-enable ONLY once the backend
+    syncs the real aggregate (e.g. the verified Trusted Shops rating/count).
   endcomment
-  assign rv_rating = product.metafields.karinex.review_rating
-  assign rv_count  = product.metafields.karinex.review_count | plus: 0
-  assign has_rating = false
-  if rv_rating != blank and rv_count > 0
-    assign has_rating = true
-  endif
 
   comment
     Detect software vs general product so we can emit SoftwareApplication
@@ -163,14 +159,7 @@
             }
           }
         }
-      }{% if has_rating %},
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ rv_rating }}",
-        "reviewCount": {{ rv_count }},
-        "bestRating": "5",
-        "worstRating": "1"
-      }{% endif %}
+      }
     }{% if is_software %},
     {
       "@type": "SoftwareApplication",
@@ -187,14 +176,7 @@
         "@type": "Organization",
         "name": {{ vendor_name | json }}
       },
-      "offers": { "@id": {{ offer_id | json }} }{% if has_rating %},
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ rv_rating }}",
-        "reviewCount": {{ rv_count }},
-        "bestRating": "5",
-        "worstRating": "1"
-      }{% endif %}
+      "offers": { "@id": {{ offer_id | json }} }
     }{% endif %}{% if has_faq %},
     {
       "@type": "FAQPage",
