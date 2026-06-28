@@ -30,22 +30,35 @@
         {%- assign _expected = 'sv' -%}
       {%- endif -%}
 
-      {%- if _expected != _cur_locale -%}
-        {%- assign _path = request.path -%}
+      {%- comment -%}
+        Does the current URL already carry an explicit locale prefix
+        (e.g. /pt/, /nl/, /da/, /sv/)? If so, the visitor — OR Googlebot / the
+        Google Shopping feed crawler — explicitly requested that locale, so we
+        must NOT auto-redirect away from it.
+
+        WHY (Merchant Center fix): the old code redirected EVERY localized
+        landing page whose geo-expected locale differed (e.g. /pt/products/x →
+        /en/products/x). Google Merchant crawls the exact feed URL, saw it
+        redirect, and flagged ~all non-DE products as "Product page
+        unavailable" (179 disapprovals). It also bounced legitimate localized
+        traffic out of its own market. We now ONLY auto-localize from the
+        default (no-prefix) URLs; explicit locale URLs are served as-is.
+      {%- endcomment -%}
+      {%- assign _req_seg = request.path | split: '/' -%}
+      {%- assign _req_locale = _req_seg[1] | default: '' -%}
+      {%- assign _known_locales = 'en,pl,sv,da,nl,fr,it,es,cs,hu,ro,sk,fi,el,pt' | split: ',' -%}
+      {%- assign _on_locale_url = false -%}
+      {%- if _known_locales contains _req_locale -%}
+        {%- assign _on_locale_url = true -%}
+      {%- endif -%}
+
+      {%- if _expected != _cur_locale and _on_locale_url == false -%}
         {%- comment -%}
-          Strip ANY known locale prefix (en/pl/sv/da/nl/fr/it/es/cs/hu/ro/sk/fi/el/pt)
-          from the front of the path before re-prepending the expected one.
-          Without this, visiting /sv/products/x with _expected='en' produced
-          /en/sv/products/x (404 → flooded the Ahrefs broken-link report).
+          We are on a default (no-prefix → de) URL and the visitor's geo wants a
+          different language. Build the localized target. No locale-prefix
+          stripping is needed here because no-prefix paths never carry one.
         {%- endcomment -%}
-        {%- assign _path_first = _path | split: '/' | first | append: '|' -%}
-        {%- assign _path_seg = _path | split: '/' -%}
-        {%- assign _path_locale = _path_seg[1] | default: '' -%}
-        {%- assign _known_locales = 'en,pl,sv,da,nl,fr,it,es,cs,hu,ro,sk,fi,el,pt' | split: ',' -%}
-        {%- if _known_locales contains _path_locale -%}
-          {%- assign _strip = '/' | append: _path_locale -%}
-          {%- assign _path = _path | remove_first: _strip -%}
-        {%- endif -%}
+        {%- assign _path = request.path -%}
         {%- if _path == blank -%}{%- assign _path = '/' -%}{%- endif -%}
 
         {%- if _expected == 'de' -%}
