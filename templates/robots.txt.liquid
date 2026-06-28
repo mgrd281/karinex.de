@@ -24,6 +24,15 @@
   {# Vendor filter pages #}
   Disallow: /collections/vendors
   Disallow: /collections/vendors?*
+  {# Product-recommendation tracking params (pr_*) create duplicate URLs of real
+     products. Google crawls them but never indexes them ("Crawled - currently not
+     indexed", ~1500 URLs) — pure crawl-budget waste. Block crawling; the clean
+     product URLs (no params) stay fully crawlable & indexable. #}
+  Disallow: /*pr_prod_strat=
+  Disallow: /*pr_rec_pid=
+  Disallow: /*pr_rec_id=
+  Disallow: /*pr_ref_pid=
+  Disallow: /*pr_seq=
 
   {%- if group.sitemap != blank -%}
     {{ group.sitemap }}
