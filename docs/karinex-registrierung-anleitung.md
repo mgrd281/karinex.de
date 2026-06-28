@@ -101,6 +101,7 @@ Karinex ist ein in Hamburg ansässiger Online-Shop für digitale Software-Lizenz
 | ProvenExpert | https://www.provenexpert.com/de-de/karinex/ |
 | Google (Maps) | https://maps.app.goo.gl/WqHn2t2QGLFz1vV99 |
 | Trusted Shops | https://www.trustedshops.de/bewertung/karinex.de |
+| TrustProfile | https://www.trustprofile.com/webshop/karinex_4213778?lang=deu |
 
 **نص جاهز ترسله للزبون بعد الشراء** (DE):
 ```
