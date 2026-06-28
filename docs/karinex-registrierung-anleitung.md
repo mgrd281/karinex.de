@@ -192,7 +192,7 @@ oder Live-Chat weiter.
 |---|---|---|
 | **Wikidata** | https://www.wikidata.org | كيان (Item) باسم "Karinex": الوصف الطويل + الموقع + Hamburg |
 | **Crunchbase** | https://www.crunchbase.com | صفحة شركة: Stammdaten + الوصف الطويل + اللوغو |
-| **About.me** | https://about.me | بروفايل + Bio القصير + رابط karinex.de |
+| **About.me** ✅ | https://about.me/karinex | **مسجّل مسبقًا** — بس تأكد الوصف + رابط karinex.de محدّثين |
 
 ### ملفاتك الموجودة — **أكملها فقط، لا تسجّل من جديد**
 
