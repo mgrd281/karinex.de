@@ -41,12 +41,12 @@ USt-IdNr:          DE452578048
 Website:           https://www.karinex.de
 Servicezeiten:     Mo–Fr 10:00–18:00 Uhr
 Gegründet:         2020
-Shop-Start:        März 2025  (Online-Shop aktiv seit > 1 Jahr)
+Shop-Start:        18. März 2025  (Online-Shop aktiv seit > 1 Jahr)
 Branche/Kategorie: Software / Software-Lizenzen / E-Commerce
 Handelsregister:   (leer lassen — Kleinunternehmer, nicht im HR)
 ```
 
-> 📅 **ملاحظة مهمة:** المتجر (Online-Shop) شغّال من **März 2025** = أكثر من سنة.
+> 📅 **ملاحظة مهمة:** المتجر (Online-Shop) شغّال من **18. März 2025** = أكثر من سنة.
 > فهو **مش جديد**. بس مهم تعرف: العمر وحده **ما يبني DR** — اللي يبنيه = الروابط.
 > سنة بالعمر + روابط قليلة = DR ضعيف. ركّز على الروابط الحقيقية + المبيعات.
 
