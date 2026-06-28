@@ -274,11 +274,12 @@ TikTok       https://www.tiktok.com/@karinexshop
 - كل بيان فيه **رابط dofollow** لـ karinex.de → يرفع DR تدريجيًا.
 
 ### زوايا جاهزة (نوّع — لا تكرّر)
-1. ~~"Microsoft-Lizenzen günstig + 100 Tage Garantie"~~ (نُشر سابقًا — لا تعيده)
-2. **"Windows 10 Support ausgelaufen → Windows 11 Umstieg"** (الجاي)
-3. "Visual Studio 2026 Professional jetzt bei Karinex verfügbar" (إطلاق منتج)
+1. ~~"Microsoft-Lizenzen günstig + 100 Tage Garantie"~~ (نُشر على openPR سابقًا — لا تعيده)
+2. ~~"Windows 10 Support ausgelaufen → Windows 11 Umstieg"~~ (نُشر على openPR **28.06.2026** — لا تعيده)
+3. **"Visual Studio 2026 Professional jetzt bei Karinex verfügbar"** (الجاي — إطلاق منتج)
 4. "Office 2024 vs Microsoft 365 – Karinex erklärt die Unterschiede"
 5. "Windows Server 2025 bei Karinex erhältlich"
+6. (أضف زوايا جديدة كل مرة — أخبار/مواسم/منتجات)
 
 > الكاتب = Claude (نطلب منه بيان جديد كل مرة). المالك بس **ينسخ-يلصق-ينشر**.
 
