@@ -959,13 +959,17 @@
         // 4. Fallback patterns (regex-based)
         if (!redirectUrl) {
           const redirectRules = [
-            // Product patterns - keep users on an indexable shopping page
-            { pattern: /\/products\/(.+)/, redirect: () => '/collections/all' },
-            
-            // Collection patterns
-            { pattern: /\/collections\/(.+)/, redirect: () => '/collections/all' },
-            
-            // Common typos & old URLs
+            // NOTE (SEO): the generic "/products/(.+)" and "/collections/(.+)" →
+            // /collections/all catch-alls were REMOVED. They turned every DELETED
+            // product/collection URL into a soft-redirect to a live 200 page, so
+            // Google treated the dead URL as "still alive" and kept it indexed for
+            // months (deleted watches/LEGO lingered in search). Unknown product/
+            // collection URLs now fall through to a clean 404 (suggestions are still
+            // shown below). Specific, confident redirects — model number, dictionary,
+            // fuzzy match, and the keyword→category rules below — are kept, so renamed
+            // CORE products (windows/office) still land on the right category.
+
+            // Common typos & old URL structures (legacy German paths)
             { pattern: /\/(produkte?|artikel|shop)\/(.+)/, redirect: () => '/collections/all' },
             { pattern: /\/(kategorie|category)\/(.+)/, redirect: () => '/collections/all' },
             
@@ -1018,11 +1022,10 @@
                 `;
               }
               
-              // Auto-redirect to first product after 3 seconds
-              redirectUrl = products[0].url;
-              setTimeout(() => {
-                window.location.href = redirectUrl;
-              }, 3000);
+              // Show suggestions only — do NOT auto-redirect. Auto-redirecting a
+              // dead URL to a search result is a soft-404 that keeps the deleted
+              // page in Google's index. The visitor can click a suggestion above;
+              // the URL keeps its clean 404 status for crawlers.
             } else {
               // No products found, remove loading notice
               const notice = document.getElementById('smart-redirect-notice');
