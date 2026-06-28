@@ -151,9 +151,23 @@ Google Merchant رفض **~179 منتج** برسالة **"Produktseite nicht verf
 - **شو تعمل:** افتح Translate & Adapt → اختر لغة (Dänisch/Niederländisch/Portugiesisch/
   Schwedisch) → **Auto-translate** → كرّر لكل لغة. مجاني.
 
+### 🗑️ منتجات محذوفة كانت عالقة بجوجل — ✅ انحلّت (28.06.2026)
+منتجات غير-برامج (ساعات/LEGO/Battlefield) محذوفة من المتجر من ٣ شهور، بس ضلّت تظهر
+بجوجل لأن صفحة 404 كانت **تحوّلها** لـ `/collections/all` (soft-404) → جوجل ما حذفها.
+- **الحل #١ (PR #376):** صفحة 404 بطّلت تحوّل المنتجات المحذوفة → 404 نظيفة.
+- **الحل #٢ (يدوي، تمّ):** المالك حذف الـ٨ روابط عبر **GSC → Entfernen** (28.06).
+الروابط الـ٨ (مأكّدة من Merchant، للأرشيف):
+```
+/products/battlefield-6-standard-edition-ps5-deutsch
+/products/daniel-wellington-classic-black-dw00100127
+/products/diesel-chronograph-mega-chief-dz4329
+/products/lego-disney-simba-43243-baubares-simba-spielset
+/products/michael-kors-darci-mk3191
+/products/michael-kors-pyper-mk4339-damen-uhr
+/collections/luxus-uhren  +  /en/collections/luxus-uhren
+```
+
 ### 📊 مشاكل Merchant الباقية (أقل أهمية)
-- **Missing product price** (DE): منتجات غير-برامج بدون سعر (Battlefield PS5, LEGO,
-  ساعات Daniel Wellington/Diesel/Michael Kors) → حط سعر أو شيلهم.
 - **Unable to show image**: Office 2024 Standard Mac — صورة AVIF (جوجل ما يدعمها) →
   استبدلها JPG/PNG.
 
