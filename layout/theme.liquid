@@ -298,7 +298,14 @@ aside#usercentrics-cmp-ui{position:fixed!important;z-index:2147483647!important;
 
     {% section 'global-sale-bar' %}
     {%- render 'affiliate-bar' -%}
-    {%- render 'karinex-lang-suggestion-banner' -%}
+    {%- comment -%}
+      Language-suggestion banner ("Ihr Browser ist auf Deutsch eingestellt /
+      Auf Deutsch wechseln") disabled at the merchant's request — it nagged
+      visitors to switch language and cluttered the top of translated pages.
+      Snippet kept in snippets/karinex-lang-suggestion-banner.liquid; re-enable
+      by restoring the render below if ever wanted.
+    {%- endcomment -%}
+    {%- comment -%}{%- render 'karinex-lang-suggestion-banner' -%}{%- endcomment -%}
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
     {% render 'screen-reader-announcements' %}
     <div id="header-group">
