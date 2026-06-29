@@ -346,7 +346,13 @@
 {% assign tomorrow_ts_global = 'now' | date: '%s' | plus: 86400 %}
 {% assign seconds_14d = 100 | times: 86400 %}
 {% assign return_until_ts_global = tomorrow_ts_global | plus: seconds_14d %}
-{% assign german_months_global = 'Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember' | split: ',' %}
+{%- case request.locale.iso_code -%}
+  {%- when 'nl' -%}{% assign loc_months_str = 'januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december' %}
+  {%- when 'en' -%}{% assign loc_months_str = 'January,February,March,April,May,June,July,August,September,October,November,December' %}
+  {%- when 'pl' -%}{% assign loc_months_str = 'stycznia,lutego,marca,kwietnia,maja,czerwca,lipca,sierpnia,września,października,listopada,grudnia' %}
+  {%- else -%}{% assign loc_months_str = 'Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember' %}
+{%- endcase -%}
+{% assign german_months_global = loc_months_str | split: ',' %}
 {% assign month_index_bis = return_until_ts_global | date: '%-m' | minus: 1 %}
 {% assign month_name_bis = german_months_global[month_index_bis] %}
 {% assign day_bis = return_until_ts_global | date: '%-d' %}
@@ -422,7 +428,13 @@
   {% if found_ts == '' %}
     {% assign found_ts = now_ts | plus: 86400 %}
   {% endif %}
-  {% assign german_months = 'Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember' | split: ',' %}
+  {%- case request.locale.iso_code -%}
+    {%- when 'nl' -%}{% assign loc_months_str2 = 'januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december' %}
+    {%- when 'en' -%}{% assign loc_months_str2 = 'January,February,March,April,May,June,July,August,September,October,November,December' %}
+    {%- when 'pl' -%}{% assign loc_months_str2 = 'stycznia,lutego,marca,kwietnia,maja,czerwca,lipca,sierpnia,września,października,listopada,grudnia' %}
+    {%- else -%}{% assign loc_months_str2 = 'Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember' %}
+  {%- endcase -%}
+  {% assign german_months = loc_months_str2 | split: ',' %}
   {% assign month_index = found_ts | date: '%-m' | minus: 1 %}
   {% assign month_name = german_months[month_index] %}
   {% assign day = found_ts | date: '%-d' %}
@@ -895,8 +907,8 @@
            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
          </button>
                   <div class="video-modal__tabs">
-           <button class="video-modal__tab is-active" data-tab="videos">VIDEOS</button>
-           <button class="video-modal__tab" data-tab="bilder">BILDER</button>
+           <button class="video-modal__tab is-active" data-tab="videos">{%- case request.locale.iso_code -%}{%- when 'nl' -%}VIDEO'S{%- when 'pl' -%}FILMY{%- else -%}VIDEOS{%- endcase -%}</button>
+           <button class="video-modal__tab" data-tab="bilder">{%- case request.locale.iso_code -%}{%- when 'nl' -%}AFBEELDINGEN{%- when 'en' -%}IMAGES{%- when 'pl' -%}ZDJĘCIA{%- else -%}BILDER{%- endcase -%}</button>
          </div>
                   <div class="video-modal__panel video-modal__panel--videos is-active" data-panel="videos">
            <div class="video-modal__body">
