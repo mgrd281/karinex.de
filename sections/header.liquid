@@ -651,7 +651,7 @@
                 {%- endcapture -%}
                 {%- if _reco_count > 0 -%}
                   <div id="cart-drawer-recommendations" class="cart-section cart-section--4 cart-reco-wrapper">
-                    <p class="cart-reco-header">Wird oft zusammen gekauft</p>
+                    <p class="cart-reco-header">{%- case request.locale.iso_code -%}{%- when 'nl' -%}Vaak samen gekocht{%- when 'en' -%}Frequently bought together{%- when 'pl' -%}Często kupowane razem{%- else -%}Wird oft zusammen gekauft{%- endcase -%}</p>
                     <div class="cart-reco-scroll">
                       {{ _reco_cards }}
                     </div>
