@@ -328,5 +328,324 @@
       "default_title": "Standaardtitel",
       "sticky_add_to_cart": "Balk voor snel toevoegen aan winkelwagen"
     }
+  },
+  "karinex": {
+    "product": {
+      "add_to_cart": "In winkelwagen",
+      "buy_now": "Nu kopen",
+      "notify_when_available": "Bericht bij beschikbaarheid",
+      "notify_description": "We kunnen je een bericht sturen zodra het product weer beschikbaar is.",
+      "notify_back_in_stock_body": "Stuur mij een bericht zodra weer beschikbaar:",
+      "tax_incl": "incl. btw",
+      "tax_shipping_incl": "incl. btw, excl. verzendkosten",
+      "lightning_shipping_label": "Bliksemsnelle levering:",
+      "delivery_email": "Direct na aankoop per e-mail",
+      "fast_free_shipping_de": "Snelle & gratis verzending vanuit DE",
+      "instant_download": "Directe download",
+      "available_after_purchase": "Direct na aankoop beschikbaar",
+      "available_after_payment": "Direct na ontvangst van betaling beschikbaar.",
+      "free_shipping": "Gratis verzending",
+      "fast_digital_delivery": "Snelle & digitale levering per e-mail",
+      "free_shipping_and_returns": "Gratis verzending & retournering",
+      "shipping_description": "Uw bestelling wordt veilig verpakt en verzekerd met DHL verzonden. De levertijd bedraagt doorgaans 1–3 werkdagen.",
+      "days_returns": "{{ days }} dagen retourrecht",
+      "free_returns_until": "Gratis retourneren mogelijk tot:",
+      "free_returns_within": "Gratis retourneren binnen {{ days }} dagen",
+      "returns_within": "Retourneren binnen {{ days }} dagen",
+      "free_delivery_by": "Gratis levering",
+      "system_requirements": "Systeemvereisten",
+      "delivery_and_returns": "Levering & retour",
+      "delivery_tab": "Levering",
+      "warranty": "Garantie",
+      "buy_now_alt_suffix": "Nu kopen bij",
+      "color_sold_out": "Jouw kleur is uitverkocht",
+      "your_email": "Jouw e-mailadres",
+      "please_enter_email": "Voer je e-mailadres in",
+      "buy_now_instant": "Direct kopen",
+      "pay_now_paypal": "Direct met PayPal betalen",
+      "lightning_email": "Bliksemsnelle levering per e-mail"
+    },
+    "related": {
+      "categories_heading": "Gerelateerde categorieën",
+      "complementary_heading": "Dit heb je ook nodig",
+      "view_all": "Alles bekijken"
+    },
+    "trust": {
+      "authorized_dealer": "Gecontroleerde originele producten – verzending vanuit Duitsland",
+      "original_and_authenticity": "Gecontroleerde originele producten & echtheidsgarantie",
+      "official_invoice": "Officiële factuur met btw",
+      "shipping_1_3_days": "Verzending in 1–3 werkdagen vanuit DE",
+      "secure_shipping_de": "Veilige verzending vanuit Duitsland",
+      "legal_license": "100% legale & ongebruikte licentie",
+      "activation_support": "Ondersteuningsgarantie bij activering",
+      "express_insured_de": "Verzekerde expresverzending vanuit DE",
+      "new_in_ovp": "100% nieuw in verzegelde verpakking",
+      "collector_protection": "Verzamelaarsbescherming: veilig verpakt",
+      "factory_sealed": "Fabrieksnieuw & verzegeld",
+      "german_version_usk": "Duitse handelsversie (USK)",
+      "key_via_email": "Productsleutel direct per e-mail"
+    },
+    "meta": {
+      "age_check_label": "Leeftijdscontrole:",
+      "age_check_value": "Vereist (vanaf 18)",
+      "availability_label": "Beschikbaarheid:",
+      "deliverable_label": "Leverbaar:",
+      "ship_email_after_payment": "Verzending per e-mail direct na betaling",
+      "in_1_3_days": "in 1–3 werkdagen bij je",
+      "before_christmas": "(vóór kerst)",
+      "after_christmas": "(na kerst)",
+      "not_available": "Niet beschikbaar",
+      "brand_label": "Merk:",
+      "see_all_from_vendor": "Alle producten van {{ vendor }} bekijken",
+      "article_number_label": "Artikelnummer:",
+      "ean_label": "EAN:",
+      "preorder": "Voorbestelling",
+      "ship_on": "Verzending op",
+      "download_guide_label": "Downloadhandleiding:",
+      "download_guide_value": "inbegrepen in de bevestigingsmail",
+      "one_time_payment_label": "Eenmalige betaling:",
+      "one_time_payment_value": "geen vervolgkosten",
+      "legally_verified_label": "Juridisch gecontroleerd:",
+      "legally_verified_value": "AVG-conform & Duitse voorwaarden",
+      "customer_service_label": "Klantenservice:",
+      "customer_service_value": "Duits · 24/7 bereikbaar",
+      "question_about_article": "Vraag over het artikel",
+      "price_savings_label": "Prijsvoordeel:",
+      "sold_last_30_days": "verkocht in de afgelopen 30 dagen",
+      "last_purchase_from": "Laatste aankoop uit",
+      "reviews_suffix": "beoordelingen"
+    },
+    "faq": {
+      "heading": "Veelgestelde vragen",
+      "subheading_digital": "Snelle antwoorden over Microsoft-licenties",
+      "q1": "Hoe snel ontvang ik mijn licentiesleutel?",
+      "q2": "Zijn de licenties origineel en legaal?",
+      "q3": "Wat als de activering niet werkt?",
+      "q4": "Verloopt de licentie op een gegeven moment?",
+      "q5": "Ontvang ik een factuur met btw voor mijn boekhouding?",
+      "q6": "Hoe is de niet-goed-geld-terug-garantie geregeld?",
+      "a1": "Direct. Meteen na een geslaagde betaling wordt uw productsleutel automatisch gegenereerd en binnen 30–60 seconden per e-mail bezorgd – inclusief downloadlink en stapsgewijze handleiding.",
+      "a2": "Ja, 100%. Wij verkopen uitsluitend originele, ongebruikte Microsoft-sleutels op basis van het uitputtingsbeginsel van het EU-recht (HvJ-arrest C-128/11) – legaal door te verkopen en gecertificeerd voor permanent gebruik.",
+      "a3": "U ontvangt gratis een nieuwe sleutel – net zo vaak tot u succesvol kunt activeren. Onze Duitstalige klantenservice helpt per e-mail, WhatsApp of livechat – meestal binnen 10 minuten.",
+      "a4": "Nee. Het betreft een permanente licentie zonder abonnement, zonder vervolgkosten en zonder tijdslimiet. Eenmalig kopen, permanent gebruiken.",
+      "a5": "Ja. Een pdf-factuur met afzonderlijk vermelde btw (19%) wordt automatisch samen met de licentiesleutel verzonden – volledig aftrekbaar.",
+      "a6": "Bij niet-geactiveerde digitale licenties betalen wij de aankoopprijs binnen 100 dagen volledig terug. Reeds geactiveerde sleutels zijn van terugbetaling uitgesloten."
+    },
+    "similar": {
+      "kicker": "Dit vind je misschien ook leuk",
+      "heading": "Vergelijkbare producten"
+    },
+    "feedback": {
+      "heading": "Korte vraag over onze pagina",
+      "subheading": "Heeft u alle informatie gevonden die u nodig had?"
+    },
+    "footer": {
+      "newsletter_heading": "Nieuwsbrief",
+      "newsletter_pitch": "Meld je aan en ontvang je welkomstbon van 10 EUR.",
+      "newsletter_email_placeholder": "Jouw e-mailadres",
+      "newsletter_subscribe_btn": "Abonneren & 10 € ontvangen",
+      "follow_us": "Volg ons",
+      "our_seals_partners": "Onze keurmerken & partners",
+      "legal_heading": "Juridisch",
+      "categories_heading": "Categorieën",
+      "help_heading": "Hulp & info",
+      "contact_heading": "Contact",
+      "hours": "Ma–vr 10:00–18:00 uur (lokale tijd Duitsland)",
+      "live_chat": "Livechat-ondersteuning",
+      "whatsapp_business": "WhatsApp Business",
+      "copyright": "© {{ year }} KARINEX – Alle rechten voorbehouden",
+      "free_consultation": "Gratis advies",
+      "agb": "Algemene voorwaarden",
+      "widerrufsrecht": "Herroepingsrecht",
+      "datenschutz": "Privacybeleid",
+      "impressum": "Colofon",
+      "legal_notices": "Juridische informatie",
+      "warranty": "Garantie",
+      "partner_program": "Partnerprogramma",
+      "rewards_program": "Rewards-programma",
+      "faq": "FAQ",
+      "shipping_delivery": "Verzending & levering",
+      "payment_methods": "Betaalmethoden",
+      "returns_exchanges": "Retouren & ruilen",
+      "about_us": "Over ons",
+      "blog": "Blog",
+      "seals_certificates": "Certificaten & keurmerken",
+      "cookie_policy": "Cookiebeleid",
+      "cookies": "Cookies",
+      "newsletter": "Nieuwsbrief",
+      "popular_products": "Populaire producten",
+      "about_heading": "Over ons",
+      "about_body_html": "Originele licenties. Direct inzetbaar. Persoonlijk begeleid. KARINEX levert gecontroleerde softwarelicenties voor particulieren en zakelijke klanten – veilig, snel en transparant.<br><br>✓ 30 dagen tevredenheidsgarantie bij niet-geactiveerde licenties"
+    },
+    "header": {
+      "contact_help": "Contact & hulp"
+    },
+    "announcement": {
+      "watches": "Gecontroleerde echtheid. Volledige garantie. Verzekerde verzending.",
+      "digital": "100% legale licenties. Bliksemsnelle levering & Duitstalige ondersteuning."
+    },
+    "countdown": {
+      "days": "DAGEN",
+      "hours": "UUR",
+      "minutes": "MIN",
+      "seconds": "SEC"
+    },
+    "tabs": {
+      "description": "Beschrijving",
+      "functions": "Functies",
+      "product_details": "Productdetails",
+      "read_more": "meer lezen",
+      "read_less": "minder weergeven"
+    },
+    "cta": {
+      "no_subscription": "GEEN ABONNEMENT",
+      "no_subscription_desc": "Eenmalige betaling, geen verborgen kosten",
+      "instant_download_title": "DIRECTE DOWNLOAD",
+      "ready_to_go_heading": "Direct klaar voor gebruik.",
+      "ready_to_go_text": "100% legale licentiesleutels per e-mail binnen enkele seconden. Direct downloaden & activeren inclusief Duitstalige ondersteuning. Juridisch gecontroleerd.",
+      "download_now_btn": "Nu downloaden",
+      "write_review": "Beoordeling schrijven",
+      "view_offer": "Naar de aanbieding",
+      "buy_now": "Nu kopen",
+      "price_from": "Vanaf"
+    },
+    "countdown_long": {
+      "days": "DAGEN",
+      "hours": "UREN",
+      "minutes": "MINUTEN",
+      "seconds": "SECONDEN"
+    },
+    "deals": {
+      "heading": "Actuele deals voor jou",
+      "subheading": "Onze beste prijzen voor u",
+      "price_from": "vanaf"
+    },
+    "panels": {
+      "instant_download_after_purchase": "Directe download na aankoop",
+      "legal_original_key": "100% legale & originele licentiesleutel",
+      "perpetual_no_subscription": "Permanente licentie – geen abonnement, geen maandelijkse kosten",
+      "easy_online_activation": "Eenvoudige online activering met handleiding",
+      "manufacturer_label": "Fabrikant:",
+      "article_type_label": "Artikeltype:"
+    },
+    "sale_banner": {
+      "top_text": "Super sale: tot 60% korting",
+      "hero_label": "MEI SALE"
+    },
+    "recently_viewed": {
+      "eyebrow": "Ga verder waar je gebleven was",
+      "heading": "Onlangs bekeken artikelen",
+      "previous": "Vorige",
+      "next": "Volgende"
+    },
+    "reviews": {
+      "heading": "Klantbeoordelingen",
+      "tab_reviews": "Beoordelingen",
+      "tab_gallery": "Galerij",
+      "reviews_count_suffix": "beoordelingen",
+      "write_review_btn": "Beoordeling schrijven"
+    },
+    "feedback_form": {
+      "title_sad": "Dat spijt ons. Wat kunnen we beter doen?",
+      "placeholder": "Laat hier uw feedback achter...",
+      "submit": "Verzenden",
+      "explanation": "We gebruiken uw feedback om onze productpagina's te verbeteren. We kunnen u helaas geen persoonlijke reactie geven. Wilt u contact met ons opnemen, neem dan gerust contact op met onze klantenservice.",
+      "to_customer_service": "naar de klantenservice",
+      "aria_textarea": "Uw feedback",
+      "title_happy": "Wat fijn! Heeft u nog meer suggesties?"
+    },
+    "cards": {
+      "coupon": "Kortingsbon"
+    },
+    "cart": {
+      "heading": "Winkelwagen",
+      "reserved_for": "Winkelwagen gereserveerd voor",
+      "instant_delivery_email": "Direct leverbaar per e-mail",
+      "recently_viewed": "Onlangs bekeken",
+      "checkout": "Afrekenen",
+      "in_cart": "In winkelwagen",
+      "add_to_cart_aria": "{{ title }} aan winkelwagen toevoegen",
+      "reviews_count": "{{ count }} beoordelingen"
+    },
+    "widerruf": {
+      "consent": "Ik ga er uitdrukkelijk mee akkoord dat met de uitvoering van de overeenkomst wordt begonnen vóór het verstrijken van de herroepingstermijn. Ik weet dat mijn herroepingsrecht vervalt zodra de uitvoering van de overeenkomst begint.",
+      "required": "Bevestig de verklaring om af te rekenen."
+    },
+    "breadcrumb": {
+      "home": "Startpagina",
+      "back_to_home": "Naar de startpagina",
+      "back": "Terug naar de startpagina"
+    },
+    "p404": {
+      "title": "Oeps! Deze pagina bestaat niet",
+      "text": "De gewenste pagina is verplaatst of bestaat niet meer. Geen probleem – wij helpen je verder!",
+      "search_placeholder": "Wat zoekt u? bijv. Windows 11, Office 2024…",
+      "search_aria": "Zoeken",
+      "search_btn_aria": "Zoeken",
+      "all_products": "Alle producten",
+      "popular_categories": "Populaire categorieën",
+      "popular_products": "Populaire producten",
+      "popular_products_subtitle": "Deze producten zijn misschien interessant voor je",
+      "help_heading": "Hulp nodig?",
+      "help_text": "Onze klantenservice helpt je graag verder.",
+      "help_chat": "Livechat",
+      "help_email": "E-mail sturen",
+      "help_faq": "FAQ bekijken",
+      "contact": "Contact"
+    },
+    "badge": {
+      "sale_price": "Actieprijs",
+      "only_today": "Alleen vandaag",
+      "mega": "MEGA",
+      "sale": "SALE"
+    },
+    "location": {
+      "hamburg_germany": "Hamburg Duitsland"
+    },
+    "wishlist": {
+      "categories": "Categorieën",
+      "title": "Verlanglijst",
+      "aria_show_all": "Alle verlanglijst-artikelen weergeven",
+      "sort": "Sorteren",
+      "sort_newest": "Nieuwste eerst",
+      "sort_popular": "Populairste",
+      "sort_price_asc": "Prijs oplopend",
+      "sort_price_desc": "Prijs aflopend",
+      "sort_brand": "Merk A–Z",
+      "loading": "Laden...",
+      "empty_title": "Je verlanglijst is nog leeg.",
+      "empty_text": "Bewaar je favoriete producten voor later.",
+      "shop_now": "Nu winkelen",
+      "all_products": "Alle producten",
+      "remove": "Verwijderen",
+      "error": "Fout",
+      "sale": "Sale"
+    },
+    "shipping_card": {
+      "direct_email": "Direct per e-mail",
+      "license_via_email": "Licentiesleutel per e-mail",
+      "instantly_available": "Direct beschikbaar",
+      "until_key_delivery": "tot levering sleutel",
+      "free_badge": "Gratis",
+      "days_business": "{{ days }} werkdagen",
+      "fast_delivery": "Snelle levering",
+      "days_return": "{{ days }} dagen retourrecht"
+    },
+    "accordion": {
+      "product_description": "Productbeschrijving",
+      "faq": "Veelgestelde vragen",
+      "shipping_returns": "Verzending & retour",
+      "delivery_notes": "Levering & informatie"
+    },
+    "reviews_widget": {
+      "customer": "Klant",
+      "verified_purchase": "Geverifieerde aankoop",
+      "was_helpful": "Was deze beoordeling nuttig?",
+      "ago_days": "{{ n }} dagen geleden",
+      "ago_weeks": "{{ n }} weken geleden",
+      "ago_months": "{{ n }} maanden geleden",
+      "ago_years": "{{ n }} jaar geleden",
+      "just_now": "zojuist"
+    }
   }
 }
