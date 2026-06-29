@@ -273,12 +273,16 @@ TikTok       https://www.tiktok.com/@karinexshop
 - **خبر/بيان كل ٤-٦ أسابيع**، كل مرة **زاوية مختلفة** (إطلاق منتج، خبر تقني، مناسبة).
 - كل بيان فيه **رابط dofollow** لـ karinex.de → يرفع DR تدريجيًا.
 
-### 🔗 بيانات منشورة فعليًا (روابط backlink — للأرشيف)
-- **openPR (28.06.2026)** — Windows 10 → Windows 11:
-  https://www.openpr.de/news/1316307/Windows-10-Support-ausgelaufen-Karinex-bietet-guenstige-Windows-11-Lizenzen-fuer-den-sicheren-Umstieg.html
+### 🔗 بيانات منشورة فعليًا (روابط backlink + تواريخ — للأرشيف)
+> الإيقاع ~شهر بين كل بيان (ممتاز). البيان الجاي ~أواخر يوليو 2026.
+
+1. **openPR (27.05.2026)** — CSP-Partner erweitert Sortiment:
+   https://www.openpr.de/news/1313019/Karinex-Guenstige-Microsoft-Lizenzen-mit-Sofort-Download-CSP-Partner-erweitert-Sortiment.html
+2. **openPR (28.06.2026)** — Windows 10 → Windows 11:
+   https://www.openpr.de/news/1316307/Windows-10-Support-ausgelaufen-Karinex-bietet-guenstige-Windows-11-Lizenzen-fuer-den-sicheren-Umstieg.html
 
 ### زوايا جاهزة (نوّع — لا تكرّر)
-1. ~~"Microsoft-Lizenzen günstig + 100 Tage Garantie"~~ (نُشر على openPR سابقًا — لا تعيده)
+1. ~~"Microsoft-Lizenzen günstig + 100 Tage Garantie / CSP-Partner"~~ (نُشر على openPR **27.05.2026** ✅ — لا تعيده)
 2. ~~"Windows 10 Support ausgelaufen → Windows 11 Umstieg"~~ (نُشر على openPR **28.06.2026** ✅ — لا تعيده)
 3. **"Visual Studio 2026 Professional jetzt bei Karinex verfügbar"** (الجاي — إطلاق منتج)
 4. "Office 2024 vs Microsoft 365 – Karinex erklärt die Unterschiede"
