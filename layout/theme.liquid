@@ -17,6 +17,7 @@
         DE/AT/CH/LI/LU  → de   (German-speaking)
         PL              → pl   (Polish)
         SE              → sv   (Swedish)
+        NL              → nl   (Dutch)
         anywhere else   → en   (default fallback, incl. English-speaking
                                 countries US/GB/IE/AU/NZ/CA + any country
                                 we don't have a localised version for yet)
@@ -28,6 +29,8 @@
         {%- assign _expected = 'pl' -%}
       {%- elsif _geo_country == 'SE' -%}
         {%- assign _expected = 'sv' -%}
+      {%- elsif _geo_country == 'NL' -%}
+        {%- assign _expected = 'nl' -%}
       {%- endif -%}
 
       {%- comment -%}
