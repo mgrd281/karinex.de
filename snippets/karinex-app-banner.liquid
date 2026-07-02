@@ -8,7 +8,9 @@
 <div id="klapp-banner" class="klapp" style="display:none" role="region" aria-label="Markty App">
   <button type="button" class="klapp__close" aria-label="Schließen" onclick="klappDismiss()">&times;</button>
 
-  <span class="klapp__icon" aria-hidden="true">M</span>
+  <span class="klapp__icon" aria-hidden="true">
+    <img src="{{ 'markty-app-icon.jpg' | asset_url }}" alt="" width="48" height="48" loading="lazy" decoding="async">
+  </span>
 
   <div class="klapp__text">
     <span class="klapp__title">Markty App</span>
