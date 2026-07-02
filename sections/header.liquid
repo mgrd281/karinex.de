@@ -330,6 +330,11 @@
     z-index: 10 !important;
     margin-right: 15px;
   }
+  /* Move DE|EUR selector further left on product pages only —
+     home page and the rest keep the default right margin. */
+  body.template-product .ay-utility-bar__right {
+    margin-right: 8.5%;
+  }
   /* Localization dropdown – compact + rechts ausgerichtet */
   .ay-utility-bar__right .dropdown-localization {
     display: flex !important;
