@@ -928,30 +928,27 @@
         font-size: 28px;
     }
 
-    /* Trust seals — elegant balanced grid on mobile:
-       4 per row (2 rows), Shop badge centered on its own line. */
+    /* Trust seals — tidy left-packed grid on mobile:
+       4 per row, content-sized columns (no wide gaps), Shop badge
+       alone on the final row at the far left. */
     .partner-logos {
-        max-width: 300px;
+        max-width: 100%;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px 8px;
+        grid-template-columns: repeat(4, auto);
+        justify-content: start;
+        justify-items: start;
         align-items: center;
-        justify-items: center;
+        gap: 16px 16px;
         margin-top: 10px;
     }
 
     .partner-logos a {
         margin: 0;
-        width: 100%;
+        width: auto;
         height: 40px;
         display: flex;
         align-items: center;
-        justify-content: center;
-    }
-
-    /* Shop badge alone, centered, on the final row */
-    .partner-logos a:last-child {
-        grid-column: 1 / -1;
+        justify-content: flex-start;
     }
 
     .partner-logos img,
