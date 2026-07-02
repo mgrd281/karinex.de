@@ -187,9 +187,6 @@
   .ay-sp-arrow{stroke-dasharray:15;stroke-dashoffset:15;opacity:0;animation:ay-sp-arr 5s cubic-bezier(.4,0,.2,1) infinite}
   .ay-social-proof__text{font-size:13px;line-height:1.2;letter-spacing:.2px;color:#555;font-weight:400}
   .ay-social-proof__text strong{font-weight:600;color:#111}
-  .ay-social-proof__city{display:block;margin-top:3px}
-  .ay-social-proof{align-items:flex-start}
-  .ay-social-proof__icon{margin-top:1px}
   @keyframes ay-sp-draw{0%{stroke-dashoffset:40}15%,85%{stroke-dashoffset:0}95%,100%{stroke-dashoffset:40}}
   @keyframes ay-sp-arr{0%,14%{stroke-dashoffset:15;opacity:0}15%{stroke-dashoffset:15;opacity:1}25%,85%{stroke-dashoffset:0;opacity:1}95%,100%{stroke-dashoffset:15;opacity:1}}
   @keyframes ay-sp-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
@@ -883,7 +880,7 @@
           <span class="ay-social-proof__text">
             <strong>{{ _sold_count }}x</strong> in den letzten 30 Tagen verkauft
             {%- if _sold_city and _sold_city != blank -%}
-              <span class="ay-social-proof__city">Letzter Kauf aus <strong>{{ _sold_city }}</strong></span>
+              <span class="ay-social-proof__sep"> · </span>Letzter Kauf aus <strong>{{ _sold_city }}</strong>
             {%- endif -%}
           </span>
         </div>
