@@ -2553,7 +2553,6 @@
     <strong class="kx-psp-highlight">{{ _sold_count }}x</strong>
     <span class="kx-psp-muted">{{ 'karinex.meta.sold_last_30_days' | t }}</span>
     {%- if _sold_city and _sold_city != blank -%}
-      <span class="kx-psp-sep"> · </span>
       <span class="kx-psp-city">{{ 'karinex.meta.last_purchase_from' | t }} <strong>{{ _sold_city }}</strong></span>
     {%- endif -%}
   </span>
@@ -2575,7 +2574,7 @@
 <style>
   .kx-premium-social-proof {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 9px;
     margin-top: 5px;
     margin-bottom: 14px;
@@ -2625,6 +2624,15 @@
   .kx-psp-highlight {
     font-weight: 600;
     color: #111111;
+  }
+
+  .kx-psp-city {
+    display: block;
+    margin-top: 3px;
+  }
+
+  .kx-psp-icon-wrapper {
+    margin-top: 1px;
   }
 
   @keyframes kx-psp-draw-line {
