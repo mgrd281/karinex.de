@@ -57,6 +57,8 @@
     {%- endif -%}
 
     <link rel="stylesheet" href="{{ 'product-information.css' | asset_url | append: '?v=5' }}">
+    {%- comment -%} Product-page color-system trial (forest/gold, single-red rule). Rollback = remove this line + assets/karinex-color-system.css. {%- endcomment -%}
+    <link rel="stylesheet" href="{{ 'karinex-color-system.css' | asset_url }}">
 
     {%- comment -%} Per-template hide rules for product-card icons. {%- endcomment -%}
     {%- if section.settings.show_card_wishlist_heart == false or section.settings.show_card_quick_add == false -%}

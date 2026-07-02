@@ -1,0 +1,61 @@
+/* ============================================================
+   Karinex — Product Page Color System (TRIAL / easy rollback)
+   ------------------------------------------------------------
+   Standalone override layer for the default product template
+   (sections/product-information.liquid). Every rule is scoped
+   to body.template-product, so its specificity beats the
+   original inline <style> + product-information.css rules
+   regardless of load order, and it only affects the PDP.
+
+   Rollback: revert the PR that adds this file + its <link>.
+   The original colors remain untouched in their source files.
+
+   Design intent (60/30/10, editorial luxury — NOT discount look):
+   - Forest Green #1D4739 = base (60%)
+   - Champagne Gold #C9B486 = accent (10%)
+   - STRICT: only ONE red element per screen = the -70% pill.
+   ============================================================ */
+
+:root{
+  --kx-forest:#1D4739;      /* base (60%)                  */
+  --kx-forest-deep:#153529; /* darker, for hover           */
+  --kx-gold:#C9B486;        /* champagne gold accent (10%) */
+  --kx-tint:#EAF1EE;        /* unified light-green surface */
+  --kx-text-2:#4A5551;      /* neutral secondary text      */
+  --kx-red:#d32f2f;         /* the ONLY allowed red — -70% pill only */
+}
+
+/* 1) Price: red -> forest green (stays large/bold 32px/800). */
+body.template-product .current-price{ color:var(--kx-forest); }
+
+/* 2) Discount -70% pill: stays the single red element. */
+body.template-product .discount-pill-simple{ background:var(--kx-red); color:#fff; }
+
+/* 3) "Nur heute" + SALE badges: red -> gold bg + green text
+      (so the -70% pill remains the only red). */
+body.template-product .sale-badge,
+body.template-product .sale-badge.sale-badge--promo{
+  background:var(--kx-gold);
+  color:var(--kx-forest);
+}
+
+/* 4) "Preisvorteil" savings text: light-green -> neutral. */
+body.template-product .savings-text{ color:var(--kx-text-2); }
+
+/* 5) Checkmarks unified to forest green. */
+body.template-product .trust-check{ color:var(--kx-forest); }
+
+/* 6) Payment logos: grayscale @ 60% opacity, full color on hover. */
+body.template-product .payment-icons-row .payment-icon{
+  filter:grayscale(100%);
+  opacity:.6;
+  transition:filter .2s ease, opacity .2s ease, transform .2s ease;
+}
+body.template-product .payment-icons-row .payment-icon:hover{
+  filter:none;
+  opacity:1;
+}
+
+/* 7) Unify greens to the 3 tokens — product option badges. */
+body.template-product .kvp-pro__badge--save{ background:var(--kx-tint); color:var(--kx-forest); }
+body.template-product .kvp-pro__badge--sale{ background:var(--kx-gold); color:var(--kx-forest); }
