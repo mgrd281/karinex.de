@@ -1,0 +1,98 @@
+{%- comment -%}
+  Karinex — App-Install-Banner (Markty), AboutYou-Style.
+  Mobile-only, top of page, dismissible (localStorage, reappears after 7 days).
+  Placeholder icon (deep-green M) until the real Markty App-Store icon is set:
+  swap the .klapp__icon <span> for an <img src="..."> when available.
+{%- endcomment -%}
+
+<div id="klapp-banner" class="klapp" style="display:none" role="region" aria-label="Markty App">
+  <button type="button" class="klapp__close" aria-label="Schließen" onclick="klappDismiss()">&times;</button>
+
+  <span class="klapp__icon" aria-hidden="true">M</span>
+
+  <div class="klapp__text">
+    <span class="klapp__title">Markty</span>
+    <span class="klapp__sub">Kaufen &amp; Verkaufen &middot; jetzt in der App</span>
+  </div>
+
+  <a class="klapp__cta"
+     href="https://apps.apple.com/de/app/markty/id6775184638"
+     target="_blank" rel="noopener"
+     aria-label="Markty im App Store öffnen">Zur App</a>
+</div>
+
+<style>
+  .klapp{
+    display:none;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    background:#ffffff;
+    border-bottom:1px solid #ececec;
+    font-family:inherit;
+    position:relative;
+    z-index:120;
+  }
+  .klapp__close{
+    flex:0 0 auto;
+    width:24px;height:24px;
+    border:0;background:transparent;
+    color:#9a9a9a;font-size:22px;line-height:1;
+    cursor:pointer;padding:0;margin:-2px 0 0 -4px;
+  }
+  .klapp__icon{
+    flex:0 0 auto;
+    width:44px;height:44px;
+    border-radius:11px;
+    background:linear-gradient(135deg,#1D4739,#2d6b54);
+    color:#c9a84c;
+    font-weight:800;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 4px rgba(0,0,0,.15);
+    letter-spacing:.5px;
+  }
+  .klapp__icon img{width:100%;height:100%;border-radius:11px;object-fit:cover;}
+  .klapp__text{
+    flex:1 1 auto;min-width:0;
+    display:flex;flex-direction:column;line-height:1.25;
+  }
+  .klapp__title{font-size:15px;font-weight:700;color:#111;}
+  .klapp__sub{font-size:12px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .klapp__cta{
+    flex:0 0 auto;
+    background:#1D4739;color:#fff !important;
+    font-size:13px;font-weight:700;
+    padding:9px 18px;border-radius:999px;
+    text-decoration:none;white-space:nowrap;
+    transition:background .2s;
+  }
+  .klapp__cta:hover{background:#153529;}
+  /* Mobile only */
+  @media (min-width:769px){ .klapp{display:none !important;} }
+</style>
+
+<script>
+  (function(){
+    function show(){
+      try{
+        var raw = localStorage.getItem('karinex_markty_banner');
+        if(raw){
+          var days = (Date.now() - parseInt(raw,10)) / 86400000;
+          if(days < 7) return; // dismissed within last 7 days
+        }
+      }catch(e){}
+      var el = document.getElementById('klapp-banner');
+      if(el && window.matchMedia('(max-width:768px)').matches){
+        el.style.display = 'flex';
+      }
+    }
+    window.klappDismiss = function(){
+      try{ localStorage.setItem('karinex_markty_banner', String(Date.now())); }catch(e){}
+      var el = document.getElementById('klapp-banner');
+      if(el){ el.style.display = 'none'; }
+    };
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', show);
+    }else{ show(); }
+  })();
+</script>
