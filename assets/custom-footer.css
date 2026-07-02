@@ -928,16 +928,39 @@
         font-size: 28px;
     }
 
+    /* Trust seals — elegant balanced grid on mobile:
+       4 per row (2 rows), Shop badge centered on its own line. */
     .partner-logos {
-        max-width: 100%;
-        display: flex;
-        flex-wrap: wrap;
+        max-width: 300px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px 8px;
         align-items: center;
-        gap: 10px;
+        justify-items: center;
+        margin-top: 10px;
     }
 
     .partner-logos a {
         margin: 0;
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Shop badge alone, centered, on the final row */
+    .partner-logos a:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .partner-logos img,
+    .partner-logos img[alt="Trustami - Ausgezeichnet 4.98/5"] {
+        height: 38px !important;
+        width: auto;
+        max-width: 100%;
+        margin: 0 !important;
+        object-fit: contain;
     }
 
     .contact-item {
